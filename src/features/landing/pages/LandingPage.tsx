@@ -81,6 +81,107 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; d
   )
 }
 
+/* ─────────────────────────────────── Light Ambient Background Animation ──── */
+const LightSectionBackground: React.FC<{
+  symbols?: string[]
+  accentPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+}> = ({
+  symbols = ['{ }', '0 KB', '✓ offline', 'def logic():'],
+  accentPosition = 'top-left'
+}) => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0">
+      {/* Light drifting ambient aura 1 */}
+      <motion.div
+        animate={{
+          x: [0, 30, -20, 0],
+          y: [0, -25, 20, 0],
+          scale: [1, 1.08, 0.95, 1],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 20,
+          ease: 'easeInOut',
+        }}
+        className={`absolute w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-brand-500/[0.035] dark:bg-brand-400/[0.045] blur-3xl ${
+          accentPosition === 'top-right'
+            ? 'top-4 right-4'
+            : accentPosition === 'bottom-left'
+            ? 'bottom-4 left-4'
+            : 'top-10 left-10'
+        }`}
+      />
+
+      {/* Light drifting ambient aura 2 */}
+      <motion.div
+        animate={{
+          x: [0, -35, 25, 0],
+          y: [0, 30, -25, 0],
+          scale: [1, 0.94, 1.06, 1],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 24,
+          ease: 'easeInOut',
+        }}
+        className="absolute bottom-6 right-8 w-72 sm:w-88 h-72 sm:h-88 rounded-full bg-emerald-500/[0.025] dark:bg-emerald-400/[0.035] blur-3xl"
+      />
+
+      {/* Floating subtle coding tokens */}
+      <div className="absolute inset-0 select-none opacity-[0.03] dark:opacity-[0.05] font-mono text-xs flex justify-around items-center">
+        {symbols[0] && (
+          <motion.span
+            animate={{ y: [0, -18, 0], rotate: [0, 6, 0] }}
+            transition={{ repeat: Infinity, duration: 9, ease: 'easeInOut' }}
+            className="absolute top-1/4 left-[7%]"
+          >
+            {symbols[0]}
+          </motion.span>
+        )}
+        {symbols[1] && (
+          <motion.span
+            animate={{ y: [0, 16, 0], rotate: [0, -6, 0] }}
+            transition={{ repeat: Infinity, duration: 11, ease: 'easeInOut', delay: 1 }}
+            className="absolute top-1/3 right-[9%]"
+          >
+            {symbols[1]}
+          </motion.span>
+        )}
+        {symbols[2] && (
+          <motion.span
+            animate={{ y: [0, -14, 0] }}
+            transition={{ repeat: Infinity, duration: 10, ease: 'easeInOut', delay: 2 }}
+            className="absolute bottom-1/4 left-[14%]"
+          >
+            {symbols[2]}
+          </motion.span>
+        )}
+        {symbols[3] && (
+          <motion.span
+            animate={{ y: [0, 18, 0], rotate: [0, 4, 0] }}
+            transition={{ repeat: Infinity, duration: 12, ease: 'easeInOut', delay: 0.5 }}
+            className="absolute bottom-1/3 right-[18%]"
+          >
+            {symbols[3]}
+          </motion.span>
+        )}
+      </div>
+
+      {/* Subtle grid mesh with gentle breathing opacity animation */}
+      <motion.div
+        animate={{ opacity: [0.02, 0.045, 0.02] }}
+        transition={{ repeat: Infinity, duration: 9, ease: 'easeInOut' }}
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, currentColor 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
+    </div>
+  )
+}
+
 /* ─────────────────────────────────── Section Journey Connector ──── */
 const StepConnector: React.FC<{ nextLabel: string; targetId: string; stepNumber: string }> = ({ nextLabel, targetId, stepNumber }) => {
   return (
@@ -89,9 +190,8 @@ const StepConnector: React.FC<{ nextLabel: string; targetId: string; stepNumber:
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col items-center justify-center pt-10 pb-4"
+      className="flex flex-col items-center justify-center pt-8 pb-4"
     >
-      <div className="w-px h-10 bg-gradient-to-b from-brand-500 via-brand-400/40 to-transparent dark:from-brand-400 mb-3 animate-pulse" />
       <a
         href={`#${targetId}`}
         className="group inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm"
@@ -624,7 +724,7 @@ print(message)`,
             HERO SECTION — Full-Bleed Background Picture Slideshow
             ═══════════════════════════════════════════════════════════════ */}
         <section
-          className="relative min-h-[540px] sm:min-h-[600px] flex items-center justify-center px-4 md:px-8 overflow-hidden bg-slate-950 border-b border-slate-800"
+          className="relative min-h-[540px] sm:min-h-[600px] flex items-center justify-center px-4 md:px-8 overflow-hidden bg-slate-950"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
@@ -794,14 +894,10 @@ print(message)`,
             SECTION 1: LIVE TERMINAL BOOT — Adaptive Canvas
             ═══════════════════════════════════════════════════════════════ */}
         <section id="terminal-demo" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
-          {/* Subtle dot grid pattern */}
-          <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.03]" style={{
-            backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }} />
-
-          {/* Ambient glowing radial light */}
-          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-brand-500/10 dark:bg-brand-600/10 rounded-full blur-[120px] pointer-events-none" />
+          <LightSectionBackground
+            symbols={['$ codetutor start', '✓ 100% offline', '0.00 KB sent', '● Ready']}
+            accentPosition="top-left"
+          />
 
           <div className="max-w-6xl mx-auto space-y-10 relative z-10" ref={terminalRef}>
             <SectionReveal>
@@ -1109,7 +1205,11 @@ print(message)`,
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 2: THE REALITIES WE SOLVE — Human-Centered Empathy
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="why-offline" className="py-20 sm:py-28 px-4 md:px-8 relative overflow-hidden">
+        <section id="why-offline" className="py-20 sm:py-28 px-4 md:px-8 relative overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-300">
+          <LightSectionBackground
+            symbols={['0ms delay', '100% free', '∞ questions', 'Zero Wi-Fi']}
+            accentPosition="top-right"
+          />
           <div className="max-w-6xl mx-auto space-y-16">
             <SectionReveal>
               <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -1215,7 +1315,11 @@ print(message)`,
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 3: INTERACTIVE WORKSPACE — Tabbed Feature Preview
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="features" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950">
+        <section id="features" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
+          <LightSectionBackground
+            symbols={['countdown.py', 'def solve():', '💡 Key Concept', 'Passed ✓']}
+            accentPosition="bottom-left"
+          />
           <div className="max-w-6xl mx-auto space-y-10">
             <SectionReveal>
               <div className="text-center space-y-3 max-w-3xl mx-auto">
@@ -1488,7 +1592,11 @@ print(message)`,
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 4: HARDWARE SPECS — Animated Counter Metrics
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="architecture" className="py-20 sm:py-28 px-4 md:px-8">
+        <section id="architecture" className="py-20 sm:py-28 px-4 md:px-8 relative overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-300">
+          <LightSectionBackground
+            symbols={['1.4 GB RAM', '52 Lessons', '320ms Instant', 'CPU Cool']}
+            accentPosition="top-left"
+          />
           <div className="max-w-5xl mx-auto space-y-12" ref={statsRef}>
             <SectionReveal>
               <div className="text-center space-y-3 max-w-2xl mx-auto">
@@ -1638,7 +1746,11 @@ print(message)`,
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 5: FAQ ACCORDION
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="faq" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950">
+        <section id="faq" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
+          <LightSectionBackground
+            symbols={['FAQ', '0 Fees', 'All Learners', '100% Private']}
+            accentPosition="top-right"
+          />
           <div className="max-w-4xl mx-auto space-y-10">
             <SectionReveal>
               <div className="text-center space-y-3">
@@ -1716,7 +1828,11 @@ print(message)`,
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 6: FINAL CALL TO ACTION — Clean Solid Design
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="cta" className="py-10 sm:py-14 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+        <section id="cta" className="py-10 sm:py-14 px-4 md:px-8 bg-white dark:bg-slate-900 relative overflow-hidden transition-colors duration-300">
+          <LightSectionBackground
+            symbols={['Start Now', '2 Min Setup', 'No Bundles', 'Free Forever']}
+            accentPosition="bottom-right"
+          />
           <div className="max-w-6xl mx-auto">
             <SectionReveal>
               <div className="rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg p-6 sm:p-8 lg:p-10 text-center text-slate-900 dark:text-white space-y-6 transition-colors duration-300">
