@@ -22,7 +22,7 @@ export const BackgroundCodeAnimation: React.FC = () => {
   ]
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none select-none z-0">
       {/* Background Matrix Grid Pattern with crisp solid color */}
       <svg
         className="absolute inset-0 w-full h-full text-slate-200 dark:text-slate-800"

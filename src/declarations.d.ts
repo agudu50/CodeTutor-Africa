@@ -34,12 +34,15 @@ declare module 'lucide-react' {
   export const Copy: LucideIcon
   export const CornerDownLeft: LucideIcon
   export const Cpu: LucideIcon
+  export const Database: LucideIcon
   export const DollarSign: LucideIcon
   export const Eye: LucideIcon
   export const EyeOff: LucideIcon
   export const Flame: LucideIcon
+  export const Globe: LucideIcon
   export const GraduationCap: LucideIcon
   export const HardDrive: LucideIcon
+  export const Heart: LucideIcon
   export const HelpCircle: LucideIcon
   export const Laptop: LucideIcon
   export const LayoutDashboard: LucideIcon
@@ -59,6 +62,7 @@ declare module 'lucide-react' {
   export const School: LucideIcon
   export const Search: LucideIcon
   export const Settings: LucideIcon
+  export const Shield: LucideIcon
   export const ShieldCheck: LucideIcon
   export const Sparkles: LucideIcon
   export const Sun: LucideIcon
