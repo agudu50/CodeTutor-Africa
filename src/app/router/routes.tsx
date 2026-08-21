@@ -3,6 +3,9 @@ import { RouteObject, Navigate } from 'react-router-dom'
 import { MainLayout } from '@/components/layout/MainLayout'
 
 // Lazy-loaded route pages for optimal bundle splitting and 8GB laptop performance
+const LandingPage = lazy(() => import('@/features/landing/pages/LandingPage'))
+const SignInPage = lazy(() => import('@/features/auth/pages/SignInPage'))
+const SignUpPage = lazy(() => import('@/features/auth/pages/SignUpPage'))
 const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'))
 const TutorPage = lazy(() => import('@/features/tutor/pages/TutorPage'))
 const PracticeListPage = lazy(() => import('@/features/practice/pages/PracticeListPage'))
@@ -15,14 +18,25 @@ const ProgressPage = lazy(() => import('@/features/progress/pages/ProgressPage')
 const SettingsPage = lazy(() => import('@/features/settings/pages/SettingsPage'))
 
 export const routes: RouteObject[] = [
+  // Public standalone routes
+  {
+    path: '/',
+    element: <LandingPage />,
+  },
+  {
+    path: '/signin',
+    element: <SignInPage />,
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage />,
+  },
+
+  // Authenticated / App shell workspace routes
   {
     path: '/',
     element: <MainLayout />,
     children: [
-      {
-        index: true,
-        element: <Navigate to="/dashboard" replace />,
-      },
       {
         path: 'dashboard',
         element: <DashboardPage />,
