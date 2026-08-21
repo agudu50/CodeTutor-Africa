@@ -15,24 +15,28 @@ export const SignUpPage: React.FC = () => {
   const navigate = useNavigate()
   const [fullName, setFullName] = useState('')
   const [emailOrId, setEmailOrId] = useState('')
-  const [university, setUniversity] = useState('ug')
+  const [institution, setInstitution] = useState('self')
   const [track, setTrack] = useState('python')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const universityOptions = [
+  const institutionOptions = [
+    { value: 'self', label: 'Self-Taught / Independent Learner' },
+    { value: 'club', label: 'Coding Club / Community Bootcamp' },
+    { value: 'shs', label: 'High School / Secondary School' },
+    { value: 'poly', label: 'Polytechnic / Technical Institute' },
     { value: 'ug', label: 'University of Ghana (Legon)' },
     { value: 'knust', label: 'Kwame Nkrumah University of Science and Technology' },
     { value: 'makerere', label: 'Makerere University (Uganda)' },
     { value: 'ashesi', label: 'Ashesi University' },
     { value: 'unilag', label: 'University of Lagos (Nigeria)' },
     { value: 'uct', label: 'University of Cape Town (South Africa)' },
-    { value: 'other', label: 'Other African Higher Institution' },
+    { value: 'other', label: 'Other School, Organization, or Hub' },
   ]
 
   const trackOptions = [
-    { value: 'python', label: 'Python (CS Fundamentals & Algorithms)' },
-    { value: 'javascript', label: 'JavaScript (Web & Asynchronous Systems)' },
+    { value: 'python', label: 'Python (Foundations, Logic & Problem Solving)' },
+    { value: 'javascript', label: 'JavaScript (Web Apps & Frontend Engineering)' },
     { value: 'java', label: 'Java (OOP & Software Engineering)' },
   ]
 
@@ -58,7 +62,7 @@ export const SignUpPage: React.FC = () => {
           </span>
         </Link>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Create student account
+          Create offline account
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400">
           Already have an offline profile?{' '}
@@ -91,21 +95,21 @@ export const SignUpPage: React.FC = () => {
             />
 
             <Input
-              label="Student Email / University ID"
+              label="Email, Username, or Student ID"
               type="text"
               required
               value={emailOrId}
               onChange={(e) => setEmailOrId(e.target.value)}
-              placeholder="e.g. 10984723 or student@knust.edu.gh"
+              placeholder="e.g. ama.serwaa@gmail.com or 10984723"
               leftIcon={<Mail className="w-4 h-4" />}
             />
 
             <div>
               <Dropdown
-                label="University / Institution"
-                options={universityOptions}
-                value={university}
-                onChange={setUniversity}
+                label="Learning Context / School / Hub"
+                options={institutionOptions}
+                value={institution}
+                onChange={setInstitution}
               />
             </div>
 

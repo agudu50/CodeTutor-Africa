@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
             <span>Zero Cloud Dependence</span>
           </div>
           <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
-            Your university courses, exercises, and AI model run 100% offline.
+            Your courses, exercises, and AI model run 100% offline.
           </p>
         </div>
       )}

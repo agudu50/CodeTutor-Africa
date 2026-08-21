@@ -3,7 +3,7 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { MOCK_COURSES } from '../data/mockCourseData'
 import { CourseCard } from '../components/CourseCard'
 import { Input, Dropdown } from '@/components/ui'
-import { Search, GraduationCap } from 'lucide-react'
+import { Search, BookOpen } from 'lucide-react'
 
 export const CourseListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -22,10 +22,10 @@ export const CourseListPage: React.FC = () => {
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-          <GraduationCap className="w-6 h-6 text-brand-500" /> University Course Modules
+          <BookOpen className="w-6 h-6 text-brand-500" /> Programming Course Tracks
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Structured computer science courses aligned with African university curricula. Fully pre-cached for offline access.
+          Structured programming courses for all skill levels—from first-time coders to advanced builders. Fully pre-cached for offline access.
         </p>
       </div>
 
@@ -33,7 +33,7 @@ export const CourseListPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <Input
-            placeholder="Search courses by topic, algorithm, or syllabus..."
+            placeholder="Search courses by topic, language, or concept..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             leftIcon={<Search className="w-4 h-4 text-slate-400" />}

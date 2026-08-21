@@ -78,7 +78,7 @@ export const CourseDetailPage: React.FC = () => {
 
         {course.modules.length === 0 ? (
           <div className="p-8 text-center border border-dashed rounded-2xl text-slate-400 text-xs">
-            Curriculum modules for this track are being synchronized from offline university storage.
+            Curriculum modules for this track are being synchronized from offline local storage.
           </div>
         ) : (
           course.modules.map((module) => (

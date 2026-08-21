@@ -47,14 +47,14 @@ export interface DashboardData {
 export const MOCK_DASHBOARD_DATA: DashboardData = {
   user: {
     name: 'Kofi Mensah',
-    university: 'University of Ghana / KNUST',
+    university: 'Independent Learner • Tech Hub Accra',
     streakDays: 7,
     totalHours: 18.5,
     problemsSolved: 34,
   },
   continueLearning: {
     courseId: 'course-py-101',
-    courseTitle: 'Python for University Computer Science',
+    courseTitle: 'Python Programming & Problem Solving',
     moduleTitle: 'Module 1 • Foundations & Control Flow',
     lessonId: 'les-3',
     lessonTitle: 'Functions, Scoping, and Recursion',

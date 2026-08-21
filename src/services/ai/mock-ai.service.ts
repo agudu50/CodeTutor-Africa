@@ -36,7 +36,7 @@ export class MockAIService implements IAIService {
 
     if (promptLower.includes('array') || promptLower.includes('list') || promptLower.includes('complexity')) {
       return {
-        reply: `Understanding time complexity with data structures is essential for university exams and technical interviews. In ${request.language}, accessing an element by index takes **O(1)** constant time because contiguous memory addresses allow instant mathematical offsets. However, inserting or deleting from the middle takes **O(n)** time due to memory shifts.`,
+        reply: `Understanding time complexity with data structures is essential for writing efficient code and solving real-world programming problems. In ${request.language}, accessing an element by index takes **O(1)** constant time because contiguous memory addresses allow instant mathematical offsets. However, inserting or deleting from the middle takes **O(n)** time due to memory shifts.`,
         codeSnippets: [
           {
             language: request.language,

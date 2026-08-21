@@ -14,10 +14,10 @@ export const ProgressPage: React.FC = () => {
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-brand-500" /> Student Learning Progress & Analytics
+          <BarChart3 className="w-6 h-6 text-brand-500" /> Learning Progress & Analytics
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Detailed metrics on university syllabus coverage, coding consistency, strengths, and targeted focus areas.
+          Detailed metrics on curriculum coverage, coding consistency, strengths, and targeted focus areas.
         </p>
       </div>
 

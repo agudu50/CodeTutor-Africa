@@ -55,7 +55,7 @@ export const SignInPage: React.FC = () => {
             to="/signup"
             className="font-semibold text-brand-600 dark:text-brand-400 hover:underline"
           >
-            create a new student account
+            create a new account
           </Link>
         </p>
       </div>
@@ -70,12 +70,12 @@ export const SignInPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 py-8 px-6 sm:px-10 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Student Email or Index Number"
+              label="Email, Username, or Student ID"
               type="text"
               required
               value={emailOrId}
               onChange={(e) => setEmailOrId(e.target.value)}
-              placeholder="e.g. 10928374 or student@university.edu"
+              placeholder="e.g. kofi@gmail.com or 10928374"
               leftIcon={<Mail className="w-4 h-4" />}
             />
 

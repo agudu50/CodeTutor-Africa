@@ -20,12 +20,12 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenMobileNav }) => {
   const location = useLocation()
 
   const getPageTitle = (path: string) => {
-    if (path.startsWith('/dashboard')) return 'Student Dashboard'
+    if (path.startsWith('/dashboard')) return 'Dashboard'
     if (path.startsWith('/tutor')) return 'AI Programming Tutor'
     if (path.startsWith('/practice')) return 'Interactive Code Practice'
     if (path.startsWith('/debugger')) return 'Offline Code Debugger'
-    if (path.startsWith('/learning')) return 'University Course Catalog'
-    if (path.startsWith('/progress')) return 'Student Learning Analytics'
+    if (path.startsWith('/learning')) return 'Course Catalog'
+    if (path.startsWith('/progress')) return 'Learning Analytics'
     if (path.startsWith('/settings')) return 'System Preferences'
     return 'CodeTutor Africa'
   }
@@ -53,7 +53,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenMobileNav }) => {
             {getPageTitle(location.pathname)}
           </h1>
           <span className="text-[11px] text-slate-500 dark:text-slate-400">
-            University CS Curriculum • Offline Mode
+            Offline Programming Workspace • All Skill Levels
           </span>
         </div>
       </div>

@@ -40,7 +40,7 @@ export const ProgressOverview: React.FC<ProgressOverviewProps> = ({
     {
       label: 'Enrolled Courses',
       value: coursesCount.toString(),
-      subtext: 'University CS series',
+      subtext: 'Core coding tracks',
       icon: Trophy,
       color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
     },

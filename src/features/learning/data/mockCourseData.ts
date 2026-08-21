@@ -3,10 +3,10 @@ import { Course } from '@/types'
 export const MOCK_COURSES: Course[] = [
   {
     id: 'course-py-101',
-    title: 'Python for University Computer Science',
-    slug: 'python-cs-fundamentals',
-    description: 'Master Python syntax, recursion, algorithmic problem solving, and object-oriented paradigms tailored for African university curricula.',
-    category: 'Computer Science Core',
+    title: 'Python Programming & Problem Solving',
+    slug: 'python-programming-fundamentals',
+    description: 'Master Python syntax, recursion, algorithmic problem solving, and object-oriented paradigms tailored for all learners and builders across Africa.',
+    category: 'Core Programming',
     language: 'python',
     difficulty: 'beginner',
     totalLessons: 18,

@@ -21,14 +21,14 @@ export const QuickActions: React.FC = () => {
     },
     {
       title: 'Code Practice',
-      description: 'Solve university algorithmic challenges offline',
+      description: 'Solve interactive coding challenges offline',
       path: '/practice',
       icon: Code2,
       color: 'bg-accent-600 text-white border border-accent-500',
     },
     {
       title: 'Browse Courses',
-      description: 'Explore full curriculum modules for Python, Java, JS',
+      description: 'Explore full modular courses for Python, Java, JS',
       path: '/learning',
       icon: GraduationCap,
       color: 'bg-sky-600 text-white border border-sky-500',
