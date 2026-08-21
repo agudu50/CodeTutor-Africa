@@ -1,36 +1,34 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Course } from '@/types'
 import { Card, CardTitle, Badge, Button, Progress } from '@/components/ui'
-import { BookOpen, Clock, ArrowRight } from 'lucide-react'
+import { BookOpen, Clock, ArrowRight, Shield } from 'lucide-react'
 
-export const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
+export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
+  const difficultyBadge =
+    course.difficulty === 'beginner'
+      ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/80'
+      : course.difficulty === 'intermediate'
+      ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
+      : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
+
   return (
-    <Card hoverable className="flex flex-col justify-between p-5 space-y-4">
+    <Card hoverable className="flex flex-col justify-between p-5 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Badge
-            variant={
-              course.difficulty === 'beginner'
-                ? 'success'
-                : course.difficulty === 'intermediate'
-                ? 'warning'
-                : 'error'
-            }
-            size="sm"
-          >
+          <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyBadge}`}>
             {course.difficulty}
-          </Badge>
-          <Badge variant="brand" size="sm" className="uppercase font-mono text-[10px]">
+          </span>
+          <Badge variant="brand" size="sm" className="uppercase font-mono text-[10px] font-bold">
             {course.language}
           </Badge>
         </div>
 
         <div>
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+          <span className="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">
             {course.category}
           </span>
-          <CardTitle className="text-base text-slate-900 dark:text-slate-100">
+          <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
             {course.title}
           </CardTitle>
         </div>
@@ -39,33 +37,40 @@ export const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
           {course.description}
         </p>
 
-        <div className="flex items-center gap-4 text-xs text-slate-500 pt-1">
+        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1 font-medium">
           <span className="flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5 text-brand-500" />
+            <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
             {course.totalLessons} Lessons
           </span>
           <span className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-accent-500" />
+            <Clock className="w-3.5 h-3.5 text-amber-500" />
             ~{course.estimatedHours} Hours
           </span>
         </div>
       </div>
 
-      <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+      <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
         {course.progressPercentage !== undefined && (
-          <div className="space-y-1">
-            <div className="flex justify-between text-[11px] font-medium text-slate-500">
-              <span>Completed</span>
-              <span className="font-mono">{course.progressPercentage}%</span>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-[11px] font-bold text-slate-700 dark:text-slate-300">
+              <span>Course Progress</span>
+              <span className="font-mono text-brand-600 dark:text-brand-400">{course.progressPercentage}%</span>
             </div>
             <Progress value={course.progressPercentage} variant="brand" size="sm" />
           </div>
         )}
 
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] text-slate-400">Offline Pack Ready</span>
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+            <Shield className="w-3 h-3" /> Offline Cached
+          </span>
           <Link to={`/learning/courses/${course.id}`}>
-            <Button variant="primary" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+            <Button
+              variant="primary"
+              size="sm"
+              className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs text-xs"
+              rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+            >
               View Syllabus
             </Button>
           </Link>
@@ -73,4 +78,6 @@ export const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
       </div>
     </Card>
   )
-}
+})
+
+CourseCard.displayName = 'CourseCard'

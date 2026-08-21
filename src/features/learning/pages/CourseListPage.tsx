@@ -3,7 +3,7 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { MOCK_COURSES } from '../data/mockCourseData'
 import { CourseCard } from '../components/CourseCard'
 import { Input, Dropdown } from '@/components/ui'
-import { Search, BookOpen } from 'lucide-react'
+import { Search, BookOpen, Shield } from 'lucide-react'
 
 export const CourseListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -19,14 +19,25 @@ export const CourseListPage: React.FC = () => {
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-brand-500" /> Programming Course Tracks
-        </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Structured programming courses for all skill levels—from first-time coders to advanced builders. Fully pre-cached for offline access.
-        </p>
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Programming Course Tracks
+            </h1>
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Structured programming courses for all skill levels—from first-time coders to advanced builders. Fully pre-cached for offline access.
+          </p>
+        </div>
+
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 shrink-0 self-start sm:self-center">
+          <Shield className="w-3.5 h-3.5" /> 100% Offline Accessible
+        </span>
       </div>
 
       {/* Filter Toolbar */}
@@ -37,15 +48,16 @@ export const CourseListPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             leftIcon={<Search className="w-4 h-4 text-slate-400" />}
+            className="bg-white dark:bg-slate-900"
           />
         </div>
-        <div className="w-full sm:w-48">
+        <div className="w-full sm:w-52">
           <Dropdown
             options={[
               { value: 'all', label: 'All Languages' },
-              { value: 'python', label: 'Python' },
+              { value: 'python', label: 'Python 3.12' },
               { value: 'javascript', label: 'JavaScript' },
-              { value: 'java', label: 'Java' },
+              { value: 'java', label: 'Java 21' },
             ]}
             value={selectedLang}
             onChange={setSelectedLang}
@@ -53,8 +65,8 @@ export const CourseListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Courses Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Courses Grid (Equal-Height Cards) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {filteredCourses.map((course) => (
           <CourseCard key={course.id} course={course} />
         ))}
