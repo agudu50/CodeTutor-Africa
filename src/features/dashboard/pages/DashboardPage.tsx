@@ -17,49 +17,49 @@ export const DashboardPage: React.FC = () => {
   const { profile } = useUserProfile()
 
   return (
-    <PageContainer maxWidth="2xl" className="space-y-6">
+    <PageContainer maxWidth="2xl" className="space-y-4 sm:space-y-6">
       {/* ═══════════════════════════════════════════════════════════════
           WELCOME HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-        <div className="space-y-1.5">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="space-y-1.5 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
               Welcome back, {profile.fullName} 👋
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
               100% Offline AI
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-            <span>{profile.location}</span>
+          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+            <span className="truncate">{profile.location}</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 font-medium">
-              <Target className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-              Daily study target: {profile.dailyTargetMins} mins
+              <Target className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+              Daily target: {profile.dailyTargetMins} mins
             </span>
           </div>
         </div>
 
         {/* Header Action Shortcuts */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          <Link to="/tutor">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 shrink-0 w-full sm:w-auto pt-1 sm:pt-0">
+          <Link to="/tutor" className="w-full sm:w-auto">
             <Button
               variant="outline"
               size="sm"
-              className="text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500"
+              className="w-full h-9 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500 justify-center"
               leftIcon={<Bot className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
             >
               Ask AI Tutor
             </Button>
           </Link>
-          <Link to="/learning">
+          <Link to="/learning" className="w-full sm:w-auto">
             <Button
               variant="primary"
               size="sm"
-              className="text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs"
+              className="w-full h-9 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs justify-center"
               leftIcon={<BookOpen className="w-3.5 h-3.5" />}
             >
               Browse Courses
@@ -81,7 +81,7 @@ export const DashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           ROW 2: HERO LEARNING MODULE & RECENT AI SESSIONS (Equal-Height)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
         <div className="lg:col-span-7 flex flex-col">
           <ContinueLearningCard {...data.continueLearning} />
         </div>
@@ -94,7 +94,7 @@ export const DashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           ROW 3: QUICK WORKSPACES & FOCUS AREAS (Equal-Height)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
         <div className="lg:col-span-7 flex flex-col">
           <QuickActions />
         </div>

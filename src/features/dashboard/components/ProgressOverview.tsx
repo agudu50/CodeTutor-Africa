@@ -51,27 +51,27 @@ export const ProgressOverview: React.FC<ProgressOverviewProps> = memo(({
   ]
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 items-stretch w-full">
       {stats.map((stat) => {
         const Icon = stat.icon
         return (
           <Card
             key={stat.label}
-            className="p-4 sm:p-5 flex flex-col justify-between h-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-xs"
+            className="p-3.5 sm:p-5 flex flex-col justify-between h-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-xs rounded-2xl"
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-400 truncate">
                 {stat.label}
               </span>
-              <div className={`p-2 rounded-xl border ${stat.iconBg} ${stat.iconColor} shrink-0`}>
-                <Icon className="w-4 h-4" />
+              <div className={`p-1.5 sm:p-2 rounded-xl border ${stat.iconBg} ${stat.iconColor} shrink-0`}>
+                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
-            <div className="mt-3">
-              <div className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 font-mono tabular-nums">
+            <div className="mt-2 sm:mt-3">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 font-mono tabular-nums">
                 {stat.value}
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 font-medium truncate">
                 {stat.subtext}
               </p>
             </div>
