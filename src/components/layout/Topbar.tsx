@@ -193,7 +193,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                     {profile.email}
                   </div>
                   <div className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-semibold truncate">
-                    📍 {profile.location}
+                    {profile.location}
                   </div>
                 </div>
 

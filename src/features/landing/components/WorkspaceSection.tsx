@@ -22,80 +22,87 @@ const featureTabs = {
   tutor: {
     title: 'Helpful AI Tutor',
     subtitle: 'A patient, friendly guide that helps you think step-by-step without stress',
-    badge: 'Private & Empathetic',
+    badge: 'Private & Socratic',
     filename: 'countdown.py',
     language: 'Python',
     codeSnippet: `# Counting down to blast off!
 def countdown(n: int):
-    if n <= 0:  # Stop when we reach zero
-        print("Blast off! 🚀")
+    if n <= 0:  # Base Case: stop at zero
+        print("Blast off!")
         return
     print(f"Counting: {n}")
-    countdown(n - 1)  # Count down to next number
+    countdown(n - 1)  # Recursive call
 
 countdown(3)`,
-    runOutput: `Counting: 3\nCounting: 2\nCounting: 1\nBlast off! 🚀`,
-    studentQuery: 'How does the countdown function know when to stop?',
-    aiResponse: 'Great job! Notice how each call counts down until it hits 0. What would happen if we forgot the check for n <= 0? It would keep counting backwards forever!',
-    conceptChip: '💡 Key Concept: The "n <= 0" check is your Base Case — it keeps recursion safe!',
+    runOutput: `Counting: 3\nCounting: 2\nCounting: 1\nBlast off!`,
+    studentQuery: 'How does the countdown function know when to stop calling itself?',
+    aiResponse: 'Great question! Notice how each call counts down until it hits n <= 0. That condition is your Base Case — it keeps recursion safe and prevents stack overflows.',
+    conceptChip: 'Key Concept: The Base Case tells the recursive call stack when to return',
     stats: 'Instant answers on your laptop (0ms delay)',
   },
   practice: {
     title: 'Hands-On Code Practice',
     subtitle: 'Write real code and get instant, encouraging feedback on your logic',
     badge: 'Zero Internet Tests',
-    filename: 'palindrome_check.py',
-    language: 'Python',
-    codeSnippet: `def is_palindrome(word: str) -> bool:
-    clean = word.lower().replace(" ", "")
-    # Check if word reads the same backward and forward
-    if len(clean) <= 1:
-        return True
-    if clean[0] != clean[-1]:
-        return False
-    return is_palindrome(clean[1:-1])
+    filename: 'array_utils.js',
+    language: 'JavaScript',
+    codeSnippet: `// Flatten nested lists and remove duplicates
+function flattenAndUnique(arr) {
+  const flattened = arr.flat(Infinity);
+  return [...new Set(flattened)].sort((a, b) => a - b);
+}
 
-print(is_palindrome("racecar"))  # True`,
-    runOutput: `Test 1: "racecar" -> Passed ✓\nTest 2: "madam" -> Passed ✓\nTest 3: "hello" -> Passed ✓`,
-    studentQuery: 'Testing my recursive palindrome solver against test challenges',
-    aiResponse: '✓ All test cases passed! Your recursive string slicing is clean and efficient. You are ready to tackle the next practice level.',
-    conceptChip: '🎯 Mastery: String indexing & recursive problem solving',
+console.log(flattenAndUnique([1, [2, [3, 2]], [4, 1]]));`,
+    runOutput: `Test 1: [1, [2, [3, 2]], [4, 1]] -> [1, 2, 3, 4] (Passed)\nTest 2: [[10, 20], 10] -> [10, 20] (Passed)\nAll 2 Test Cases Passed!`,
+    studentQuery: 'Testing my nested array flattener against the automated test suite',
+    aiResponse: 'All test cases passed! Your use of Set deduplication combined with Infinity flattening is clean, idiomatic JavaScript.',
+    conceptChip: 'Mastery: Array flattening, Sets, and numeric sort comparisons',
     stats: 'Runs 100% without internet',
   },
   debugger: {
     title: 'Friendly Error Explainer',
     subtitle: 'No confusing jargon — just clear explanations of why code breaks and how to fix it',
     badge: 'Plain English',
-    filename: 'student_scores.py',
-    language: 'Python',
-    codeSnippet: `# Calculating student scores
-scores = [85, 92, 78]
-
-# Bug: loop tries to access index 3 in a 3-item list
-for i in range(len(scores) + 1):
-    print(f"Student {i+1}: {scores[i]}")`,
-    runOutput: `Student 1: 85\nStudent 2: 92\nStudent 3: 78\nIndexError: list index out of range`,
-    studentQuery: 'Why is Python saying "list index out of range"?',
-    aiResponse: 'What happened: In Python, lists start counting at 0. For a list with 3 items, their positions are 0, 1, and 2. When the loop asks for index 3, Python cannot find it.',
-    conceptChip: '🛠️ Quick Fix: Change range(len(scores) + 1) to range(len(scores))',
+    filename: 'ArraySearch.java',
+    language: 'Java',
+    codeSnippet: `public class ArraySearch {
+    public static int search(int[] scores, int target) {
+        // Bug: '<=' attempts to access scores[scores.length]
+        for (int i = 0; i <= scores.length; i++) {
+            if (scores[i] == target) return i;
+        }
+        return -1;
+    }
+}`,
+    runOutput: `Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3\n\tat ArraySearch.search(ArraySearch.java:4)`,
+    studentQuery: 'Why is Java throwing "ArrayIndexOutOfBoundsException: Index 3"?',
+    aiResponse: 'What happened: In Java, arrays are 0-indexed. For an array of 3 scores, valid positions are 0, 1, and 2. Because the loop condition uses "<= scores.length", it asks for index 3 on the final loop.',
+    conceptChip: 'Quick Fix: Change "i <= scores.length" to "i < scores.length"',
     stats: 'Explains mistakes in plain language',
   },
   curriculum: {
     title: 'Step-by-Step Lessons',
     subtitle: 'From zero-knowledge basics to building real-world software applications',
-    badge: '52 Lessons Built-In',
-    filename: 'lesson_01_welcome.py',
-    language: 'Python',
-    codeSnippet: `# Lesson 1: Your First Friendly Python Function
-def welcome_coder(name: str, city: str) -> str:
-    return f"Welcome {name} from {city}! Ready to build?"
+    badge: 'Multi-Language Tracks',
+    filename: 'student_service.ts',
+    language: 'TypeScript',
+    codeSnippet: `interface Student {
+  id: string;
+  name: string;
+  enrolledTracks: string[];
+}
 
-message = welcome_coder("Ama", "Kumasi")
-print(message)`,
-    runOutput: `Welcome Ama from Kumasi! Ready to build?`,
-    studentQuery: 'Starting Module 1: Python Fundamentals & Variables',
-    aiResponse: 'Welcome to your coding journey! You just defined your first reusable function. Every lesson in this course is saved directly on your laptop with zero internet required.',
-    conceptChip: '📚 Lesson 1 of 52 • Complete Notes & Interactive Exercises',
+export function registerStudent(name: string, track: string): Student {
+  return {
+    id: \`std-\${Date.now()}\`,
+    name,
+    enrolledTracks: [track],
+  };
+}`,
+    runOutput: `Registered: Student { id: 'std-174000000', name: 'Alex', enrolledTracks: ['Python 3', 'Modern JS', 'Java'] }`,
+    studentQuery: 'Building reusable data contracts with TypeScript interfaces',
+    aiResponse: 'Awesome work! Type interfaces provide compile-time safety and self-documenting APIs as your applications scale across frontend and backend systems.',
+    conceptChip: 'Multi-Language Tracks: Python 3 • JavaScript • Java OOP • TypeScript',
     stats: 'Over 50 lessons included',
   },
 }
@@ -128,7 +135,7 @@ export const WorkspaceSection: React.FC = memo(() => {
   return (
     <section id="features" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
       <LightSectionBackground
-        symbols={['countdown.py', 'def solve():', '💡 Key Concept', 'Passed ✓']}
+        symbols={['countdown.py', 'def solve():', 'Key Concept', 'Passed ✓']}
         accentPosition="bottom-left"
       />
       <div className="max-w-6xl mx-auto space-y-10">

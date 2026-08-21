@@ -98,9 +98,10 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = memo(({
                   key={idx}
                   type="button"
                   onClick={() => onSelectFollowup?.(followup)}
-                  className="w-full text-xs text-left px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:border-brand-400 dark:hover:border-brand-600 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-slate-900 transition-all shadow-2xs font-medium cursor-pointer"
+                  className="w-full text-xs text-left px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:border-brand-400 dark:hover:border-brand-600 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-slate-900 transition-all shadow-2xs font-medium cursor-pointer flex items-center gap-2"
                 >
-                  💡 {followup}
+                  <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                  <span>{followup}</span>
                 </button>
               ))}
             </div>

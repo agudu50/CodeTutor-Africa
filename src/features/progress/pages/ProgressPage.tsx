@@ -77,7 +77,7 @@ export const ProgressPage: React.FC = () => {
           </div>
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
-              🔥 Personal best streak
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Personal best streak
             </span>
           </div>
         </Card>
@@ -98,8 +98,8 @@ export const ProgressPage: React.FC = () => {
             </div>
           </div>
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-              ✓ 100% test pass rate
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+              <Check className="w-3.5 h-3.5 text-emerald-500" /> 100% test pass rate
             </span>
           </div>
         </Card>
@@ -121,8 +121,8 @@ export const ProgressPage: React.FC = () => {
             </div>
           </div>
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[11px] text-sky-600 dark:text-sky-400 font-semibold">
-              ⚡ Zero internet required
+            <span className="text-[11px] text-sky-600 dark:text-sky-400 font-semibold flex items-center gap-1">
+              <Shield className="w-3.5 h-3.5 text-sky-500" /> Zero internet required
             </span>
           </div>
         </Card>

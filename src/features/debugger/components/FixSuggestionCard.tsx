@@ -2,6 +2,7 @@ import React, { useState, memo } from 'react'
 import { DebugResult } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent, Button, MarkdownRenderer } from '@/components/ui'
 import { Check, Copy, AlertTriangle, Sparkles, CheckCircle2 } from 'lucide-react'
+import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 
 interface FixSuggestionCardProps {
   result: DebugResult
@@ -67,16 +68,16 @@ export const FixSuggestionCard: React.FC<FixSuggestionCardProps> = memo(({
         </CardContent>
       </Card>
 
-      {/* Suggested Fix and Patch Panel */}
-      <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
-        <CardHeader className="p-3.5 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
+      {/* Suggested Fix and Patch Panel with VS Code Colors */}
+      <Card className="border-slate-700/80 bg-[#1e1e1e] overflow-hidden shadow-xl">
+        <CardHeader className="p-3.5 bg-[#252526] border-b border-[#181818]">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="p-1 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80">
+              <div className="p-1 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800/80">
                 <Sparkles className="w-3.5 h-3.5" />
               </div>
-              <CardTitle className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                Recommended Patch
+              <CardTitle className="text-xs sm:text-sm font-bold text-slate-100">
+                Recommended Patch (VS Code Dark+)
               </CardTitle>
             </div>
 
@@ -84,9 +85,9 @@ export const FixSuggestionCard: React.FC<FixSuggestionCardProps> = memo(({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
+                className="h-7 text-xs font-semibold text-slate-300 hover:text-white hover:bg-[#333333]"
                 onClick={handleCopy}
-                leftIcon={copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                leftIcon={copied ? <Check className="w-3 h-3 text-[#4ec9b0]" /> : <Copy className="w-3 h-3 text-slate-400" />}
               >
                 {copied ? 'Copied' : 'Copy'}
               </Button>
@@ -94,7 +95,7 @@ export const FixSuggestionCard: React.FC<FixSuggestionCardProps> = memo(({
               <Button
                 variant="primary"
                 size="sm"
-                className="h-7 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                className="h-7 text-xs font-bold bg-[#007acc] hover:bg-[#0062a3] text-white shadow-xs"
                 onClick={() => onApplyFix(result.fixedCode)}
                 leftIcon={<CheckCircle2 className="w-3 h-3" />}
               >
@@ -105,8 +106,10 @@ export const FixSuggestionCard: React.FC<FixSuggestionCardProps> = memo(({
         </CardHeader>
 
         <CardContent className="p-0">
-          <div className="p-4 bg-slate-950 text-slate-100 font-mono text-xs sm:text-[13px] overflow-x-auto leading-relaxed selection:bg-brand-600/40">
-            <pre className="whitespace-pre">{result.fixedCode}</pre>
+          <div className="p-4 bg-[#1e1e1e] font-mono text-xs sm:text-[13px] overflow-x-auto leading-6 selection:bg-[#264f78]/80 selection:text-white">
+            <pre className="whitespace-pre">
+              {renderVSCodeSyntax(result.fixedCode)}
+            </pre>
           </div>
         </CardContent>
       </Card>
