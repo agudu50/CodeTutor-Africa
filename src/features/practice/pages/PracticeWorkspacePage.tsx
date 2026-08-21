@@ -4,7 +4,7 @@ import { MOCK_PRACTICE_QUESTIONS } from '../data/mockPracticeData'
 import { practiceService } from '@/services/practice/practice.service'
 import { CodeEditorPlaceholder } from '../components/CodeEditorPlaceholder'
 import { TestResultPanel } from '../components/TestResultPanel'
-import { Badge, Button } from '@/components/ui'
+import { Button } from '@/components/ui'
 import {
   ChevronLeft,
   Bot,
@@ -13,8 +13,6 @@ import {
   Shield,
   Copy,
   Check,
-  Code2,
-  Terminal,
 } from 'lucide-react'
 import { TestCase } from '@/types'
 
@@ -24,7 +22,6 @@ export const PracticeWorkspacePage: React.FC = () => {
 
   const [code, setCode] = useState(problem.starterCode)
   const [activeTab, setActiveTab] = useState<'problem' | 'hints'>('problem')
-  const [mobileWorkspaceView, setMobileWorkspaceView] = useState<'description' | 'editor' | 'tests'>('editor')
 
   const [isRunning, setIsRunning] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -47,10 +44,6 @@ export const PracticeWorkspacePage: React.FC = () => {
     setTestResults(res.testResults)
     setRuntimeMs(res.runtimeMs)
     setIsRunning(false)
-    // On mobile, switch to tests tab to see results
-    if (window.innerWidth < 1024) {
-      setMobileWorkspaceView('tests')
-    }
   }
 
   const handleSubmit = async () => {
@@ -60,9 +53,6 @@ export const PracticeWorkspacePage: React.FC = () => {
     setSubmissionFeedback(res.feedback)
     setRuntimeMs(res.runtimeMs)
     setIsSubmitting(false)
-    if (window.innerWidth < 1024) {
-      setMobileWorkspaceView('tests')
-    }
   }
 
   const handleReset = () => {
@@ -83,113 +73,102 @@ export const PracticeWorkspacePage: React.FC = () => {
       ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
       : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
 
-  const passedCount = testResults.filter((t) => t.passed).length
-
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div className="flex-1 flex flex-col min-h-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-slate-50 dark:bg-slate-950 w-full">
       {/* ═══════════════════════════════════════════════════════════════
           WORKSPACE SUBHEADER BAR
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="h-13 px-3 sm:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between shrink-0 shadow-2xs">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+      {/* Desktop Bar (sm:flex) */}
+      <div className="hidden sm:flex h-13 px-4 sm:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 items-center justify-between shrink-0 shadow-2xs w-full">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <Link
             to="/practice"
             className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">All Problems</span>
-            <span className="sm:hidden">All</span>
+            <span>All Problems</span>
           </Link>
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 shrink-0" />
-          <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white truncate">
             {problem.title}
           </h2>
-          <span className={`hidden sm:inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border shrink-0 ${difficultyVariant}`}>
+          <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border shrink-0 ${difficultyVariant}`}>
             {problem.difficulty}
           </span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
             <Shield className="w-3.5 h-3.5 text-emerald-500" /> 100% Offline
           </span>
           <Link to="/tutor">
             <Button
               variant="outline"
               size="sm"
-              className="h-8 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500 hover:text-brand-600 shadow-2xs px-2.5"
+              className="h-8 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500 hover:text-brand-600 shadow-2xs px-2.5 cursor-pointer"
               leftIcon={<Bot className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
             >
-              <span className="hidden sm:inline">Ask Tutor for Help</span>
-              <span className="sm:hidden">Ask AI</span>
+              Ask Tutor for Help
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          MOBILE TAB NAVIGATION (LG:HIDDEN)
-          ═══════════════════════════════════════════════════════════════ */}
-      <div className="lg:hidden p-1.5 px-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between gap-1.5 shrink-0">
-        <div className="grid grid-cols-3 gap-1 w-full">
-          <button
-            type="button"
-            onClick={() => setMobileWorkspaceView('description')}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
-              mobileWorkspaceView === 'description'
-                ? 'bg-brand-600 text-white shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+      {/* Mobile 2-Tier Subheader (sm:hidden) */}
+      <div className="sm:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 space-y-2 shrink-0 shadow-2xs w-full">
+        {/* Tier 1: Navigation & Actions */}
+        <div className="flex items-center justify-between gap-2">
+          <Link
+            to="/practice"
+            className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors py-0.5"
           >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Problem</span>
-          </button>
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
+            <span>All Problems</span>
+          </Link>
 
-          <button
-            type="button"
-            onClick={() => setMobileWorkspaceView('editor')}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
-              mobileWorkspaceView === 'editor'
-                ? 'bg-brand-600 text-white shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Code2 className="w-3.5 h-3.5" />
-            <span>Editor</span>
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 px-2 py-0.5 rounded-full">
+              <Shield className="w-3 h-3 text-emerald-500" /> 100% Offline
+            </span>
+            <Link to="/tutor">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500 hover:text-brand-600 px-2 cursor-pointer"
+                leftIcon={<Bot className="w-3 h-3 text-brand-600 dark:text-brand-400" />}
+              >
+                Ask Tutor
+              </Button>
+            </Link>
+          </div>
+        </div>
 
-          <button
-            type="button"
-            onClick={() => setMobileWorkspaceView('tests')}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
-              mobileWorkspaceView === 'tests'
-                ? 'bg-brand-600 text-white shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Terminal className="w-3.5 h-3.5" />
-            <span>Tests ({passedCount}/{testResults.length})</span>
-          </button>
+        {/* Tier 2: Title & Badges */}
+        <div className="flex items-center justify-between gap-2 pt-0.5 border-t border-slate-100 dark:border-slate-800/80">
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+            {problem.title}
+          </h2>
+          <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border shrink-0 ${difficultyVariant}`}>
+            {problem.difficulty}
+          </span>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SPLIT WORKSPACE: PROBLEM/HINTS (LEFT) & EDITOR + OUTPUT (RIGHT)
+          WORKSPACE LAYOUT
+          - MOBILE: Fluid full-page vertical flow with auto heights
+          - DESKTOP: Side-by-side 2-column split with fixed height
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden p-2 sm:p-3 gap-3">
-        {/* Left Column: Problem description & Progressive Hints */}
-        <div
-          className={`lg:col-span-5 flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs ${
-            mobileWorkspaceView === 'description' ? 'flex h-full' : 'hidden lg:flex'
-          }`}
-        >
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 lg:overflow-hidden p-3 sm:p-4 gap-4 w-full max-w-7xl mx-auto pb-10 lg:pb-4">
+        {/* Left Column: Problem Description & Progressive Hints */}
+        <div className="lg:col-span-5 flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-auto lg:h-full lg:overflow-hidden">
           {/* Tab Selector Bar */}
-          <div className="p-2 sm:p-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex items-center justify-between">
+          <div className="p-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setActiveTab('problem')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'problem'
                     ? 'bg-brand-600 text-white shadow-2xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -201,7 +180,7 @@ export const PracticeWorkspacePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('hints')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'hints'
                     ? 'bg-brand-600 text-white shadow-2xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -212,31 +191,28 @@ export const PracticeWorkspacePage: React.FC = () => {
               </button>
             </div>
 
-            <span className="text-[11px] font-mono text-slate-400 font-semibold uppercase pr-2">
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 font-semibold uppercase pr-2">
               {problem.language}
             </span>
           </div>
 
           {/* Tab Body */}
-          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-5">
+          <div className="p-4 sm:p-5 lg:flex-1 lg:overflow-y-auto space-y-4">
             {activeTab === 'problem' ? (
               <>
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80">
                       {problem.category}
                     </span>
-                    <Badge variant="neutral" size="sm" className="font-mono text-[10px] uppercase">
-                      {problem.language}
-                    </Badge>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                  <h3 className="text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-snug">
                     {problem.title}
                   </h3>
                 </div>
 
                 {/* Formatted Problem Statement */}
-                <div className="text-xs sm:text-sm leading-relaxed text-slate-800 dark:text-slate-200 space-y-3">
+                <div className="text-xs sm:text-sm leading-relaxed text-slate-800 dark:text-slate-200 space-y-2.5">
                   <p>
                     Write a recursive function{' '}
                     <code className="font-mono text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 px-1.5 py-0.5 rounded border border-brand-200 dark:border-brand-800">
@@ -254,33 +230,35 @@ export const PracticeWorkspacePage: React.FC = () => {
                 </div>
 
                 {/* Examples & Constraints */}
-                <div className="space-y-2.5 pt-2">
+                <div className="space-y-2 pt-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
                     Examples & Constraints
                   </h4>
                   <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3 font-mono text-xs shadow-2xs">
-                    <div>
-                      <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                        <span className="uppercase font-sans font-semibold">Sample Input</span>
+                    {/* Sample Input */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                        <span className="uppercase font-sans font-bold">Sample Input:</span>
                         <button
                           type="button"
                           onClick={() => handleCopySample(problem.testCases[0]?.input || '')}
-                          className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-200"
+                          className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer"
                         >
                           {copiedInput ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                           <span>{copiedInput ? 'Copied' : 'Copy'}</span>
                         </button>
                       </div>
-                      <code className="text-brand-600 dark:text-brand-400 font-bold block bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800 select-all">
+                      <code className="text-brand-600 dark:text-brand-400 font-bold block bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 select-all break-all">
                         {problem.testCases[0]?.input}
                       </code>
                     </div>
 
-                    <div>
-                      <span className="text-[11px] text-slate-400 uppercase font-sans font-semibold mb-1 block">
-                        Sample Expected Output
-                      </span>
-                      <code className="text-emerald-600 dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800 select-all">
+                    {/* Sample Output */}
+                    <div className="space-y-1.5">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <span className="uppercase font-sans font-bold">Sample Expected Output:</span>
+                      </div>
+                      <code className="text-emerald-600 dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 select-all">
                         {problem.testCases[0]?.expectedOutput}
                       </code>
                     </div>
@@ -288,7 +266,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                 </div>
               </>
             ) : (
-              <div className="space-y-3.5">
+              <div className="space-y-3">
                 <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300">
                   <span>💡 Progressive Hints help you build your own solution step-by-step.</span>
                 </div>
@@ -296,7 +274,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                 {problem.hints.map((hint, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 space-y-2.5 shadow-2xs"
+                    className="p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 space-y-2 shadow-2xs"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
@@ -306,7 +284,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 text-xs font-bold text-brand-600 dark:text-brand-400 border-slate-200 dark:border-slate-700 hover:border-brand-500"
+                          className="h-7 text-xs font-bold text-brand-600 dark:text-brand-400 border-slate-200 dark:border-slate-700 hover:border-brand-500 cursor-pointer"
                           onClick={() => setShowHintIndex(idx)}
                         >
                           Reveal Hint
@@ -328,17 +306,9 @@ export const PracticeWorkspacePage: React.FC = () => {
         </div>
 
         {/* Right Column: Code Editor & Test Results */}
-        <div
-          className={`lg:col-span-7 flex-col gap-3 overflow-hidden h-full ${
-            mobileWorkspaceView !== 'description' ? 'flex' : 'hidden lg:flex'
-          }`}
-        >
+        <div className="lg:col-span-7 flex flex-col gap-4 h-auto lg:h-full lg:overflow-hidden">
           {/* Editor Container */}
-          <div
-            className={`flex-[6] min-h-[300px] ${
-              mobileWorkspaceView === 'tests' ? 'hidden lg:block' : 'block'
-            }`}
-          >
+          <div className="h-[340px] sm:h-[380px] lg:flex-[6] lg:h-auto">
             <CodeEditorPlaceholder
               code={code}
               onChange={setCode}
@@ -352,11 +322,7 @@ export const PracticeWorkspacePage: React.FC = () => {
           </div>
 
           {/* Test Results Container */}
-          <div
-            className={`flex-[4] min-h-[200px] ${
-              mobileWorkspaceView === 'editor' ? 'hidden lg:block' : 'block'
-            }`}
-          >
+          <div className="h-auto lg:flex-[4] lg:h-auto lg:overflow-hidden">
             <TestResultPanel
               testCases={testResults}
               isPassedAll={testResults.every((t) => t.passed)}
