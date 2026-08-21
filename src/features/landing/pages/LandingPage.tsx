@@ -33,7 +33,7 @@ export const LandingPage: React.FC = () => {
   const [activeFeatureTab, setActiveFeatureTab] = useState<'tutor' | 'practice' | 'debugger' | 'curriculum'>('tutor')
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   
-  // Slideshow state
+  // Hero Background Slideshow state
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
@@ -43,15 +43,13 @@ export const LandingPage: React.FC = () => {
   const slides = [
     {
       image: '/images/students_collaboration.jpg',
-      title: 'Collaborative Learning Without Connectivity Constraints',
-      subtitle: 'African university students practicing algorithmic problem solving together in campus study spaces.',
-      tag: 'Campus Study Hall',
+      tag: 'University of Ghana & KNUST Campus Labs',
+      caption: 'Peer study circles collaborating without internet connectivity',
     },
     {
       image: '/images/student_focus.jpg',
-      title: 'Individual Deep Focus & Zero-Latency AI Tutoring',
-      subtitle: 'Mastering recursion, data structures, and OOP on an 8 GB laptop with quiet confidence.',
-      tag: 'Hostel & Library Ready',
+      tag: 'African CS Student Focus Room',
+      caption: 'Deep algorithmic problem solving on standard 8 GB laptops',
     },
   ]
 
@@ -60,7 +58,7 @@ export const LandingPage: React.FC = () => {
     if (!isAutoPlaying) return
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 4500)
+    }, 5000)
     return () => clearInterval(interval)
   }, [isAutoPlaying, slides.length])
 
@@ -175,7 +173,7 @@ class Node:
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
-      {/* Navigation Header with solid styling */}
+      {/* Navigation Header */}
       <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shrink-0 border border-brand-500">
@@ -193,17 +191,17 @@ class Node:
 
         {/* Center links on desktop */}
         <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300">
-          <a href="#why-offline" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
-            Why Offline
-          </a>
           <a href="#terminal-demo" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
             Offline Terminal
+          </a>
+          <a href="#why-offline" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+            Why Offline
           </a>
           <a href="#features" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
             Features
           </a>
-          <a href="#slideshow" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
-            Campus Stories
+          <a href="#architecture" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+            Architecture
           </a>
           <a href="#faq" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
             FAQ
@@ -236,78 +234,146 @@ class Node:
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 space-y-20 sm:space-y-28 relative">
-        {/* Dynamic Background Code Animation (Framer Motion, solid styling) */}
+      <main className="flex-1 relative">
+        {/* Dynamic Background Code Animation on page */}
         <BackgroundCodeAnimation />
 
-        {/* Hero Section */}
-        <section className="pt-12 sm:pt-20 px-4 md:px-8 max-w-6xl mx-auto relative z-10">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="text-center space-y-6"
+        {/* HERO SECTION WITH BACKGROUND PICTURE SLIDESHOW */}
+        <section
+          className="relative min-h-[520px] sm:min-h-[580px] flex items-center justify-center px-4 md:px-8 overflow-hidden bg-slate-950 border-b border-slate-800"
+          onMouseEnter={() => setIsAutoPlaying(false)}
+          onMouseLeave={() => setIsAutoPlaying(true)}
+        >
+          {/* Animated Background Slides */}
+          <div className="absolute inset-0 z-0">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentSlide}
+                src={slides[currentSlide].image}
+                alt={slides[currentSlide].caption}
+                initial={{ opacity: 0, scale: 1.08 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="w-full h-full object-cover object-center"
+              />
+            </AnimatePresence>
+
+            {/* Solid Dark Overlay for high-contrast text readability (no gradient) */}
+            <div className="absolute inset-0 bg-slate-950 opacity-65" />
+          </div>
+
+          {/* Slide navigation controls */}
+          <button
+            type="button"
+            onClick={() => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))}
+            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900 text-white border border-slate-700 hover:bg-slate-800 transition-all"
+            aria-label="Previous slide"
           >
-            {/* Pill Badge with solid styling */}
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900 text-white border border-slate-700 hover:bg-slate-800 transition-all"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          {/* Slide Tag in top left of hero */}
+          <div className="absolute top-6 left-6 sm:left-12 z-20 hidden sm:block">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 text-[11px] font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+              {slides[currentSlide].tag}
+            </span>
+          </div>
+
+          {/* Slide Dots Indicator */}
+          <div className="absolute bottom-6 right-6 sm:right-12 z-20 flex items-center gap-2">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-2.5 rounded-full transition-all ${
+                  currentSlide === idx ? 'w-8 bg-brand-500' : 'w-2.5 bg-slate-600 hover:bg-slate-400'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Hero Foreground Content */}
+          <div className="relative z-10 max-w-4xl mx-auto text-center space-y-5 py-12 sm:py-16">
             <motion.div
-              variants={itemVariants}
-              animate={{ y: [0, -4, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-              className="inline-block"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6"
             >
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-brand-950 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 text-xs font-semibold">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                Zero Cloud Dependence • 100% On-Device AI for 8 GB Laptops
-              </span>
+              {/* Pill Badge */}
+              <motion.div
+                variants={itemVariants}
+                animate={{ y: [0, -4, 0] }}
+                transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                className="inline-block"
+              >
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-brand-500 text-brand-300 text-xs font-semibold shadow-md">
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
+                  Zero Cloud Dependence • 100% On-Device AI for 8 GB Laptops
+                </span>
+              </motion.div>
+
+              {/* Main Headline */}
+              <motion.h1
+                variants={itemVariants}
+                className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight drop-shadow-lg"
+              >
+                Master University Computer Science. Anytime. <span className="text-brand-400 font-black">Offline.</span>
+              </motion.h1>
+
+              {/* Subtitle */}
+              <motion.p
+                variants={itemVariants}
+                className="text-sm sm:text-base md:text-lg text-slate-100 font-medium max-w-3xl mx-auto leading-relaxed drop-shadow-md"
+              >
+                An intelligent, human-centered programming tutor built for African students. Learn Python, JavaScript, and Java with a private AI mentor that lives directly on your laptop—no internet connection, cloud bills, or expensive hardware required.
+              </motion.p>
+
+              {/* CTA Buttons */}
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-wrap items-center justify-center gap-3 pt-2"
+              >
+                <Link to="/signup">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="font-bold shadow-lg h-12 px-7 bg-brand-600 hover:bg-brand-500 border border-brand-400"
+                    rightIcon={<ArrowRight className="w-4 h-4" />}
+                  >
+                    Start Learning Free
+                  </Button>
+                </Link>
+                <Link to="/dashboard">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="font-semibold h-12 px-7 bg-slate-900 text-white hover:bg-slate-800 border border-slate-700"
+                    leftIcon={<Laptop className="w-4 h-4" />}
+                  >
+                    Launch Workspace
+                  </Button>
+                </Link>
+              </motion.div>
             </motion.div>
-
-            {/* Main Headline */}
-            <motion.h1
-              variants={itemVariants}
-              className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight"
-            >
-              Master University Computer Science. Anytime. <span className="text-brand-600 dark:text-brand-400">Offline.</span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              variants={itemVariants}
-              className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
-            >
-              An intelligent, human-centered programming tutor built for African students. Learn Python, JavaScript, and Java with a private AI mentor that lives directly on your laptop—no internet connection, cloud bills, or expensive hardware required.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-wrap items-center justify-center gap-3 pt-2"
-            >
-              <Link to="/signup">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="font-bold shadow-sm h-12 px-6"
-                  rightIcon={<ArrowRight className="w-4 h-4" />}
-                >
-                  Start Learning Free
-                </Button>
-              </Link>
-              <Link to="/dashboard">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="font-semibold h-12 px-6"
-                  leftIcon={<Laptop className="w-4 h-4" />}
-                >
-                  Launch Workspace
-                </Button>
-              </Link>
-            </motion.div>
-          </motion.div>
+          </div>
         </section>
 
         {/* Interactive Animated Terminal Demo Section */}
-        <section id="terminal-demo" className="px-4 md:px-8 max-w-5xl mx-auto relative z-10">
+        <section id="terminal-demo" className="py-16 sm:py-20 px-4 md:px-8 max-w-5xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -385,97 +451,6 @@ class Node:
           </motion.div>
         </section>
 
-        {/* Interactive Campus Slideshow Section */}
-        <section id="slideshow" className="px-4 md:px-8 max-w-5xl mx-auto space-y-6 relative z-10">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-mono">
-              Campus Experience
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Built for African Campus Realities
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              See how students leverage CodeTutor Africa in libraries, hostels, and peer study circles.
-            </p>
-          </div>
-
-          {/* Slideshow Card */}
-          <div
-            className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden"
-            onMouseEnter={() => setIsAutoPlaying(false)}
-            onMouseLeave={() => setIsAutoPlaying(true)}
-          >
-            {/* Image Slide Container with AnimatePresence */}
-            <div className="relative h-72 sm:h-96 md:h-[420px] overflow-hidden bg-slate-950">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentSlide}
-                  src={slides[currentSlide].image}
-                  alt={slides[currentSlide].title}
-                  initial={{ opacity: 0, scale: 1.05 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6, ease: 'easeOut' }}
-                  className="w-full h-full object-cover"
-                />
-              </AnimatePresence>
-
-              {/* Prev / Next Navigation Arrows */}
-              <button
-                type="button"
-                onClick={() => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 transition-all"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 transition-all"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-
-              {/* Slide Badge Pill */}
-              <div className="absolute top-4 left-4">
-                <Badge variant="brand" size="sm" className="font-mono shadow-md">
-                  {slides[currentSlide].tag}
-                </Badge>
-              </div>
-            </div>
-
-            {/* Slide Metadata Caption Footer */}
-            <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="space-y-1">
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                  {slides[currentSlide].title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
-                  {slides[currentSlide].subtitle}
-                </p>
-              </div>
-
-              {/* Slide Indicators */}
-              <div className="flex items-center gap-2 shrink-0">
-                {slides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`h-2.5 rounded-full transition-all ${
-                      currentSlide === idx ? 'w-8 bg-brand-600' : 'w-2.5 bg-slate-300 dark:bg-slate-700'
-                    }`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Human-Centered Empathy Section: Why Offline-First Matters */}
         <section id="why-offline" className="py-16 px-4 md:px-8 border-y border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 relative z-10">
           <div className="max-w-6xl mx-auto space-y-12">
@@ -550,7 +525,7 @@ class Node:
         </section>
 
         {/* Interactive Feature Workspace Section with Animated Tabs */}
-        <section id="features" className="py-6 px-4 md:px-8 max-w-6xl mx-auto space-y-8 relative z-10">
+        <section id="features" className="py-16 sm:py-20 px-4 md:px-8 max-w-6xl mx-auto space-y-8 relative z-10">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-mono">
               Interactive Workspace
@@ -738,7 +713,7 @@ class Node:
                     <AnimatePresence>
                       {isOpen && (
                         <motion.div
-                          initial={{ height: 0, opacity: 0 }}
+                          initial={{ height: 0, opacity: 1 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.25 }}
