@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { useTheme } from '@/app/providers/ThemeProvider'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
-import { Card, CardHeader, CardTitle, CardContent, Button, Dropdown } from '@/components/ui'
+import { useUserProfile } from '@/app/providers/UserProfileProvider'
+import { Card, CardHeader, CardTitle, CardContent, Button, Dropdown, Avatar, Input } from '@/components/ui'
 import {
   Settings,
   Sun,
@@ -14,12 +15,23 @@ import {
   Sparkles,
   Shield,
   Check,
+  User,
+  Plus,
+  X,
 } from 'lucide-react'
 import { ProgrammingLanguage, TutorMode, ThemeMode } from '@/types'
 
 export const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme()
   const { activeModel, refreshLocalModel } = useSystemStatus()
+  const { profile, updateProfile, uploadAvatar, removeAvatar } = useUserProfile()
+
+  // Form states initialized with user profile
+  const [fullName, setFullName] = useState(profile.fullName)
+  const [username, setUsername] = useState(profile.username)
+  const [email, setEmail] = useState(profile.email)
+  const [location, setLocation] = useState(profile.location)
+  const [bio, setBio] = useState(profile.bio)
 
   const [defaultLang, setDefaultLang] = useState<ProgrammingLanguage>('python')
   const [defaultMode, setDefaultMode] = useState<TutorMode>('socratic')
@@ -29,9 +41,31 @@ export const SettingsPage: React.FC = () => {
   const [isValidating, setIsValidating] = useState(false)
   const [validatedSuccess, setValidatedSuccess] = useState(false)
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const handleSave = () => {
+    updateProfile({
+      fullName,
+      username,
+      email,
+      location,
+      bio,
+    })
     setSavedSuccess(true)
     setTimeout(() => setSavedSuccess(false), 2500)
+  }
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      try {
+        await uploadAvatar(file)
+        setSavedSuccess(true)
+        setTimeout(() => setSavedSuccess(false), 2500)
+      } catch (err) {
+        console.error('Avatar upload failed:', err)
+      }
+    }
   }
 
   const handleValidate = async () => {
@@ -60,7 +94,7 @@ export const SettingsPage: React.FC = () => {
             </h1>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Configure appearance, default programming languages, AI tutor modes, and on-device offline runtime thresholds.
+            Configure your personal profile, appearance, default programming languages, and on-device runtime thresholds.
           </p>
         </div>
 
@@ -69,10 +103,10 @@ export const SettingsPage: React.FC = () => {
             variant="primary"
             size="md"
             onClick={handleSave}
-            className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs text-xs"
+            className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs text-xs cursor-pointer"
             leftIcon={<Save className="w-4 h-4" />}
           >
-            {savedSuccess ? 'Saved ✓' : 'Save Preferences'}
+            {savedSuccess ? 'Saved ✓' : 'Save Changes'}
           </Button>
         </div>
       </div>
@@ -80,13 +114,157 @@ export const SettingsPage: React.FC = () => {
       {savedSuccess && (
         <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2.5 animate-in fade-in shadow-2xs">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-          <span className="font-semibold">Preferences updated and successfully persisted to offline local storage.</span>
+          <span className="font-semibold">Your profile details and workspace preferences were updated successfully in local storage.</span>
         </div>
       )}
 
       <div className="space-y-6">
         {/* ═══════════════════════════════════════════════════════════════
-            1. APPEARANCE & THEME (3 EQUAL HEIGHT CARDS)
+            1. USER PROFILE & IDENTITY (AVATAR UPLOAD + NAME EDITING)
+            ═══════════════════════════════════════════════════════════════ */}
+        <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+          <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                  <User className="w-3.5 h-3.5" />
+                </div>
+                <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+                  Learner Profile & Identity
+                </CardTitle>
+              </div>
+              <span className="text-xs font-mono text-slate-400 font-semibold">Offline Account</span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Update your display name, handle, avatar photo, and learning hub information.
+            </p>
+          </CardHeader>
+
+          <CardContent className="p-4 sm:p-5 space-y-6">
+            {/* Avatar Uploader Row */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+              <div className="relative group shrink-0">
+                <Avatar
+                  src={profile.avatarUrl || undefined}
+                  fallbackName={fullName || 'User'}
+                  size="xl"
+                  className="bg-brand-600 text-white font-bold text-xl border-2 border-slate-300 dark:border-slate-700 shadow-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute inset-0 rounded-full bg-slate-950/60 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-[10px] font-semibold"
+                  title="Click to change profile picture"
+                >
+                  <User className="w-5 h-5 mb-0.5" />
+                  <span>Change</span>
+                </button>
+              </div>
+
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Profile Picture
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Upload a custom photo or avatar image. Compressed and persisted 100% locally on this device.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1.5">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="h-8 text-xs font-semibold border-slate-200 dark:border-slate-700 hover:border-brand-500 hover:text-brand-600"
+                    leftIcon={<Plus className="w-3.5 h-3.5" />}
+                  >
+                    Upload Photo
+                  </Button>
+                  {profile.avatarUrl && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={removeAvatar}
+                      className="h-8 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60"
+                      leftIcon={<X className="w-3.5 h-3.5" />}
+                    >
+                      Remove Photo
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Fields Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Input
+                  label="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. Kofi Mensah"
+                  className="bg-white dark:bg-slate-900"
+                />
+              </div>
+
+              <div>
+                <Input
+                  label="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="e.g. kofimensah"
+                  leftIcon={<span className="text-xs text-slate-400 font-mono">@</span>}
+                  className="bg-white dark:bg-slate-900 font-mono text-xs"
+                />
+              </div>
+
+              <div>
+                <Input
+                  label="Email Address"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. kofi.mensah@techhub-accra.org"
+                  className="bg-white dark:bg-slate-900 text-xs"
+                />
+              </div>
+
+              <div>
+                <Input
+                  label="Learning Hub / Region"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g. Tech Hub Accra, Ghana"
+                  className="bg-white dark:bg-slate-900 text-xs"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
+                  Bio / Learning Goal
+                </label>
+                <input
+                  type="text"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="e.g. Independent Learner & Aspiring Systems Software Engineer"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            2. APPEARANCE & THEME (3 EQUAL HEIGHT CARDS)
             ═══════════════════════════════════════════════════════════════ */}
         <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -157,7 +335,7 @@ export const SettingsPage: React.FC = () => {
         </Card>
 
         {/* ═══════════════════════════════════════════════════════════════
-            2. LEARNING & EDITOR DEFAULTS (2 EQUAL HEIGHT COLUMNS)
+            3. LEARNING & EDITOR DEFAULTS (2 EQUAL HEIGHT COLUMNS)
             ═══════════════════════════════════════════════════════════════ */}
         <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -256,7 +434,7 @@ export const SettingsPage: React.FC = () => {
                         key={size}
                         type="button"
                         onClick={() => setTabSize(size)}
-                        className={`py-2 px-3 rounded-lg text-xs font-mono font-bold border transition-all text-center ${
+                        className={`py-2 px-3 rounded-lg text-xs font-mono font-bold border transition-all text-center cursor-pointer ${
                           tabSize === size
                             ? 'bg-brand-600 text-white border-brand-500 shadow-2xs'
                             : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
@@ -278,7 +456,7 @@ export const SettingsPage: React.FC = () => {
         </Card>
 
         {/* ═══════════════════════════════════════════════════════════════
-            3. ON-DEVICE LOCAL AI CONFIGURATION
+            4. ON-DEVICE LOCAL AI CONFIGURATION
             ═══════════════════════════════════════════════════════════════ */}
         <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -331,7 +509,7 @@ export const SettingsPage: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 text-xs font-bold text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700 hover:bg-brand-100 dark:hover:bg-brand-900/60 shrink-0 self-start sm:self-center"
+                className="h-8 text-xs font-bold text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700 hover:bg-brand-100 dark:hover:bg-brand-900/60 shrink-0 self-start sm:self-center cursor-pointer"
                 onClick={handleValidate}
                 isLoading={isValidating}
                 leftIcon={validatedSuccess ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Cpu className="w-3.5 h-3.5" />}

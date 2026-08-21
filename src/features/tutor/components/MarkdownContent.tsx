@@ -11,27 +11,34 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = memo(({ content }
   const segments = parseMarkdownSegments(content)
 
   return (
-    <div className="space-y-3 text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
+    <div className="space-y-3 text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed max-w-full overflow-hidden">
       {segments.map((segment, idx) => {
         if (segment.type === 'code') {
           // Check if this is an error traceback or text error
           const isError =
-            segment.language === 'text' &&
+            (segment.language === 'text' || segment.language === 'python' || segment.language === '') &&
             (segment.code.includes('Error:') || segment.code.includes('RecursionError') || segment.code.includes('Traceback'))
 
           if (isError) {
             return (
               <div
                 key={idx}
-                className="my-3 rounded-xl border border-rose-300 dark:border-rose-900/80 bg-rose-50 dark:bg-rose-950/40 p-3.5 space-y-1.5 font-mono shadow-2xs"
+                className="my-3 rounded-xl border border-rose-300 dark:border-rose-900/80 bg-rose-50 dark:bg-rose-950/50 p-3 sm:p-4 space-y-2 font-mono shadow-2xs overflow-hidden"
               >
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>Python Runtime Error</span>
+                <div className="flex items-center justify-between gap-2 border-b border-rose-200 dark:border-rose-900/60 pb-1.5">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Python Runtime Error</span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-200/70 dark:bg-rose-900/80 text-rose-800 dark:text-rose-300">
+                    Depth Exceeded
+                  </span>
                 </div>
-                <pre className="text-xs sm:text-[13px] text-rose-800 dark:text-rose-300 whitespace-pre-wrap leading-normal font-semibold">
-                  {segment.code}
-                </pre>
+                <div className="overflow-x-auto">
+                  <pre className="text-[11px] sm:text-xs text-rose-900 dark:text-rose-200 whitespace-pre-wrap break-words leading-relaxed font-semibold">
+                    {segment.code}
+                  </pre>
+                </div>
               </div>
             )
           }
@@ -110,7 +117,7 @@ const FormattedParagraph: React.FC<{ text: string }> = memo(({ text }) => {
           return (
             <blockquote
               key={pIdx}
-              className="my-2 border-l-4 border-brand-500 bg-brand-50/60 dark:bg-brand-950/40 px-4 py-2.5 rounded-r-xl text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-medium"
+              className="my-2.5 border-l-3 border-brand-500 bg-brand-50/60 dark:bg-brand-950/40 px-3.5 py-2.5 rounded-r-xl text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-medium"
             >
               {renderFormattedInline(quoteText)}
             </blockquote>
@@ -123,7 +130,7 @@ const FormattedParagraph: React.FC<{ text: string }> = memo(({ text }) => {
           const isOrdered = /^\d+\./.test(lines[0].trim())
 
           return (
-            <div key={pIdx} className="space-y-1.5 my-2 pl-2">
+            <div key={pIdx} className="space-y-1.5 my-2 pl-1 sm:pl-2">
               {lines.map((line, lIdx) => {
                 const cleanLine = line.replace(/^(\d+\.|\*|-)\s*/, '').trim()
                 return (
@@ -135,7 +142,7 @@ const FormattedParagraph: React.FC<{ text: string }> = memo(({ text }) => {
                     ) : (
                       <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shrink-0 mt-2" />
                     )}
-                    <span className="leading-relaxed flex-1">
+                    <span className="leading-relaxed flex-1 min-w-0">
                       {renderFormattedInline(cleanLine)}
                     </span>
                   </div>
@@ -168,7 +175,7 @@ function renderFormattedInline(text: string): React.ReactNode[] {
       return (
         <code
           key={idx}
-          className="font-mono text-[11px] sm:text-xs font-semibold px-1.5 py-0.5 mx-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-brand-400 border border-slate-200 dark:border-slate-700 select-all"
+          className="font-mono text-[11px] sm:text-xs font-semibold px-1.5 py-0.5 mx-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-brand-400 border border-slate-200 dark:border-slate-700 select-all break-all"
         >
           {code}
         </code>

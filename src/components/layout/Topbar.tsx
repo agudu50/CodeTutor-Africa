@@ -1,7 +1,8 @@
-import React, { memo } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useState, useEffect, useRef, memo } from 'react'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useTheme } from '@/app/providers/ThemeProvider'
-import { SystemStatusIndicator } from './SystemStatusIndicator'
+import { useUserProfile } from '@/app/providers/UserProfileProvider'
+import { QuickSearchModal } from './QuickSearchModal'
 import { Avatar } from '@/components/ui'
 import {
   Menu,
@@ -9,6 +10,12 @@ import {
   Moon,
   Search,
   Flame,
+  Settings,
+  BarChart3,
+  Bot,
+  ArrowRight,
+  Code2,
+  User,
 } from 'lucide-react'
 
 interface TopbarProps {
@@ -17,16 +24,48 @@ interface TopbarProps {
 
 export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
   const { theme, setTheme, isDark } = useTheme()
+  const { profile } = useUserProfile()
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const profileMenuRef = useRef<HTMLDivElement>(null)
+
+  // Listen for global Ctrl+K / Cmd+K shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setIsSearchOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  // Close profile dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false)
+      }
+    }
+    if (isProfileOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isProfileOpen])
 
   const getPageTitle = (path: string) => {
     if (path.startsWith('/dashboard')) return 'Dashboard'
-    if (path.startsWith('/tutor')) return 'AI Programming Tutor'
-    if (path.startsWith('/practice')) return 'Interactive Code Practice'
-    if (path.startsWith('/debugger')) return 'Offline Code Debugger'
-    if (path.startsWith('/learning')) return 'Course Tracks & Lessons'
-    if (path.startsWith('/progress')) return 'Learning Analytics'
-    if (path.startsWith('/settings')) return 'System Preferences'
+    if (path.startsWith('/tutor')) return 'AI Tutor'
+    if (path.startsWith('/practice')) return 'Code Practice'
+    if (path.startsWith('/debugger')) return 'Debugger'
+    if (path.startsWith('/learning/lessons')) return 'Lesson'
+    if (path.startsWith('/learning')) return 'Courses'
+    if (path.startsWith('/progress')) return 'Analytics'
+    if (path.startsWith('/settings')) return 'Settings'
     return 'CodeTutor Africa'
   }
 
@@ -35,65 +74,197 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
     else setTheme('dark')
   }
 
+  const handleSignOut = () => {
+    setIsProfileOpen(false)
+    navigate('/signin')
+  }
+
   return (
-    <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-20 px-4 md:px-6 flex items-center justify-between shadow-2xs">
-      {/* Left section: Mobile menu + Page context */}
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onOpenMobileNav}
-          className="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Open mobile menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+    <>
+      <header className="h-14 sm:h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-20 px-3 sm:px-6 flex items-center justify-between shadow-2xs select-none w-full box-border">
+        {/* Left section: Mobile menu + Page context */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <button
+            type="button"
+            onClick={onOpenMobileNav}
+            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-        <div>
-          <h1 className="text-base font-bold text-slate-900 dark:text-white leading-none">
-            {getPageTitle(location.pathname)}
-          </h1>
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-            Offline Programming Workspace • All Skill Levels
-          </span>
-        </div>
-      </div>
-
-      {/* Right section: System status, streak, theme, profile */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
-        {/* Quick Search Shortcut Trigger */}
-        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-400 text-xs cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-2xs">
-          <Search className="w-3.5 h-3.5" />
-          <span>Search topics, lessons...</span>
-          <kbd className="text-[10px] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300 font-mono font-bold">
-            Ctrl K
-          </kbd>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
+              {getPageTitle(location.pathname)}
+            </h1>
+            <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden md:inline-block truncate">
+              Offline Programming Workspace • All Skill Levels
+            </span>
+          </div>
         </div>
 
-        {/* Streak Counter */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 text-xs font-bold font-mono shadow-2xs">
-          <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-          <span>7 Days</span>
+        {/* Right section: Search, streak, theme toggle, user */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Search Trigger (Icon on mobile, pill on desktop) */}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs cursor-pointer hover:border-brand-400 dark:hover:border-brand-600 transition-all shadow-2xs group focus:outline-none focus:ring-1 focus:ring-brand-500"
+            title="Search courses, lessons, and practice (Ctrl+K)"
+          >
+            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 transition-colors" />
+            <span className="text-slate-500 dark:text-slate-400 font-medium hidden lg:inline">Search topics, lessons...</span>
+            <kbd className="text-[10px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300 font-mono font-bold">
+              Ctrl K
+            </kbd>
+          </button>
+
+          {/* Mobile Icon-Only Search Button */}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="sm:hidden p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800 shadow-2xs cursor-pointer"
+            aria-label="Search"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+
+          {/* Streak Counter */}
+          <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 text-xs font-bold font-mono shadow-2xs shrink-0">
+            <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
+            <span className="hidden xs:inline">7 Days</span>
+            <span className="xs:hidden">7d</span>
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800 shadow-2xs focus:outline-none focus:ring-1 focus:ring-brand-500 cursor-pointer shrink-0"
+            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+          </button>
+
+          {/* Interactive User Profile Dropdown */}
+          <div className="relative shrink-0" ref={profileMenuRef}>
+            <button
+              type="button"
+              onClick={() => setIsProfileOpen((prev) => !prev)}
+              className="flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-brand-500/30 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
+              aria-label="User profile menu"
+              aria-expanded={isProfileOpen}
+            >
+              <Avatar
+                src={profile.avatarUrl || undefined}
+                fallbackName={profile.fullName || 'User'}
+                size="sm"
+                className="bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-xs transition-colors w-7 h-7 sm:w-8 sm:h-8 text-xs"
+              />
+            </button>
+
+            {/* Profile Dropdown Menu */}
+            {isProfileOpen && (
+              <div className="absolute right-0 mt-2.5 w-64 sm:w-68 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 divide-y divide-slate-100 dark:divide-slate-800">
+                {/* User Info Header */}
+                <div className="p-2.5 sm:p-3 space-y-1.5">
+                  <div className="flex items-center gap-2.5">
+                    <Avatar
+                      src={profile.avatarUrl || undefined}
+                      fallbackName={profile.fullName || 'User'}
+                      size="md"
+                      className="bg-brand-600 text-white font-bold shrink-0 shadow-2xs"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
+                          {profile.fullName}
+                        </span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                          Offline
+                        </span>
+                      </div>
+                      <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">
+                        @{profile.username}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="pt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                    {profile.email}
+                  </div>
+                  <div className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-semibold truncate">
+                    📍 {profile.location}
+                  </div>
+                </div>
+
+                {/* Quick Navigation Actions */}
+                <div className="pt-1.5 space-y-0.5">
+                  <Link
+                    to="/settings"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-brand-700 dark:text-brand-300 bg-brand-50/60 dark:bg-brand-950/40 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors"
+                  >
+                    <User className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+                    <span>Edit Profile & Photo</span>
+                  </Link>
+
+                  <Link
+                    to="/progress"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    <BarChart3 className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Learning Progress & Analytics</span>
+                  </Link>
+
+                  <Link
+                    to="/practice"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    <Code2 className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Problem Solving Workspace</span>
+                  </Link>
+
+                  <Link
+                    to="/tutor"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    <Bot className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Ask AI Tutor</span>
+                  </Link>
+
+                  <Link
+                    to="/settings"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    <Settings className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>System Settings & Preferences</span>
+                  </Link>
+                </div>
+
+                {/* Sign Out Action */}
+                <div className="pt-1.5">
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors cursor-pointer"
+                  >
+                    <span>Sign Out</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+      </header>
 
-        {/* System & Model Status Pill */}
-        <SystemStatusIndicator />
-
-        {/* Theme Toggle */}
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-          aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-        >
-          {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-        </button>
-
-        {/* User Avatar */}
-        <div className="flex items-center gap-2 pl-1">
-          <Avatar fallbackName="Kofi Mensah" size="sm" />
-        </div>
-      </div>
-    </header>
+      {/* Quick Search Command Palette Modal */}
+      <QuickSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </>
   )
 })
 

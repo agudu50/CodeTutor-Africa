@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { Button } from '@/components/ui'
 import { MOCK_DASHBOARD_DATA } from '../data/mockDashboardData'
 import { MOCK_COURSES } from '@/features/learning/data/mockCourseData'
+import { useUserProfile } from '@/app/providers/UserProfileProvider'
 import { ContinueLearningCard } from '../components/ContinueLearningCard'
 import { ProgressOverview } from '../components/ProgressOverview'
 import { WeakAreasCard } from '../components/WeakAreasCard'
@@ -13,6 +14,7 @@ import { Target, BookOpen, Bot } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
   const data = MOCK_DASHBOARD_DATA
+  const { profile } = useUserProfile()
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
@@ -23,7 +25,7 @@ export const DashboardPage: React.FC = () => {
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Welcome back, {data.user.name} 👋
+              Welcome back, {profile.fullName} 👋
             </h1>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
@@ -32,11 +34,11 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-            <span>{data.user.university}</span>
+            <span>{profile.location}</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 font-medium">
               <Target className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-              Daily study target: 45 mins
+              Daily study target: {profile.dailyTargetMins} mins
             </span>
           </div>
         </div>

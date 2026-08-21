@@ -70,7 +70,7 @@ export const DebuggerPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
@@ -85,11 +85,11 @@ export const DebuggerPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
+        <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
           <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
-            <Shield className="w-3.5 h-3.5" /> 100% Offline AI
+            <Shield className="w-3.5 h-3.5 text-emerald-500" /> 100% Offline AI
           </span>
-          <div className="w-40">
+          <div className="w-full sm:w-44">
             <Dropdown
               options={[
                 { value: 'python', label: 'Python 3.12' },
@@ -109,7 +109,7 @@ export const DebuggerPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left Column: Code and Error Input */}
         <div className="lg:col-span-6 flex flex-col">
-          <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4 shadow-xs h-full flex flex-col justify-between">
+          <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4 shadow-xs h-full flex flex-col justify-between">
             <div className="space-y-3 flex-1 flex flex-col">
               {/* Code Snippet Header */}
               <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
@@ -131,9 +131,9 @@ export const DebuggerPage: React.FC = () => {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 isCode
-                rows={12}
+                rows={10}
                 placeholder="# Paste your code here..."
-                className="flex-1 min-h-[220px] font-mono text-xs leading-relaxed"
+                className="flex-1 min-h-[180px] sm:min-h-[220px] font-mono text-xs leading-relaxed"
               />
 
               {/* Runtime Error / Stack Trace Input */}
@@ -153,7 +153,7 @@ export const DebuggerPage: React.FC = () => {
             </div>
 
             {/* Actions Toolbar */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
               <Button
                 variant="ghost"
                 size="sm"
@@ -191,7 +191,7 @@ export const DebuggerPage: React.FC = () => {
               onApplyFix={(fixed) => setCode(fixed)}
             />
           ) : (
-            <div className="h-full min-h-[350px] flex flex-col items-center justify-center p-8 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-center text-slate-400 space-y-3 shadow-xs">
+            <div className="h-full min-h-[300px] sm:min-h-[350px] flex flex-col items-center justify-center p-6 sm:p-8 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-center text-slate-400 space-y-3 shadow-xs">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400">
                 <Bug className="w-6 h-6" />
               </div>

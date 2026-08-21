@@ -9,7 +9,7 @@ export const MainLayout: React.FC = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   return (
-    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="h-screen w-full flex overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {/* Sidebar for Desktop / Tablet */}
       <Sidebar
         collapsed={sidebarCollapsed}
@@ -23,11 +23,11 @@ export const MainLayout: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <Topbar onOpenMobileNav={() => setMobileNavOpen(true)} />
-        <div className="flex-1 flex flex-col overflow-y-auto">
+        <main className="flex-1 flex flex-col overflow-y-auto min-w-0 w-full">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   )
