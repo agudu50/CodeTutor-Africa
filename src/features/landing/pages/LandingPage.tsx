@@ -484,14 +484,15 @@ print(message)`,
 
 
       {/* ═══════════════════════════════════════════════════════════════
-          NAVIGATION HEADER
+          NAVIGATION HEADER — Modern Human-Centered Design
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-50 px-4 md:px-8 flex items-center justify-between backdrop-blur-sm">
+      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 sticky top-0 z-50 px-4 md:px-8 flex items-center justify-between backdrop-blur-md transition-colors duration-300">
+        {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-3 group">
           <motion.div
             whileHover={{ scale: 1.05, rotate: 2 }}
             whileTap={{ scale: 0.95 }}
-            className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shrink-0 border border-brand-500"
+            className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shrink-0 border border-brand-500 shadow-xs"
           >
             <Sparkles className="w-5 h-5 text-accent-300" />
           </motion.div>
@@ -499,55 +500,60 @@ print(message)`,
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
               CodeTutor <span className="text-brand-600 dark:text-brand-400 font-extrabold">Africa</span>
             </span>
-            <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">
-              Offline AI Core
-            </span>
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+              <span>100% Offline AI</span>
+            </div>
           </div>
         </Link>
 
-        {/* Center links on desktop */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300">
+        {/* Center links on desktop — Friendly, jargon-free labels */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
           {[
-            { href: '#terminal-demo', label: 'Offline Runtime' },
-            { href: '#why-offline', label: 'Realities We Solve' },
-            { href: '#features', label: 'Workspace' },
-            { href: '#architecture', label: 'Hardware Specs' },
+            { href: '#terminal-demo', label: 'Live Demo' },
+            { href: '#why-offline', label: 'Why Offline?' },
+            { href: '#features', label: 'AI Workspace' },
+            { href: '#architecture', label: 'Laptop Specs' },
             { href: '#faq', label: 'FAQ' },
           ].map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="relative hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-brand-500 after:transition-all after:duration-300"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 text-slate-700 dark:text-slate-200 transition-all font-medium"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        {/* Right CTA / Auth & Theme Switch & Mobile Toggle */}
+        {/* Right Actions: Theme Toggle + Auth Buttons + Mobile Hamburger */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Theme Toggle Button */}
           <motion.button
-            whileHover={{ scale: 1.1, rotate: 15 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             type="button"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-colors shadow-xs"
             aria-label="Toggle theme"
           >
             {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
           </motion.button>
 
+          {/* Desktop Auth CTA */}
           <div className="hidden sm:flex items-center gap-2">
             <Link to="/signin">
-              <Button variant="ghost" size="sm" className="font-semibold text-xs">
+              <Button variant="ghost" size="sm" className="font-semibold text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                 Sign In
               </Button>
             </Link>
 
             <Link to="/signup">
-              <Button variant="primary" size="sm" className="font-semibold text-xs">
-                Get Started
-              </Button>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <Button variant="primary" size="sm" className="font-bold text-xs bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-3.5">
+                  Get Started Free
+                </Button>
+              </motion.div>
             </Link>
           </div>
 
@@ -557,7 +563,7 @@ print(message)`,
             whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800"
+            className="md:hidden p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800"
             aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -572,23 +578,24 @@ print(message)`,
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: 'easeInOut' }}
-              className="md:hidden absolute top-16 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-5 shadow-2xl space-y-4 z-50 overflow-hidden"
+              className="md:hidden absolute top-16 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-5 shadow-xl space-y-4 z-50 overflow-hidden"
             >
-              <div className="flex flex-col space-y-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 font-sans">
+              <div className="flex flex-col space-y-2 text-sm font-semibold text-slate-700 dark:text-slate-200 font-sans">
                 {[
-                  { href: '#terminal-demo', label: 'Offline Runtime' },
-                  { href: '#why-offline', label: 'Realities We Solve' },
-                  { href: '#features', label: 'Interactive Workspace' },
-                  { href: '#architecture', label: 'Hardware Specs' },
+                  { href: '#terminal-demo', label: 'Live Demo' },
+                  { href: '#why-offline', label: 'Why Offline?' },
+                  { href: '#features', label: 'AI Workspace' },
+                  { href: '#architecture', label: 'Laptop Specs' },
                   { href: '#faq', label: 'FAQ' },
                 ].map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="py-2 px-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors"
+                    className="py-2.5 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors font-medium flex items-center justify-between"
                   >
-                    {link.label}
+                    <span>{link.label}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                   </a>
                 ))}
               </div>
@@ -600,7 +607,7 @@ print(message)`,
                   </Button>
                 </Link>
                 <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="primary" size="md" className="w-full justify-center font-semibold text-xs">
+                  <Button variant="primary" size="md" className="w-full justify-center font-bold text-xs bg-brand-600 hover:bg-brand-700 text-white">
                     Get Started Free
                   </Button>
                 </Link>
