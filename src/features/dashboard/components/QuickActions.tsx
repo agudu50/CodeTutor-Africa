@@ -1,71 +1,105 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
-import { Bot, Bug, Code2, GraduationCap } from 'lucide-react'
+import { Bot, Bug, Code2, GraduationCap, ArrowRight, Sparkles } from 'lucide-react'
 
-export const QuickActions: React.FC = () => {
+export const QuickActions: React.FC = memo(() => {
   const actions = [
     {
       title: 'Ask AI Tutor',
-      description: 'Socratic dialogue on data structures and syntax',
+      description: 'Socratic 1-on-1 dialogue on concepts, logic, and syntax',
       path: '/tutor',
       icon: Bot,
-      color: 'bg-brand-600 text-white border border-brand-500',
+      iconColor: 'text-brand-600 dark:text-brand-400',
+      iconBg: 'bg-brand-50 dark:bg-brand-950/70 border-brand-200 dark:border-brand-800/80',
+      tag: '100% Offline',
     },
     {
       title: 'Debug My Code',
-      description: 'Find bugs and receive step-by-step root cause analysis',
+      description: 'Find mistakes, trace execution, and get step-by-step root cause fixes',
       path: '/debugger',
       icon: Bug,
-      color: 'bg-red-600 text-white border border-red-500',
+      iconColor: 'text-rose-600 dark:text-rose-400',
+      iconBg: 'bg-rose-50 dark:bg-rose-950/70 border-rose-200 dark:border-rose-800/80',
+      tag: 'Plain English',
     },
     {
       title: 'Code Practice',
-      description: 'Solve interactive coding challenges offline',
+      description: 'Solve curated coding challenges and run automated test suites',
       path: '/practice',
       icon: Code2,
-      color: 'bg-accent-600 text-white border border-accent-500',
+      iconColor: 'text-amber-600 dark:text-amber-400',
+      iconBg: 'bg-amber-50 dark:bg-amber-950/70 border-amber-200 dark:border-amber-800/80',
+      tag: '50+ Problems',
     },
     {
       title: 'Browse Courses',
-      description: 'Explore full modular courses for Python, Java, JS',
+      description: 'Explore full modular courses for Python, JavaScript, and Java',
       path: '/learning',
       icon: GraduationCap,
-      color: 'bg-sky-600 text-white border border-sky-500',
+      iconColor: 'text-sky-600 dark:text-sky-400',
+      iconBg: 'bg-sky-50 dark:bg-sky-950/70 border-sky-200 dark:border-sky-800/80',
+      tag: 'Structured Tracks',
     },
   ]
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Quick Access Workspaces</CardTitle>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {actions.map((action) => {
-          const Icon = action.icon
-          return (
-            <Link
-              key={action.title}
-              to={action.path}
-              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 bg-slate-50 dark:bg-slate-950/40 transition-all hover:-translate-y-0.5 group flex flex-col justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${action.color} shrink-0`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-brand-500 transition-colors">
-                    {action.title}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
-                    {action.description}
-                  </p>
-                </div>
+    <Card className="h-full flex flex-col justify-between border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div>
+        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400" />
               </div>
-            </Link>
-          )
-        })}
-      </CardContent>
+              <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+                Quick Access Workspaces
+              </CardTitle>
+            </div>
+            <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500 hidden sm:inline">
+              Instant Launch
+            </span>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-4 sm:p-5 pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {actions.map((action) => {
+              const Icon = action.icon
+              return (
+                <Link
+                  key={action.title}
+                  to={action.path}
+                  className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-700 bg-slate-50/70 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 transition-all duration-150 group flex flex-col justify-between space-y-3 shadow-2xs"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className={`p-2 rounded-xl border ${action.iconBg} ${action.iconColor} shrink-0`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+                        {action.tag}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400 group-hover:translate-x-0.5 transition-all" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                      {action.title}
+                    </h4>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                      {action.description}
+                    </p>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </CardContent>
+      </div>
     </Card>
   )
-}
+})
+
+QuickActions.displayName = 'QuickActions'
