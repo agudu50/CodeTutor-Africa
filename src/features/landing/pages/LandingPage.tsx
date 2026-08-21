@@ -81,6 +81,31 @@ const SectionReveal: React.FC<{ children: React.ReactNode; className?: string; d
   )
 }
 
+/* ─────────────────────────────────── Section Journey Connector ──── */
+const StepConnector: React.FC<{ nextLabel: string; targetId: string; stepNumber: string }> = ({ nextLabel, targetId, stepNumber }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col items-center justify-center pt-10 pb-4"
+    >
+      <div className="w-px h-10 bg-gradient-to-b from-brand-500 via-brand-400/40 to-transparent dark:from-brand-400 mb-3 animate-pulse" />
+      <a
+        href={`#${targetId}`}
+        className="group inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm"
+      >
+        <span className="w-5 h-5 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 text-[10px] font-bold font-mono flex items-center justify-center border border-brand-200 dark:border-brand-800">
+          {stepNumber}
+        </span>
+        <span>{nextLabel}</span>
+        <ArrowRight className="w-3.5 h-3.5 text-brand-500 group-hover:translate-x-1 transition-transform" />
+      </a>
+    </motion.div>
+  )
+}
+
 /* ─────────────────────────────────── Main Component ──── */
 export const LandingPage: React.FC = () => {
   const { isDark, setTheme } = useTheme()
@@ -94,12 +119,19 @@ export const LandingPage: React.FC = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
   // Terminal interactive state & scenarios
+  const terminalModes: Array<'boot' | 'test' | 'diagnose'> = ['boot', 'test', 'diagnose']
   const [terminalMode, setTerminalMode] = useState<'boot' | 'test' | 'diagnose'>('boot')
   const [terminalRunning, setTerminalRunning] = useState(false)
   const [terminalStep, setTerminalStep] = useState(-1)
+  const [terminalIsAutoPlay, setTerminalIsAutoPlay] = useState(true)
   const [copiedCmd, setCopiedCmd] = useState(false)
   const terminalRef = useRef(null)
   const terminalInView = useInView(terminalRef, { once: true, margin: '-100px' })
+
+  // Workspace Tabs auto-cycling
+  const featureTabKeys: Array<'tutor' | 'practice' | 'debugger' | 'curriculum'> = ['tutor', 'practice', 'debugger', 'curriculum']
+  const [workspaceIsAutoPlay, setWorkspaceIsAutoPlay] = useState(true)
+  const [copiedCode, setCopiedCode] = useState(false)
 
   // Stats section
   const statsRef = useRef(null)
@@ -134,12 +166,12 @@ export const LandingPage: React.FC = () => {
     },
     {
       image: '/images/terminal_student_offline.jpg',
-      tag: 'Hands-On Local Development',
-      caption: 'Building real-world software on 8 GB laptops with sub-400ms on-device response times',
+      tag: 'Hands-On Coding Practice',
+      caption: 'Building real-world projects on everyday laptops with fast, instant AI help',
     },
   ]
 
-  // Auto-advance slideshow
+  // Auto-advance hero slideshow
   useEffect(() => {
     if (!isAutoPlaying) return
     const interval = setInterval(() => {
@@ -148,25 +180,50 @@ export const LandingPage: React.FC = () => {
     return () => clearInterval(interval)
   }, [isAutoPlaying, slides.length])
 
+  // Auto-advance workspace features tabs
+  useEffect(() => {
+    if (!workspaceIsAutoPlay) return
+    const interval = setInterval(() => {
+      setActiveFeatureTab((prev) => {
+        const nextIdx = (featureTabKeys.indexOf(prev) + 1) % featureTabKeys.length
+        return featureTabKeys[nextIdx]
+      })
+    }, 6000)
+    return () => clearInterval(interval)
+  }, [workspaceIsAutoPlay])
+
   // Terminal auto-start when in view
   useEffect(() => {
     if (terminalInView && !terminalRunning) {
       setTerminalRunning(true)
       setTerminalStep(-1)
     }
-  }, [terminalInView])
+  }, [terminalInView, terminalRunning])
 
-  // Terminal step-by-step animation on mode switch or restart
+  // Terminal step-by-step animation and automatic sequence flow
   useEffect(() => {
     if (!terminalRunning) return
     setTerminalStep(-1)
     const timers: ReturnType<typeof setTimeout>[] = []
-    const delays = [350, 950, 1800, 2750, 3900]
+    const delays = [300, 800, 1500, 2200, 3000]
     delays.forEach((d, i) => {
       timers.push(setTimeout(() => setTerminalStep(i), d))
     })
+
+    // Advance to next step automatically in 5.8s if auto-play is enabled
+    if (terminalIsAutoPlay) {
+      timers.push(
+        setTimeout(() => {
+          setTerminalMode((prev) => {
+            const nextIdx = (terminalModes.indexOf(prev) + 1) % terminalModes.length
+            return terminalModes[nextIdx]
+          })
+        }, 5800)
+      )
+    }
+
     return () => timers.forEach(clearTimeout)
-  }, [terminalRunning, terminalMode])
+  }, [terminalRunning, terminalMode, terminalIsAutoPlay])
 
   const restartTerminal = () => {
     setTerminalStep(-1)
@@ -180,6 +237,12 @@ export const LandingPage: React.FC = () => {
     navigator.clipboard?.writeText(text)
     setCopiedCmd(true)
     setTimeout(() => setCopiedCmd(false), 2000)
+  }
+
+  const handleCopyCode = (text: string) => {
+    navigator.clipboard?.writeText(text)
+    setCopiedCode(true)
+    setTimeout(() => setCopiedCode(false), 2000)
   }
 
   const containerVariants: Variants = {
@@ -205,59 +268,59 @@ export const LandingPage: React.FC = () => {
   const terminalScenarios = {
     boot: {
       id: 'boot',
-      label: 'Cold Boot & RAM Mount',
-      command: '$ codetutor start --offline --target=8gb-ram',
-      badge: '1.4 GB RAM',
+      label: 'Step 1: Start AI Mentor',
+      command: '$ codetutor start --offline',
+      badge: 'Zero Data',
       logs: [
-        { text: '$ codetutor start --offline --target=8gb-ram', type: 'cmd' as const },
-        { text: '✓ Local runtime initialized (Memory allocation: 1.4 GB / 8.0 GB used)', type: 'success' as const },
-        { text: '✓ Quantized Gemma 2B IT neural weights mounted on CPU (Q4_K_M)', type: 'success' as const },
-        { text: '✓ Pre-cached syllabi indexed (Python 3.12, JavaScript, Java 21)', type: 'info' as const },
-        { text: '● Offline Tutor Standby — Zero cloud packets transmitted [READY]', type: 'ready' as const },
+        { text: '$ codetutor start --offline', type: 'cmd' as const },
+        { text: '✓ AI coding mentor loaded and ready on your laptop', type: 'info' as const },
+        { text: '✓ Course lessons ready to learn (Python, JavaScript, Java)', type: 'success' as const },
+        { text: '✓ 50+ practice exercises ready to practice without internet', type: 'success' as const },
+        { text: '● AI Tutor Ready — 100% offline and free to use [READY]', type: 'ready' as const },
       ],
       metrics: {
-        network: '0.00 KB (Air-Gapped)',
-        model: 'Gemma 2B IT • Q4_K_M',
-        latency: '318ms CPU',
-        ramPercent: '17.5%',
+        network: '0 KB Data (No Internet)',
+        model: 'Smart AI Mentor',
+        latency: 'Fast Response',
+        ramPercent: 'Lightweight',
       },
     },
     test: {
       id: 'test',
-      label: 'Offline Test Runner',
-      command: '$ codetutor test recursive_palindrome.py',
-      badge: '0 KB Lookups',
+      label: 'Step 2: Check Your Code',
+      command: '$ codetutor test my_solution.py',
+      badge: 'Instant Tests',
       logs: [
-        { text: '$ codetutor test recursive_palindrome.py', type: 'cmd' as const },
-        { text: '✓ Sandboxed Python 3.12 local execution worker spawned', type: 'info' as const },
-        { text: '✓ Test 1: Base Case (len <= 1) -> Passed [0.2ms]', type: 'success' as const },
-        { text: '✓ Test 2: Punctuation & Case Sanitization -> Passed [0.4ms]', type: 'success' as const },
-        { text: '● All test assertions passed locally with zero network lookups [SUCCESS]', type: 'ready' as const },
+        { text: '$ codetutor test my_solution.py', type: 'cmd' as const },
+        { text: '✓ Checking your code against test challenges', type: 'info' as const },
+        { text: '✓ Test 1: Basic check -> Passed!', type: 'success' as const },
+        { text: '✓ Test 2: Edge cases -> Passed!', type: 'success' as const },
+        { text: '● Great job! All tests passed with zero internet [SUCCESS]', type: 'ready' as const },
       ],
       metrics: {
-        network: '0.00 KB (Air-Gapped)',
-        model: 'AST Test Runner',
-        latency: '1.2ms Local',
-        ramPercent: '14.2%',
+        network: '0 KB Data (No Internet)',
+        model: 'Code Checker',
+        latency: 'Instant (<1s)',
+        ramPercent: 'Low Memory',
       },
     },
     diagnose: {
       id: 'diagnose',
-      label: 'On-Device Debugger',
-      command: '$ codetutor debug loop_index_error.py',
-      badge: 'Instant AST Fix',
+      label: 'Step 3: Fix Any Mistakes',
+      command: '$ codetutor fix loop_error.py',
+      badge: 'Plain English',
       logs: [
-        { text: '$ codetutor debug loop_index_error.py', type: 'cmd' as const },
-        { text: '✓ Abstract Syntax Tree (AST) compiled in local memory', type: 'info' as const },
-        { text: '✓ Root Cause: Loop accesses index len(arr) (off-by-one boundary error)', type: 'success' as const },
-        { text: '✓ Suggested Fix: Replace `range(len(scores) + 1)` with `range(len(scores))`', type: 'success' as const },
-        { text: '● Diagnosis completed on-device in 294ms via local Gemma 2B [RESOLVED]', type: 'ready' as const },
+        { text: '$ codetutor fix loop_error.py', type: 'cmd' as const },
+        { text: '✓ Reading your code to find the mistake', type: 'info' as const },
+        { text: '✓ Found the issue: The loop counts one item too far', type: 'success' as const },
+        { text: '✓ Simple fix: Change range(len(items) + 1) to range(len(items))', type: 'success' as const },
+        { text: '● Problem explained clearly in plain English [SOLVED]', type: 'ready' as const },
       ],
       metrics: {
-        network: '0.00 KB (Air-Gapped)',
-        model: 'Gemma 2B Diagnostic',
-        latency: '294ms Inference',
-        ramPercent: '17.8%',
+        network: '0 KB Data (No Internet)',
+        model: 'Friendly Helper',
+        latency: 'Instant (<1s)',
+        ramPercent: 'Low Memory',
       },
     },
   }
@@ -266,74 +329,102 @@ export const LandingPage: React.FC = () => {
 
   const faqs = [
     {
-      q: 'How does CodeTutor Africa run an AI model without internet on an 8 GB RAM laptop?',
-      a: 'We utilize highly optimized 4-bit quantized local neural weights (such as Gemma 2B IT) which only require ~1.4 GB of system RAM. Inference executes directly on your laptop CPU or integrated GPU with zero network packets sent over the internet.',
+      q: 'How does CodeTutor Africa work without internet on a normal laptop?',
+      a: 'We built a compact AI model that lives directly on your computer. It reads your code and explains concepts using your laptop\'s own processor—meaning zero internet connection and zero mobile data bundles are ever needed.',
     },
     {
-      q: 'Do I need to pay for OpenAI API keys or mobile data bundles?',
-      a: 'No. CodeTutor Africa is completely free and self-contained. There are no API keys, recurring subscriptions, or cloud dependencies required to practice code, debug errors, or chat with the AI tutor.',
+      q: 'Do I need to pay for subscriptions or mobile data?',
+      a: 'No. CodeTutor Africa is completely free forever. There are no monthly fees, hidden subscriptions, or mobile data bundles required to practice coding, fix errors, or get help from the AI tutor.',
     },
     {
-      q: 'Who is CodeTutor Africa built for and what courses are supported?',
-      a: 'CodeTutor Africa is designed for everyone learning to code—from absolute beginners and high school coding clubs to self-taught developers, bootcampers, polytechnics, and university students. Tracks cover fundamental programming, practical algorithmic thinking, web technologies, and software engineering with Python, JavaScript, and Java.',
+      q: 'Who can use CodeTutor Africa and what languages can I learn?',
+      a: 'It is made for everyone—complete beginners, high school coding clubs, self-taught learners, polytechnic, and university students. You can learn Python, JavaScript, and Java through simple, step-by-step lessons.',
     },
     {
-      q: 'Can I use CodeTutor Africa during power outages or in transit?',
-      a: 'Yes. Since every course module, test case runner, and AI model weight is pre-stored on your local hard drive, you can study at home, in workshops, libraries, or off-grid locations seamlessly.',
+      q: 'Can I use it during power cuts or while traveling?',
+      a: 'Yes! Because every lesson and tool is saved directly on your laptop, you can open your computer and practice anywhere—at home, on the bus, in school, or during power outages.',
     },
   ]
 
   const featureTabs = {
     tutor: {
-      title: 'Socratic AI Tutor',
-      subtitle: 'A patient, non-judgmental mentor that asks guiding questions',
-      badge: 'Gemma 2B Local',
-      codeSnippet: `# Recursive Call Stack Memory Breakdown
+      title: 'Helpful AI Tutor',
+      subtitle: 'A patient, friendly guide that helps you think step-by-step without stress',
+      badge: 'Private & Empathetic',
+      filename: 'countdown.py',
+      language: 'Python',
+      codeSnippet: `# Counting down to blast off!
 def countdown(n: int):
-    if n <= 0:  # Base Case
-        print("Blast off!")
+    if n <= 0:  # Stop when we reach zero
+        print("Blast off! 🚀")
         return
-    print(f"Frame {n} added to stack")
-    countdown(n - 1)  # Recurses towards base condition`,
-      aiResponse: `"Notice how each call to countdown(n) pushes a new frame onto your laptop's memory stack. Why is the base case check n <= 0 necessary to prevent a RecursionError?"`,
-      stats: 'Average response: 320ms on Core i5 CPU',
+    print(f"Counting: {n}")
+    countdown(n - 1)  # Count down to next number
+
+countdown(3)`,
+      runOutput: `Counting: 3\nCounting: 2\nCounting: 1\nBlast off! 🚀`,
+      studentQuery: 'How does the countdown function know when to stop?',
+      aiResponse: 'Great job! Notice how each call counts down until it hits 0. What would happen if we forgot the check for n <= 0? It would keep counting backwards forever!',
+      conceptChip: '💡 Key Concept: The "n <= 0" check is your Base Case — it keeps recursion safe!',
+      stats: 'Instant answers on your laptop (0ms delay)',
     },
     practice: {
-      title: 'Interactive Code Sandbox',
-      subtitle: 'Instant test case validation with step-by-step hint reveals',
-      badge: 'Automated Test Runner',
-      codeSnippet: `def is_palindrome(s: str) -> bool:
-    clean = ''.join(c.lower() for c in s if c.isalnum())
-    # Recursive base cases
+      title: 'Hands-On Code Practice',
+      subtitle: 'Write real code and get instant, encouraging feedback on your logic',
+      badge: 'Zero Internet Tests',
+      filename: 'palindrome_check.py',
+      language: 'Python',
+      codeSnippet: `def is_palindrome(word: str) -> bool:
+    clean = word.lower().replace(" ", "")
+    # Check if word reads the same backward and forward
     if len(clean) <= 1:
         return True
     if clean[0] != clean[-1]:
         return False
-    return is_palindrome(clean[1:-1])`,
-      aiResponse: `"✓ All 3 test cases passed! Time complexity O(N) where N is string length. Space complexity O(N) due to recursion stack depth."`,
-      stats: '100% offline execution engine',
+    return is_palindrome(clean[1:-1])
+
+print(is_palindrome("racecar"))  # True`,
+      runOutput: `Test 1: "racecar" -> Passed ✓\nTest 2: "madam" -> Passed ✓\nTest 3: "hello" -> Passed ✓`,
+      studentQuery: 'Testing my recursive palindrome solver against test challenges',
+      aiResponse: '✓ All test cases passed! Your recursive string slicing is clean and efficient. You are ready to tackle the next practice level.',
+      conceptChip: '🎯 Mastery: String indexing & recursive problem solving',
+      stats: 'Runs 100% without internet',
     },
     debugger: {
-      title: 'Root Cause Error Debugger',
-      subtitle: 'Clear, compassionate explanations of syntax & boundary errors',
-      badge: 'Offline Diagnostic Engine',
-      codeSnippet: `# Buggy loop with off-by-one error
+      title: 'Friendly Error Explainer',
+      subtitle: 'No confusing jargon — just clear explanations of why code breaks and how to fix it',
+      badge: 'Plain English',
+      filename: 'student_scores.py',
+      language: 'Python',
+      codeSnippet: `# Calculating student scores
+scores = [85, 92, 78]
+
+# Bug: loop tries to access index 3 in a 3-item list
 for i in range(len(scores) + 1):
-    total += scores[i]  # IndexError: list index out of range`,
-      aiResponse: `"Root cause: In Python, lists are 0-indexed. When scores has length 3, valid indices are 0, 1, 2. The loop attempted to access index 3. Fixed code: for score in scores:"`,
-      stats: 'Identifies stack trace root causes in seconds',
+    print(f"Student {i+1}: {scores[i]}")`,
+      runOutput: `Student 1: 85\nStudent 2: 92\nStudent 3: 78\nIndexError: list index out of range`,
+      studentQuery: 'Why is Python saying "list index out of range"?',
+      aiResponse: 'What happened: In Python, lists start counting at 0. For a list with 3 items, their positions are 0, 1, and 2. When the loop asks for index 3, Python cannot find it.',
+      conceptChip: '🛠️ Quick Fix: Change range(len(scores) + 1) to range(len(scores))',
+      stats: 'Explains mistakes in plain language',
     },
     curriculum: {
-      title: 'Structured Tracks & Lessons',
-      subtitle: 'From zero-knowledge basics to real-world software engineering',
-      badge: 'For All Learners',
-      codeSnippet: `# Module 2 • Lesson 4: Singly Linked List Traversal
-class Node:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next`,
-      aiResponse: `"Complete modular tracks available for Python, JavaScript, and Java. Each lesson includes beginner-friendly notes, visual memory diagrams, and paired interactive coding challenges."`,
-      stats: '52 comprehensive lessons pre-cached',
+      title: 'Step-by-Step Lessons',
+      subtitle: 'From zero-knowledge basics to building real-world software applications',
+      badge: '52 Lessons Built-In',
+      filename: 'lesson_01_welcome.py',
+      language: 'Python',
+      codeSnippet: `# Lesson 1: Your First Friendly Python Function
+def welcome_coder(name: str, city: str) -> str:
+    return f"Welcome {name} from {city}! Ready to build?"
+
+message = welcome_coder("Ama", "Kumasi")
+print(message)`,
+      runOutput: `Welcome Ama from Kumasi! Ready to build?`,
+      studentQuery: 'Starting Module 1: Python Fundamentals & Variables',
+      aiResponse: 'Welcome to your coding journey! You just defined your first reusable function. Every lesson in this course is saved directly on your laptop with zero internet required.',
+      conceptChip: '📚 Lesson 1 of 52 • Complete Notes & Interactive Exercises',
+      stats: 'Over 50 lessons included',
     },
   }
 
@@ -343,15 +434,15 @@ class Node:
       iconBg: 'bg-amber-50 dark:bg-amber-950/50',
       iconBorder: 'border-amber-200 dark:border-amber-800',
       iconColor: 'text-amber-600 dark:text-amber-400',
-      tag: 'Offline Resilience',
-      title: 'Erratic Wi-Fi & Offline Study',
-      description: 'Study without anxiety. When local internet, school Wi-Fi, or home connectivity drops, CodeTutor Africa continues executing code, explaining concepts, and tracking test progress with zero downtime.',
+      tag: 'No Internet Needed',
+      title: 'No Wi-Fi? No Problem.',
+      description: 'Learn without stress. When local internet or school Wi-Fi drops, CodeTutor Africa keeps running your code, explaining concepts, and saving your progress with zero interruptions.',
       stat: '0ms',
-      statLabel: 'downtime on Wi-Fi loss',
+      statLabel: 'delay on Wi-Fi loss',
       highlights: [
-        'Local code execution and automated test runner',
-        'Pre-cached beginner to advanced learning tracks',
-        'Uninterrupted practice during power cuts',
+        'Run your code and check answers completely offline',
+        'All beginner to advanced lessons ready anytime',
+        'Keep practicing even during power outages',
       ],
     },
     {
@@ -360,14 +451,14 @@ class Node:
       iconBorder: 'border-emerald-200 dark:border-emerald-800',
       iconColor: 'text-emerald-600 dark:text-emerald-400',
       tag: '100% Free Forever',
-      title: 'Zero Mobile Data Burden',
-      description: 'Cloud AI tutors consume heavy internet data on every prompt. CodeTutor Africa runs 100% on your laptop\'s CPU, saving your budget for what matters most.',
+      title: 'Zero Mobile Data Costs',
+      description: 'Online AI tools consume expensive internet data every time you ask a question. CodeTutor Africa runs 100% on your laptop, keeping your mobile data in your pocket.',
       stat: '0 KB',
-      statLabel: 'cloud data consumed',
+      statLabel: 'mobile data spent',
       highlights: [
-        'No monthly internet data bundles burned',
-        'No OpenAI or third-party API subscription costs',
-        'Fully private inference on your 8 GB laptop',
+        'No mobile data bundles required',
+        'No monthly subscriptions or hidden fees',
+        'Completely private and runs easily on your laptop',
       ],
     },
     {
@@ -375,14 +466,14 @@ class Node:
       iconBg: 'bg-brand-50 dark:bg-brand-950/50',
       iconBorder: 'border-brand-200 dark:border-brand-800',
       iconColor: 'text-brand-600 dark:text-brand-400',
-      tag: 'Psychological Safety',
-      title: '1-on-1 Guidance For Every Learner',
-      description: 'Whether in crowded classrooms or self-learning alone at night, asking questions can feel intimidating. Your offline tutor provides a patient, safe space to master tricky logic without fear of judgment.',
+      tag: 'Friendly & Patient',
+      title: '1-on-1 Help For Every Student',
+      description: 'In crowded classrooms or studying alone late at night, asking questions can feel intimidating. Your AI tutor provides a friendly, patient space to learn at your own pace.',
       stat: '\u221E',
       statLabel: 'questions you can ask',
       highlights: [
-        'Socratic prompts that guide without giving away answers',
-        'Friendly, compassionate syntax error breakdowns',
+        'Gentle hints that guide you without just spoiling the answer',
+        'Friendly explanations when you make mistakes',
         'Practice as many times as you need in private',
       ],
     },
@@ -620,7 +711,7 @@ class Node:
               >
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 border border-brand-500 text-brand-300 text-xs font-semibold shadow-lg">
                   <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
-                  Zero Cloud Dependence • 100% On-Device AI for 8 GB Laptops
+                  No Internet Needed • 100% Free AI Tutor for Any Laptop
                 </span>
               </motion.div>
 
@@ -639,7 +730,7 @@ class Node:
                 variants={itemVariants}
                 className="text-sm sm:text-base md:text-lg text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-md"
               >
-                An intelligent, human-centered coding tutor built for beginners, self-taught developers, clubs, and schools across Africa. Learn Python, JavaScript, and Java with a private AI mentor that lives directly on your laptop—no internet connection, cloud bills, or expensive hardware required.
+                A friendly, patient coding tutor built for beginners, students, and self-learners across Africa. Learn Python, JavaScript, and Java with an AI mentor that lives directly on your laptop—no internet connection, mobile data bundles, or fees needed.
               </motion.p>
 
               {/* CTA Buttons */}
@@ -679,13 +770,13 @@ class Node:
                 className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 text-[11px] text-slate-400 font-mono"
               >
                 <span className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-emerald-400" /> 100% Private & Local
+                  <Shield className="w-3.5 h-3.5 text-emerald-400" /> 100% Private & Free
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" /> Sub-400ms Response
+                  <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant AI Answers
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-sky-400" /> No Internet Required
+                  <Globe className="w-3.5 h-3.5 text-sky-400" /> Works Without Wi-Fi
                 </span>
               </motion.div>
             </motion.div>
@@ -695,7 +786,7 @@ class Node:
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 1: LIVE TERMINAL BOOT — Adaptive Canvas
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="terminal-demo" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 border-y border-slate-200 dark:border-slate-800/80 relative overflow-hidden transition-colors duration-300">
+        <section id="terminal-demo" className="py-20 sm:py-28 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
           {/* Subtle dot grid pattern */}
           <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.03]" style={{
             backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
@@ -708,49 +799,77 @@ class Node:
           <div className="max-w-6xl mx-auto space-y-10 relative z-10" ref={terminalRef}>
             <SectionReveal>
               <div className="text-center space-y-3 max-w-2xl mx-auto">
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
                   <Terminal className="w-3.5 h-3.5" />
-                  Real-World On-Device Verification
+                  Step 01 • Live On-Device Demo
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                  Live On-Device Terminal Boot
+                  See It Work Directly On Your Laptop
                 </h2>
                 <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Engineered for everyday laptops. The AI tutor neural runtime mounts directly into memory—no internet connection, cloud server, or recurring fees.
+                  Built for everyday student laptops. Your AI tutor lives right on your computer—so you can learn, practice, and get help anytime without internet, data costs, or subscriptions.
                 </p>
               </div>
             </SectionReveal>
 
-            {/* Interactive Terminal Mode Switcher */}
+            {/* Interactive Terminal Mode Switcher with Auto-Advancing Progress Bar */}
             <SectionReveal delay={0.08}>
-              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                {(Object.keys(terminalScenarios) as Array<keyof typeof terminalScenarios>).map((modeKey) => {
-                  const sc = terminalScenarios[modeKey]
-                  const isActive = terminalMode === modeKey
-                  return (
-                    <button
-                      key={modeKey}
-                      type="button"
-                      onClick={() => {
-                        setTerminalMode(modeKey)
-                        setTerminalStep(-1)
-                      }}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-semibold transition-all duration-200 ${
-                        isActive
-                          ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20 border border-brand-500'
-                          : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200 shadow-sm'
-                      }`}
-                    >
-                      <Play className={`w-3 h-3 ${isActive ? 'fill-white' : ''}`} />
-                      <span>{sc.label}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                        isActive ? 'bg-brand-700 text-brand-100' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                      }`}>
-                        {sc.badge}
-                      </span>
-                    </button>
-                  )
-                })}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                  {(Object.keys(terminalScenarios) as Array<keyof typeof terminalScenarios>).map((modeKey) => {
+                    const sc = terminalScenarios[modeKey]
+                    const isActive = terminalMode === modeKey
+                    return (
+                      <button
+                        key={modeKey}
+                        type="button"
+                        onClick={() => {
+                          setTerminalMode(modeKey)
+                          setTerminalStep(-1)
+                        }}
+                        className={`relative overflow-hidden flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-semibold transition-all duration-200 ${
+                          isActive
+                            ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20 border border-brand-500 scale-[1.02]'
+                            : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200 shadow-sm'
+                        }`}
+                      >
+                        <Play className={`w-3 h-3 ${isActive ? 'fill-white' : ''}`} />
+                        <span>{sc.label}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                          isActive ? 'bg-brand-700 text-brand-100' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        }`}>
+                          {sc.badge}
+                        </span>
+
+                        {/* Animated linear countdown progress bar */}
+                        {isActive && terminalIsAutoPlay && (
+                          <motion.div
+                            key={`${terminalMode}-progress`}
+                            initial={{ width: '0%' }}
+                            animate={{ width: '100%' }}
+                            transition={{ duration: 5.8, ease: 'linear' }}
+                            className="absolute bottom-0 left-0 h-1 bg-white/70 rounded-full"
+                          />
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Auto-Play status pill */}
+                <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>
+                    Auto-playing live workflow (Step {terminalModes.indexOf(terminalMode) + 1} of 3)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setTerminalIsAutoPlay((prev) => !prev)}
+                    className="ml-1 underline hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                  >
+                    {terminalIsAutoPlay ? 'Pause' : 'Resume'}
+                  </button>
+                </div>
               </div>
             </SectionReveal>
 
@@ -799,7 +918,7 @@ class Node:
                       </motion.button>
 
                       <Badge variant="brand" size="sm" className="font-mono text-[10px] bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800 shrink-0">
-                        OFFLINE 8GB RAM
+                        OFFLINE • NO DATA
                       </Badge>
                       <motion.button
                         whileHover={{ scale: 1.15, rotate: -90 }}
@@ -912,14 +1031,14 @@ class Node:
                     <div className="absolute top-3 left-3">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-950/90 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 text-[10px] font-mono backdrop-blur-sm shadow-md">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                        Real-World Tested
+                        Tested on Laptops
                       </span>
                     </div>
 
                     <div className="absolute bottom-3 right-3">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-950/90 text-brand-700 dark:text-brand-300 border border-slate-200 dark:border-slate-700 text-[10px] font-mono backdrop-blur-sm shadow-md">
                         <Cpu className="w-3 h-3 text-brand-600 dark:text-brand-400" />
-                        Target: 8 GB Laptops
+                        Everyday Laptops
                       </span>
                     </div>
                   </div>
@@ -958,22 +1077,25 @@ class Node:
                     <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 transition-colors shadow-xs">
                       <span className="block text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400">0.00</span>
                       <span className="block text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold mt-0.5">Data Cost</span>
-                      <span className="block text-[8px] text-slate-400 dark:text-slate-500">$0 vs $20/mo</span>
+                      <span className="block text-[8px] text-slate-400 dark:text-slate-500">100% Free</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500/40 transition-colors shadow-xs">
                       <span className="block text-sm sm:text-base font-bold text-brand-600 dark:text-brand-400">100%</span>
-                      <span className="block text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold mt-0.5">On-Device</span>
-                      <span className="block text-[8px] text-slate-400 dark:text-slate-500">Zero Cloud Logs</span>
+                      <span className="block text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold mt-0.5">Offline</span>
+                      <span className="block text-[8px] text-slate-400 dark:text-slate-500">Zero Internet</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-amber-500/40 transition-colors shadow-xs">
                       <span className="block text-sm sm:text-base font-bold text-amber-600 dark:text-amber-300">4+ Hrs</span>
-                      <span className="block text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold mt-0.5">Battery Save</span>
-                      <span className="block text-[8px] text-slate-400 dark:text-slate-500">Low CPU Drain</span>
+                      <span className="block text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold mt-0.5">Battery Life</span>
+                      <span className="block text-[8px] text-slate-400 dark:text-slate-500">Runs Cool</span>
                     </div>
                   </div>
                 </div>
               </SectionReveal>
             </div>
+
+            {/* Journey Connector */}
+            <StepConnector nextLabel="Next Step: See Why Offline-First Matters" targetId="why-offline" stepNumber="02" />
           </div>
         </section>
 
@@ -984,9 +1106,9 @@ class Node:
           <div className="max-w-6xl mx-auto space-y-16">
             <SectionReveal>
               <div className="text-center space-y-4 max-w-3xl mx-auto">
-                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-mono">
-                  <Heart className="w-4 h-4" />
-                  The Realities We Solve
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
+                  <Heart className="w-3.5 h-3.5" />
+                  Step 02 • The Realities We Solve
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
                   Built Around the Real Daily Experience{' '}
@@ -1077,6 +1199,9 @@ class Node:
                 </div>
               </div>
             </SectionReveal>
+
+            {/* Journey Connector */}
+            <StepConnector nextLabel="Next Step: Explore The Interactive Workspace" targetId="features" stepNumber="03" />
           </div>
         </section>
 
@@ -1087,53 +1212,84 @@ class Node:
           <div className="max-w-6xl mx-auto space-y-10">
             <SectionReveal>
               <div className="text-center space-y-3 max-w-3xl mx-auto">
-                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-mono">
-                  <Code2 className="w-4 h-4" />
-                  Interactive Workspace
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
+                  <Code2 className="w-3.5 h-3.5" />
+                  Step 03 • Interactive Workspace
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
                   Everything You Need to Master Programming & Build Software
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Click through the modules below to see how each tool empowers your offline study sessions.
+                  Click through the modules below or let the live tour guide you through each tool.
                 </p>
               </div>
             </SectionReveal>
 
             <SectionReveal delay={0.1}>
-              {/* Interactive Navigation Pills */}
-              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                {[
-                  { id: 'tutor', label: 'AI Socratic Tutor', icon: Bot },
-                  { id: 'practice', label: 'Offline Code Practice', icon: Code2 },
-                  { id: 'debugger', label: 'Root Cause Debugger', icon: Bug },
-                  { id: 'curriculum', label: 'Structured Tracks', icon: BookOpen },
-                ].map((tab) => {
-                  const Icon = tab.icon
-                  const isActive = activeFeatureTab === tab.id
-                  return (
-                    <motion.button
-                      key={tab.id}
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
-                      type="button"
-                      onClick={() => setActiveFeatureTab(tab.id as any)}
-                      className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                        isActive
-                          ? 'bg-brand-600 text-white shadow-lg'
-                          : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="hidden sm:inline">{tab.label}</span>
-                    </motion.button>
-                  )
-                })}
+              {/* Interactive Navigation Pills with Auto-Advancing Progress Bar */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                  {[
+                    { id: 'tutor', label: 'Helpful AI Tutor', icon: Bot },
+                    { id: 'practice', label: 'Hands-On Practice', icon: Code2 },
+                    { id: 'debugger', label: 'Error Explainer', icon: Bug },
+                    { id: 'curriculum', label: 'Step-by-Step Lessons', icon: BookOpen },
+                  ].map((tab) => {
+                    const Icon = tab.icon
+                    const isActive = activeFeatureTab === tab.id
+                    return (
+                      <motion.button
+                        key={tab.id}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        type="button"
+                        onClick={() => {
+                          setActiveFeatureTab(tab.id as any)
+                          setWorkspaceIsAutoPlay(false)
+                        }}
+                        className={`relative overflow-hidden flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                          isActive
+                            ? 'bg-brand-600 text-white shadow-lg scale-[1.02]'
+                            : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="hidden sm:inline">{tab.label}</span>
+
+                        {/* Animated linear tab progress bar */}
+                        {isActive && workspaceIsAutoPlay && (
+                          <motion.div
+                            key={`${activeFeatureTab}-prog`}
+                            initial={{ width: '0%' }}
+                            animate={{ width: '100%' }}
+                            transition={{ duration: 6, ease: 'linear' }}
+                            className="absolute bottom-0 left-0 h-1 bg-white/70 rounded-full"
+                          />
+                        )}
+                      </motion.button>
+                    )
+                  })}
+                </div>
+
+                {/* Workspace Tour Status */}
+                <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+                  <span>
+                    Auto-touring workspace modules ({featureTabKeys.indexOf(activeFeatureTab) + 1} of 4)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setWorkspaceIsAutoPlay((prev) => !prev)}
+                    className="ml-1 underline hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                  >
+                    {workspaceIsAutoPlay ? 'Pause' : 'Resume'}
+                  </button>
+                </div>
               </div>
             </SectionReveal>
 
             <SectionReveal delay={0.15}>
-              {/* Animated Tab Preview Container */}
+              {/* Modern Human-Centered Animated Tab Preview Container */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeFeatureTab}
@@ -1141,56 +1297,174 @@ class Node:
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -12, scale: 0.99 }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden"
+                  className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden backdrop-blur-md"
                 >
-                  {/* Sub-Header */}
-                  <div className="p-5 sm:p-6 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                        {featureTabs[activeFeatureTab].title}
-                      </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        {featureTabs[activeFeatureTab].subtitle}
-                      </p>
+                  {/* Top Bar with Window Controls, Filename Badge, and Empathetic Tag */}
+                  <div className="px-5 py-4 bg-slate-100/90 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="w-3 h-3 rounded-full bg-red-500/90 inline-block" />
+                        <span className="w-3 h-3 rounded-full bg-amber-500/90 inline-block" />
+                        <span className="w-3 h-3 rounded-full bg-emerald-500/90 inline-block" />
+                      </div>
+                      <div className="h-4 w-px bg-slate-300 dark:bg-slate-800 mx-1 hidden sm:block" />
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 shadow-xs">
+                        <Code2 className="w-3.5 h-3.5 text-brand-500" />
+                        <span>{featureTabs[activeFeatureTab].filename}</span>
+                        <span className="text-[10px] px-1 rounded bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-semibold">
+                          {featureTabs[activeFeatureTab].language}
+                        </span>
+                      </div>
                     </div>
-                    <Badge variant="brand" size="sm" className="font-mono text-[10px] self-start sm:self-auto">
-                      {featureTabs[activeFeatureTab].badge}
-                    </Badge>
+
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-400">
+                        <Sparkles className="w-3 h-3 text-emerald-500" />
+                        {featureTabs[activeFeatureTab].badge}
+                      </span>
+                      <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 hidden md:inline">
+                        100% Offline • 0 KB Data
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Code & Response Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-800 font-mono text-xs">
-                    {/* Left: Code Pane */}
-                    <div className="p-6 bg-slate-950 text-slate-200 space-y-3 overflow-x-auto leading-relaxed">
-                      <div className="text-slate-500 text-[11px] pb-2 border-b border-slate-800 flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <Code2 className="w-3 h-3" /> Active Editor Context
-                        </span>
-                        <span className="text-slate-600">UTF-8</span>
+                  {/* Split Content: Left = Modern Code Editor, Right = Warm Human-Centered AI Tutor */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-slate-800">
+                    {/* Left 6 Columns: Interactive Code Editor with Terminal Run Preview */}
+                    <div className="lg:col-span-6 flex flex-col justify-between bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 p-5 sm:p-6 space-y-4 transition-colors duration-300">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-500 dark:text-slate-400">
+                          <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                            <span>workspace</span>
+                            <span className="text-slate-400">/</span>
+                            <span className="text-brand-600 dark:text-brand-400 font-semibold">{featureTabs[activeFeatureTab].filename}</span>
+                          </span>
+
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            type="button"
+                            onClick={() => handleCopyCode(featureTabs[activeFeatureTab].codeSnippet)}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-[11px] font-mono text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors shadow-xs"
+                          >
+                            {copiedCode ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                                <span className="text-emerald-600 dark:text-emerald-400">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </motion.button>
+                        </div>
+
+                        {/* Code Display with Line Numbers */}
+                        <div className="font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto py-1 text-slate-800 dark:text-slate-200">
+                          <pre className="whitespace-pre">
+                            {featureTabs[activeFeatureTab].codeSnippet}
+                          </pre>
+                        </div>
                       </div>
-                      <pre className="whitespace-pre pt-2 font-mono text-xs text-slate-200 leading-relaxed">
-                        {featureTabs[activeFeatureTab].codeSnippet}
-                      </pre>
+
+                      {/* Run Output Console Window */}
+                      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 p-3.5 space-y-2 font-mono text-xs shadow-xs">
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pb-1.5 border-b border-slate-200 dark:border-slate-800">
+                          <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                            <Play className="w-3 h-3 fill-emerald-600 dark:fill-emerald-400" /> On-Device Output
+                          </span>
+                          <span className="text-[10px] text-slate-500">Local CPU • 0ms Delay</span>
+                        </div>
+                        <pre className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed text-[11px]">
+                          {featureTabs[activeFeatureTab].runOutput}
+                        </pre>
+                      </div>
                     </div>
 
-                    {/* Right: AI Tutor / Diagnostic Output */}
-                    <div className="p-6 bg-slate-900 text-slate-200 space-y-5 font-sans text-xs flex flex-col justify-between">
+                    {/* Right 6 Columns: Human-Centered AI Tutor Conversation Interface */}
+                    <div className="lg:col-span-6 bg-slate-50/50 dark:bg-slate-900/70 p-5 sm:p-6 flex flex-col justify-between space-y-6">
                       <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-brand-400 font-semibold font-mono text-[11px]">
-                          <Bot className="w-4 h-4" />
-                          <span>On-Device Intelligent Feedback:</span>
+                        {/* Tutor Persona Header */}
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white shadow-md">
+                                <Bot className="w-5 h-5" />
+                              </div>
+                              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                                <span>CodeTutor AI Mentor</span>
+                                <span className="text-[10px] font-mono font-normal text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800">
+                                  Online
+                                </span>
+                              </h4>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                Patient, private & friendly 1-on-1 guide
+                              </p>
+                            </div>
+                          </div>
+
+                          <Badge variant="brand" size="sm" className="font-mono text-[10px] hidden sm:inline-flex">
+                            No Subscriptions
+                          </Badge>
                         </div>
-                        <p className="text-slate-200 leading-relaxed text-sm bg-slate-950 p-5 rounded-xl border border-slate-800">
-                          {featureTabs[activeFeatureTab].aiResponse}
-                        </p>
+
+                        {/* Student Question Context Bubble */}
+                        <div className="flex items-start gap-2.5">
+                          <div className="w-7 h-7 rounded-full bg-brand-100 dark:bg-brand-950 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                            KO
+                          </div>
+                          <div className="p-3 rounded-2xl rounded-tl-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 shadow-xs">
+                            <span className="font-semibold text-brand-600 dark:text-brand-400 block text-[10px] uppercase font-mono mb-0.5">
+                              Learner Question
+                            </span>
+                            "{featureTabs[activeFeatureTab].studentQuery}"
+                          </div>
+                        </div>
+
+                        {/* AI Tutor Supportive Response Bubble */}
+                        <div className="flex items-start gap-2.5">
+                          <div className="w-7 h-7 rounded-full bg-brand-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                            <Bot className="w-4 h-4" />
+                          </div>
+                          <div className="space-y-3 flex-1">
+                            <div className="p-4 rounded-2xl rounded-tl-sm bg-brand-50/70 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800/80 text-xs sm:text-sm text-slate-800 dark:text-slate-100 leading-relaxed shadow-xs">
+                              <span className="font-bold text-brand-700 dark:text-brand-300 block text-[10px] uppercase font-mono mb-1">
+                                Tutor Explanation
+                              </span>
+                              "{featureTabs[activeFeatureTab].aiResponse}"
+                            </div>
+
+                            {/* Human-Centered Concept Insight Chip */}
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-medium">
+                              <span>{featureTabs[activeFeatureTab].conceptChip}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                        <span className="flex items-center gap-1.5 text-emerald-400">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> {featureTabs[activeFeatureTab].stats}
-                        </span>
-                        <Link to="/dashboard" className="text-brand-400 hover:text-brand-300 flex items-center gap-1 font-sans transition-colors">
-                          Try Workspace <ArrowRight className="w-3 h-3" />
+                      {/* Bottom Action Footer */}
+                      <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
+                        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium font-mono text-[11px]">
+                          <CheckCircle2 className="w-4 h-4 shrink-0" />
+                          <span>{featureTabs[activeFeatureTab].stats}</span>
+                        </div>
+
+                        <Link to="/dashboard">
+                          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              className="font-bold shadow-md bg-brand-600 hover:bg-brand-500 text-xs w-full sm:w-auto"
+                              rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                            >
+                              Try Interactive Workspace
+                            </Button>
+                          </motion.div>
                         </Link>
                       </div>
                     </div>
@@ -1198,6 +1472,9 @@ class Node:
                 </motion.div>
               </AnimatePresence>
             </SectionReveal>
+
+            {/* Journey Connector */}
+            <StepConnector nextLabel="Next Step: Check Everyday Laptop Compatibility" targetId="architecture" stepNumber="04" />
           </div>
         </section>
 
@@ -1208,101 +1485,146 @@ class Node:
           <div className="max-w-5xl mx-auto space-y-12" ref={statsRef}>
             <SectionReveal>
               <div className="text-center space-y-3 max-w-2xl mx-auto">
-                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-mono">
-                  <Cpu className="w-4 h-4" />
-                  Hardware Efficiency
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
+                  <Cpu className="w-3.5 h-3.5" />
+                  Step 04 • Everyday Laptops
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  Optimized for Everyday Laptops
+                  Built for Regular Student Laptops
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Engineered specifically to run efficiently on standard 8 GB RAM laptops without thermal throttling or memory starvation.
+                  Designed to run smoothly on everyday laptops without slowing down your computer or draining your battery.
                 </p>
               </div>
             </SectionReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 items-stretch">
               {/* Card 1: RAM */}
-              <SectionReveal delay={0}>
+              <SectionReveal delay={0} className="h-full">
                 <motion.div
                   whileHover={{ y: -4, scale: 1.02 }}
-                  className="p-7 rounded-2xl border border-slate-700 bg-slate-800 space-y-4 shadow-md hover:shadow-2xl transition-all duration-300 group"
+                  className="h-full p-7 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-between space-y-4"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-xl bg-brand-950 border border-brand-700 text-brand-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Cpu className="w-6 h-6" />
+                  <div className="space-y-4 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-xl bg-brand-100 dark:bg-brand-950 border border-brand-200 dark:border-brand-800 text-brand-600 dark:text-brand-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Cpu className="w-6 h-6" />
+                      </div>
+                      <span className="font-mono text-[10px] uppercase text-slate-500 dark:text-slate-400 tracking-wider">Lightweight</span>
                     </div>
-                    <span className="font-mono text-[10px] uppercase text-slate-400 tracking-wider">AI Memory</span>
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono tabular-nums">
+                      {(ramCount / 10).toFixed(1)} <span className="text-lg text-slate-500 dark:text-slate-400 font-sans font-normal">GB RAM</span>
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed flex-1">
+                      Uses very little memory, leaving plenty of room for your code editor and web browser.
+                    </p>
                   </div>
-                  <p className="text-3xl font-bold text-white font-mono tabular-nums">
-                    {(ramCount / 10).toFixed(1)} <span className="text-lg text-slate-400">GB RAM</span>
-                  </p>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    4-bit quantized Gemma 2B weights leave 6.6 GB available for browser and system.
-                  </p>
-                  {/* Mini progress bar */}
-                  <div className="h-1.5 rounded-full bg-slate-700 overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={statsInView ? { width: '17.5%' } : { width: 0 }}
-                      transition={{ duration: 1.5, ease: 'easeOut' }}
-                      className="h-full rounded-full bg-brand-500"
-                    />
+                  
+                  {/* Mini progress bar & footer */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={statsInView ? { width: '17.5%' } : { width: 0 }}
+                        transition={{ duration: 1.5, ease: 'easeOut' }}
+                        className="h-full rounded-full bg-brand-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                      <span>1.4 / 8.0 GB used by AI</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">17.5%</span>
+                    </div>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-mono">1.4 / 8.0 GB used by AI</span>
                 </motion.div>
               </SectionReveal>
 
-              {/* Card 2: RAG */}
-              <SectionReveal delay={0.1}>
+              {/* Card 2: Lessons */}
+              <SectionReveal delay={0.1} className="h-full">
                 <motion.div
                   whileHover={{ y: -4, scale: 1.02 }}
-                  className="p-7 rounded-2xl border border-slate-700 bg-slate-800 space-y-4 shadow-md hover:shadow-2xl transition-all duration-300 group"
+                  className="h-full p-7 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-between space-y-4"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-xl bg-accent-950 border border-accent-700 text-accent-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Database className="w-6 h-6" />
+                  <div className="space-y-4 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Database className="w-6 h-6" />
+                      </div>
+                      <span className="font-mono text-[10px] uppercase text-slate-500 dark:text-slate-400 tracking-wider">Offline Lessons</span>
                     </div>
-                    <span className="font-mono text-[10px] uppercase text-slate-400 tracking-wider">Knowledge</span>
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                      50+ Lessons
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed flex-1">
+                      All course notes, exercises, and examples are saved directly on your laptop ready to learn.
+                    </p>
                   </div>
-                  <p className="text-3xl font-bold text-white font-mono">
-                    IndexedDB
-                  </p>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    Local vector index over lecture slides and textbook materials with zero cloud lookups.
-                  </p>
-                  <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>{lessonCount} lessons pre-cached</span>
+
+                  {/* Mini progress bar & footer */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={statsInView ? { width: '100%' } : { width: 0 }}
+                        transition={{ duration: 1.5, ease: 'easeOut' }}
+                        className="h-full rounded-full bg-amber-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                      <span className="flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-amber-500" />
+                        {lessonCount} lessons included
+                      </span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">100% Ready</span>
+                    </div>
                   </div>
                 </motion.div>
               </SectionReveal>
 
               {/* Card 3: Battery */}
-              <SectionReveal delay={0.2}>
+              <SectionReveal delay={0.2} className="h-full">
                 <motion.div
                   whileHover={{ y: -4, scale: 1.02 }}
-                  className="p-7 rounded-2xl border border-slate-700 bg-slate-800 space-y-4 shadow-md hover:shadow-2xl transition-all duration-300 group"
+                  className="h-full p-7 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-between space-y-4"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-950 border border-emerald-700 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <BatteryCharging className="w-6 h-6" />
+                  <div className="space-y-4 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <BatteryCharging className="w-6 h-6" />
+                      </div>
+                      <span className="font-mono text-[10px] uppercase text-slate-500 dark:text-slate-400 tracking-wider">Fast & Cool</span>
                     </div>
-                    <span className="font-mono text-[10px] uppercase text-slate-400 tracking-wider">Latency</span>
+                    <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">
+                      {latencyCount}<span className="text-lg text-slate-500 dark:text-slate-400 font-sans font-normal">ms Instant</span>
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed flex-1">
+                      Answers questions fast while keeping your laptop cool and battery lasting for hours.
+                    </p>
                   </div>
-                  <p className="text-3xl font-bold text-emerald-400 font-mono tabular-nums">
-                    {latencyCount}<span className="text-lg text-slate-400">ms</span>
-                  </p>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    Sub-400ms inference bursts designed to preserve laptop battery life during load shedding.
-                  </p>
-                  <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400">
-                    <Zap className="w-3 h-3" />
-                    <span>Lightweight CPU inference</span>
+
+                  {/* Mini progress bar & footer */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={statsInView ? { width: '100%' } : { width: 0 }}
+                        transition={{ duration: 1.5, ease: 'easeOut' }}
+                        className="h-full rounded-full bg-emerald-500"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                      <span className="flex items-center gap-1">
+                        <Zap className="w-3 h-3 text-emerald-500" />
+                        Battery friendly
+                      </span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Low Temp</span>
+                    </div>
                   </div>
                 </motion.div>
               </SectionReveal>
             </div>
+
+            {/* Journey Connector */}
+            <StepConnector nextLabel="Next Step: Frequently Asked Questions" targetId="faq" stepNumber="05" />
           </div>
         </section>
 
@@ -1313,9 +1635,9 @@ class Node:
           <div className="max-w-4xl mx-auto space-y-10">
             <SectionReveal>
               <div className="text-center space-y-3">
-                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 font-mono">
-                  <BookOpen className="w-4 h-4" />
-                  Common Questions
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
+                  <BookOpen className="w-3.5 h-3.5" />
+                  Step 05 • Common Questions
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
                   Frequently Asked Questions
@@ -1378,75 +1700,116 @@ class Node:
                 )
               })}
             </div>
+
+            {/* Journey Connector */}
+            <StepConnector nextLabel="Final Step: Start Learning Free Today" targetId="cta" stepNumber="06" />
           </div>
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            SECTION 6: FINAL CALL TO ACTION
+            SECTION 6: FINAL CALL TO ACTION — Clean Solid Design
             ═══════════════════════════════════════════════════════════════ */}
-        <section className="py-12 sm:py-16 px-4 md:px-8 text-center text-white relative overflow-hidden">
-          {/* Dot pattern */}
-          <div className="absolute inset-0 opacity-[0.03]" style={{
-            backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }} />
+        <section id="cta" className="py-10 sm:py-14 px-4 md:px-8 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+          <div className="max-w-6xl mx-auto">
+            <SectionReveal>
+              <div className="rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg p-6 sm:p-8 lg:p-10 text-center text-slate-900 dark:text-white space-y-6 transition-colors duration-300">
+                <div className="space-y-4 max-w-4xl mx-auto">
+                  {/* Step Badge */}
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-950 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Step 06 • Ready to Begin?
+                  </span>
 
-          <SectionReveal>
-            <div className="max-w-3xl mx-auto space-y-5 relative z-10">
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-              >
-                <Sparkles className="w-10 h-10 text-brand-400 mx-auto" />
-              </motion.div>
+                  {/* Headline */}
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                    Join the Offline Coding{' '}
+                    <span className="text-brand-600 dark:text-brand-400">
+                      Revolution
+                    </span>{' '}
+                    Today
+                  </h2>
 
-              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
-                Join the Offline Coding{' '}
-                <span className="text-brand-400">Revolution</span> Today
-              </h2>
-              <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-                Equip yourself with the tools to master programming and build software without barriers. Free, offline, and tailored for every African learner.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                <Link to="/signup">
-                  <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="font-bold shadow-lg h-14 px-10 bg-brand-600 hover:bg-brand-500 border border-brand-400 text-base"
-                      rightIcon={<ArrowRight className="w-5 h-5" />}
-                    >
-                      Create Free Account
-                    </Button>
-                  </motion.div>
-                </Link>
-                <Link to="/dashboard">
-                  <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="font-semibold h-14 px-8 bg-slate-950 text-slate-200 border-slate-700 hover:bg-slate-800 text-base"
-                    >
-                      Explore as Guest
-                    </Button>
-                  </motion.div>
-                </Link>
+                  {/* Empathy & Value Subtitle */}
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    Equip yourself with the tools to master programming and build real-world software without barriers. 100% free, runs completely on your laptop, and tailored for every African learner.
+                  </p>
+
+                  {/* 3 Value Cards with Clean Solid Surfaces */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-left">
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>100% Free Forever</span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        No subscription fees, credit cards, or hidden costs.
+                      </p>
+                    </div>
+
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+                      <div className="flex items-center gap-2 text-brand-600 dark:text-brand-400 text-xs font-mono font-bold">
+                        <Shield className="w-4 h-4" />
+                        <span>Private & Offline</span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Your code, notes, and progress stay safe on your computer.
+                      </p>
+                    </div>
+
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-mono font-bold">
+                        <Zap className="w-4 h-4" />
+                        <span>Instant Start</span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Setup in under 2 minutes and start coding right away.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                    <Link to="/signup">
+                      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                        <Button
+                          variant="primary"
+                          size="md"
+                          className="font-bold shadow-md h-11 px-7 bg-brand-600 hover:bg-brand-700 text-white border border-brand-500 text-sm"
+                          rightIcon={<ArrowRight className="w-4 h-4" />}
+                        >
+                          Create Free Account
+                        </Button>
+                      </motion.div>
+                    </Link>
+                    <Link to="/dashboard">
+                      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                        <Button
+                          variant="outline"
+                          size="md"
+                          className="font-semibold h-11 px-6 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm shadow-xs"
+                        >
+                          Explore as Guest
+                        </Button>
+                      </motion.div>
+                    </Link>
+                  </div>
+
+                  {/* Trust Footer Indicators */}
+                  <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 pt-4 text-[11px] text-slate-500 dark:text-slate-400 font-mono border-t border-slate-100 dark:border-slate-800">
+                    <span className="flex items-center gap-1.5">
+                      <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> No sign-up data leaves your device
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" /> Setup in under 2 minutes
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Heart className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" /> Made for African developers
+                    </span>
+                  </div>
+                </div>
               </div>
-
-              {/* Trust footer in CTA */}
-              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 text-[11px] text-slate-500 font-mono">
-                <span className="flex items-center gap-1.5">
-                  <Shield className="w-3 h-3" /> No sign-up data leaves your device
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="w-3 h-3" /> Setup in under 2 minutes
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Heart className="w-3 h-3" /> Free forever
-                </span>
-              </div>
-            </div>
-          </SectionReveal>
+            </SectionReveal>
+          </div>
         </section>
       </main>
 
