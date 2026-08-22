@@ -16,6 +16,7 @@ const CourseDetailPage = lazy(() => import('@/features/learning/pages/CourseDeta
 const LessonViewPage = lazy(() => import('@/features/learning/pages/LessonViewPage'))
 const ProgressPage = lazy(() => import('@/features/progress/pages/ProgressPage'))
 const SettingsPage = lazy(() => import('@/features/settings/pages/SettingsPage'))
+const AdminDashboardPage = lazy(() => import('@/features/admin/pages/AdminDashboardPage'))
 
 export const routes: RouteObject[] = [
   // Public standalone routes
@@ -99,6 +100,10 @@ export const routes: RouteObject[] = [
       {
         path: 'settings',
         element: <SettingsPage />,
+      },
+      {
+        path: 'admin',
+        element: <AdminDashboardPage />,
       },
       {
         path: '*',

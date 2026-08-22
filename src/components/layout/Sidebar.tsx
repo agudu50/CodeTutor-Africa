@@ -10,6 +10,7 @@ import {
   GraduationCap,
   BarChart3,
   Settings,
+  ShieldCheck,
   Sparkles,
   ChevronLeft,
   ChevronRight,
@@ -25,6 +26,7 @@ const iconMap = {
   GraduationCap,
   BarChart3,
   Settings,
+  ShieldCheck,
 }
 
 interface SidebarProps {

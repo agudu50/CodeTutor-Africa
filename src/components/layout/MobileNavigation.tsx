@@ -10,6 +10,7 @@ import {
   GraduationCap,
   BarChart3,
   Settings,
+  ShieldCheck,
   Sparkles,
   X,
   Shield,
@@ -24,6 +25,7 @@ const iconMap = {
   GraduationCap,
   BarChart3,
   Settings,
+  ShieldCheck,
 }
 
 interface MobileNavigationProps {

@@ -1,15 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { MOCK_COURSES } from '../data/mockCourseData'
+import { courseStoreService } from '@/services/learning/course-store.service'
+import { Course } from '@/types'
 import { CourseCard } from '../components/CourseCard'
 import { Input, Dropdown } from '@/components/ui'
 import { Search, BookOpen, Shield } from 'lucide-react'
 
 export const CourseListPage: React.FC = () => {
+  const [courses, setCourses] = useState<Course[]>(courseStoreService.getAllCourses())
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedLang, setSelectedLang] = useState('all')
 
-  const filteredCourses = MOCK_COURSES.filter((course) => {
+  useEffect(() => {
+    const handleUpdate = () => setCourses(courseStoreService.getAllCourses())
+    window.addEventListener('courses_updated', handleUpdate)
+    return () => window.removeEventListener('courses_updated', handleUpdate)
+  }, [])
+
+  const filteredCourses = courses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(searchTerm.toLowerCase())

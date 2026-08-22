@@ -1,13 +1,14 @@
 import React from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { MOCK_COURSES } from '../data/mockCourseData'
+import { courseStoreService } from '@/services/learning/course-store.service'
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Progress } from '@/components/ui'
 import { ChevronLeft, Play, CheckCircle2, Circle, Clock, BookOpen, Shield, Sparkles, Code2 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
-  const course = MOCK_COURSES.find((c) => c.id === courseId || c.slug === courseId) || MOCK_COURSES[0]
+  const courses = courseStoreService.getAllCourses()
+  const course = courses.find((c) => c.id === courseId || c.slug === courseId) || courses[0]
 
   const difficultyVariant =
     course.difficulty === 'beginner'

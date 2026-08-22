@@ -2,7 +2,7 @@ export interface NavItem {
   id: string
   label: string
   path: string
-  iconName: 'LayoutDashboard' | 'Bot' | 'Code2' | 'Bug' | 'GraduationCap' | 'BarChart3' | 'Settings'
+  iconName: 'LayoutDashboard' | 'Bot' | 'Code2' | 'Bug' | 'GraduationCap' | 'BarChart3' | 'Settings' | 'ShieldCheck'
   badge?: string
 }
 
@@ -43,6 +43,13 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: 'My Progress',
     path: '/progress',
     iconName: 'BarChart3',
+  },
+  {
+    id: 'admin',
+    label: 'Admin Portal',
+    path: '/admin',
+    iconName: 'ShieldCheck',
+    badge: 'Staff',
   },
   {
     id: 'settings',

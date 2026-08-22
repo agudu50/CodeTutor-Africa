@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { MOCK_COURSES } from '../data/mockCourseData'
+import { courseStoreService } from '@/services/learning/course-store.service'
 import { Card, Button, Badge, MarkdownRenderer } from '@/components/ui'
 import { ChevronLeft, CheckCircle2, Circle, Bot, Code2, ArrowRight, BookOpen, Clock } from 'lucide-react'
 
@@ -9,12 +9,12 @@ export const LessonViewPage: React.FC = () => {
   const { lessonId } = useParams<{ lessonId: string }>()
   const [isCompleted, setIsCompleted] = useState(false)
 
-  // Find lesson from mock courses
-  let foundLesson = MOCK_COURSES[0].modules[0]?.lessons[0]
-  let courseTitle = MOCK_COURSES[0].title
-  let courseId = MOCK_COURSES[0].id
+  const courses = courseStoreService.getAllCourses()
+  let foundLesson = courses[0]?.modules[0]?.lessons[0]
+  let courseTitle = courses[0]?.title || 'Course Track'
+  let courseId = courses[0]?.id || 'course-py-101'
 
-  for (const c of MOCK_COURSES) {
+  for (const c of courses) {
     for (const m of c.modules) {
       const l = m.lessons.find((les) => les.id === lessonId || les.slug === lessonId)
       if (l) {
