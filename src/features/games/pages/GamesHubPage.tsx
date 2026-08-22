@@ -6,6 +6,7 @@ import { SyntaxSpeedrunGame } from '../components/SyntaxSpeedrunGame'
 import { BugHuntGame } from '../components/BugHuntGame'
 import { OutputPredictorGame } from '../components/OutputPredictorGame'
 import { CodeShuffleGame } from '../components/CodeShuffleGame'
+import { Arcade3DHero } from '../components/3d/Arcade3DHero'
 import { gameSound } from '../services/gameSound.service'
 import {
   Gamepad2,
@@ -107,48 +108,55 @@ export const GamesHubPage: React.FC = () => {
       ) : (
         <>
           {/* ═══════════════════════════════════════════════════════════════
-              HERO ARCADE HEADER
+              HERO ARCADE HEADER WITH 3D THREE.JS CANVAS
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-            <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
-              <div className="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm ring-2 ring-brand-500/20">
-                <Gamepad2 className="w-6 h-6" />
-              </div>
-
-              <div className="space-y-1 min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-                    Coding Arcade & Mini-Games
-                  </h1>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 shrink-0">
-                    Offline Ready
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Sharpen your typing speed, spot bugs, and master algorithmic logic with quick 2-minute coding games.
-                </p>
-              </div>
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+            {/* Background 3D Three.js Interactive Mesh & Particles */}
+            <div className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 opacity-70 pointer-events-none">
+              <Arcade3DHero />
             </div>
 
-            {/* Sound & Mode Controls */}
-            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-              <button
-                type="button"
-                onClick={handleToggleSound}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors cursor-pointer shadow-2xs"
-              >
-                {soundEnabled ? (
-                  <>
-                    <Volume2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                    <span>Sound: ON</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Sound: MUTED</span>
-                  </>
-                )}
-              </button>
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 sm:p-6">
+              <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
+                <div className="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm ring-2 ring-brand-500/20">
+                  <Gamepad2 className="w-6 h-6" />
+                </div>
+
+                <div className="space-y-1 min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                      Coding Arcade & Mini-Games
+                    </h1>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 shrink-0">
+                      3D Interactive
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 max-w-lg">
+                    Sharpen your typing speed, spot bugs, and master algorithmic logic with quick 2-minute coding games and 3D visual animations.
+                  </p>
+                </div>
+              </div>
+
+              {/* Sound & Mode Controls */}
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <button
+                  type="button"
+                  onClick={handleToggleSound}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/90 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors cursor-pointer shadow-2xs backdrop-blur-xs"
+                >
+                  {soundEnabled ? (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                      <span>Sound: ON</span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Sound: MUTED</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CODE_SHUFFLE_CHALLENGES } from '../data/gameData'
 import { CodeShuffleChallenge } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
   Shuffle,
@@ -151,10 +152,8 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({ onBack, onScor
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
-            <Trophy className="w-8 h-8" />
-          </div>
+        <div className="p-6 sm:p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
+          <VictoryBurst3D />
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">All Puzzles Solved!</h2>
             <p className="text-xs text-slate-500">Your total score:</p>

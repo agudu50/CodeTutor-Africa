@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { BUG_HUNT_CHALLENGES } from '../data/gameData'
 import { BugHuntChallenge } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { HologramBug3D } from './3d/HologramBug3D'
+import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
   Bug,
@@ -222,10 +224,8 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({ onBack, onScoreUpdate 
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto">
-            <Trophy className="w-8 h-8" />
-          </div>
+        <div className="p-6 sm:p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
+          <VictoryBurst3D />
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Bug Hunt Complete!</h2>
             <p className="text-xs text-slate-500">Your total score is:</p>
@@ -243,6 +243,12 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({ onBack, onScoreUpdate 
         </div>
       ) : (
         <div className="space-y-4">
+          {/* 3D Holographic Bug Radar */}
+          <HologramBug3D
+            isTargetLocked={isLineConfirmed}
+            isSquashed={feedback?.isSuccess ?? false}
+          />
+
           {/* Challenge Description */}
           <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
             <div className="flex items-center justify-between gap-2">

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { SPEEDRUN_SNIPPETS } from '../data/gameData'
 import { SpeedrunSnippet } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { WarpSpeed3D } from './3d/WarpSpeed3D'
+import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
   Timer,
@@ -215,10 +217,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({ onBack, 
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
-            <Trophy className="w-8 h-8" />
-          </div>
+        <div className="p-6 sm:p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
+          <VictoryBurst3D />
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Run Complete!</h2>
             <p className="text-xs text-slate-500">Here is your speedrun performance summary:</p>
@@ -254,6 +254,9 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({ onBack, 
         </div>
       ) : (
         <div className="space-y-4">
+          {/* 3D Warp Speed Tunnel reacting to speed & combo */}
+          <WarpSpeed3D speedMultiplier={Math.max(1, wpm / 15)} comboCount={streak} />
+
           {/* Snippet Card */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-2xs">
             <div className="flex items-center justify-between gap-2">
