@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { Button } from '@/components/ui'
+import { Button, Avatar } from '@/components/ui'
 import { MOCK_DASHBOARD_DATA } from '../data/mockDashboardData'
 import { MOCK_COURSES } from '@/features/learning/data/mockCourseData'
 import { useUserProfile } from '@/app/providers/UserProfileProvider'
@@ -19,27 +19,41 @@ export const DashboardPage: React.FC = () => {
   return (
     <PageContainer maxWidth="2xl" className="space-y-4 sm:space-y-6">
       {/* ═══════════════════════════════════════════════════════════════
-          WELCOME HEADER BANNER
+          WELCOME HEADER HERO BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-        <div className="space-y-1.5 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-              Welcome back, {profile.fullName}
-            </h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-              100% Offline AI
-            </span>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
+          <Avatar
+            src={profile.avatarUrl || undefined}
+            fallbackName={profile.fullName || 'User'}
+            size="lg"
+            className="bg-brand-600 text-white font-bold shrink-0 shadow-sm ring-2 ring-brand-500/20 w-11 h-11 sm:w-13 sm:h-13 text-base sm:text-lg"
+          />
 
-          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-            <span className="truncate">{profile.location}</span>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 font-medium">
-              <Target className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-              Daily target: {profile.dailyTargetMins} mins
-            </span>
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                Welcome back,{' '}
+                <span className="text-brand-600 dark:text-brand-400 font-extrabold">
+                  {profile.fullName}
+                </span>
+              </h1>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                100% Offline AI
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+              <span className="font-medium text-slate-600 dark:text-slate-300 truncate">
+                {profile.bio || profile.location}
+              </span>
+              <span className="text-slate-300 dark:text-slate-700 hidden xs:inline">•</span>
+              <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 font-medium">
+                <Target className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                <span>Daily goal: <strong className="font-mono text-slate-900 dark:text-white">{profile.dailyTargetMins}m</strong></span>
+              </span>
+            </div>
           </div>
         </div>
 
