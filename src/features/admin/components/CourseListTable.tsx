@@ -66,15 +66,28 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                     key={course.id}
                     className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
                   >
-                    {/* Title */}
+                    {/* Title & Thumbnail */}
                     <td className="py-3.5 px-4">
-                      <div className="space-y-0.5">
-                        <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5">
-                          <span>{course.title}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center">
+                          {course.thumbnailUrl ? (
+                            <img
+                              src={course.thumbnailUrl}
+                              alt={course.title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400 opacity-60" />
+                          )}
                         </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                          /{course.slug}
-                        </p>
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5 truncate">
+                            <span className="truncate">{course.title}</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate">
+                            /{course.slug}
+                          </p>
+                        </div>
                       </div>
                     </td>
 

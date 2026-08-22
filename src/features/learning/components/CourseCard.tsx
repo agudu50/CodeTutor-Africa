@@ -13,22 +13,43 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
       : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
 
   return (
-    <Card hoverable className="flex flex-col justify-between p-5 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full">
+    <Card hoverable className="flex flex-col justify-between p-4 sm:p-5 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full overflow-hidden">
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyBadge}`}>
-            {course.difficulty}
-          </span>
-          <Badge variant="brand" size="sm" className="uppercase font-mono text-[10px] font-bold">
-            {course.language}
-          </Badge>
-        </div>
+        {/* Cover Image Banner (If present) */}
+        {course.thumbnailUrl ? (
+          <div className="h-36 w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 relative group bg-slate-950">
+            <img
+              src={course.thumbnailUrl}
+              alt={course.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+              <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded backdrop-blur-xs border ${difficultyBadge}`}>
+                {course.difficulty}
+              </span>
+              <Badge variant="brand" size="sm" className="uppercase font-mono text-[10px] font-bold shadow-xs">
+                {course.language}
+              </Badge>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyBadge}`}>
+              {course.difficulty}
+            </span>
+            <Badge variant="brand" size="sm" className="uppercase font-mono text-[10px] font-bold">
+              {course.language}
+            </Badge>
+          </div>
+        )}
 
         <div>
           <span className="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">
             {course.category}
           </span>
-          <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+          <CardTitle className="text-base font-bold text-slate-900 dark:text-white leading-snug">
             {course.title}
           </CardTitle>
         </div>
@@ -37,7 +58,7 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
           {course.description}
         </p>
 
-        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1 font-medium">
+        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1 font-medium font-mono">
           <span className="flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
             {course.totalLessons} Lessons
@@ -61,7 +82,7 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
         )}
 
         <div className="flex items-center justify-between pt-1">
-          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
             <Shield className="w-3 h-3" /> Offline Cached
           </span>
           <Link to={`/learning/courses/${course.id}`}>

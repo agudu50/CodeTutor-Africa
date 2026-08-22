@@ -35,29 +35,41 @@ export const CourseDetailPage: React.FC = () => {
       </div>
 
       {/* Course Hero Banner */}
-      <Card className="p-6 sm:p-7 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-5 shadow-xs">
-        {/* Badges Row */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="brand" size="sm" className="uppercase font-mono font-bold text-[10px]">
-            {course.language}
-          </Badge>
-          <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyVariant}`}>
-            {course.difficulty}
-          </span>
-          <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-            {course.category}
-          </span>
-        </div>
+      <Card className="p-0 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
+        {course.thumbnailUrl && (
+          <div className="h-44 sm:h-56 w-full relative bg-slate-950 overflow-hidden border-b border-slate-200 dark:border-slate-800">
+            <img
+              src={course.thumbnailUrl}
+              alt={course.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+          </div>
+        )}
 
-        {/* Title & Description */}
-        <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            {course.title}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-            {course.description}
-          </p>
-        </div>
+        <div className="p-6 sm:p-7 space-y-5">
+          {/* Badges Row */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="brand" size="sm" className="uppercase font-mono font-bold text-[10px]">
+              {course.language}
+            </Badge>
+            <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyVariant}`}>
+              {course.difficulty}
+            </span>
+            <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              {course.category}
+            </span>
+          </div>
+
+          {/* Title & Description */}
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+              {course.title}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+              {course.description}
+            </p>
+          </div>
 
         {/* Telemetry Row */}
         <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 font-medium">
@@ -85,6 +97,7 @@ export const CourseDetailPage: React.FC = () => {
             <Progress value={course.progressPercentage} variant="brand" size="md" />
           </div>
         )}
+        </div>
       </Card>
 
       {/* Curriculum Syllabus */}

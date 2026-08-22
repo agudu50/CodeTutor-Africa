@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react'
+import React, { useState, useEffect, useRef, memo } from 'react'
 import { Course, ProgrammingLanguage, DifficultyLevel, Module } from '@/types'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { Button, Input, Textarea, Dropdown } from '@/components/ui'
@@ -10,7 +10,36 @@ import {
   Check,
   Clock,
   Database,
+  Sparkles,
 } from 'lucide-react'
+
+// Preset Curated Cover Images (SVGs and gradients that work 100% offline)
+const PRESET_COVERS = [
+  {
+    label: 'Python Dark',
+    url: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    label: 'JavaScript Neon',
+    url: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    label: 'Java Enterprise',
+    url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    label: 'Algorithms & Math',
+    url: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    label: 'Systems & Hardware',
+    url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    label: 'Cloud & Database',
+    url: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&auto=format&fit=crop&q=80',
+  },
+]
 
 interface CourseEditorModalProps {
   isOpen: boolean
@@ -32,6 +61,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   const [category, setCategory] = useState('Core Programming')
   const [estimatedHours, setEstimatedHours] = useState(20)
   const [description, setDescription] = useState('')
+  const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [modules, setModules] = useState<Array<{
     id: string
     title: string
@@ -45,6 +75,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   }>>([])
 
   const [isSaving, setIsSaving] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (courseToEdit) {
@@ -55,6 +86,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setCategory(courseToEdit.category)
       setEstimatedHours(courseToEdit.estimatedHours)
       setDescription(courseToEdit.description)
+      setThumbnailUrl(courseToEdit.thumbnailUrl || '')
       setModules(
         courseToEdit.modules.map((m) => ({
           id: m.id,
@@ -77,6 +109,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setCategory('Core Programming')
       setEstimatedHours(16)
       setDescription('')
+      setThumbnailUrl('')
       setModules([
         {
           id: `mod-${Date.now()}-1`,
@@ -102,6 +135,26 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
     if (!courseToEdit) {
       setSlug(newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''))
     }
+  }
+
+  // Handle local image file selection (convert to base64 DataURL for 100% offline persistence)
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Limit to 4MB
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Please select an image smaller than 4MB.')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setThumbnailUrl(event.target.result as string)
+      }
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleAddModule = () => {
@@ -188,6 +241,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         category,
         estimatedHours,
         description,
+        thumbnailUrl: thumbnailUrl.trim() || undefined,
         totalLessons,
         modules: finalModules,
       }) || courseToEdit
@@ -200,6 +254,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         category,
         estimatedHours,
         description,
+        thumbnailUrl: thumbnailUrl.trim() || undefined,
         totalLessons,
         modules: finalModules,
       })
@@ -239,7 +294,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 {courseToEdit ? 'Edit Course Curriculum' : 'Create New Course Track'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Admin Course Creator with offline lesson indexing & modules.
+                Admin Course Creator with image banner & offline lesson indexing.
               </p>
             </div>
           </div>
@@ -339,6 +394,110 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
               onChange={(e) => setDescription(e.target.value)}
               className="text-xs font-sans leading-relaxed"
             />
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════════════
+              COURSE THUMBNAIL / BANNER IMAGE BUILDER
+              ═══════════════════════════════════════════════════════════════ */}
+          <div className="space-y-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 font-mono flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                  Course Cover Image / Thumbnail
+                </label>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Upload an image from your device (saved offline) or paste a custom image URL.
+                </p>
+              </div>
+
+              {thumbnailUrl && (
+                <button
+                  type="button"
+                  onClick={() => setThumbnailUrl('')}
+                  className="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
+                >
+                  Remove Image
+                </button>
+              )}
+            </div>
+
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleImageFileChange}
+              className="hidden"
+            />
+
+            {/* Image Preview & Upload Controls */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+              {/* Preview Thumbnail Container */}
+              <div className="sm:col-span-4 h-28 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden flex items-center justify-center relative group">
+                {thumbnailUrl ? (
+                  <img
+                    src={thumbnailUrl}
+                    alt="Course Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-3 text-slate-400 space-y-1">
+                    <BookOpen className="w-6 h-6 mx-auto opacity-50 text-brand-600 dark:text-brand-400" />
+                    <span className="text-[10px] font-mono block">No image selected</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload or URL Inputs */}
+              <div className="sm:col-span-8 space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="h-8 text-xs font-bold bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                    leftIcon={<Plus className="w-3.5 h-3.5" />}
+                  >
+                    Upload from Device
+                  </Button>
+
+                  <span className="text-[11px] text-slate-400 font-mono">or paste URL:</span>
+                </div>
+
+                <Input
+                  type="url"
+                  placeholder="https://example.com/course-banner.jpg or data:image/..."
+                  value={thumbnailUrl}
+                  onChange={(e) => setThumbnailUrl(e.target.value)}
+                  className="text-xs font-mono"
+                />
+
+                {/* Preset suggestions */}
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                    Quick Preset Covers:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {PRESET_COVERS.map((preset) => (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        onClick={() => setThumbnailUrl(preset.url)}
+                        className={`text-[10px] font-mono px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                          thumbnailUrl === preset.url
+                            ? 'bg-brand-600 text-white border-brand-600 shadow-2xs font-bold'
+                            : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-brand-400'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Module & Lesson Builder Section */}
