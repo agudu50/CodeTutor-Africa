@@ -53,12 +53,13 @@ const heroSlides = [
 ]
 
 /* ═══════════════════════════════════════════════════════════════════
-   CODE SAMPLES FOR LIVE PREVIEW
+   CODE SAMPLES & SYNCHRONIZED SOCRATIC DIALOGUE
    ═══════════════════════════════════════════════════════════════════ */
 const codeExamples = [
   {
     lang: 'python',
     filename: 'algorithms.py',
+    badge: 'Python • Recursion',
     code: `# Problem: Socratic Tutor guiding recursion
 def sum_list(items):
     # Hint: What is our base case when items is empty?
@@ -68,10 +69,18 @@ def sum_list(items):
     return items[0] + sum_list(items[1:])
 
 print("Sum:", sum_list([10, 20, 30, 40]))  # Output: 100`,
+    dialogue: {
+      student: 'I am getting a recursion limit exceeded error on my binary search function. What is wrong?',
+      ai: 'A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.',
+      hint: 'Look at lines 4 and 8 in your code: when low > high, is your function returning immediately or is it recalculating mid again?',
+      latency: 'CPU Latency: 38ms',
+      verified: 'Python AST Verified',
+    },
   },
   {
     lang: 'javascript',
     filename: 'eventLoop.js',
+    badge: 'JavaScript • Microtasks',
     code: `// Understanding JavaScript Microtasks & Promises
 console.log("1: Synchronous start");
 
@@ -81,10 +90,18 @@ Promise.resolve().then(() => {
 
 console.log("2: Synchronous end");
 // Tutor: "Notice how microtasks execute before timers!"`,
+    dialogue: {
+      student: 'Why does the Promise microtask execute before setTimeout(..., 0) in the event loop?',
+      ai: 'The JavaScript engine drains the entire microtask queue at the end of the current synchronous tick before polling the timer queue.',
+      hint: 'Notice the output sequence 1 -> 2 -> 3: what runs while the main thread call stack is still synchronously active?',
+      latency: 'CPU Latency: 42ms',
+      verified: 'V8 Event Loop Verified',
+    },
   },
   {
     lang: 'java',
     filename: 'BankLedger.java',
+    badge: 'Java • Encapsulation',
     code: `// Java OOP: Encapsulation & Memory Safety
 public class BankLedger {
     private double balance;
@@ -94,6 +111,13 @@ public class BankLedger {
         this.balance += amount;
     }
 }`,
+    dialogue: {
+      student: 'Why should balance be private with a method instead of making balance public?',
+      ai: 'Encapsulation prevents unauthorized state mutations and allows validating invariants (like amount > 0) before modifying ledger balances.',
+      hint: 'If balance were public, what would prevent external code from directly writing account.balance = -5000 and bypassing the deposit check?',
+      latency: 'CPU Latency: 35ms',
+      verified: 'JVM OOP Model Verified',
+    },
   },
 ]
 
@@ -177,21 +201,20 @@ function renderVSCodeTokens(lineText: string, lineIndex: number) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TERMINAL PREVIEW COMPONENT (VS CODE THEMED & AUTO-ADVANCING)
+   TERMINAL PREVIEW COMPONENT (VS CODE THEMED & SYNCHRONIZED)
    ═══════════════════════════════════════════════════════════════ */
-const TerminalLivePreview: React.FC = memo(() => {
-  const [activeTab, setActiveTab] = useState(0)
-  const [displayedCode, setDisplayedCode] = useState(codeExamples[0].code)
-  const [isHovered, setIsHovered] = useState(false)
+interface TerminalLivePreviewProps {
+  activeTab: number
+  setActiveTab: (tab: number) => void
+  onHoverChange: (isHovered: boolean) => void
+}
 
-  // Auto-switch languages by itself every 3.8 seconds
-  useEffect(() => {
-    if (isHovered) return
-    const timer = setInterval(() => {
-      setActiveTab((prev) => (prev + 1) % codeExamples.length)
-    }, 3800)
-    return () => clearInterval(timer)
-  }, [isHovered])
+const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
+  activeTab,
+  setActiveTab,
+  onHoverChange,
+}) => {
+  const [displayedCode, setDisplayedCode] = useState(codeExamples[0].code)
 
   // Typewriter effect on activeTab change
   useEffect(() => {
@@ -212,8 +235,8 @@ const TerminalLivePreview: React.FC = memo(() => {
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => onHoverChange(true)}
+      onMouseLeave={() => onHoverChange(false)}
       className="flex flex-col flex-1 rounded-2xl border border-slate-300 dark:border-slate-700 bg-[#1E1E1E] shadow-2xl overflow-hidden font-mono text-xs text-left"
     >
       {/* Code Editor Tab Bar (Enhanced VS Code Style) */}
@@ -383,6 +406,10 @@ export const LandingPage: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isSlidePaused, setIsSlidePaused] = useState(false)
+  const [activeCodeTab, setActiveCodeTab] = useState(0)
+  const [isCodePaused, setIsCodePaused] = useState(false)
+  const [testimonialSlide, setTestimonialSlide] = useState(0)
+  const [isTestimonialPaused, setIsTestimonialPaused] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
 
@@ -397,6 +424,24 @@ export const LandingPage: React.FC = () => {
     }, 3200)
     return () => clearInterval(timer)
   }, [isSlidePaused])
+
+  // Auto-advance code IDE and Socratic dialogue synchronously (4.5s transition)
+  useEffect(() => {
+    if (isCodePaused) return
+    const timer = setInterval(() => {
+      setActiveCodeTab((prev) => (prev + 1) % codeExamples.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [isCodePaused])
+
+  // Auto-advance student testimonials slide show (4.5s transition)
+  useEffect(() => {
+    if (isTestimonialPaused) return
+    const timer = setInterval(() => {
+      setTestimonialSlide((prev) => (prev + 1) % studentTestimonials.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [isTestimonialPaused])
 
   // Scroll position listener
   useEffect(() => {
@@ -994,13 +1039,23 @@ export const LandingPage: React.FC = () => {
           <div className="space-y-3 flex flex-col h-full">
             <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
               <span>1. Multi-Language Code Runner</span>
-              <span className="font-mono text-[11px] text-[#005F02] font-bold">Python • JS • Java</span>
+              <span className="font-mono text-[11px] text-[#005F02] font-bold">
+                {codeExamples[activeCodeTab].badge}
+              </span>
             </div>
-            <TerminalLivePreview />
+            <TerminalLivePreview
+              activeTab={activeCodeTab}
+              setActiveTab={setActiveCodeTab}
+              onHoverChange={setIsCodePaused}
+            />
           </div>
 
           {/* Right: Socratic Dialogue Simulator */}
-          <div className="space-y-3 flex flex-col h-full">
+          <div
+            className="space-y-3 flex flex-col h-full"
+            onMouseEnter={() => setIsCodePaused(true)}
+            onMouseLeave={() => setIsCodePaused(false)}
+          >
             <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
               <span>2. Real-Time Pedagogical Dialogue</span>
               <span className="font-mono text-[11px] text-[#005F02] font-bold">Mode: Socratic Hint</span>
@@ -1023,41 +1078,50 @@ export const LandingPage: React.FC = () => {
                 </span>
               </div>
 
-              {/* Conversation Box */}
-              <div className="p-5 space-y-4 text-xs sm:text-sm flex-1 flex flex-col justify-between">
-                <div className="space-y-4">
-                  {/* Student Question */}
-                  <div className="flex justify-end">
-                    <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
-                      <p className="font-medium">I am getting a recursion limit exceeded error on my binary search function. What is wrong?</p>
+              {/* Conversation Box (Synchronized with Active Language) */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeCodeTab}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.25 }}
+                  className="p-5 space-y-4 text-xs sm:text-sm flex-1 flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    {/* Student Question */}
+                    <div className="flex justify-end">
+                      <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
+                        <p className="font-medium">{codeExamples[activeCodeTab].dialogue.student}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* AI Tutor Socratic Guidance */}
-                  <div className="flex justify-start">
-                    <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
-                      <p className="leading-relaxed">
-                        A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.
-                      </p>
-                      
-                      <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
-                        <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
-                          <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
-                          <span>Guided Socratic Check:</span>
-                        </div>
-                        <p className="italic text-slate-700 dark:text-slate-300">
-                          "Look at lines 4 and 8 in your code: when low &gt; high, is your function returning immediately or is it recalculating mid again?"
+                    {/* AI Tutor Socratic Guidance */}
+                    <div className="flex justify-start">
+                      <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
+                        <p className="leading-relaxed">
+                          {codeExamples[activeCodeTab].dialogue.ai}
                         </p>
+                        
+                        <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
+                          <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
+                            <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
+                            <span>Guided Socratic Check:</span>
+                          </div>
+                          <p className="italic text-slate-700 dark:text-slate-300">
+                            "{codeExamples[activeCodeTab].dialogue.hint}"
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-2 shrink-0">
-                  <span>CPU Latency: 38ms</span>
-                  <span className="text-[#005F02] font-bold">✓ Zero Cloud Leak</span>
-                </div>
-              </div>
+                  <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-2 shrink-0">
+                    <span>{codeExamples[activeCodeTab].dialogue.latency}</span>
+                    <span className="text-[#005F02] font-bold">✓ {codeExamples[activeCodeTab].dialogue.verified}</span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -1088,10 +1152,15 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 5: STUDENT VOICES & TESTIMONIALS (GLASSMORPHISM)
+          SECTION 5: STUDENT VOICES & TESTIMONIALS (ANIMATED SLIDESHOW)
           ═══════════════════════════════════════════════════════════════ */}
-      <section id="testimonials" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+      <section
+        id="testimonials"
+        className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full relative z-10"
+        onMouseEnter={() => setIsTestimonialPaused(true)}
+        onMouseLeave={() => setIsTestimonialPaused(false)}
+      >
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
             <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Student Stories
           </span>
@@ -1103,40 +1172,94 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Interconnected Linked Testimonials Strip */}
-        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 sm:p-8 shadow-xl dark:shadow-2xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {studentTestimonials.map((t, idx) => (
-              <div
-                key={idx}
-                className="bg-slate-50/80 dark:bg-white/[0.03] backdrop-blur-md border border-slate-200 dark:border-white/[0.06] rounded-2xl p-6 space-y-4 flex flex-col justify-between shadow-sm dark:shadow-inner hover:border-[#005F02] hover:bg-white dark:hover:bg-white/[0.06] transition-all"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[#005F02]">
-                    <div className="flex gap-1 text-[#005F02] text-sm">
-                      <span>★</span>
-                      <span>★</span>
-                      <span>★</span>
-                      <span>★</span>
-                      <span>★</span>
-                    </div>
-                    <Quote className="w-5 h-5 text-slate-400 dark:text-slate-600" />
+        {/* Featured Testimonial Slideshow Box */}
+        <div className="relative rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 sm:p-10 shadow-xl dark:shadow-2xl overflow-hidden min-h-[300px] flex flex-col justify-between">
+          {/* Navigation Arrows */}
+          <div className="absolute top-6 right-6 flex items-center gap-2 z-20">
+            <button
+              type="button"
+              onClick={() => setTestimonialSlide((prev) => (prev === 0 ? studentTestimonials.length - 1 : prev - 1))}
+              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setTestimonialSlide((prev) => (prev + 1) % studentTestimonials.length)}
+              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
+              aria-label="Next testimonial"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Animated Testimonial Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={testimonialSlide}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+              className="space-y-6 flex-1 flex flex-col justify-between"
+            >
+              <div className="space-y-4 pr-16 sm:pr-24">
+                {/* 5 Stars Rating & Quote Icon */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-[#005F02] text-base sm:text-lg">
+                    <span>★</span>
+                    <span>★</span>
+                    <span>★</span>
+                    <span>★</span>
+                    <span>★</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
-                    "{t.quote}"
-                  </p>
+                  <Quote className="w-6 h-6 text-[#005F02]/40 shrink-0" />
                 </div>
 
-                <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">{t.name}</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">{t.university}</div>
-                  </div>
-                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-[#005F02]/15 dark:bg-[#005F02]/30 text-[#005F02] border border-[#005F02]/40">
-                    {t.tag}
-                  </span>
-                </div>
+                {/* Big Quote */}
+                <blockquote className="text-base sm:text-xl md:text-2xl text-slate-800 dark:text-slate-200 font-medium italic leading-relaxed">
+                  "{studentTestimonials[testimonialSlide].quote}"
+                </blockquote>
               </div>
+
+              {/* Author Profile Footer */}
+              <div className="pt-6 border-t border-slate-200 dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-full bg-[#005F02] text-white font-bold flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-slate-800">
+                    {studentTestimonials[testimonialSlide].name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
+                      {studentTestimonials[testimonialSlide].name}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      {studentTestimonials[testimonialSlide].role} • <span className="font-semibold text-slate-700 dark:text-slate-300">{studentTestimonials[testimonialSlide].university}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 text-[#005F02] border border-[#005F02]/40">
+                  {studentTestimonials[testimonialSlide].tag}
+                </span>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Bottom Interactive Slide Indicators */}
+          <div className="flex items-center justify-center gap-2 pt-6 mt-2">
+            {studentTestimonials.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setTestimonialSlide(idx)}
+                className={`transition-all rounded-full flex items-center gap-1.5 ${
+                  testimonialSlide === idx
+                    ? 'w-8 h-2.5 bg-[#005F02]'
+                    : 'w-2.5 h-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-[#005F02]/50'
+                }`}
+                aria-label={`Jump to slide ${idx + 1}`}
+              />
             ))}
           </div>
         </div>
