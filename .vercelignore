@@ -1,0 +1,13 @@
+# Ignore heavy backend models and local environments
+models/
+server/models/
+server/venv/
+server/data/
+data/
+*.gguf
+*.bin
+*.tar.gz
+.venv/
+venv/
+node_modules/
+.git/
