@@ -1,12 +1,16 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useTheme } from '@/app/providers/ThemeProvider'
 
 interface Arcade3DHeroProps {
   className?: string
 }
 
 export const Arcade3DHero: React.FC<Arcade3DHeroProps> = ({ className = '' }) => {
+  const { isDark } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
+  const isDarkRef = useRef(isDark)
+  isDarkRef.current = isDark
 
   useEffect(() => {
     const container = containerRef.current
@@ -25,25 +29,25 @@ export const Arcade3DHero: React.FC<Arcade3DHeroProps> = ({ className = '' }) =>
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     container.appendChild(renderer.domElement)
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
+    // Lighting (responsive to light/dark)
+    const ambientLight = new THREE.AmbientLight(0xffffff, isDarkRef.current ? 0.9 : 1.4)
     scene.add(ambientLight)
 
-    const pointLight1 = new THREE.PointLight(0x10b981, 3, 50) // emerald
+    const pointLight1 = new THREE.PointLight(0x10b981, isDarkRef.current ? 3 : 2.2, 50) // emerald
     pointLight1.position.set(4, 4, 4)
     scene.add(pointLight1)
 
-    const pointLight2 = new THREE.PointLight(0xf59e0b, 3, 50) // amber
+    const pointLight2 = new THREE.PointLight(0xf59e0b, isDarkRef.current ? 3 : 2.2, 50) // amber
     pointLight2.position.set(-4, -4, 2)
     scene.add(pointLight2)
 
     // Main 3D Floating Geometry (Rotating Wireframe Icosahedron)
     const icoGeo = new THREE.IcosahedronGeometry(1.5, 1)
     const icoMat = new THREE.MeshStandardMaterial({
-      color: 0x059669,
+      color: isDarkRef.current ? 0x10b981 : 0x047857,
       wireframe: true,
       roughness: 0.2,
-      metalness: 0.8,
+      metalness: isDarkRef.current ? 0.8 : 0.4,
     })
     const icosahedron = new THREE.Mesh(icoGeo, icoMat)
     scene.add(icosahedron)
@@ -53,7 +57,7 @@ export const Arcade3DHero: React.FC<Arcade3DHeroProps> = ({ className = '' }) =>
     const knotMat = new THREE.MeshStandardMaterial({
       color: 0xd97706,
       roughness: 0.3,
-      metalness: 0.9,
+      metalness: isDarkRef.current ? 0.9 : 0.5,
     })
     const innerKnot = new THREE.Mesh(knotGeo, knotMat)
     scene.add(innerKnot)
@@ -67,10 +71,10 @@ export const Arcade3DHero: React.FC<Arcade3DHeroProps> = ({ className = '' }) =>
     const particlesGeo = new THREE.BufferGeometry()
     particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3))
     const particlesMat = new THREE.PointsMaterial({
-      size: 0.05,
-      color: 0x34d399,
+      size: isDarkRef.current ? 0.05 : 0.07,
+      color: isDarkRef.current ? 0x34d399 : 0x059669,
       transparent: true,
-      opacity: 0.8,
+      opacity: isDarkRef.current ? 0.8 : 0.9,
     })
     const particleSystem = new THREE.Points(particlesGeo, particlesMat)
     scene.add(particleSystem)
@@ -141,7 +145,7 @@ export const Arcade3DHero: React.FC<Arcade3DHeroProps> = ({ className = '' }) =>
       particlesMat.dispose()
       renderer.dispose()
     }
-  }, [])
+  }, [isDark])
 
   return (
     <div

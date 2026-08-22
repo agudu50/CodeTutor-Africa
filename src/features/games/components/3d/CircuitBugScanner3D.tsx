@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useTheme } from '@/app/providers/ThemeProvider'
 
 interface CircuitBugScanner3DProps {
   totalLines: number
@@ -20,6 +21,7 @@ export const CircuitBugScanner3D: React.FC<CircuitBugScanner3DProps> = ({
   hasError,
   className = '',
 }) => {
+  const { isDark } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
 
   const lineCountRef = useRef(totalLines)
@@ -54,17 +56,17 @@ export const CircuitBugScanner3D: React.FC<CircuitBugScanner3DProps> = ({
     container.appendChild(renderer.domElement)
 
     // Lighting
-    const ambient = new THREE.AmbientLight(0xffffff, 0.7)
+    const ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.7 : 1.3)
     scene.add(ambient)
 
-    const laserLight = new THREE.PointLight(0xf43f5e, 2, 10)
+    const laserLight = new THREE.PointLight(0xf43f5e, isDark ? 2 : 1.5, 10)
     scene.add(laserLight)
 
     // Motherboard Chip Base
     const boardGeo = new THREE.BoxGeometry(7, 0.2, 3)
     const boardMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      metalness: 0.8,
+      color: isDark ? 0x0f172a : 0xe2e8f0,
+      metalness: isDark ? 0.8 : 0.2,
       roughness: 0.3,
     })
     const board = new THREE.Mesh(boardGeo, boardMat)
@@ -81,7 +83,7 @@ export const CircuitBugScanner3D: React.FC<CircuitBugScanner3DProps> = ({
 
     for (let i = 0; i < nodeCount; i++) {
       const nodeMat = new THREE.MeshStandardMaterial({
-        color: 0x334155, // slate default
+        color: isDark ? 0x334155 : 0x94a3b8, // slate default
         roughness: 0.4,
       })
       const nodeMesh = new THREE.Mesh(nodeGeo, nodeMat)
@@ -212,12 +214,12 @@ export const CircuitBugScanner3D: React.FC<CircuitBugScanner3DProps> = ({
       beamMat.dispose()
       renderer.dispose()
     }
-  }, [])
+  }, [isDark])
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-950 border border-slate-800 shadow-inner ${className}`}
+      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner ${className}`}
       aria-hidden="true"
     />
   )

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useTheme } from '@/app/providers/ThemeProvider'
 
 interface AlgorithmBlocks3DProps {
   blockOrder: string[]
@@ -12,6 +13,7 @@ export const AlgorithmBlocks3D: React.FC<AlgorithmBlocks3DProps> = ({
   isSuccess,
   className = '',
 }) => {
+  const { isDark } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const orderRef = useRef(blockOrder)
   const successRef = useRef(isSuccess)
@@ -37,17 +39,18 @@ export const AlgorithmBlocks3D: React.FC<AlgorithmBlocks3DProps> = ({
     container.appendChild(renderer.domElement)
 
     // Lighting
-    const ambient = new THREE.AmbientLight(0xffffff, 0.8)
+    const ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.8 : 1.3)
     scene.add(ambient)
 
-    const mainLight = new THREE.PointLight(0x10b981, 2, 20)
+    const mainLight = new THREE.PointLight(0x10b981, isDark ? 2 : 1.6, 20)
     mainLight.position.set(2, 4, 3)
     scene.add(mainLight)
 
     // Platform Base
     const baseGeo = new THREE.BoxGeometry(6.5, 0.2, 2)
     const baseMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
+      color: isDark ? 0x0f172a : 0xe2e8f0,
+      metalness: isDark ? 0.8 : 0.2,
       roughness: 0.3,
     })
     const base = new THREE.Mesh(baseGeo, baseMat)
@@ -142,12 +145,12 @@ export const AlgorithmBlocks3D: React.FC<AlgorithmBlocks3DProps> = ({
       })
       renderer.dispose()
     }
-  }, [blockOrder.length])
+  }, [blockOrder.length, isDark])
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-950 border border-slate-800 shadow-inner ${className}`}
+      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner ${className}`}
       aria-hidden="true"
     />
   )

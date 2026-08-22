@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useTheme } from '@/app/providers/ThemeProvider'
 
 interface CyberRacer3DProps {
   progressPercent: number // 0 to 100%
@@ -16,17 +17,20 @@ export const CyberRacer3D: React.FC<CyberRacer3DProps> = ({
   isCompleted,
   className = '',
 }) => {
+  const { isDark } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
 
   const progressRef = useRef(progressPercent)
   const wpmRef = useRef(wpm)
   const errorRef = useRef(hasError)
   const completedRef = useRef(isCompleted)
+  const isDarkRef = useRef(isDark)
 
   progressRef.current = progressPercent
   wpmRef.current = wpm
   errorRef.current = hasError
   completedRef.current = isCompleted
+  isDarkRef.current = isDark
 
   useEffect(() => {
     const container = containerRef.current
@@ -36,7 +40,7 @@ export const CyberRacer3D: React.FC<CyberRacer3DProps> = ({
     const height = container.clientHeight || 140
 
     const scene = new THREE.Scene()
-    scene.fog = new THREE.FogExp2(0x020617, 0.08)
+    scene.fog = new THREE.FogExp2(isDark ? 0x020617 : 0xf1f5f9, 0.08)
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000)
     camera.position.set(0, 1.8, 4.5)
@@ -48,22 +52,27 @@ export const CyberRacer3D: React.FC<CyberRacer3DProps> = ({
     container.appendChild(renderer.domElement)
 
     // Lighting
-    const ambient = new THREE.AmbientLight(0xffffff, 0.6)
+    const ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.7 : 1.3)
     scene.add(ambient)
 
-    const headLight = new THREE.PointLight(0x10b981, 3, 20)
+    const headLight = new THREE.PointLight(0x10b981, isDark ? 3 : 2, 20)
     scene.add(headLight)
 
     // 3D Neon Road Track Grid
     const trackWidth = 4
     const trackLength = 40
-    const gridHelper = new THREE.GridHelper(trackLength, 20, 0x10b981, 0x1e293b)
+    const gridColor1 = isDark ? 0x10b981 : 0x059669
+    const gridColor2 = isDark ? 0x1e293b : 0xcbd5e1
+    const gridHelper = new THREE.GridHelper(trackLength, 20, gridColor1, gridColor2)
     gridHelper.position.set(0, 0, -trackLength / 2 + 5)
     gridHelper.scale.set(trackWidth / 20, 1, 1)
     scene.add(gridHelper)
 
     // Track Guardrails
-    const railMat = new THREE.MeshBasicMaterial({ color: 0x059669, wireframe: true })
+    const railMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x059669 : 0x0d9488,
+      wireframe: true,
+    })
     const leftRail = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.4, trackLength), railMat)
     leftRail.position.set(-trackWidth / 2 - 0.1, 0.2, -trackLength / 2 + 5)
     scene.add(leftRail)
@@ -205,12 +214,12 @@ export const CyberRacer3D: React.FC<CyberRacer3DProps> = ({
       archMat.dispose()
       renderer.dispose()
     }
-  }, [])
+  }, [isDark])
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-950 border border-slate-800 shadow-inner ${className}`}
+      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner ${className}`}
       aria-hidden="true"
     />
   )

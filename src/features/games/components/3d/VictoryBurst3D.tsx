@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useTheme } from '@/app/providers/ThemeProvider'
 
 interface VictoryBurst3DProps {
   className?: string
 }
 
 export const VictoryBurst3D: React.FC<VictoryBurst3DProps> = ({ className = '' }) => {
+  const { isDark } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -23,6 +25,10 @@ export const VictoryBurst3D: React.FC<VictoryBurst3DProps> = ({ className = '' }
     renderer.setSize(width, height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     container.appendChild(renderer.domElement)
+
+    // Lighting (responsive to light/dark)
+    const ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.7 : 1.3)
+    scene.add(ambient)
 
     // Center Gold Trophy Orb
     const orbGeo = new THREE.DodecahedronGeometry(1.2, 0)
@@ -142,7 +148,7 @@ export const VictoryBurst3D: React.FC<VictoryBurst3DProps> = ({ className = '' }
       partMat.dispose()
       renderer.dispose()
     }
-  }, [])
+  }, [isDark])
 
   return (
     <div

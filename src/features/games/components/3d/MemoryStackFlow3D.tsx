@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useTheme } from '@/app/providers/ThemeProvider'
 
 interface MemoryStackFlow3DProps {
   selectedOptionIndex: number | null
@@ -16,6 +17,7 @@ export const MemoryStackFlow3D: React.FC<MemoryStackFlow3DProps> = ({
   isCorrect,
   className = '',
 }) => {
+  const { isDark } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
 
   const selectedRef = useRef(selectedOptionIndex)
@@ -46,17 +48,17 @@ export const MemoryStackFlow3D: React.FC<MemoryStackFlow3DProps> = ({
     container.appendChild(renderer.domElement)
 
     // Lighting
-    const ambient = new THREE.AmbientLight(0xffffff, 0.8)
+    const ambient = new THREE.AmbientLight(0xffffff, isDark ? 0.8 : 1.3)
     scene.add(ambient)
 
-    const dataLight = new THREE.PointLight(0x6366f1, 3, 15) // indigo
+    const dataLight = new THREE.PointLight(0x6366f1, isDark ? 3 : 2, 15) // indigo
     scene.add(dataLight)
 
     // Center Memory Stack Node (CPU Core)
     const coreGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.8, 6)
     const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x4338ca,
-      metalness: 0.8,
+      color: isDark ? 0x4338ca : 0x6366f1,
+      metalness: isDark ? 0.8 : 0.3,
       roughness: 0.2,
       wireframe: true,
     })
@@ -71,7 +73,7 @@ export const MemoryStackFlow3D: React.FC<MemoryStackFlow3DProps> = ({
 
     for (let i = 0; i < 4; i++) {
       const portMat = new THREE.MeshStandardMaterial({
-        color: 0x334155,
+        color: isDark ? 0x334155 : 0x94a3b8,
         roughness: 0.3,
       })
       const port = new THREE.Mesh(portGeo, portMat)
@@ -178,12 +180,12 @@ export const MemoryStackFlow3D: React.FC<MemoryStackFlow3DProps> = ({
       packetMat.dispose()
       renderer.dispose()
     }
-  }, [])
+  }, [isDark])
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-950 border border-slate-800 shadow-inner ${className}`}
+      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner ${className}`}
       aria-hidden="true"
     />
   )
