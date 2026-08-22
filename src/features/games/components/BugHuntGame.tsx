@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { BUG_HUNT_CHALLENGES } from '../data/gameData'
 import { BugHuntChallenge } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
-import { HologramBug3D } from './3d/HologramBug3D'
+import { CircuitBugScanner3D } from './3d/CircuitBugScanner3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
@@ -243,10 +243,14 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({ onBack, onScoreUpdate 
         </div>
       ) : (
         <div className="space-y-4">
-          {/* 3D Holographic Bug Radar */}
-          <HologramBug3D
-            isTargetLocked={isLineConfirmed}
+          {/* 3D Circuit Bug Scanner responding to line selection & squash state */}
+          <CircuitBugScanner3D
+            totalLines={currentChallenge.lines.length}
+            selectedLineIndex={selectedLineIndex}
+            buggyLineIndex={currentChallenge.buggyLineIndex}
+            isLocked={isLineConfirmed}
             isSquashed={feedback?.isSuccess ?? false}
+            hasError={feedback !== null && !feedback.isSuccess}
           />
 
           {/* Challenge Description */}

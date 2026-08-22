@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CODE_SHUFFLE_CHALLENGES } from '../data/gameData'
 import { CodeShuffleChallenge } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { AlgorithmBlocks3D } from './3d/AlgorithmBlocks3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
@@ -171,6 +172,12 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({ onBack, onScor
         </div>
       ) : (
         <div className="space-y-4">
+          {/* 3D Physical Algorithm Blocks reflecting block ordering & verification */}
+          <AlgorithmBlocks3D
+            blockOrder={blocks.map((b) => b.id)}
+            isSuccess={feedback ? feedback.isSuccess : null}
+          />
+
           {/* Goal Header */}
           <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
             <div className="flex items-center justify-between gap-2">

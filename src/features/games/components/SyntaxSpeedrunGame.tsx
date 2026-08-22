@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { SPEEDRUN_SNIPPETS } from '../data/gameData'
 import { SpeedrunSnippet } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
-import { WarpSpeed3D } from './3d/WarpSpeed3D'
+import { CyberRacer3D } from './3d/CyberRacer3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
@@ -254,8 +254,13 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({ onBack, 
         </div>
       ) : (
         <div className="space-y-4">
-          {/* 3D Warp Speed Tunnel reacting to speed & combo */}
-          <WarpSpeed3D speedMultiplier={Math.max(1, wpm / 15)} comboCount={streak} />
+          {/* 3D Cyber Racer Track visualizer driven by typing progress and errors */}
+          <CyberRacer3D
+            progressPercent={currentSnippet.code.length > 0 ? Math.min(100, Math.round((userInput.length / currentSnippet.code.length) * 100)) : 0}
+            wpm={wpm}
+            hasError={accuracy < 90 && userInput.length > 0}
+            isCompleted={userInput === currentSnippet.code}
+          />
 
           {/* Snippet Card */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-2xs">

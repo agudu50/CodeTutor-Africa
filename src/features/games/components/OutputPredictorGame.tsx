@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { OUTPUT_PREDICTOR_CHALLENGES } from '../data/gameData'
 import { OutputPredictorChallenge } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { MemoryStackFlow3D } from './3d/MemoryStackFlow3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
@@ -219,6 +220,14 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({ onBack
         </div>
       ) : (
         <div className="space-y-4">
+          {/* 3D Memory Stack and Data Flow visualizer */}
+          <MemoryStackFlow3D
+            selectedOptionIndex={selectedOption}
+            correctIndex={currentChallenge.correctIndex}
+            isAnswered={feedback !== null}
+            isCorrect={feedback?.isSuccess ?? false}
+          />
+
           {/* Question Snippet */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
             <div className="flex items-center justify-between gap-2">
