@@ -68,7 +68,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = memo(({ isOpen,
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-slate-900 dark:text-white text-sm">
-                CodeTutor <span className="text-brand-600 dark:text-brand-400">Africa</span>
+                CodeTutor <span className="text-[#005F02] font-extrabold">Africa</span>
               </span>
               <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase font-semibold">
                 Offline Edition

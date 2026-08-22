@@ -43,7 +43,7 @@ export const SignInPage: React.FC = () => {
             <Sparkles className="w-5 h-5 text-accent-300" />
           </div>
           <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-            CodeTutor <span className="text-brand-600 dark:text-brand-400 font-extrabold">Africa</span>
+            CodeTutor <span className="text-[#005F02] font-extrabold">Africa</span>
           </span>
         </Link>
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">

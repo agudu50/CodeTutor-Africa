@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ collapsed, onToggleCollap
           {!collapsed && (
             <div className="flex flex-col min-w-0">
               <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1 truncate">
-                CodeTutor <span className="text-brand-600 dark:text-brand-400 font-extrabold">Africa</span>
+                CodeTutor <span className="text-[#005F02] font-extrabold">Africa</span>
               </span>
               <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase font-semibold">
                 Offline AI Core
