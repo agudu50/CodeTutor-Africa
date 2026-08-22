@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.1.0",
+  "profiler_version": "adtc-profiler 0.1.0",
+  "submission": {
+    "team_id": "codetutor-africa",
+    "submitter": {
+      "name": "CodeTutor Africa Team",
+      "email": "contact@codetutor.africa",
+      "github_handle": "agudu50"
+    },
+    "domain": "coding_assistants",
+    "language_scope": [
+      "en"
+    ],
+    "budget_laptop_claim": true,
+    "african_alpha_claim": true,
+    "cross_disciplinary_pairing": {
+      "discipline": "Computer Science Education & Pedagogical AI",
+      "load_bearing": true,
+      "description": "Offline Socratic tutoring system delivering compiler-guided diagnostics and localized curriculum scaffolding for African engineering students."
+    },
+    "test_prompts": [
+      {
+        "prompt_id": "prompt_1",
+        "prompt": "Explain the difference between mutable and immutable data types in Python with code examples."
+      },
+      {
+        "prompt_id": "prompt_2",
+        "prompt": "Write a Python function to find the maximum element in a list without using the built-in max() function."
+      }
+    ],
+    "model": {
+      "name": "Qwen2.5-Coder-1.5B-Instruct",
+      "runtime": "llama.cpp",
+      "quantization": "Q4_K_M",
+      "parameters_estimate": "1.78B",
+      "packaging": "binary_bundle"
+    }
+  },
+  "environment": {
+    "measured_on": "participant_laptop",
+    "cpu_model": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "ram_gb": 15.3,
+    "gpu": "none",
+    "os": "Windows-11-10.0.26200-SP0"
+  },
+  "throughput": {
+    "tokens_per_second_generation": 23.44,
+    "first_token_latency_ms": 6531.8,
+    "prompt_tokens": 512,
+    "generated_tokens": 128
+  },
+  "memory": {
+    "peak_rss_mb": 1729.99,
+    "steady_state_rss_mb": 1640.82,
+    "peak_vms_mb": 1056.27
+  },
+  "accuracy": [],
+  "cpu_thermal": {
+    "cpu_percent_p99": 96.8,
+    "core_temp_c_peak": null,
+    "throttled": false
+  },
+  "reproducibility": {
+    "git_commit_sha": "f1693ce96442",
+    "docker_image_digest": "unknown",
+    "random_seed": 42
+  },
+  "model_info": {
+    "params_count": 1777088000,
+    "context_length": 32768,
+    "architecture": "qwen2",
+    "claimed_params_estimate": "1.78B",
+    "params_match": true
+  }
+}

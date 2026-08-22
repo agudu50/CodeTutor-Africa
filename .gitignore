@@ -21,7 +21,9 @@ ENV/
 *.sqlite
 *.sqlite3
 server/data/database/codetutor.db
-models/*.gguf
+*.gguf
+bin/
+*.zip
 !server/models/.gitkeep
 
 # Environment variables & secrets

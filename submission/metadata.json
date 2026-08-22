@@ -1,31 +1,36 @@
 {
-  "team_name": "CodeTutor Africa",
-  "track": "Laptop LLM Track",
-  "competition": "Africa Deep Tech Challenge (ADTC) 2026",
+  "team_id": "codetutor-africa",
+  "submitter": {
+    "name": "CodeTutor Africa Team",
+    "email": "contact@codetutor.africa",
+    "github_handle": "agudu50"
+  },
+  "domain": "coding_assistants",
+  "language_scope": [
+    "en"
+  ],
+  "budget_laptop_claim": true,
+  "african_alpha_claim": true,
+  "cross_disciplinary_pairing": {
+    "discipline": "Computer Science Education & Pedagogical AI",
+    "load_bearing": true,
+    "description": "Offline Socratic tutoring system delivering compiler-guided diagnostics and localized curriculum scaffolding for African engineering students."
+  },
+  "test_prompts": [
+    {
+      "prompt_id": "prompt_1",
+      "prompt": "Explain the difference between mutable and immutable data types in Python with code examples."
+    },
+    {
+      "prompt_id": "prompt_2",
+      "prompt": "Write a Python function to find the maximum element in a list without using the built-in max() function."
+    }
+  ],
   "model": {
-    "name": "Qwen2.5-Coder-1.5B-Instruct-GGUF",
-    "architecture": "qwen2",
+    "name": "Qwen2.5-Coder-1.5B-Instruct",
+    "runtime": "llama.cpp",
     "quantization": "Q4_K_M",
-    "size_bytes": 1116982464,
-    "source_repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
-    "filename": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
-    "context_size": 2048,
-    "batch_size": 256,
-    "threads": 4,
-    "gpu_layers": 0
-  },
-  "hardware_target": {
-    "cpu": "Intel Core i5 (10-12th gen) / AMD Ryzen 5 (3000-5000)",
-    "ram_limit_gb": 7.0,
-    "discrete_gpu": false,
-    "storage_gb": 256,
-    "os": "Ubuntu 22.04 LTS"
-  },
-  "metrics_target": {
-    "target_tps": 22.5,
-    "tps_reference": 15.0,
-    "peak_rss_gb": 2.4,
-    "expected_s_perf": 100.0,
-    "expected_s_eff": 65.7
+    "parameters_estimate": "1.78B",
+    "packaging": "binary_bundle"
   }
 }

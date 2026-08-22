@@ -15,29 +15,41 @@ DEFAULT_OUTPUT_NAME = "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
 def download_file(url: str, output_path: str):
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
 
+    downloaded_bytes = 0
     if os.path.exists(output_path):
-        size_mb = os.path.getsize(output_path) / (1024 * 1024)
-        print(f"Model already exists at {output_path} ({size_mb:.2f} MB). Skipping download.")
-        return
+        downloaded_bytes = os.path.getsize(output_path)
+
+    headers = {}
+    if downloaded_bytes > 0:
+        headers["Range"] = f"bytes={downloaded_bytes}-"
+        print(f"Resuming download from byte offset: {downloaded_bytes / (1024*1024):.2f} MB")
 
     print(f"Downloading model from: {url}")
     print(f"Destination: {output_path}")
 
-    def progress_hook(block_num, block_size, total_size):
-        downloaded = block_num * block_size
-        if total_size > 0:
-            percent = min(100.0, (downloaded / total_size) * 100)
-            mb_downloaded = downloaded / (1024 * 1024)
-            mb_total = total_size / (1024 * 1024)
-            sys.stdout.write(f"\rProgress: [{percent:.1f}%] {mb_downloaded:.1f}/{mb_total:.1f} MB")
-            sys.stdout.flush()
-
+    req = urllib.request.Request(url, headers=headers)
     try:
-        urllib.request.urlretrieve(url, output_path, reporthook=progress_hook)
+        with urllib.request.urlopen(req, timeout=30) as response:
+            total_size = response.getheader("Content-Length")
+            total_bytes = downloaded_bytes + int(total_size) if total_size else 1116982464
+
+            mode = "ab" if downloaded_bytes > 0 else "wb"
+            with open(output_path, mode) as f:
+                chunk_size = 1024 * 512
+                curr_bytes = downloaded_bytes
+                while True:
+                    chunk = response.read(chunk_size)
+                    if not chunk:
+                        break
+                    f.write(chunk)
+                    curr_bytes += len(chunk)
+                    pct = min(100.0, (curr_bytes / total_bytes) * 100)
+                    sys.stdout.write(f"\rProgress: [{pct:.1f}%] {curr_bytes/(1024*1024):.1f} / {total_bytes/(1024*1024):.1f} MB")
+                    sys.stdout.flush()
+
         print(f"\nDownload completed successfully: {output_path}")
     except Exception as e:
-        print(f"\nError downloading model: {e}", file=sys.stderr)
-        sys.exit(1)
+        print(f"\nDownload paused/interrupted: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

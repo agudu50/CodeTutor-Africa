@@ -1,0 +1,42 @@
+{
+  "team_id": "codetutor-africa",
+  "verdict": "fail",
+  "checks": [
+    {
+      "field": "memory.peak_rss_mb",
+      "submission": 1729.99,
+      "audit": 1729.99,
+      "delta_pct": 0.0,
+      "tolerance_pct": 15.0,
+      "status": "pass"
+    },
+    {
+      "field": "memory.steady_state_rss_mb",
+      "submission": 1640.82,
+      "audit": 1640.82,
+      "delta_pct": 0.0,
+      "tolerance_pct": 15.0,
+      "status": "pass"
+    },
+    {
+      "field": "throughput.tokens_per_second_generation",
+      "submission": 23.44,
+      "audit": 23.44,
+      "delta_pct": 0.0,
+      "tolerance_pct": 25.0,
+      "status": "pass"
+    },
+    {
+      "field": "throughput.first_token_latency_ms",
+      "submission": 6531.8,
+      "audit": 6531.8,
+      "delta_pct": 0.0,
+      "tolerance_pct": 25.0,
+      "status": "pass"
+    }
+  ],
+  "accuracy_audit": [],
+  "notes": [
+    "audit environment.measured_on='participant_laptop' (expected audit_cloud_vm)"
+  ]
+}
