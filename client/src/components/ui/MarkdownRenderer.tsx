@@ -1,5 +1,6 @@
-import React, { memo } from 'react'
-import { AlertCircle } from 'lucide-react'
+import React, { memo, useState } from 'react'
+import { AlertCircle, Check, Copy, Code2 } from 'lucide-react'
+import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 
 interface MarkdownRendererProps {
   content: string
@@ -21,7 +22,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = memo(({ content
             return (
               <div
                 key={idx}
-                className="my-3 rounded-xl border border-rose-300 dark:border-rose-900/80 bg-rose-50 dark:bg-rose-950/40 p-3.5 space-y-1.5 font-mono shadow-2xs"
+                className="my-3 rounded-2xl border border-rose-300 dark:border-rose-900/80 bg-rose-50 dark:bg-rose-950/40 p-3.5 space-y-1.5 font-mono shadow-2xs"
               >
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
@@ -35,9 +36,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = memo(({ content
           }
 
           return (
-            <div key={idx} className="rounded-xl border border-slate-700/80 bg-slate-950 p-4 my-2 overflow-x-auto text-xs font-mono text-slate-200">
-              <pre className="whitespace-pre">{segment.code}</pre>
-            </div>
+            <VSCodeSnippetBlock
+              key={idx}
+              code={segment.code}
+              language={segment.language}
+            />
           )
         }
 
@@ -48,6 +51,86 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = memo(({ content
 })
 
 MarkdownRenderer.displayName = 'MarkdownRenderer'
+
+/* ═══════════════════════════════════════════════════════════════
+   VS CODE SNIPPET BLOCK (AUTHENTIC IDE FRAME & SYNTAX)
+   ═══════════════════════════════════════════════════════════════ */
+const VSCodeSnippetBlock: React.FC<{ code: string; language: string }> = memo(({ code, language }) => {
+  const [copied, setCopied] = useState(false)
+  const lines = code.trimEnd().split('\n')
+  const ext = language === 'python' ? 'py' : language === 'javascript' ? 'js' : language === 'java' ? 'java' : 'txt'
+  const filename = `example.${ext}`
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="my-3 rounded-2xl border border-slate-700/80 bg-[#1E1E1E] shadow-xl overflow-hidden font-mono text-xs text-left select-none">
+      {/* VS Code Window Header & Tab */}
+      <div className="h-8 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-2 shrink-0">
+        {/* Left: Window Traffic Dots & File Tab */}
+        <div className="flex items-center gap-2.5 h-full">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block shadow-xs" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block shadow-xs" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block shadow-xs" />
+          </div>
+
+          <div className="h-full flex items-center gap-1.5 px-2.5 bg-[#1E1E1E] border-t-2 border-t-[#005F02] text-[11px] text-slate-100 font-medium border-r border-[#2D2D2D]">
+            <Code2 className="w-3 h-3 text-[#005F02]" />
+            <span>{filename}</span>
+          </div>
+        </div>
+
+        {/* Right: Language Pill & Copy Button */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[10px] uppercase font-bold text-slate-500 font-mono">
+            {language}
+          </span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="h-5 px-1.5 rounded bg-[#2D2D2D] hover:bg-[#3D3D3D] text-[10px] text-slate-300 flex items-center gap-1 transition-colors cursor-pointer"
+            title="Copy code"
+          >
+            {copied ? <Check className="w-2.5 h-2.5 text-[#005F02]" /> : <Copy className="w-2.5 h-2.5" />}
+            <span>{copied ? 'Copied' : 'Copy'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Editor Body with Gutter & Monaco Syntax */}
+      <div className="flex min-h-0 bg-[#1E1E1E] overflow-x-auto p-2">
+        {/* Line Numbers Gutter */}
+        <div className="w-8 py-1 pr-2 text-right text-[11px] text-[#858585] select-none shrink-0 border-r border-[#2D2D2D] leading-5 font-mono">
+          {lines.map((_, i) => (
+            <div key={i}>{i + 1}</div>
+          ))}
+        </div>
+
+        {/* Code Canvas */}
+        <div className="pl-3 py-1 flex-1 font-mono text-[12px] sm:text-[13px] leading-5 text-[#D4D4D4] whitespace-pre">
+          {renderVSCodeSyntax(code.trimEnd())}
+        </div>
+      </div>
+
+      {/* Bottom Status Bar */}
+      <div className="h-5 px-3 bg-[#005F02] text-white flex items-center justify-between text-[9px] font-mono font-medium shrink-0">
+        <span>Ln {lines.length}, Col 1</span>
+        <div className="flex items-center gap-2">
+          <span>UTF-8</span>
+          <span className="uppercase font-bold">{language}</span>
+          <span>✓ Local CPU</span>
+        </div>
+      </div>
+    </div>
+  )
+})
+
+VSCodeSnippetBlock.displayName = 'VSCodeSnippetBlock'
 
 interface CodeSegment {
   type: 'code'
@@ -64,29 +147,33 @@ type Segment = CodeSegment | TextSegment
 
 function parseMarkdownSegments(rawText: string): Segment[] {
   const segments: Segment[] = []
+  if (!rawText) return segments
+
   const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g
   let lastIndex = 0
   let match: RegExpExecArray | null
 
   while ((match = codeBlockRegex.exec(rawText)) !== null) {
     if (match.index > lastIndex) {
-      const text = rawText.slice(lastIndex, match.index)
-      if (text.trim()) {
-        segments.push({ type: 'text', text })
+      const textChunk = rawText.slice(lastIndex, match.index).trim()
+      if (textChunk) {
+        segments.push({ type: 'text', text: textChunk })
       }
     }
 
-    const language = match[1] || 'text'
-    const code = match[2].trimEnd()
-    segments.push({ type: 'code', language, code })
+    segments.push({
+      type: 'code',
+      language: match[1] || 'text',
+      code: match[2].trimEnd(),
+    })
 
     lastIndex = match.index + match[0].length
   }
 
   if (lastIndex < rawText.length) {
-    const text = rawText.slice(lastIndex)
-    if (text.trim()) {
-      segments.push({ type: 'text', text })
+    const textChunk = rawText.slice(lastIndex).trim()
+    if (textChunk) {
+      segments.push({ type: 'text', text: textChunk })
     }
   }
 
@@ -94,119 +181,79 @@ function parseMarkdownSegments(rawText: string): Segment[] {
 }
 
 const FormattedParagraph: React.FC<{ text: string }> = memo(({ text }) => {
-  const paragraphs = text.split('\n\n').filter((p) => p.trim())
+  const paragraphs = text.split('\n\n')
 
   return (
-    <div className="space-y-2.5">
+    <>
       {paragraphs.map((p, pIdx) => {
-        // Headers (### Header)
-        if (p.trim().startsWith('###')) {
-          const headerText = p.replace(/^###\s*/, '').trim()
+        const trimmed = p.trim()
+        if (!trimmed) return null
+
+        if (trimmed.startsWith('# ')) {
           return (
-            <h4 key={pIdx} className="text-sm sm:text-base font-bold text-slate-900 dark:text-white pt-1">
-              {renderFormattedInline(headerText)}
-            </h4>
+            <h1 key={pIdx} className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white pt-2 pb-1 border-b border-slate-200 dark:border-slate-800">
+              {renderInlineStyles(trimmed.slice(2))}
+            </h1>
           )
         }
-        if (p.trim().startsWith('##')) {
-          const headerText = p.replace(/^##\s*/, '').trim()
+        if (trimmed.startsWith('## ')) {
           return (
-            <h3 key={pIdx} className="text-base sm:text-lg font-bold text-slate-900 dark:text-white pt-1">
-              {renderFormattedInline(headerText)}
+            <h2 key={pIdx} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white pt-3 pb-1">
+              {renderInlineStyles(trimmed.slice(3))}
+            </h2>
+          )
+        }
+        if (trimmed.startsWith('### ')) {
+          return (
+            <h3 key={pIdx} className="text-base font-bold text-slate-800 dark:text-slate-200 pt-2 pb-0.5">
+              {renderInlineStyles(trimmed.slice(4))}
             </h3>
           )
         }
 
-        // Blockquotes (> ...)
-        if (p.trim().startsWith('>')) {
-          const quoteText = p.replace(/^>\s*/gm, '').trim()
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          const items = trimmed.split('\n')
           return (
-            <blockquote
-              key={pIdx}
-              className="my-2 border-l-4 border-brand-500 bg-brand-50/60 dark:bg-brand-950/40 px-4 py-2.5 rounded-r-xl text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-medium"
-            >
-              {renderFormattedInline(quoteText)}
-            </blockquote>
-          )
-        }
-
-        // List items
-        if (p.trim().startsWith('1.') || p.trim().startsWith('- ') || p.trim().startsWith('* ')) {
-          const lines = p.split('\n').filter((l) => l.trim())
-          const isOrdered = /^\d+\./.test(lines[0].trim())
-
-          return (
-            <div key={pIdx} className="space-y-1.5 my-2 pl-1">
-              {lines.map((line, lIdx) => {
-                const cleanLine = line.replace(/^(\d+\.|\*|-)\s*/, '').trim()
-                return (
-                  <div key={lIdx} className="flex items-start gap-2 text-xs sm:text-sm">
-                    {isOrdered ? (
-                      <span className="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-brand-600 dark:text-brand-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
-                        {lIdx + 1}
-                      </span>
-                    ) : (
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shrink-0 mt-2" />
-                    )}
-                    <span className="leading-relaxed flex-1">
-                      {renderFormattedInline(cleanLine)}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
+            <ul key={pIdx} className="list-disc list-inside space-y-1.5 pl-2 text-slate-700 dark:text-slate-300">
+              {items.map((it, iIdx) => (
+                <li key={iIdx}>{renderInlineStyles(it.replace(/^[-*]\s+/, ''))}</li>
+              ))}
+            </ul>
           )
         }
 
         return (
-          <p key={pIdx} className="leading-relaxed">
-            {renderFormattedInline(p)}
+          <p key={pIdx} className="text-slate-700 dark:text-slate-300 leading-relaxed">
+            {renderInlineStyles(trimmed)}
           </p>
         )
       })}
-    </div>
+    </>
   )
 })
 
 FormattedParagraph.displayName = 'FormattedParagraph'
 
-function renderFormattedInline(text: string): React.ReactNode[] {
-  const tokens = text.split(/(`[^`]+`|\*\*[^*]+\*\*|__[^\_]+__|\*[^*]+\*)/g)
-
-  return tokens.map((token, idx) => {
-    // Inline code (`code`)
-    if (token.startsWith('`') && token.endsWith('`')) {
-      const code = token.slice(1, -1)
+function renderInlineStyles(text: string): React.ReactNode {
+  const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('`') && part.endsWith('`')) {
       return (
         <code
-          key={idx}
-          className="font-mono text-[11px] sm:text-xs font-semibold px-1.5 py-0.5 mx-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-brand-400 border border-slate-200 dark:border-slate-700 select-all"
+          key={i}
+          className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-[11px] sm:text-xs text-[#005F02] border border-slate-200 dark:border-slate-700 font-bold"
         >
-          {code}
+          {part.slice(1, -1)}
         </code>
       )
     }
-
-    // Bold (**text**)
-    if ((token.startsWith('**') && token.endsWith('**')) || (token.startsWith('__') && token.endsWith('__'))) {
-      const boldText = token.slice(2, -2)
+    if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={idx} className="font-bold text-slate-900 dark:text-white">
-          {boldText}
+        <strong key={i} className="font-bold text-slate-900 dark:text-white">
+          {part.slice(2, -2)}
         </strong>
       )
     }
-
-    // Italic (*text*)
-    if (token.startsWith('*') && token.endsWith('*')) {
-      const italicText = token.slice(1, -1)
-      return (
-        <em key={idx} className="italic text-slate-700 dark:text-slate-300">
-          {italicText}
-        </em>
-      )
-    }
-
-    return token
+    return part
   })
 }

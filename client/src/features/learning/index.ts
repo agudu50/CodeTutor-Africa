@@ -1,4 +1,5 @@
 export * from './pages/CourseListPage'
 export * from './pages/CourseDetailPage'
 export * from './pages/LessonViewPage'
+export * from './components/AiCourseGeneratorModal'
 export * from './data/mockCourseData'

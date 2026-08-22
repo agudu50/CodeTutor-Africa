@@ -7,8 +7,18 @@ import {
 } from '../data/mockDebuggerData'
 import { aiService } from '@/services/ai/ai.service'
 import { FixSuggestionCard } from '../components/FixSuggestionCard'
-import { Button, Dropdown, Textarea } from '@/components/ui'
-import { Bug, Sparkles, RotateCcw, Shield, Terminal, AlertCircle, Code2 } from 'lucide-react'
+import { Button, Dropdown } from '@/components/ui'
+import {
+  Bug,
+  Sparkles,
+  Shield,
+  Terminal,
+  Code2,
+  BookOpen,
+  Gamepad2,
+  ChevronRight,
+  Cpu,
+} from 'lucide-react'
 import { ProgrammingLanguage, DebugResult } from '@/types'
 
 export const DebuggerPage: React.FC = () => {
@@ -73,41 +83,42 @@ export const DebuggerPage: React.FC = () => {
   }
 
   const lineCount = code.split('\n').length
+  const fileExt = language === 'python' ? 'py' : language === 'javascript' ? 'js' : 'java'
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
               <Bug className="w-4 h-4" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Offline Code Debugger
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+              Offline Socratic Debugger
             </h1>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Paste buggy code or compiler stack traces across Python, JavaScript, and Java for offline root cause explanations and patches.
+            Inspect, trace, and diagnose runtime exceptions and logic traps across Python, JavaScript, and Java without cloud connection.
           </p>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
-          <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
-            <Shield className="w-3.5 h-3.5 text-emerald-500" /> 100% Offline AI
+          <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 border border-[#005F02]/30">
+            <Shield className="w-3.5 h-3.5" /> 100% Offline AI
           </span>
-          <div className="w-full sm:w-44">
+          <div className="w-full sm:w-48">
             <Dropdown
               options={[
-                { value: 'javascript', label: 'JavaScript (ES2024)' },
+                { value: 'javascript', label: 'JavaScript (Node.js)' },
                 { value: 'java', label: 'Java 21 (OpenJDK)' },
                 { value: 'python', label: 'Python 3.12' },
               ]}
               value={language}
               onChange={handleLanguageChange}
-              className="text-xs font-semibold"
+              className="text-xs font-bold"
             />
           </div>
         </div>
@@ -116,17 +127,17 @@ export const DebuggerPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           MULTI-LANGUAGE PRESET CHIPS
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-wrap items-center gap-2 p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs">
+      <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs shadow-xs">
         <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider pl-1">
           Sample Bugs:
         </span>
         <button
           type="button"
           onClick={() => handleSelectPreset('javascript')}
-          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
             language === 'javascript'
-              ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
-              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-400'
+              ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
           }`}
         >
           <span className="text-[#ffd700] mr-1">JS:</span> Async Race Condition
@@ -134,10 +145,10 @@ export const DebuggerPage: React.FC = () => {
         <button
           type="button"
           onClick={() => handleSelectPreset('java')}
-          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
             language === 'java'
-              ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
-              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-400'
+              ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
           }`}
         >
           <span className="text-[#e06c75] mr-1">Java:</span> Array Bounds Exceeded
@@ -145,10 +156,10 @@ export const DebuggerPage: React.FC = () => {
         <button
           type="button"
           onClick={() => handleSelectPreset('python')}
-          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
             language === 'python'
-              ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
-              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-400'
+              ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
           }`}
         >
           <span className="text-[#4ec9b0] mr-1">Python:</span> Off-by-One Loop Error
@@ -156,111 +167,178 @@ export const DebuggerPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          EDITOR & STACK TRACE FORM
+          VS CODE DEBUGGER IDE & TERMINAL WORKSPACE
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="space-y-4">
-        {/* Code Input Card */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
-          <div className="px-4 py-3 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Code Snippet
-              </span>
-              <span className="text-[11px] font-mono text-slate-600 dark:text-slate-400">
-                • {language} • {lineCount} lines
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setCode('')}
-              className="text-[11px] font-mono text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors cursor-pointer"
-            >
-              Clear
-            </button>
+      <div className="rounded-3xl border border-slate-700/80 bg-[#1E1E1E] shadow-2xl overflow-hidden text-slate-200 font-mono text-xs flex flex-col select-none">
+        {/* VS Code Window Titlebar */}
+        <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block shadow-xs" />
+            <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block shadow-xs" />
+            <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block shadow-xs" />
           </div>
 
-          <div className="p-3 sm:p-4">
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              rows={8}
-              spellCheck={false}
-              className="w-full p-3 font-mono text-xs sm:text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-slate-100 resize-y leading-relaxed"
-              placeholder="// Paste your buggy code here..."
-            />
+          <div className="flex-1 max-w-sm mx-auto flex items-center justify-center">
+            <div className="w-full h-6 px-3 rounded-md bg-[#2A2A2A] border border-[#3A3A3A] text-[11px] text-slate-400 flex items-center justify-center gap-2 truncate shadow-inner">
+              <span className="text-slate-500">🔍</span>
+              <span className="truncate text-slate-300">debug-workspace — bug_sample.{fileExt} (CodeTutor IDE)</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setCode('')
+                setErrorMessage('')
+              }}
+              className="text-[10px] font-mono text-slate-400 hover:text-white px-2 py-0.5 rounded hover:bg-[#333333] transition-colors cursor-pointer"
+            >
+              Clear Workspace
+            </button>
           </div>
         </div>
 
-        {/* Optional Error Trace Card */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
-          <div className="px-4 py-3 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Terminal className="w-3.5 h-3.5 text-amber-500" />
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Optional Runtime Error / Stack Trace
-              </span>
+        {/* IDE Split Body (Activity Bar + Code Editor + Integrated Terminal) */}
+        <div className="flex flex-1 min-h-[360px] overflow-hidden">
+          {/* Left: Activity Bar */}
+          <div className="w-10 bg-[#181818] border-r border-[#2D2D2D] flex flex-col items-center justify-between py-2 shrink-0 text-slate-400">
+            <div className="flex flex-col items-center gap-3 w-full">
+              <div className="p-1.5 hover:text-white cursor-pointer" title="Explorer">
+                <BookOpen className="w-3.5 h-3.5" />
+              </div>
+              <div className="p-1.5 hover:text-white cursor-pointer" title="Search">
+                <Code2 className="w-3.5 h-3.5" />
+              </div>
+              <div className="relative p-1.5 text-white border-l-2 border-[#005F02] w-full flex justify-center cursor-pointer" title="Run & Debug">
+                <Bug className="w-3.5 h-3.5 text-rose-400" />
+              </div>
+              <div className="p-1.5 hover:text-white cursor-pointer" title="Arcade Drills">
+                <Gamepad2 className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setErrorMessage('')}
-              className="text-[11px] font-mono text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors cursor-pointer"
-            >
-              Clear
-            </button>
+
+            <div className="p-1.5 text-slate-500 hover:text-slate-300 cursor-pointer">
+              <Cpu className="w-3.5 h-3.5 text-[#005F02]" />
+            </div>
           </div>
 
-          <div className="p-3 sm:p-4">
-            <Textarea
-              value={errorMessage}
-              onChange={(e) => setErrorMessage(e.target.value)}
-              rows={3}
-              className="font-mono text-xs text-rose-700 dark:text-rose-400 bg-rose-50/40 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/80"
-              placeholder="Paste terminal error message (e.g., TypeError, NullPointerException, IndexError)..."
-            />
+          {/* Right: Code Canvas & Terminal Stack */}
+          <div className="flex flex-col flex-1 min-w-0 bg-[#1E1E1E]">
+            {/* Tab Bar */}
+            <div className="h-9 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0">
+              <div className="flex items-center h-full">
+                <div className="h-full px-3 bg-[#1E1E1E] border-t-2 border-t-[#005F02] text-xs font-mono font-medium text-slate-100 flex items-center gap-2 border-r border-[#252526]">
+                  <Code2 className="w-3.5 h-3.5 text-[#005F02] shrink-0" />
+                  <span className="font-semibold truncate">bug_sample.{fileExt}</span>
+                  <span className="text-[10px] text-slate-500 hover:text-white ml-1">×</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-slate-500 pr-2">
+                <span>{lineCount} lines</span>
+              </div>
+            </div>
+
+            {/* Breadcrumb Bar */}
+            <div className="h-6 px-3 bg-[#1E1E1E] border-b border-[#252526] flex items-center gap-1.5 text-[11px] text-slate-500 font-mono shrink-0">
+              <span>workspace</span>
+              <ChevronRight className="w-3 h-3 text-slate-600" />
+              <span>src</span>
+              <ChevronRight className="w-3 h-3 text-slate-600" />
+              <span className="text-slate-300 font-semibold">bug_sample.{fileExt}</span>
+            </div>
+
+            {/* Editor Canvas (Gutter + Textarea) */}
+            <div className="flex-1 min-h-[160px] flex overflow-hidden relative bg-[#1E1E1E]">
+              {/* Line Numbers Gutter */}
+              <div className="w-9 sm:w-11 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 sm:pr-2.5 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
+                {Array.from({ length: Math.max(lineCount, 8) }).map((_, i) => (
+                  <div key={i}>{i + 1}</div>
+                ))}
+              </div>
+
+              <textarea
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                spellCheck={false}
+                className="flex-1 p-3 bg-transparent text-[#D4D4D4] font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre overflow-y-auto selection:bg-[#005F02]/40"
+                placeholder="// Paste your buggy code snippet here..."
+              />
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════
+                INTEGRATED VS CODE TERMINAL (FOR RUNTIME STACK TRACES)
+                ═══════════════════════════════════════════════════════════ */}
+            <div className="border-t border-[#2D2D2D] bg-[#181818] flex flex-col shrink-0">
+              <div className="h-7 px-3 bg-[#1F1F1F] border-b border-[#282828] flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <div className="flex items-center gap-3">
+                  <span className="text-white font-bold flex items-center gap-1.5 border-b-2 border-[#005F02] pb-0.5">
+                    <Terminal className="w-3 h-3 text-[#005F02]" />
+                    <span>TERMINAL / STACK TRACE</span>
+                  </span>
+                  <span className="text-slate-500 text-[10px]">DEBUG CONSOLE</span>
+                  <span className="text-slate-500 text-[10px]">OUTPUT</span>
+                </div>
+
+                <span className="text-[10px] font-mono text-slate-400">
+                  Optional Crash Log
+                </span>
+              </div>
+
+              <div className="p-3 bg-[#181818]">
+                <textarea
+                  value={errorMessage}
+                  onChange={(e) => setErrorMessage(e.target.value)}
+                  rows={3}
+                  spellCheck={false}
+                  className="w-full bg-transparent font-mono text-xs text-rose-400 placeholder:text-slate-600 focus:outline-none leading-relaxed resize-none selection:bg-rose-900/50"
+                  placeholder="Paste terminal error message or stack trace (e.g., TypeError, NullPointerException, IndexError)..."
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Actions Row */}
-        <div className="flex items-center justify-end gap-3 pt-1">
-          <Button
-            variant="outline"
-            onClick={() => handleLanguageChange(language)}
-            className="text-xs font-semibold"
-            leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
-          >
-            Reset Sample
-          </Button>
+        {/* VS Code Bottom Status Bar (#005F02) */}
+        <div className="h-6 px-3 bg-[#005F02] text-white flex items-center justify-between text-[10px] font-mono shrink-0 select-none">
+          <div className="flex items-center gap-3">
+            <span className="font-bold">main*</span>
+            <span>0 ⨂ 0 ⚠</span>
+            <span className="hidden sm:inline">Offline Debugger Ready</span>
+          </div>
 
-          <Button
-            variant="primary"
-            onClick={handleAnalyze}
-            isLoading={isAnalyzing}
-            className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs"
-            leftIcon={<Sparkles className="w-3.5 h-3.5" />}
-          >
-            Analyze & Explain Bug
-          </Button>
+          <div className="flex items-center gap-3">
+            <span>Spaces: 4</span>
+            <span>UTF-8</span>
+            <span className="font-bold uppercase">{language}</span>
+            <span className="bg-white/20 px-1.5 py-0.2 rounded font-bold">100% OFFLINE</span>
+          </div>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ROOT CAUSE DIAGNOSTICS & FIX CARDS
+          ANALYZE ACTION BUTTON
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="flex justify-end">
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={handleAnalyze}
+          isLoading={isAnalyzing}
+          disabled={!code.trim()}
+          className="font-bold text-sm bg-[#005F02] hover:bg-[#004e02] text-white shadow-md shadow-[#005F02]/20 px-8 py-3 rounded-2xl cursor-pointer"
+          leftIcon={<Sparkles className="w-4 h-4 text-white" />}
+        >
+          {isAnalyzing ? 'Analyzing Root Cause Offline...' : 'Diagnose & Suggest Fix with AI'}
+        </Button>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          AI SOCRATIC FIX SUGGESTION REPORT
           ═══════════════════════════════════════════════════════════════ */}
       {debugResult && (
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold font-mono uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                Root Cause Diagnostics
-              </span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                <AlertCircle className="w-3 h-3 text-emerald-500" />
-                Bug Identified
-              </span>
-            </div>
-          </div>
-
+        <div className="space-y-4 pt-2">
           <FixSuggestionCard
             result={debugResult}
             onApplyFix={(fixed) => setCode(fixed)}

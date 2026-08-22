@@ -39,6 +39,13 @@ export interface Module extends BaseEntity {
   lessons: Lesson[]
 }
 
+export interface CourseGameLink {
+  id: string
+  title: string
+  type: 'bughunt' | 'speedrun' | 'matrix' | 'arcade'
+  description: string
+}
+
 export interface Course extends BaseEntity {
   title: string
   slug: string
@@ -51,4 +58,7 @@ export interface Course extends BaseEntity {
   estimatedHours: number
   progressPercentage?: number
   modules: Module[]
+  isAiGenerated?: boolean
+  generatedPrompt?: string
+  games?: CourseGameLink[]
 }

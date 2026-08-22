@@ -330,31 +330,46 @@ export const TerminalSection: React.FC = memo(() => {
           {/* Left Column: Interactive Terminal Window (7 Cols) */}
           <SectionReveal delay={0.12} className="lg:col-span-7 flex flex-col justify-between">
             <div className="rounded-2xl border border-slate-700/80 bg-[#1e1e1e] shadow-2xl overflow-hidden text-left flex flex-col justify-between h-full text-slate-200">
-              {/* Terminal Window Header Bar with Tabs */}
-              <div className="h-10 px-3 bg-[#252526] border-b border-[#181818] flex items-center justify-between gap-2 select-none">
-                {/* Left: Window Dots & Tabs */}
-                <div className="flex items-center gap-2 overflow-hidden h-full">
-                  <div className="flex items-center gap-1.5 px-1 shrink-0">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f] inline-block" />
-                  </div>
+              {/* VS Code Window Titlebar */}
+              <div className="h-8 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-2 select-none shrink-0">
+                {/* Traffic Dots */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block shadow-xs" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block shadow-xs" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block shadow-xs" />
+                </div>
 
-                  {/* Terminal Tabs */}
-                  <div className="flex items-center h-full text-xs font-mono">
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('bash')}
-                      className={`h-full px-3 flex items-center gap-1.5 border-t-2 transition-colors cursor-pointer ${
-                        activeTab === 'bash'
-                          ? 'bg-[#1e1e1e] border-[#007acc] text-slate-100 font-semibold'
-                          : 'border-transparent text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      <Terminal className="w-3 h-3 text-[#569cd6]" />
-                      <span>1: codetutor-cli</span>
-                    </button>
-                  </div>
+                {/* Command Title */}
+                <div className="text-[11px] font-mono text-slate-400 truncate flex items-center gap-1.5">
+                  <span className="text-slate-500">🔍</span>
+                  <span className="truncate">codetutor-africa — Terminal: bash (Offline Local Node)</span>
+                </div>
+
+                {/* Network Pill */}
+                <span className="text-[10px] font-mono font-bold text-[#005F02] bg-[#005F02]/20 px-2 py-0.2 rounded border border-[#005F02]/40">
+                  0 KB AIR-GAPPED
+                </span>
+              </div>
+
+              {/* Terminal Panel Tab Header Bar */}
+              <div className="h-9 px-3 bg-[#252526] border-b border-[#181818] flex items-center justify-between gap-2 select-none shrink-0">
+                {/* Left: Terminal Tabs */}
+                <div className="flex items-center gap-3 overflow-hidden h-full text-xs font-mono">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('bash')}
+                    className={`h-full px-3 flex items-center gap-1.5 border-t-2 transition-colors cursor-pointer ${
+                      activeTab === 'bash'
+                        ? 'bg-[#1e1e1e] border-[#005F02] text-slate-100 font-bold'
+                        : 'border-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Terminal className="w-3 h-3 text-[#005F02]" />
+                    <span>1: codetutor-cli</span>
+                  </button>
+                  <span className="text-slate-600">|</span>
+                  <span className="text-slate-500 text-[11px] hidden sm:inline">OUTPUT</span>
+                  <span className="text-slate-500 text-[11px] hidden sm:inline">DEBUG CONSOLE</span>
                 </div>
 
                 {/* Right: Actions */}
@@ -367,8 +382,8 @@ export const TerminalSection: React.FC = memo(() => {
                   >
                     {copiedCmd ? (
                       <>
-                        <Check className="w-3 h-3 text-[#4ec9b0]" />
-                        <span className="text-[#4ec9b0]">Copied</span>
+                        <Check className="w-3 h-3 text-[#005F02]" />
+                        <span className="text-[#005F02]">Copied</span>
                       </>
                     ) : (
                       <>
@@ -420,19 +435,19 @@ export const TerminalSection: React.FC = memo(() => {
                   >
                     {log.type === 'cmd' ? (
                       <div className="flex items-center gap-1.5 text-[#569cd6] font-bold">
-                        <span className="text-[#4ec9b0]">student@laptop</span>
+                        <span className="text-[#005F02]">student@laptop</span>
                         <span className="text-slate-500">:</span>
                         <span className="text-[#ce9178]">~/codetutor</span>
                         <span className="text-white">{log.text}</span>
                       </div>
                     ) : log.type === 'success' ? (
-                      <span className="text-[#4ec9b0] font-medium">{log.text}</span>
+                      <span className="text-[#005F02] font-semibold">{log.text}</span>
                     ) : log.type === 'warn' ? (
                       <span className="text-[#ffd700] font-medium">{log.text}</span>
                     ) : log.type === 'info' ? (
                       <span className="text-[#9cdcfe]">{log.text}</span>
                     ) : log.type === 'ready' ? (
-                      <span className="text-[#dcdcaa] font-bold bg-[#2d2d2d] px-2.5 py-0.5 rounded border border-[#3d3d3d] block my-1">
+                      <span className="text-[#005F02] font-bold bg-[#005F02]/10 px-2.5 py-0.5 rounded border border-[#005F02]/30 block my-1">
                         {log.text}
                       </span>
                     ) : (
@@ -443,7 +458,7 @@ export const TerminalSection: React.FC = memo(() => {
 
                 {/* Interactive Prompt Input Form */}
                 <form onSubmit={handleExecuteInput} className="flex items-center gap-2 pt-2 text-xs sm:text-[13px]">
-                  <div className="flex items-center gap-1 text-[#4ec9b0] font-bold shrink-0">
+                  <div className="flex items-center gap-1 text-[#005F02] font-bold shrink-0">
                     <span>student@laptop</span>
                     <span className="text-slate-500">:</span>
                     <span className="text-[#ce9178]">~/codetutor</span>
@@ -461,7 +476,7 @@ export const TerminalSection: React.FC = memo(() => {
                   />
                   <button
                     type="submit"
-                    className="p-1 rounded bg-[#333333] hover:bg-[#007acc] text-slate-300 hover:text-white transition-colors cursor-pointer"
+                    className="p-1 rounded bg-[#333333] hover:bg-[#005F02] text-slate-300 hover:text-white transition-colors cursor-pointer"
                     title="Press Enter to execute"
                   >
                     <CornerDownLeft className="w-3 h-3" />
@@ -469,8 +484,8 @@ export const TerminalSection: React.FC = memo(() => {
                 </form>
               </div>
 
-              {/* Terminal Bottom Status Bar (#007acc) */}
-              <div className="h-6 px-3 bg-[#007acc] text-white flex items-center justify-between text-[11px] font-mono shrink-0 select-none">
+              {/* Terminal Bottom Status Bar (#005F02) */}
+              <div className="h-6 px-3 bg-[#005F02] text-white flex items-center justify-between text-[11px] font-mono shrink-0 select-none">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1.5 font-bold">
                     <span className="w-1.5 h-1.5 rounded-full bg-white inline-block animate-pulse" />

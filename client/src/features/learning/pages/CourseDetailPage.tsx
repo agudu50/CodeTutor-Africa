@@ -1,21 +1,52 @@
 import React from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Progress } from '@/components/ui'
-import { ChevronLeft, Play, CheckCircle2, Circle, Clock, BookOpen, Shield, Sparkles, Code2 } from 'lucide-react'
+import {
+  ChevronLeft,
+  Play,
+  CheckCircle2,
+  Circle,
+  Clock,
+  BookOpen,
+  Shield,
+  Sparkles,
+  Code2,
+  Gamepad2,
+  X,
+} from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
+  const navigate = useNavigate()
   const courses = courseStoreService.getAllCourses()
   const course = courses.find((c) => c.id === courseId || c.slug === courseId) || courses[0]
 
+  if (!course) {
+    return (
+      <PageContainer maxWidth="xl" className="py-12 text-center space-y-4">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Course Not Found</h2>
+        <Link to="/learning">
+          <Button variant="primary">Return to Courses</Button>
+        </Link>
+      </PageContainer>
+    )
+  }
+
   const difficultyVariant =
     course.difficulty === 'beginner'
-      ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/80'
+      ? 'bg-[#005F02]/10 text-[#005F02] border-[#005F02]/30'
       : course.difficulty === 'intermediate'
       ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
       : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
+
+  const handleDeleteCourse = () => {
+    if (window.confirm(`Are you sure you want to remove "${course.title}" from your local offline library?`)) {
+      courseStoreService.deleteCourse(course.id)
+      navigate('/learning')
+    }
+  }
 
   return (
     <PageContainer maxWidth="xl" className="space-y-6">
@@ -29,9 +60,22 @@ export const CourseDetailPage: React.FC = () => {
           <span>Back to Courses</span>
         </Link>
 
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/80">
-          <Shield className="w-3.5 h-3.5" /> 100% Offline Ready
-        </span>
+        <div className="flex items-center gap-2">
+          {course.isAiGenerated && (
+            <button
+              type="button"
+              onClick={handleDeleteCourse}
+              className="inline-flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Delete AI Course</span>
+            </button>
+          )}
+
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 px-3 py-1 rounded-full border border-[#005F02]/30">
+            <Shield className="w-3.5 h-3.5" /> 100% Offline Ready
+          </span>
+        </div>
       </div>
 
       {/* Course Hero Banner */}
@@ -59,11 +103,17 @@ export const CourseDetailPage: React.FC = () => {
             <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
               {course.category}
             </span>
+            {course.isAiGenerated && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30">
+                <Sparkles className="w-3 h-3" />
+                <span>AI Generated from Prompt</span>
+              </span>
+            )}
           </div>
 
           {/* Title & Description */}
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               {course.title}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
@@ -71,40 +121,107 @@ export const CourseDetailPage: React.FC = () => {
             </p>
           </div>
 
-        {/* Telemetry Row */}
-        <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 font-medium">
-          <span className="flex items-center gap-1.5">
-            <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-            <strong className="text-slate-800 dark:text-slate-200">{course.totalLessons}</strong> Total Lessons
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-amber-500" />
-            <strong className="text-slate-800 dark:text-slate-200">{course.estimatedHours}</strong> Estimated Hours
-          </span>
-          <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
-            <Sparkles className="w-4 h-4" />
-            Offline Cached
-          </span>
-        </div>
-
-        {/* Completion Progress Bar */}
-        {course.progressPercentage !== undefined && (
-          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-300">
-              <span>Your Course Completion</span>
-              <span className="font-mono text-brand-600 dark:text-brand-400">{course.progressPercentage}%</span>
-            </div>
-            <Progress value={course.progressPercentage} variant="brand" size="md" />
+          {/* Telemetry Row */}
+          <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 font-medium">
+            <span className="flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4 text-[#005F02]" />
+              <strong className="text-slate-800 dark:text-slate-200">{course.totalLessons}</strong> Total Lessons
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-amber-500" />
+              <strong className="text-slate-800 dark:text-slate-200">{course.estimatedHours}</strong> Estimated Hours
+            </span>
+            <span className="flex items-center gap-1.5 text-[#005F02] font-semibold">
+              <Sparkles className="w-4 h-4" />
+              Pre-Cached for Local CPU
+            </span>
           </div>
-        )}
+
+          {/* Completion Progress Bar */}
+          {course.progressPercentage !== undefined && (
+            <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-300">
+                <span>Your Course Completion</span>
+                <span className="font-mono text-[#005F02]">{course.progressPercentage}%</span>
+              </div>
+              <Progress value={course.progressPercentage} variant="brand" size="md" />
+            </div>
+          )}
         </div>
       </Card>
 
-      {/* Curriculum Syllabus */}
+      {/* ═══════════════════════════════════════════════════════════════
+          COURSE ARCADE GAMES & EXERCISE DRILLS SECTION
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Bug Hunt Game Card */}
+        <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between space-y-3">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 text-[10px] font-mono font-bold">
+                <Gamepad2 className="w-3 h-3" />
+                <span>3D ARCADE DRILL</span>
+              </span>
+              <span className="text-[10px] font-mono text-slate-400">Time-Attack</span>
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              {course.title} Bug Hunt
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Find, isolate, and fix runtime exceptions, syntax traps, and logic errors in {course.language} code under time pressure.
+            </p>
+          </div>
+
+          <Link to="/games" className="pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full h-9 text-xs font-bold border-slate-300 dark:border-slate-700 hover:border-[#005F02] hover:text-[#005F02] justify-center"
+              leftIcon={<Gamepad2 className="w-3.5 h-3.5 text-[#005F02]" />}
+            >
+              Play Bug Hunt Drill
+            </Button>
+          </Link>
+        </div>
+
+        {/* Syntax Speedrun & Compiler Practice */}
+        <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between space-y-3">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 text-[10px] font-mono font-bold">
+                <Code2 className="w-3 h-3" />
+                <span>COMPILER WORKSPACE</span>
+              </span>
+              <span className="text-[10px] font-mono text-slate-400">Automated Tests</span>
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              Hands-On Coding Drills
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Run your algorithms against automated test cases in the local offline compiler with CPU latency benchmarks.
+            </p>
+          </div>
+
+          <Link to="/practice" className="pt-2">
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-full h-9 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs justify-center"
+              leftIcon={<Code2 className="w-3.5 h-3.5" />}
+            >
+              Launch Coding Exercises
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          CURRICULUM SYLLABUS & LESSON MODULES
+          ═══════════════════════════════════════════════════════════════ */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Code2 className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+            <Code2 className="w-5 h-5 text-[#005F02]" />
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               Curriculum Syllabus
             </h2>
@@ -126,7 +243,7 @@ export const CourseDetailPage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80 font-mono text-[11px] font-bold flex items-center justify-center">
+                        <span className="w-5 h-5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 font-mono text-[11px] font-bold flex items-center justify-center">
                           {mIdx + 1}
                         </span>
                         <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
@@ -151,8 +268,8 @@ export const CourseDetailPage: React.FC = () => {
                     >
                       <div className="flex items-start sm:items-center gap-3">
                         {lesson.isCompleted ? (
-                          <div className="p-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 shrink-0 mt-0.5 sm:mt-0">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <div className="p-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 shrink-0 mt-0.5 sm:mt-0">
+                            <CheckCircle2 className="w-4 h-4 text-[#005F02]" />
                           </div>
                         ) : (
                           <div className="p-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0 mt-0.5 sm:mt-0">
@@ -188,7 +305,7 @@ export const CourseDetailPage: React.FC = () => {
                             className={
                               lesson.isCompleted
                                 ? 'h-8 text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border-slate-200 dark:border-slate-700'
-                                : 'h-8 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs'
+                                : 'h-8 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs'
                             }
                             leftIcon={<Play className="w-3 h-3" />}
                           >

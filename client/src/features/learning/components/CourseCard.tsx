@@ -36,9 +36,16 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
           </div>
         ) : (
           <div className="flex items-center justify-between">
-            <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyBadge}`}>
-              {course.difficulty}
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyBadge}`}>
+                {course.difficulty}
+              </span>
+              {course.isAiGenerated && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30">
+                  <span>AI Synthesized</span>
+                </span>
+              )}
+            </div>
             <Badge variant="brand" size="sm" className="uppercase font-mono text-[10px] font-bold">
               {course.language}
             </Badge>
