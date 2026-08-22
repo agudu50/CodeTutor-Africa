@@ -123,74 +123,154 @@ function useCounter(target: number, duration = 1500, inView = false) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TERMINAL PREVIEW COMPONENT
+   VS CODE SYNTAX TOKENIZER & HIGHLIGHTER
+   ═══════════════════════════════════════════════════════════════ */
+function renderVSCodeTokens(lineText: string, lineIndex: number) {
+  // Check for line comments (# or //)
+  const commentIdx = lineText.search(/(#|\/\/)/)
+  let codePart = lineText
+  let commentPart = ''
+  if (commentIdx !== -1) {
+    codePart = lineText.substring(0, commentIdx)
+    commentPart = lineText.substring(commentIdx)
+  }
+
+  // Tokenize codePart with VS Code Dark+ color palette
+  const tokenRegex = /("(?:\\.|[^"\\])*")|(\b(?:def|if|not|return|print|console|Promise|public|class|private|double|void|throw|new|this)\b)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_]\w*(?=\s*\())|(\b[A-Z]\w*\b)|([a-zA-Z_]\w*)|([^\s\w"']+|\s+)/g
+  const tokens: React.ReactNode[] = []
+  let match
+  let k = 0
+
+  while ((match = tokenRegex.exec(codePart)) !== null) {
+    const [full, str, kw, num, fn, typeCls, ident, symbol] = match
+    if (str) {
+      tokens.push(<span key={k++} className="text-[#CE9178]">{str}</span>)
+    } else if (kw) {
+      const isControl = /^(if|not|return|throw|new)$/.test(kw)
+      tokens.push(
+        <span key={k++} className={isControl ? "text-[#C586C0] font-semibold" : "text-[#569CD6] font-semibold"}>
+          {kw}
+        </span>
+      )
+    } else if (num) {
+      tokens.push(<span key={k++} className="text-[#B5CEA8]">{num}</span>)
+    } else if (fn) {
+      tokens.push(<span key={k++} className="text-[#DCDCAA]">{fn}</span>)
+    } else if (typeCls) {
+      tokens.push(<span key={k++} className="text-[#4EC9B0]">{typeCls}</span>)
+    } else if (ident) {
+      tokens.push(<span key={k++} className="text-[#9CDCFE]">{ident}</span>)
+    } else {
+      tokens.push(<span key={k++} className="text-[#D4D4D4]">{symbol || full}</span>)
+    }
+  }
+
+  return (
+    <div key={lineIndex} className="table-row leading-relaxed">
+      <span className="table-cell pr-3 select-none text-slate-500 text-right w-6 font-mono text-[11px]">{lineIndex + 1}</span>
+      <span className="table-cell font-mono">
+        {tokens}
+        {commentPart && <span className="text-[#6A9955] italic">{commentPart}</span>}
+      </span>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL PREVIEW COMPONENT (VS CODE THEMED & AUTO-ADVANCING)
    ═══════════════════════════════════════════════════════════════ */
 const TerminalLivePreview: React.FC = memo(() => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-60px' })
   const [activeTab, setActiveTab] = useState(0)
-  const [displayedCode, setDisplayedCode] = useState('')
+  const [displayedCode, setDisplayedCode] = useState(codeExamples[0].code)
+  const [isHovered, setIsHovered] = useState(false)
 
+  // Auto-switch languages by itself every 3.8 seconds
   useEffect(() => {
-    if (!isInView) return
+    if (isHovered) return
+    const timer = setInterval(() => {
+      setActiveTab((prev) => (prev + 1) % codeExamples.length)
+    }, 3800)
+    return () => clearInterval(timer)
+  }, [isHovered])
+
+  // Typewriter effect on activeTab change
+  useEffect(() => {
     const targetCode = codeExamples[activeTab].code
     setDisplayedCode('')
     let idx = 0
     const interval = setInterval(() => {
-      idx += 3
+      idx += 6
       if (idx >= targetCode.length) {
         setDisplayedCode(targetCode)
         clearInterval(interval)
       } else {
         setDisplayedCode(targetCode.slice(0, idx))
       }
-    }, 15)
+    }, 12)
     return () => clearInterval(interval)
-  }, [activeTab, isInView])
+  }, [activeTab])
 
   return (
-    <div ref={ref} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-950 shadow-2xl overflow-hidden font-mono text-xs text-left">
-      {/* Code Editor Tab Bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5 mr-2">
-            <span className="w-3 h-3 rounded-full bg-slate-700 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-slate-700 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-slate-700 inline-block" />
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="flex flex-col flex-1 rounded-2xl border border-slate-300 dark:border-slate-700 bg-[#1E1E1E] shadow-2xl overflow-hidden font-mono text-xs text-left"
+    >
+      {/* Code Editor Tab Bar (Enhanced VS Code Style) */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-[#252526] border-b border-[#333333] shrink-0 gap-3">
+        {/* Left: Window Traffic Lights & Language Tabs */}
+        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+          {/* macOS / VS Code Traffic Light Dots */}
+          <div className="flex items-center gap-1.5 mr-1 shrink-0">
+            <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 inline-block shadow-xs" />
+            <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50 inline-block shadow-xs" />
+            <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50 inline-block shadow-xs" />
           </div>
-          {codeExamples.map((ex, i) => (
-            <button
-              key={ex.filename}
-              type="button"
-              onClick={() => setActiveTab(i)}
-              className={`px-3 py-1 rounded-lg text-xs transition-colors flex items-center gap-1.5 ${
-                activeTab === i
-                  ? 'bg-slate-800 text-[#005F02] font-bold border border-[#005F02]'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Code2 className="w-3.5 h-3.5 text-[#005F02]" />
-              <span>{ex.filename}</span>
-            </button>
-          ))}
+
+          {/* Interactive Language Tabs */}
+          <div className="flex items-center gap-1.5">
+            {codeExamples.map((ex, i) => {
+              const isActive = activeTab === i
+              return (
+                <button
+                  key={ex.filename}
+                  type="button"
+                  onClick={() => setActiveTab(i)}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-2 relative ${
+                    isActive
+                      ? 'bg-[#1E1E1E] text-white shadow-md border border-[#444444] border-b-2 border-b-[#005F02]'
+                      : 'bg-[#2D2D2D]/70 text-slate-400 border border-transparent hover:bg-[#333333] hover:text-slate-200'
+                  }`}
+                >
+                  <Code2 className={`w-3.5 h-3.5 ${isActive ? 'text-[#005F02]' : 'text-slate-400'}`} />
+                  <span className="truncate">{ex.filename}</span>
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] inline-block animate-pulse" />
+                  )}
+                </button>
+              )
+            })}
+          </div>
         </div>
-        <span className="text-[10px] text-[#005F02] font-bold bg-[#005F02]/20 border border-[#005F02]/40 px-2 py-0.5 rounded">
-          ● 100% OFFLINE
-        </span>
+
+        {/* Right: High-Tech Offline Telemetry Pill */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#005F02]/15 border border-[#005F02]/40 text-[10px] font-mono font-bold text-[#005F02] shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-ping" />
+            <span>100% OFFLINE</span>
+          </span>
+        </div>
       </div>
 
-      {/* Editor Body */}
-      <div className="p-5 overflow-x-auto min-h-[220px] text-slate-200 bg-slate-950 leading-relaxed font-mono">
-        <pre className="text-xs sm:text-sm whitespace-pre">
-          <code>
-            {displayedCode}
-            <span className="inline-block w-2 h-4 bg-[#005F02] animate-pulse ml-0.5 align-middle" />
-          </code>
-        </pre>
+      {/* VS Code Editor Body */}
+      <div className="p-4 overflow-x-auto flex-1 min-h-[220px] bg-[#1E1E1E] text-[#D4D4D4] leading-relaxed font-mono">
+        <div className="table w-full text-xs sm:text-[13px]">
+          {displayedCode.split('\n').map((line, lIdx) => renderVSCodeTokens(line, lIdx))}
+        </div>
       </div>
 
       {/* Socratic Terminal Guidance Bar */}
-      <div className="px-4 py-2.5 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+      <div className="px-4 py-2.5 bg-[#252526] border-t border-[#333333] flex items-center justify-between text-[11px] text-slate-400 shrink-0">
         <div className="flex items-center gap-2">
           <Sparkles className="w-3.5 h-3.5 text-[#005F02]" />
           <span className="text-slate-300 font-medium">Socratic Insight:</span>
@@ -909,10 +989,10 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           {/* Left: Code Editor Sandbox Preview */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1">
+          <div className="space-y-3 flex flex-col h-full">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
               <span>1. Multi-Language Code Runner</span>
               <span className="font-mono text-[11px] text-[#005F02] font-bold">Python • JS • Java</span>
             </div>
@@ -920,15 +1000,15 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Right: Socratic Dialogue Simulator */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1">
+          <div className="space-y-3 flex flex-col h-full">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
               <span>2. Real-Time Pedagogical Dialogue</span>
               <span className="font-mono text-[11px] text-[#005F02] font-bold">Mode: Socratic Hint</span>
             </div>
             
-            <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-xl dark:shadow-2xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-xl dark:shadow-2xl overflow-hidden flex flex-col flex-1">
               {/* Chat Header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-[#005F02] flex items-center justify-center text-white font-bold">
                     <Sparkles className="w-4 h-4 text-white" />
@@ -944,36 +1024,38 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Conversation Box */}
-              <div className="p-5 space-y-4 text-xs sm:text-sm">
-                {/* Student Question */}
-                <div className="flex justify-end">
-                  <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
-                    <p className="font-medium">I am getting a recursion limit exceeded error on my binary search function. What is wrong?</p>
+              <div className="p-5 space-y-4 text-xs sm:text-sm flex-1 flex flex-col justify-between">
+                <div className="space-y-4">
+                  {/* Student Question */}
+                  <div className="flex justify-end">
+                    <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
+                      <p className="font-medium">I am getting a recursion limit exceeded error on my binary search function. What is wrong?</p>
+                    </div>
+                  </div>
+
+                  {/* AI Tutor Socratic Guidance */}
+                  <div className="flex justify-start">
+                    <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
+                      <p className="leading-relaxed">
+                        A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.
+                      </p>
+                      
+                      <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
+                        <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
+                          <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
+                          <span>Guided Socratic Check:</span>
+                        </div>
+                        <p className="italic text-slate-700 dark:text-slate-300">
+                          "Look at lines 4 and 8 in your code: when low &gt; high, is your function returning immediately or is it recalculating mid again?"
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* AI Tutor Socratic Guidance */}
-                <div className="flex justify-start">
-                  <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
-                    <p className="leading-relaxed">
-                      A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.
-                    </p>
-                    
-                    <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
-                      <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
-                        <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
-                        <span>Guided Socratic Check:</span>
-                      </div>
-                      <p className="italic text-slate-700 dark:text-slate-300">
-                        "Look at lines 4 and 8 in your code: when low &gt; high, is your function returning immediately or is it recalculating mid again?"
-                      </p>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400">
-                      <span>CPU Latency: 38ms</span>
-                      <span className="text-[#005F02] font-bold">✓ Zero Cloud Leak</span>
-                    </div>
-                  </div>
+                <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-2 shrink-0">
+                  <span>CPU Latency: 38ms</span>
+                  <span className="text-[#005F02] font-bold">✓ Zero Cloud Leak</span>
                 </div>
               </div>
             </div>
