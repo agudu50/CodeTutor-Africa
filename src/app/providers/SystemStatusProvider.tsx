@@ -50,6 +50,15 @@ export const SYSTEM_CAPABILITIES: CapabilityItem[] = [
     offlineFallbackNote: 'Test checks run offline on your device.',
   },
   {
+    id: 'arcade-games',
+    title: 'Coding Arcade & Mini-Games',
+    description: 'Play Syntax Speedrun, Bug Hunt Blitz, Output Predictor, and Code Shuffle.',
+    category: 'core',
+    isAvailableOffline: true,
+    isAvailableOnline: true,
+    offlineFallbackNote: 'All 4 games, 3D animations, and sound effects work 100% offline.',
+  },
+  {
     id: 'support-inquiries',
     title: 'Ask Instructor for Help',
     description: 'Send questions or report issues with coding exercises.',

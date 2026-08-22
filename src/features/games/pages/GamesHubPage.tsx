@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { GAMES_METADATA } from '../data/gameData'
 import { GameId, PlayerGameStats } from '../types/games.types'
 import { SyntaxSpeedrunGame } from '../components/SyntaxSpeedrunGame'
@@ -20,6 +21,10 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
+  Wifi,
+  WifiOff,
+  CheckCircle2,
+  HardDrive,
 } from 'lucide-react'
 
 const ICON_MAP = {
@@ -32,6 +37,9 @@ const ICON_MAP = {
 const STATS_STORAGE_KEY = 'codetutor_arcade_stats'
 
 export const GamesHubPage: React.FC = () => {
+  const { effectiveNetwork } = useSystemStatus()
+  const isOffline = effectiveNetwork === 'offline'
+
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
   const [stats, setStats] = useState<PlayerGameStats>(() => {
@@ -123,13 +131,22 @@ export const GamesHubPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-1 min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
                       Coding Arcade & Mini-Games
                     </h1>
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 shrink-0">
                       3D Interactive
                     </span>
+                    {isOffline ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">
+                        <WifiOff className="w-3 h-3" /> Offline Ready
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                        <Wifi className="w-3 h-3" /> 100% Local
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 max-w-lg">
                     Sharpen your typing speed, spot bugs, and master algorithmic logic with quick 2-minute coding games and 3D visual animations.
@@ -262,6 +279,44 @@ export const GamesHubPage: React.FC = () => {
                 </div>
               )
             })}
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════════════
+              100% OFFLINE GUARANTEE & DEVICE STORAGE CALLOUT
+              ═══════════════════════════════════════════════════════════════ */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                  <HardDrive className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  100% Offline-Ready Gaming
+                </h3>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Zero Data Cost
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              All 4 coding games, WebGL 3D animations, synth sound effects, and scoring logic are bundled directly in your browser. You can play, practice, and compete anytime without an internet connection.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Local Web Audio Synthesizer</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Real-Time WebGL 3D Visualizer</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Local High Score Persistence</span>
+              </div>
+            </div>
           </div>
         </>
       )}

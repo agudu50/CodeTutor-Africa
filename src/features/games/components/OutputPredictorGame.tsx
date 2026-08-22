@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { OUTPUT_PREDICTOR_CHALLENGES } from '../data/gameData'
 import { OutputPredictorChallenge } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
@@ -15,6 +16,7 @@ import {
   AlertTriangle,
   Volume2,
   VolumeX,
+  WifiOff,
 } from 'lucide-react'
 
 interface OutputPredictorGameProps {
@@ -23,6 +25,8 @@ interface OutputPredictorGameProps {
 }
 
 export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({ onBack, onScoreUpdate }) => {
+  const { effectiveNetwork } = useSystemStatus()
+  const isOffline = effectiveNetwork === 'offline'
   const [challengeIndex, setChallengeIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<{ isSuccess: boolean; message: string } | null>(null)
@@ -151,6 +155,11 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({ onBack
             <span className="font-bold text-sm text-slate-900 dark:text-white">
               Output Predictor
             </span>
+            {isOffline && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                <WifiOff className="w-2.5 h-2.5" /> Offline
+              </span>
+            )}
           </div>
         </div>
 
