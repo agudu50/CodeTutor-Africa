@@ -8,6 +8,7 @@ export interface Lesson extends BaseEntity {
   durationMinutes: number
   order: number
   contentMarkdown: string
+  videoUrl?: string
   codeSnippets?: Array<{
     language: ProgrammingLanguage
     code: string

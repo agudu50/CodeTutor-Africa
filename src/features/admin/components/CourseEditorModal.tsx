@@ -10,6 +10,7 @@ import {
   Check,
   Clock,
   Database,
+  Play,
   Sparkles,
 } from 'lucide-react'
 
@@ -71,6 +72,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       title: string
       durationMinutes: number
       contentMarkdown: string
+      videoUrl?: string
     }>
   }>>([])
 
@@ -97,6 +99,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             title: l.title,
             durationMinutes: l.durationMinutes,
             contentMarkdown: l.contentMarkdown,
+            videoUrl: l.videoUrl || '',
           })),
         }))
       )
@@ -121,6 +124,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
               title: 'Lesson 1: Environment & First Steps',
               durationMinutes: 20,
               contentMarkdown: '# Welcome to the Course\n\nIn this lesson, you will learn foundational concepts...',
+              videoUrl: 'https://www.youtube.com/watch?v=kqtD5dpn9C8',
             },
           ],
         },
@@ -170,6 +174,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             title: 'New Lesson',
             durationMinutes: 25,
             contentMarkdown: '# Lesson Overview\n\nContent for this lesson...',
+            videoUrl: '',
           },
         ],
       },
@@ -188,6 +193,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         title: `Lesson ${copy[modIdx].lessons.length + 1}`,
         durationMinutes: 30,
         contentMarkdown: '# Lesson Topic\n\nCore explanation and practical coding examples...',
+        videoUrl: '',
       })
       return copy
     })
@@ -227,6 +233,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         order: lIdx + 1,
         isCompleted: false,
         contentMarkdown: l.contentMarkdown,
+        videoUrl: l.videoUrl?.trim() ? l.videoUrl.trim() : undefined,
         createdAt: new Date().toISOString(),
       })),
     }))
@@ -294,7 +301,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 {courseToEdit ? 'Edit Course Curriculum' : 'Create New Course Track'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Admin Course Creator with image banner & offline lesson indexing.
+                Admin Course Creator with cover banner, YouTube video tutorials & modules.
               </p>
             </div>
           </div>
@@ -500,7 +507,9 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             </div>
           </div>
 
-          {/* Module & Lesson Builder Section */}
+          {/* ═══════════════════════════════════════════════════════════════
+              MODULE & LESSON BUILDER WITH YOUTUBE VIDEO SUPPORT
+              ═══════════════════════════════════════════════════════════════ */}
           <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -523,7 +532,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             </div>
 
             {/* Module Cards */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {modules.map((mod, modIdx) => (
                 <div
                   key={mod.id}
@@ -542,7 +551,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                           return copy
                         })
                       }}
-                      placeholder="Module Title"
+                      placeholder="Module Title (e.g. Module 1: Core Syntax)"
                       className="font-bold text-xs sm:text-sm bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white flex-1 py-0.5"
                     />
 
@@ -571,60 +580,90 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                     </div>
                   </div>
 
-                  {/* Lessons list */}
-                  <div className="space-y-2 pl-2 border-l-2 border-slate-200 dark:border-slate-800">
+                  {/* Lessons list with YouTube Video fields */}
+                  <div className="space-y-3 pl-2 sm:pl-3 border-l-2 border-slate-200 dark:border-slate-800">
                     {mod.lessons.map((les, lesIdx) => (
                       <div
                         key={les.id}
-                        className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs"
+                        className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 shadow-2xs text-xs"
                       >
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        {/* Lesson Header Row */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                            <input
+                              type="text"
+                              value={les.title}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                setModules((prev) => {
+                                  const copy = [...prev]
+                                  copy[modIdx].lessons[lesIdx].title = val
+                                  return copy
+                                })
+                              }}
+                              className="bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-800 dark:text-slate-200 font-bold flex-1 text-xs"
+                              placeholder="Lesson Title (e.g. Lesson 1: Introduction)"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <input
+                                type="number"
+                                min={5}
+                                max={180}
+                                value={les.durationMinutes}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setModules((prev) => {
+                                    const copy = [...prev]
+                                    copy[modIdx].lessons[lesIdx].durationMinutes = val
+                                    return copy
+                                  })
+                                }}
+                                className="w-10 text-right bg-transparent border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-mono text-[11px] focus:outline-none"
+                              />
+                              m
+                            </span>
+
+                            {mod.lessons.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveLesson(modIdx, lesIdx)}
+                                className="p-1 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                                title="Delete lesson"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* YouTube Video URL Input */}
+                        <div className="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                          <div className="p-1 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shrink-0">
+                            <Play className="w-3 h-3 fill-rose-600 dark:fill-rose-400" />
+                          </div>
                           <input
-                            type="text"
-                            value={les.title}
+                            type="url"
+                            value={les.videoUrl || ''}
                             onChange={(e) => {
                               const val = e.target.value
                               setModules((prev) => {
                                 const copy = [...prev]
-                                copy[modIdx].lessons[lesIdx].title = val
+                                copy[modIdx].lessons[lesIdx].videoUrl = val
                                 return copy
                               })
                             }}
-                            className="bg-transparent border-none focus:outline-none text-slate-800 dark:text-slate-200 font-medium flex-1 text-xs"
-                            placeholder="Lesson Title"
+                            placeholder="Optional YouTube Video Link (e.g. https://www.youtube.com/watch?v=...)"
+                            className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1 text-[11px] font-mono text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-500 flex-1"
                           />
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            <input
-                              type="number"
-                              min={5}
-                              max={120}
-                              value={les.durationMinutes}
-                              onChange={(e) => {
-                                const val = Number(e.target.value)
-                                setModules((prev) => {
-                                  const copy = [...prev]
-                                  copy[modIdx].lessons[lesIdx].durationMinutes = val
-                                  return copy
-                                })
-                              }}
-                              className="w-10 text-right bg-transparent border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-mono text-[11px] focus:outline-none"
-                            />
-                            m
-                          </span>
-
-                          {mod.lessons.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveLesson(modIdx, lesIdx)}
-                              className="p-1 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
+                          {les.videoUrl && (
+                            <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                              Video Attached
+                            </span>
                           )}
                         </div>
                       </div>

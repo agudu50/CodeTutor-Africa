@@ -3,7 +3,18 @@ import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { Card, Button, Badge, MarkdownRenderer } from '@/components/ui'
-import { ChevronLeft, CheckCircle2, Circle, Bot, Code2, ArrowRight, BookOpen, Clock } from 'lucide-react'
+import { VideoLessonPlayer } from '../components/VideoLessonPlayer'
+import {
+  ChevronLeft,
+  CheckCircle2,
+  Circle,
+  Bot,
+  Code2,
+  ArrowRight,
+  BookOpen,
+  Clock,
+  Play,
+} from 'lucide-react'
 
 export const LessonViewPage: React.FC = () => {
   const { lessonId } = useParams<{ lessonId: string }>()
@@ -72,15 +83,21 @@ export const LessonViewPage: React.FC = () => {
       </div>
 
       {/* Lesson Reader Card */}
-      <Card className="p-6 sm:p-8 space-y-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <Card className="p-5 sm:p-8 space-y-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <div className="space-y-3 border-b border-slate-100 dark:border-slate-800 pb-5">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant="brand" size="sm" className="font-mono text-[10px] uppercase font-bold">
               Lesson {foundLesson.order}
             </Badge>
             <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
               <Clock className="w-3 h-3 text-amber-500" /> {foundLesson.durationMinutes} mins
             </span>
+            {foundLesson.videoUrl && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
+                <Play className="w-2.5 h-2.5 fill-rose-600 dark:fill-rose-400" />
+                <span>Video Lesson</span>
+              </span>
+            )}
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -90,6 +107,18 @@ export const LessonViewPage: React.FC = () => {
             {foundLesson.description}
           </p>
         </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            INTEGRATED YOUTUBE VIDEO LESSON PLAYER
+            ═══════════════════════════════════════════════════════════════ */}
+        {foundLesson.videoUrl && (
+          <div className="space-y-2">
+            <VideoLessonPlayer
+              videoUrl={foundLesson.videoUrl}
+              title={foundLesson.title}
+            />
+          </div>
+        )}
 
         {/* Objectives Box */}
         <div className="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">

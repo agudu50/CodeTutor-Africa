@@ -159,10 +159,18 @@ export const CourseDetailPage: React.FC = () => {
                             <Circle className="w-4 h-4 text-slate-400" />
                           </div>
                         )}
-                        <div className="space-y-0.5">
-                          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                            {lesson.title}
-                          </h3>
+                        <div className="space-y-0.5 min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                              {lesson.title}
+                            </h3>
+                            {lesson.videoUrl && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-1.5 py-0.2 rounded bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
+                                <Play className="w-2.5 h-2.5 fill-rose-600 dark:fill-rose-400" />
+                                <span>Video</span>
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 leading-relaxed">
                             {lesson.description}
                           </p>
