@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  codetutor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: codetutor-africa:latest
+    container_name: codetutor-africa
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - MODEL_PROVIDER=mock
+      - MODEL_PATH=/app/model/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf
+    volumes:
+      - ./data:/app/data
+      - ./model:/app/model
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 7500M
+    restart: unless-stopped
