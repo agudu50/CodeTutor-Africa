@@ -17,6 +17,7 @@ import {
   User,
   ShieldCheck,
   HelpCircle,
+  X,
 } from 'lucide-react'
 
 interface TopbarProps {
@@ -34,12 +35,14 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const profileMenuRef = useRef<HTMLDivElement>(null)
 
-  // Listen for global Ctrl+K / Cmd+K shortcut
+  // Listen for global Ctrl+K / Cmd+K shortcut and Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
         setIsSearchOpen((prev) => !prev)
+      } else if (e.key === 'Escape') {
+        setIsProfileOpen(false)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -177,32 +180,55 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
               />
             </button>
 
+            {/* Backdrop overlay for reliable outside click / tap dismissal */}
+            {isProfileOpen && (
+              <div
+                className="fixed inset-0 z-40 bg-transparent"
+                onClick={() => setIsProfileOpen(false)}
+                aria-hidden="true"
+              />
+            )}
+
             {/* Profile Dropdown Menu */}
             {isProfileOpen && (
               <div className="absolute right-0 mt-2.5 w-64 sm:w-68 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 divide-y divide-slate-100 dark:divide-slate-800">
-                {/* User Info Header */}
+                {/* User Info Header with Close Button */}
                 <div className="p-2.5 sm:p-3 space-y-1.5">
-                  <div className="flex items-center gap-2.5">
-                    <Avatar
-                      src={profile.avatarUrl || undefined}
-                      fallbackName={profile.fullName || 'User'}
-                      size="md"
-                      className="bg-brand-600 text-white font-bold shrink-0 shadow-2xs"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
-                          {profile.fullName}
-                        </span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
-                          Offline
-                        </span>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <Avatar
+                        src={profile.avatarUrl || undefined}
+                        fallbackName={profile.fullName || 'User'}
+                        size="md"
+                        className="bg-brand-600 text-white font-bold shrink-0 shadow-2xs"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
+                            {profile.fullName}
+                          </span>
+                        </div>
+                        <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">
+                          @{profile.username}
+                        </p>
                       </div>
-                      <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">
-                        @{profile.username}
-                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                        Offline
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                        aria-label="Close profile menu"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
+
                   <div className="pt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
                     {profile.email}
                   </div>
