@@ -122,9 +122,9 @@ function useCounter(target: number, duration = 1500, inView = false) {
   return val
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    TERMINAL PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════ */
 const TerminalLivePreview: React.FC = memo(() => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-60px' })
@@ -149,7 +149,7 @@ const TerminalLivePreview: React.FC = memo(() => {
   }, [activeTab, isInView])
 
   return (
-    <div ref={ref} className="rounded-2xl border border-slate-700 bg-slate-950 shadow-2xl overflow-hidden font-mono text-xs text-left">
+    <div ref={ref} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-950 shadow-2xl overflow-hidden font-mono text-xs text-left">
       {/* Code Editor Tab Bar */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800">
         <div className="flex items-center gap-2">
@@ -165,16 +165,16 @@ const TerminalLivePreview: React.FC = memo(() => {
               onClick={() => setActiveTab(i)}
               className={`px-3 py-1 rounded-lg text-xs transition-colors flex items-center gap-1.5 ${
                 activeTab === i
-                  ? 'bg-slate-800 text-brand-400 font-bold border border-brand-600'
+                  ? 'bg-slate-800 text-[#005F02] font-bold border border-[#005F02]'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Code2 className="w-3.5 h-3.5 text-brand-400" />
+              <Code2 className="w-3.5 h-3.5 text-[#005F02]" />
               <span>{ex.filename}</span>
             </button>
           ))}
         </div>
-        <span className="text-[10px] text-brand-400 font-bold bg-brand-950/80 border border-brand-800 px-2 py-0.5 rounded">
+        <span className="text-[10px] text-[#005F02] font-bold bg-[#005F02]/20 border border-[#005F02]/40 px-2 py-0.5 rounded">
           ● 100% OFFLINE
         </span>
       </div>
@@ -184,7 +184,7 @@ const TerminalLivePreview: React.FC = memo(() => {
         <pre className="text-xs sm:text-sm whitespace-pre">
           <code>
             {displayedCode}
-            <span className="inline-block w-2 h-4 bg-brand-500 animate-pulse ml-0.5 align-middle" />
+            <span className="inline-block w-2 h-4 bg-[#005F02] animate-pulse ml-0.5 align-middle" />
           </code>
         </pre>
       </div>
@@ -192,20 +192,112 @@ const TerminalLivePreview: React.FC = memo(() => {
       {/* Socratic Terminal Guidance Bar */}
       <div className="px-4 py-2.5 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+          <Sparkles className="w-3.5 h-3.5 text-[#005F02]" />
           <span className="text-slate-300 font-medium">Socratic Insight:</span>
           <span className="text-slate-400 truncate">Compiler verified locally (0 KB network)</span>
         </div>
-        <span className="text-brand-400 font-bold font-mono text-[10px]">23.4 tok/s</span>
+        <span className="text-[#005F02] font-bold font-mono text-[10px]">23.4 tok/s</span>
       </div>
     </div>
   )
 })
 TerminalLivePreview.displayName = 'TerminalLivePreview'
 
-/* ═══════════════════════════════════════════════════════════════════
-   MAIN LANDING COMPONENT (HIGH-CONTRAST ALTERNATING DARK & GRAY)
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT AMBIENT BACKGROUND ANIMATION COMPONENT (VIBRANT & VISIBLE)
+   ═══════════════════════════════════════════════════════════════ */
+const AmbientLightBackground: React.FC = memo(() => {
+  const particles = [
+    { top: '10%', left: '15%', size: 6, duration: 8, delay: 0 },
+    { top: '22%', left: '80%', size: 8, duration: 10, delay: 1 },
+    { top: '35%', left: '30%', size: 5, duration: 7, delay: 2 },
+    { top: '48%', left: '70%', size: 7, duration: 9, delay: 0.5 },
+    { top: '60%', left: '20%', size: 6, duration: 11, delay: 1.5 },
+    { top: '72%', left: '85%', size: 8, duration: 8.5, delay: 2.5 },
+    { top: '85%', left: '40%', size: 5, duration: 9.5, delay: 3 },
+    { top: '92%', left: '65%', size: 7, duration: 12, delay: 1 },
+  ]
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+      {/* Vibrant Ambient Glow Orb 1 - Top Left */}
+      <motion.div
+        animate={{
+          x: [0, 60, -40, 0],
+          y: [0, -50, 40, 0],
+          scale: [1, 1.3, 0.9, 1],
+          opacity: [0.4, 0.75, 0.4],
+        }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-10 left-10 w-[500px] h-[500px] rounded-full bg-[#005F02]/25 dark:bg-[#005F02]/35 blur-3xl"
+      />
+
+      {/* Vibrant Ambient Glow Orb 2 - Middle Right */}
+      <motion.div
+        animate={{
+          x: [0, -70, 50, 0],
+          y: [0, 60, -50, 0],
+          scale: [1, 1.25, 0.95, 1],
+          opacity: [0.35, 0.7, 0.35],
+        }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+        className="absolute top-[35%] right-5 w-[550px] h-[550px] rounded-full bg-[#005F02]/25 dark:bg-[#005F02]/35 blur-3xl"
+      />
+
+      {/* Vibrant Ambient Glow Orb 3 - Lower Left */}
+      <motion.div
+        animate={{
+          x: [0, 50, -60, 0],
+          y: [0, -60, 50, 0],
+          scale: [1, 1.2, 0.9, 1],
+          opacity: [0.4, 0.8, 0.4],
+        }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+        className="absolute top-[65%] left-5 w-[520px] h-[520px] rounded-full bg-[#005F02]/30 dark:bg-[#005F02]/40 blur-3xl"
+      />
+
+      {/* Vibrant Ambient Glow Orb 4 - Bottom Center */}
+      <motion.div
+        animate={{
+          x: [0, -50, 40, 0],
+          y: [0, 40, -40, 0],
+          scale: [1, 1.25, 1, 1],
+          opacity: [0.3, 0.65, 0.3],
+        }}
+        transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 4.5 }}
+        className="absolute bottom-10 right-1/4 w-[480px] h-[480px] rounded-full bg-[#005F02]/25 dark:bg-[#005F02]/35 blur-3xl"
+      />
+
+      {/* Floating Sparkle Particles */}
+      {particles.map((p, idx) => (
+        <motion.div
+          key={idx}
+          style={{ top: p.top, left: p.left, width: p.size, height: p.size }}
+          animate={{
+            y: [0, -60, 0],
+            opacity: [0.2, 0.9, 0.2],
+            scale: [0.8, 1.4, 0.8],
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: p.delay,
+          }}
+          className="absolute rounded-full bg-[#005F02] shadow-[0_0_10px_#005F02]"
+        />
+      ))}
+
+      {/* High-Contrast Cyber Grid Lines */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#005f021f_1px,transparent_1px),linear-gradient(to_bottom,#005f021f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_70%,transparent_100%)] opacity-80" />
+    </div>
+  )
+})
+AmbientLightBackground.displayName = 'AmbientLightBackground'
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN LANDING COMPONENT (FULL #005F02 CONSISTENCY)
+   ═══════════════════════════════════════════════════════════════ */
 export const LandingPage: React.FC = () => {
   const { isDark, setTheme } = useTheme()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -217,7 +309,7 @@ export const LandingPage: React.FC = () => {
   const statsRef = useRef(null)
   const statsInView = useInView(statsRef, { once: true, margin: '-60px' })
 
-  // Auto-advance hero carousel (faster transition)
+  // Auto-advance hero carousel (faster 3.2s transition)
   useEffect(() => {
     if (isSlidePaused) return
     const timer = setInterval(() => {
@@ -251,40 +343,46 @@ export const LandingPage: React.FC = () => {
 
   const featureCards = [
     {
-      icon: <Sparkles className="w-6 h-6 text-brand-400" />,
+      icon: <Sparkles className="w-6 h-6 text-[#005F02]" />,
       badge: 'Pedagogy',
       title: '6 Socratic AI Modes',
       description: 'Explain, Hint, Practice, Debug, Review, and Quiz modes that build real engineering intuition instead of copy-paste habits.',
+      link: '/tutor',
     },
     {
-      icon: <BookOpen className="w-6 h-6 text-brand-400" />,
+      icon: <BookOpen className="w-6 h-6 text-[#005F02]" />,
       badge: 'Curriculum',
       title: 'Comprehensive Course Tracks',
       description: 'Structured syllabi for Python Fundamentals, Async JavaScript, and Java OOP aligned with African engineering university curricula.',
+      link: '/learning',
     },
     {
-      icon: <Code2 className="w-6 h-6 text-brand-400" />,
+      icon: <Code2 className="w-6 h-6 text-[#005F02]" />,
       badge: 'Execution',
       title: 'Interactive Code Playground',
       description: 'Write, execute, and validate code against automated test cases locally on your CPU with zero external dependencies.',
+      link: '/practice',
     },
     {
-      icon: <Bug className="w-6 h-6 text-brand-400" />,
+      icon: <Bug className="w-6 h-6 text-[#005F02]" />,
       badge: 'Diagnostics',
       title: 'Compiler Root-Cause Debugger',
       description: 'Paste tricky stack traces and compiler errors. The AI breaks down memory state, edge cases, and guided fixes.',
+      link: '/debugger',
     },
     {
-      icon: <Gamepad2 className="w-6 h-6 text-brand-400" />,
+      icon: <Gamepad2 className="w-6 h-6 text-[#005F02]" />,
       badge: 'Gamification',
       title: '3D Arcade Mini-Games',
       description: 'Syntax Speedrun, Bug Hunt Blitz, Output Predictor, and Code Shuffle turn tedious syntax drills into engaging offline challenges.',
+      link: '/games',
     },
     {
-      icon: <BarChart3 className="w-6 h-6 text-brand-400" />,
+      icon: <BarChart3 className="w-6 h-6 text-[#005F02]" />,
       badge: 'Progress',
       title: 'Skill Mastery & Streaks',
       description: 'Track daily study streaks, problem-solving velocity, and earned badges stored privately in your local storage.',
+      link: '/dashboard',
     },
   ]
 
@@ -336,24 +434,24 @@ export const LandingPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-300">
 
       {/* ═══════════════════════════════════════════════════════════════
-          HEADER NAVIGATION (DARK)
+          HEADER NAVIGATION
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-50 bg-slate-950/95 border-b border-slate-800 backdrop-blur-md transition-colors">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shadow-sm border border-brand-500 group-hover:bg-brand-700 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-[#005F02] text-white flex items-center justify-center font-bold text-base shadow-sm border border-[#005F02] group-hover:bg-[#004e02] transition-colors">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-base tracking-tight text-white flex items-center gap-1">
+              <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
                 CodeTutor <span className="text-[#005F02] font-black">Africa</span>
               </span>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                 <span className="w-2 h-2 rounded-full bg-[#005F02] inline-block animate-pulse" />
                 <span>100% Offline AI Mentor</span>
               </div>
@@ -361,12 +459,12 @@ export const LandingPage: React.FC = () => {
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-semibold text-slate-300">
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="px-3.5 py-2 rounded-lg hover:bg-slate-800 hover:text-brand-400 transition-colors"
+                className="px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#005F02] transition-colors"
               >
                 {link.label}
               </a>
@@ -379,21 +477,21 @@ export const LandingPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 border border-slate-800 transition-colors"
+              className="p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-colors"
               aria-label="Toggle theme"
             >
-              {isDark ? <Sun className="w-4 h-4 text-brand-400" /> : <Moon className="w-4 h-4 text-slate-400" />}
+              {isDark ? <Sun className="w-4 h-4 text-[#005F02]" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>
 
             {/* Auth CTAs */}
             <div className="hidden sm:flex items-center gap-2">
               <Link to="/signin">
-                <button className="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition-colors">
+                <button className="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                   Sign In
                 </button>
               </Link>
               <Link to="/dashboard">
-                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-colors flex items-center gap-1.5">
+                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-sm transition-colors flex items-center gap-1.5">
                   <span>Launch Workspace</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
@@ -404,7 +502,7 @@ export const LandingPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden p-2 rounded-lg text-slate-300 hover:bg-slate-800 border border-slate-800"
+              className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -419,26 +517,26 @@ export const LandingPage: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-slate-800 bg-slate-900 px-4 py-4 space-y-2"
+              className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 space-y-2"
             >
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800"
+                  className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   {link.label}
                 </a>
               ))}
-              <div className="pt-2 border-t border-slate-800 flex flex-col gap-2">
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
                 <Link to="/signin" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-2.5 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200">
+                  <button className="w-full py-2.5 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200">
                     Sign In
                   </button>
                 </Link>
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-2.5 rounded-lg text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white">
+                  <button className="w-full py-2.5 rounded-lg text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white">
                     Launch Workspace
                   </button>
                 </Link>
@@ -449,7 +547,7 @@ export const LandingPage: React.FC = () => {
       </header>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 1: HERO SECTION (DARK: bg-slate-950)
+          SECTION 1: HERO SECTION
           ═══════════════════════════════════════════════════════════════ */}
       <section
         className="relative min-h-[620px] sm:min-h-[680px] flex items-center justify-center overflow-hidden bg-slate-950 text-white"
@@ -475,14 +573,14 @@ export const LandingPage: React.FC = () => {
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[1px]" />
           
           {/* Top Brand Stripe */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-brand-600" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#005F02]" />
         </div>
 
         {/* Carousel Navigation Arrows */}
         <button
           type="button"
           onClick={() => setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))}
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-brand-600 hover:border-brand-500 transition-colors shadow-lg"
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-[#005F02] hover:border-[#005F02] transition-colors shadow-lg"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -491,7 +589,7 @@ export const LandingPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-brand-600 hover:border-brand-500 transition-colors shadow-lg"
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-[#005F02] hover:border-[#005F02] transition-colors shadow-lg"
           aria-label="Next slide"
         >
           <ChevronRight className="w-5 h-5" />
@@ -567,14 +665,14 @@ export const LandingPage: React.FC = () => {
             className="flex flex-wrap items-center justify-center gap-3 pt-3"
           >
             <Link to="/dashboard">
-              <button className="px-7 py-3.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xl flex items-center gap-2 transition-transform hover:scale-102">
+              <button className="px-7 py-3.5 rounded-xl text-sm font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xl flex items-center gap-2 transition-transform hover:scale-102">
                 <span>Start Learning Free</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
             <a href="#demo">
               <button className="px-7 py-3.5 rounded-xl text-sm font-bold bg-slate-900/90 text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors flex items-center gap-2">
-                <Play className="w-4 h-4 text-brand-400" />
+                <Play className="w-4 h-4 text-[#005F02]" />
                 <span>Try Live Sandbox</span>
               </button>
             </a>
@@ -588,83 +686,115 @@ export const LandingPage: React.FC = () => {
             className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 text-xs text-slate-300 font-mono"
           >
             <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-brand-400" /> 100% Private &amp; Free
+              <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Private &amp; Free
             </span>
             <span className="flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-brand-400" /> 23.4 Tokens/Sec CPU Speed
+              <Zap className="w-3.5 h-3.5 text-[#005F02]" /> 23.4 Tokens/Sec CPU Speed
             </span>
             <span className="flex items-center gap-1.5">
-              <Laptop className="w-3.5 h-3.5 text-brand-400" /> 8 GB RAM Optimized
+              <Laptop className="w-3.5 h-3.5 text-[#005F02]" /> 8 GB RAM Optimized
             </span>
           </motion.div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
+          MAIN CONTENT WRAPPER WITH LIGHT AMBIENT BACKGROUND ANIMATION
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="relative overflow-hidden">
+        <AmbientLightBackground />
+
+        {/* ═══════════════════════════════════════════════════════════════
+            ANIMATED CONNECTING DATA LINE (HERO TO STATS)
+            ═══════════════════════════════════════════════════════════════ */}
+        <div className="relative flex flex-col items-center justify-center -my-3 z-30 pointer-events-none">
+        <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 40] }}
+            transition={{ repeat: Infinity, duration: 1.6, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-ping" />
+          <span className="font-bold tracking-wider">LIVE TELEMETRY STREAM</span>
+        </div>
+
+        <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 40] }}
+            transition={{ repeat: Infinity, duration: 1.6, ease: 'linear', delay: 0.8 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
           SECTION 2: INTERCONNECTED LINKED GLASSMORPHISM STATS STRIP
           ═══════════════════════════════════════════════════════════════ */}
-      <section ref={statsRef} className="py-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="rounded-3xl bg-slate-900/70 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/10 text-center">
+      <section ref={statsRef} className="pb-16 pt-2 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
             
             {/* Stat Card 1 -> Links to #specs */}
             <a
               href="#specs"
-              className="p-6 space-y-2 hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/30 border border-brand-500/40 text-brand-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Shield className="w-4 h-4" />
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statOffline}%
               </div>
-              <div className="text-xs sm:text-sm font-bold text-white group-hover:text-brand-300 transition-colors">Offline Operation</div>
-              <div className="text-[11px] text-slate-400">Zero cloud API costs →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Offline Operation</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">Zero cloud API costs →</div>
             </a>
 
             {/* Stat Card 2 -> Links to #specs */}
             <a
               href="#specs"
-              className="p-6 space-y-2 hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/30 border border-brand-500/40 text-brand-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Zap className="w-4 h-4" />
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statTokens}.4
               </div>
-              <div className="text-xs sm:text-sm font-bold text-white group-hover:text-brand-300 transition-colors">Tokens Per Second</div>
-              <div className="text-[11px] text-slate-400">4-Thread CPU speed →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Tokens Per Second</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">4-Thread CPU speed →</div>
             </a>
 
             {/* Stat Card 3 -> Links to #features */}
             <a
               href="#features"
-              className="p-6 space-y-2 hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/30 border border-brand-500/40 text-brand-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Code2 className="w-4 h-4" />
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statExercises}+
               </div>
-              <div className="text-xs sm:text-sm font-bold text-white group-hover:text-brand-300 transition-colors">Practice Exercises</div>
-              <div className="text-[11px] text-slate-400">Python, JS &amp; Java →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Practice Exercises</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">Python, JS &amp; Java →</div>
             </a>
 
             {/* Stat Card 4 -> Links to #demo */}
             <a
               href="#demo"
-              className="p-6 space-y-2 hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/30 border border-brand-500/40 text-brand-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Sparkles className="w-4 h-4" />
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statModes}
               </div>
-              <div className="text-xs sm:text-sm font-bold text-white group-hover:text-brand-300 transition-colors">Pedagogical Modes</div>
-              <div className="text-[11px] text-slate-400">Explain, Hint, Debug →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Pedagogical Modes</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">Explain, Hint, Debug →</div>
             </a>
 
           </div>
@@ -672,124 +802,176 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 3: FEATURES GRID (DARK: bg-slate-950)
+          ANIMATED CONNECTOR: STATS TO FEATURES
           ═══════════════════════════════════════════════════════════════ */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full bg-slate-950">
-        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-950/80 border border-brand-800 text-brand-400 text-xs font-semibold font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-brand-400" /> Complete Learning Ecosystem
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
+          <span className="font-bold tracking-wider">OFFLINE ARCHITECTURE</span>
+        </div>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 3: FEATURES GRID (INTERCONNECTED GLASSMORPHISM)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
+            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Complete Learning Ecosystem
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Engineered for Academic Rigor &amp; Practical Mastery
           </h2>
-          <p className="text-sm sm:text-base text-slate-400">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
             Every feature—from compiler diagnostics to gamified syntax drills—is bundled to run 100% locally on standard laptops.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featureCards.map((card, idx) => (
-            <div
-              key={idx}
-              className="bg-slate-900 rounded-2xl border border-slate-800 p-6 space-y-4 hover:border-brand-500 transition-all shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center">
-                  {card.icon}
-                </div>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border border-brand-800 bg-brand-950 text-brand-400">
-                  {card.badge}
-                </span>
-              </div>
-              <h3 className="text-base font-bold text-white">{card.title}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{card.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          SECTION 4: INTERACTIVE LIVE CODE SANDBOX (VISIBLE GRAY: bg-slate-800)
-          ═══════════════════════════════════════════════════════════════ */}
-      <section id="demo" className="py-20 bg-slate-800 border-y border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-950/80 border border-brand-800 text-brand-400 text-xs font-semibold font-mono">
-              <Terminal className="w-3.5 h-3.5 text-brand-400" /> Interactive Sandbox
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Test Driven Learning with Real Code
-            </h2>
-            <p className="text-sm sm:text-base text-slate-300">
-              Switch languages to see how CodeTutor guides you through algorithms, async concurrency, and object-oriented design.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Left: Code Editor Sandbox Preview */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-300 font-semibold px-1">
-                <span>1. Multi-Language Code Runner</span>
-                <span className="font-mono text-[11px] text-brand-400 font-bold">Python • JS • Java</span>
-              </div>
-              <TerminalLivePreview />
-            </div>
-
-            {/* Right: Socratic Dialogue Simulator */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-300 font-semibold px-1">
-                <span>2. Real-Time Pedagogical Dialogue</span>
-                <span className="font-mono text-[11px] text-brand-400 font-bold">Mode: Socratic Hint</span>
-              </div>
-              
-              <div className="bg-slate-950 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
-                {/* Chat Header */}
-                <div className="flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold">
-                      <Sparkles className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white">CodeTutor Mentor</div>
-                      <div className="text-[10px] text-slate-400">Offline Llama.cpp Engine</div>
-                    </div>
+        {/* Linked Glassmorphism Features Container */}
+        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 sm:p-8 shadow-xl dark:shadow-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {featureCards.map((card, idx) => (
+              <Link
+                key={idx}
+                to={card.link}
+                className="bg-slate-50/80 dark:bg-white/[0.03] backdrop-blur-md border border-slate-200 dark:border-white/[0.06] rounded-2xl p-6 space-y-3.5 hover:border-[#005F02] hover:bg-white dark:hover:bg-white/[0.06] transition-all group shadow-sm dark:shadow-inner block"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-xl bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    {card.icon}
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-950 text-brand-400 border border-brand-800 font-bold">
-                    0 KB NETWORK
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md border border-[#005F02]/30 bg-[#005F02]/10 text-[#005F02]">
+                    {card.badge}
                   </span>
                 </div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors flex items-center justify-between">
+                  <span>{card.title}</span>
+                  <span className="text-xs text-[#005F02] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{card.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                {/* Conversation Box */}
-                <div className="p-5 space-y-4 text-xs sm:text-sm">
-                  {/* Student Question */}
-                  <div className="flex justify-end">
-                    <div className="bg-brand-600 text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
-                      <p className="font-medium">I am getting a recursion limit exceeded error on my binary search function. What is wrong?</p>
-                    </div>
+      {/* ═══════════════════════════════════════════════════════════════
+          ANIMATED CONNECTOR: FEATURES TO SANDBOX
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
+          <span className="font-bold tracking-wider">EXECUTION ENGINE</span>
+        </div>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 4: INTERACTIVE LIVE CODE SANDBOX
+          ═══════════════════════════════════════════════════════════════ */}
+      <section id="demo" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
+            <Terminal className="w-3.5 h-3.5 text-[#005F02]" /> Interactive Sandbox
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Test Driven Learning with Real Code
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
+            Switch languages to see how CodeTutor guides you through algorithms, async concurrency, and object-oriented design.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Left: Code Editor Sandbox Preview */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1">
+              <span>1. Multi-Language Code Runner</span>
+              <span className="font-mono text-[11px] text-[#005F02] font-bold">Python • JS • Java</span>
+            </div>
+            <TerminalLivePreview />
+          </div>
+
+          {/* Right: Socratic Dialogue Simulator */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1">
+              <span>2. Real-Time Pedagogical Dialogue</span>
+              <span className="font-mono text-[11px] text-[#005F02] font-bold">Mode: Socratic Hint</span>
+            </div>
+            
+            <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-xl dark:shadow-2xl overflow-hidden">
+              {/* Chat Header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#005F02] flex items-center justify-center text-white font-bold">
+                    <Sparkles className="w-4 h-4 text-white" />
                   </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">CodeTutor Mentor</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Offline Llama.cpp Engine</div>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 font-bold">
+                  0 KB NETWORK
+                </span>
+              </div>
 
-                  {/* AI Tutor Socratic Guidance */}
-                  <div className="flex justify-start">
-                    <div className="bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
-                      <p className="leading-relaxed">
-                        A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.
+              {/* Conversation Box */}
+              <div className="p-5 space-y-4 text-xs sm:text-sm">
+                {/* Student Question */}
+                <div className="flex justify-end">
+                  <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
+                    <p className="font-medium">I am getting a recursion limit exceeded error on my binary search function. What is wrong?</p>
+                  </div>
+                </div>
+
+                {/* AI Tutor Socratic Guidance */}
+                <div className="flex justify-start">
+                  <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
+                    <p className="leading-relaxed">
+                      A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.
+                    </p>
+                    
+                    <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
+                      <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
+                        <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
+                        <span>Guided Socratic Check:</span>
+                      </div>
+                      <p className="italic text-slate-700 dark:text-slate-300">
+                        "Look at lines 4 and 8 in your code: when low &gt; high, is your function returning immediately or is it recalculating mid again?"
                       </p>
-                      
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-xs">
-                        <div className="font-bold flex items-center gap-1.5 mb-1 text-brand-400">
-                          <Lightbulb className="w-3.5 h-3.5 text-brand-400" />
-                          <span>Guided Socratic Check:</span>
-                        </div>
-                        <p className="italic text-slate-300">
-                          "Look at lines 4 and 8 in your code: when low &gt; high, is your function returning immediately or is it recalculating mid again?"
-                        </p>
-                      </div>
+                    </div>
 
-                      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-400">
-                        <span>CPU Latency: 38ms</span>
-                        <span className="text-brand-400 font-bold">✓ Zero Cloud Leak</span>
-                      </div>
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                      <span>CPU Latency: 38ms</span>
+                      <span className="text-[#005F02] font-bold">✓ Zero Cloud Leak</span>
                     </div>
                   </div>
                 </div>
@@ -800,88 +982,139 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 5: STUDENT VOICES & TESTIMONIALS (DARK: bg-slate-950)
+          ANIMATED CONNECTOR: SANDBOX TO TESTIMONIALS
           ═══════════════════════════════════════════════════════════════ */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full bg-slate-950">
-        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-950/80 border border-brand-800 text-brand-400 text-xs font-semibold font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-brand-400" /> Student Stories
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
+          <span className="font-bold tracking-wider">COMMUNITY IMPACT</span>
+        </div>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 5: STUDENT VOICES & TESTIMONIALS (GLASSMORPHISM)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section id="testimonials" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
+            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Student Stories
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Built for Real Realities in African Classrooms
           </h2>
-          <p className="text-sm sm:text-base text-slate-400">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
             Hear from university students and developers building skills without internet limits.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {studentTestimonials.map((t, idx) => (
-            <div
-              key={idx}
-              className="bg-slate-900 rounded-2xl border border-slate-800 p-6 space-y-4 flex flex-col justify-between shadow-md hover:border-brand-500 transition-colors"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-brand-400">
-                  <div className="flex gap-1 text-brand-400 text-sm">
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
+        {/* Interconnected Linked Testimonials Strip */}
+        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 sm:p-8 shadow-xl dark:shadow-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {studentTestimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="bg-slate-50/80 dark:bg-white/[0.03] backdrop-blur-md border border-slate-200 dark:border-white/[0.06] rounded-2xl p-6 space-y-4 flex flex-col justify-between shadow-sm dark:shadow-inner hover:border-[#005F02] hover:bg-white dark:hover:bg-white/[0.06] transition-all"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-[#005F02]">
+                    <div className="flex gap-1 text-[#005F02] text-sm">
+                      <span>★</span>
+                      <span>★</span>
+                      <span>★</span>
+                      <span>★</span>
+                      <span>★</span>
+                    </div>
+                    <Quote className="w-5 h-5 text-slate-400 dark:text-slate-600" />
                   </div>
-                  <Quote className="w-5 h-5 text-slate-700" />
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
+                    "{t.quote}"
+                  </p>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed">
-                  "{t.quote}"
-                </p>
-              </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-white">{t.name}</div>
-                  <div className="text-[11px] text-slate-400">{t.university}</div>
+                <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">{t.name}</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">{t.university}</div>
+                  </div>
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-[#005F02]/15 dark:bg-[#005F02]/30 text-[#005F02] border border-[#005F02]/40">
+                    {t.tag}
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-brand-400 border border-slate-800">
-                  {t.tag}
-                </span>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 6: HARDWARE SPECS / ADTC BENCHMARK (VISIBLE GRAY: bg-slate-800)
+          ANIMATED CONNECTOR: TESTIMONIALS TO SPECS
           ═══════════════════════════════════════════════════════════════ */}
-      <section id="specs" className="py-20 bg-slate-800 border-y border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-950/80 border border-brand-800 text-brand-400 text-xs font-semibold font-mono">
-              <Cpu className="w-3.5 h-3.5 text-brand-400" /> ADTC 2026 Verification
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Tested on Standard 8 GB RAM Student Laptops
-            </h2>
-            <p className="text-sm sm:text-base text-slate-300">
-              Engineered from the ground up for low-power, commodity machines with zero GPU requirements:
-            </p>
-          </div>
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
+          <span className="font-bold tracking-wider">HARDWARE BENCHMARK</span>
+        </div>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 6: HARDWARE SPECS / ADTC BENCHMARK (LINKED STRIP)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section id="specs" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
+            <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> ADTC 2026 Verification
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Tested on Standard 8 GB RAM Student Laptops
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
+            Engineered from the ground up for low-power, commodity machines with zero GPU requirements:
+          </p>
+        </div>
+
+        {/* Interconnected Linked Hardware Strip */}
+        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
             {[
               {
                 title: 'Peak RAM Footprint',
                 val: '1.64 GB RSS',
                 sub: 'Target: < 7.0 GB limit',
-                note: 'Leaves >6 GB free memory for compilers and editors',
+                note: 'Leaves >6 GB free memory for IDE & compiler',
               },
               {
                 title: 'Generation Speed',
                 val: '23.44 Tok/s',
                 sub: 'Target: ≥ 15.0 tok/s',
-                note: 'CPU thread scaling maintains smooth interaction',
+                note: 'CPU thread scaling maintains fluid interaction',
               },
               {
                 title: 'Thermal Ceiling',
@@ -898,28 +1131,51 @@ export const LandingPage: React.FC = () => {
             ].map((spec, idx) => (
               <div
                 key={idx}
-                className="bg-slate-950 rounded-2xl border border-slate-700 p-6 space-y-2 text-center shadow-md"
+                className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group"
               >
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{spec.title}</div>
-                <div className="text-2xl font-extrabold text-brand-400 font-mono">{spec.val}</div>
-                <div className="text-xs font-bold text-slate-200">{spec.sub}</div>
-                <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">{spec.note}</div>
+                <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{spec.title}</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-[#005F02] font-mono tracking-tight">{spec.val}</div>
+                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">{spec.sub}</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/[0.06]">{spec.note}</div>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 7: FAQ ACCORDION SECTION (DARK: bg-slate-950)
+          ANIMATED CONNECTOR: SPECS TO FAQ
           ═══════════════════════════════════════════════════════════════ */}
-      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 bg-slate-950">
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
+          <span className="font-bold tracking-wider">QUESTIONS &amp; ANSWERS</span>
+        </div>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 7: FAQ ACCORDION (GLASSMORPHISM)
+          ═══════════════════════════════════════════════════════════════ */}
+      <section id="faq" className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 relative z-10">
         <div className="text-center space-y-3">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Frequently Asked Questions
           </h2>
-          <p className="text-sm sm:text-base text-slate-400">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
             Everything you need to know about setting up and running CodeTutor Africa.
           </p>
         </div>
@@ -930,17 +1186,17 @@ export const LandingPage: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden transition-colors"
+                className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden transition-all shadow-sm hover:border-[#005F02]"
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-white hover:text-brand-400 transition-colors"
+                  className="w-full px-5 py-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white hover:text-[#005F02] transition-colors"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-brand-400' : ''
+                    className={`w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180 text-[#005F02]' : ''
                     }`}
                   />
                 </button>
@@ -953,7 +1209,7 @@ export const LandingPage: React.FC = () => {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-4 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800 pt-3">
+                      <div className="px-5 pb-4 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-t border-slate-200 dark:border-white/[0.06] pt-3">
                         {faq.a}
                       </div>
                     </motion.div>
@@ -966,11 +1222,35 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 8: FINAL CTA BANNER (VISIBLE GRAY: bg-slate-800)
+          ANIMATED CONNECTOR: FAQ TO CTA
           ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-20 bg-slate-800 border-t border-slate-700">
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
+          <span className="font-bold tracking-wider">GET STARTED</span>
+        </div>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
+          <motion.div
+            animate={{ y: [-10, 48] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
+            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
+          />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 8: FINAL CTA BANNER
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="py-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-brand-600 rounded-3xl p-8 sm:p-12 text-center text-white shadow-xl space-y-6 relative overflow-hidden">
+          <div className="bg-[#005F02] rounded-3xl p-8 sm:p-12 text-center text-white shadow-xl space-y-6 relative overflow-hidden">
             <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto shadow-sm">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
@@ -979,20 +1259,20 @@ export const LandingPage: React.FC = () => {
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
                 Ready to Master Programming on Your Own Terms?
               </h2>
-              <p className="text-sm sm:text-base text-brand-100 leading-relaxed">
+              <p className="text-sm sm:text-base text-white/90 leading-relaxed">
                 No internet subscription required. Start learning Python, JavaScript, and Java with an offline Socratic mentor right now.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Link to="/dashboard">
-                <button className="px-8 py-3.5 rounded-xl text-sm font-bold bg-white text-brand-700 hover:bg-brand-50 shadow-md transition-colors flex items-center gap-2">
+                <button className="px-8 py-3.5 rounded-xl text-sm font-bold bg-white text-[#005F02] hover:bg-slate-100 shadow-md transition-colors flex items-center gap-2">
                   <span>Launch Workspace Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
               <Link to="/signup">
-                <button className="px-8 py-3.5 rounded-xl text-sm font-semibold bg-brand-800 hover:bg-brand-900 text-white border border-brand-500 transition-colors">
+                <button className="px-8 py-3.5 rounded-xl text-sm font-semibold bg-[#004e02] hover:bg-[#003e02] text-white border border-white/20 transition-colors">
                   Create Free Account
                 </button>
               </Link>
@@ -1000,50 +1280,51 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 9: FOOTER (DARK: bg-slate-950)
+          SECTION 9: FOOTER
           ═══════════════════════════════════════════════════════════════ */}
-      <footer className="border-t border-slate-800 bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 mt-auto">
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 mt-auto transition-colors">
         <div className="max-w-7xl mx-auto space-y-8">
           
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-slate-800">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-slate-200 dark:border-slate-800">
             {/* Brand Logo & Tagline */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shadow-sm border border-brand-500">
+              <div className="w-10 h-10 rounded-xl bg-[#005F02] text-white flex items-center justify-center font-bold text-base shadow-sm border border-[#005F02]">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="font-bold text-base text-white">
+                <span className="font-bold text-base text-slate-900 dark:text-white">
                   CodeTutor <span className="text-[#005F02] font-black">Africa</span>
                 </span>
-                <p className="text-[10px] text-slate-400 font-mono">Offline-First Socratic Programming Education</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Offline-First Socratic Programming Education</p>
               </div>
             </div>
 
             {/* Nav Column Links */}
-            <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs text-slate-400 font-medium">
-              <Link to="/dashboard" className="hover:text-brand-400 transition-colors">Dashboard</Link>
-              <Link to="/tutor" className="hover:text-brand-400 transition-colors">AI Tutor</Link>
-              <Link to="/learning" className="hover:text-brand-400 transition-colors">Courses</Link>
-              <Link to="/practice" className="hover:text-brand-400 transition-colors">Practice</Link>
-              <Link to="/games" className="hover:text-brand-400 transition-colors">Arcade Games</Link>
-              <Link to="/debugger" className="hover:text-brand-400 transition-colors">Debugger</Link>
+            <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs text-slate-600 dark:text-slate-400 font-medium">
+              <Link to="/dashboard" className="hover:text-[#005F02] transition-colors">Dashboard</Link>
+              <Link to="/tutor" className="hover:text-[#005F02] transition-colors">AI Tutor</Link>
+              <Link to="/learning" className="hover:text-[#005F02] transition-colors">Courses</Link>
+              <Link to="/practice" className="hover:text-[#005F02] transition-colors">Practice</Link>
+              <Link to="/games" className="hover:text-[#005F02] transition-colors">Arcade Games</Link>
+              <Link to="/debugger" className="hover:text-[#005F02] transition-colors">Debugger</Link>
             </div>
           </div>
 
           {/* Bottom Copyright & Security Badges */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
             <span>© 2026 CodeTutor Africa. Built with ❤️ for African university students &amp; self-learners.</span>
             <div className="flex items-center gap-4 font-mono text-[10px]">
               <span className="flex items-center gap-1">
-                <Shield className="w-3.5 h-3.5 text-brand-400" /> 100% Local Execution
+                <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Local Execution
               </span>
               <span className="flex items-center gap-1">
-                <Cpu className="w-3.5 h-3.5 text-brand-400" /> Qwen2.5-Coder GGUF
+                <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> Qwen2.5-Coder GGUF
               </span>
               <span className="flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-brand-400" /> Zero Cloud Dependency
+                <Zap className="w-3.5 h-3.5 text-[#005F02]" /> Zero Cloud Dependency
               </span>
             </div>
           </div>
@@ -1062,7 +1343,7 @@ export const LandingPage: React.FC = () => {
             exit={{ opacity: 0, scale: 0.8 }}
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-6 right-6 z-40 p-3.5 rounded-full bg-brand-600 text-white shadow-xl hover:bg-brand-700 transition-colors border border-brand-400"
+            className="fixed bottom-6 right-6 z-40 p-3.5 rounded-full bg-[#005F02] text-white shadow-xl hover:bg-[#004e02] transition-colors border border-[#005F02]"
             aria-label="Back to top"
           >
             <ChevronDown className="w-5 h-5 rotate-180" />
