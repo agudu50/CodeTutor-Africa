@@ -8,6 +8,8 @@ import { BugHuntGame } from '../components/BugHuntGame'
 import { OutputPredictorGame } from '../components/OutputPredictorGame'
 import { CodeShuffleGame } from '../components/CodeShuffleGame'
 import { GameLanguageSelector } from '../components/GameLanguageSelector'
+import { CourseGameSelector } from '../components/CourseGameSelector'
+import { courseGameAdapter, EnrolledCourseOption } from '../services/courseGameAdapter.service'
 import { Arcade3DHero } from '../components/3d/Arcade3DHero'
 import { gameSound } from '../services/gameSound.service'
 import {
@@ -42,8 +44,18 @@ export const GamesHubPage: React.FC = () => {
   const isOffline = effectiveNetwork === 'offline'
 
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('all')
   const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>('all')
+  const [courses, setCourses] = useState<EnrolledCourseOption[]>(() => courseGameAdapter.getUserCourses())
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
+
+  useEffect(() => {
+    const handleCoursesUpdated = () => {
+      setCourses(courseGameAdapter.getUserCourses())
+    }
+    window.addEventListener('courses_updated', handleCoursesUpdated)
+    return () => window.removeEventListener('courses_updated', handleCoursesUpdated)
+  }, [])
   const [stats, setStats] = useState<PlayerGameStats>(() => {
     const saved = localStorage.getItem(STATS_STORAGE_KEY)
     if (saved) {
@@ -100,24 +112,28 @@ export const GamesHubPage: React.FC = () => {
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('speedrun', score)}
           initialLanguage={selectedLanguage}
+          initialCourseId={selectedCourseId}
         />
       ) : activeGame === 'bughunt' ? (
         <BugHuntGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('bughunt', score)}
           initialLanguage={selectedLanguage}
+          initialCourseId={selectedCourseId}
         />
       ) : activeGame === 'predictor' ? (
         <OutputPredictorGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('predictor', score)}
           initialLanguage={selectedLanguage}
+          initialCourseId={selectedCourseId}
         />
       ) : activeGame === 'shuffle' ? (
         <CodeShuffleGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('shuffle', score)}
           initialLanguage={selectedLanguage}
+          initialCourseId={selectedCourseId}
         />
       ) : (
         <>
@@ -229,15 +245,34 @@ export const GamesHubPage: React.FC = () => {
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
+              COURSE CURRICULUM SELECTOR (Games based on enrolled courses)
+              ═══════════════════════════════════════════════════════════════ */}
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <CourseGameSelector
+              courses={courses}
+              selectedCourseId={selectedCourseId}
+              onSelectCourse={(cId) => {
+                setSelectedCourseId(cId)
+                if (cId !== 'all') {
+                  const targetCourse = courses.find((c) => c.id === cId)
+                  if (targetCourse?.language) {
+                    setSelectedLanguage(targetCourse.language as GameLanguage)
+                  }
+                }
+              }}
+            />
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════════════
               LANGUAGE SELECTION & FILTER TOOLBAR
               ═══════════════════════════════════════════════════════════════ */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
             <div className="space-y-0.5">
               <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                Choose Practice Language
+                Practice Language
               </span>
               <p className="text-[11px] text-slate-500">
-                Filter challenges by your target programming language or practice in mixed mode.
+                Filter challenges by programming language or practice in mixed curriculum mode.
               </p>
             </div>
 

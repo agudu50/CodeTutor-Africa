@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
-import { BUG_HUNT_CHALLENGES } from '../data/gameData'
 import { BugHuntChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
 import { CircuitBugScanner3D } from './3d/CircuitBugScanner3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
@@ -18,27 +18,31 @@ import {
   Volume2,
   VolumeX,
   WifiOff,
+  BookOpen,
 } from 'lucide-react'
 
 interface BugHuntGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
   initialLanguage?: GameLanguage
+  initialCourseId?: string
 }
 
 export const BugHuntGame: React.FC<BugHuntGameProps> = ({
   onBack,
   onScoreUpdate,
   initialLanguage = 'all',
+  initialCourseId = 'all',
 }) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
 
   const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const courseChallenges = courseGameAdapter.getBugHuntChallenges(initialCourseId)
   const filteredChallenges = selectedLanguage === 'all'
-    ? BUG_HUNT_CHALLENGES
-    : BUG_HUNT_CHALLENGES.filter((c) => c.language === selectedLanguage)
-  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : BUG_HUNT_CHALLENGES
+    ? courseChallenges
+    : courseChallenges.filter((c) => c.language === selectedLanguage)
+  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : courseChallenges
 
   const [challengeIndex, setChallengeIndex] = useState(0)
   const [selectedLineIndex, setSelectedLineIndex] = useState<number | null>(null)
@@ -165,9 +169,9 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
     setSelectedLineIndex(null)
     setIsLineConfirmed(false)
 
-    if (challengeIndex + 1 < BUG_HUNT_CHALLENGES.length) {
-      setChallengeIndex((prev) => prev + 1)
-      const nextChallenge = BUG_HUNT_CHALLENGES[challengeIndex + 1]
+    if (challengeIndex + 1 < activeChallenges.length) {
+      setChallengeIndex((prev: number) => prev + 1)
+      const nextChallenge = activeChallenges[challengeIndex + 1]
       setTimeLeft(nextChallenge.timeLimitSecs)
     } else {
       setIsGameOver(true)
@@ -296,10 +300,19 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
 
           {/* Challenge Description */}
           <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                {currentChallenge.language} • Bug {challengeIndex + 1} of {BUG_HUNT_CHALLENGES.length}
-              </span>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                  {currentChallenge.language} • Bug {challengeIndex + 1} of {activeChallenges.length}
+                </span>
+                {currentChallenge.courseTitle && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <BookOpen className="w-3 h-3 text-rose-500" />
+                    <span>{currentChallenge.courseTitle}</span>
+                    {currentChallenge.lessonTitle && <span className="text-slate-400">• {currentChallenge.lessonTitle}</span>}
+                  </span>
+                )}
+              </div>
               <span className="text-xs font-semibold text-slate-500">
                 {!isLineConfirmed ? 'Step 1: Tap the buggy line' : 'Step 2: Pick the correct fix'}
               </span>

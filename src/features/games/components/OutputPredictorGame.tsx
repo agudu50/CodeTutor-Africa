@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
-import { OUTPUT_PREDICTOR_CHALLENGES } from '../data/gameData'
 import { OutputPredictorChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
 import { MemoryStackFlow3D } from './3d/MemoryStackFlow3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
@@ -18,27 +18,31 @@ import {
   Volume2,
   VolumeX,
   WifiOff,
+  BookOpen,
 } from 'lucide-react'
 
 interface OutputPredictorGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
   initialLanguage?: GameLanguage
+  initialCourseId?: string
 }
 
 export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
   onBack,
   onScoreUpdate,
   initialLanguage = 'all',
+  initialCourseId = 'all',
 }) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
 
   const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const courseChallenges = courseGameAdapter.getOutputPredictorChallenges(initialCourseId)
   const filteredChallenges = selectedLanguage === 'all'
-    ? OUTPUT_PREDICTOR_CHALLENGES
-    : OUTPUT_PREDICTOR_CHALLENGES.filter((c) => c.language === selectedLanguage)
-  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : OUTPUT_PREDICTOR_CHALLENGES
+    ? courseChallenges
+    : courseChallenges.filter((c) => c.language === selectedLanguage)
+  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : courseChallenges
 
   const [challengeIndex, setChallengeIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
@@ -141,9 +145,9 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
     setFeedback(null)
     setSelectedOption(null)
 
-    if (challengeIndex + 1 < OUTPUT_PREDICTOR_CHALLENGES.length) {
-      setChallengeIndex((prev) => prev + 1)
-      const nextChallenge = OUTPUT_PREDICTOR_CHALLENGES[challengeIndex + 1]
+    if (challengeIndex + 1 < activeChallenges.length) {
+      setChallengeIndex((prev: number) => prev + 1)
+      const nextChallenge = activeChallenges[challengeIndex + 1]
       setTimeLeft(nextChallenge.timeLimitSecs)
     } else {
       setIsGameOver(true)
@@ -270,10 +274,19 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
 
           {/* Question Snippet */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                {currentChallenge.language} • Question {challengeIndex + 1} of {OUTPUT_PREDICTOR_CHALLENGES.length}
-              </span>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                  {currentChallenge.language} • Question {challengeIndex + 1} of {activeChallenges.length}
+                </span>
+                {currentChallenge.courseTitle && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <BookOpen className="w-3 h-3 text-indigo-500" />
+                    <span>{currentChallenge.courseTitle}</span>
+                    {currentChallenge.lessonTitle && <span className="text-slate-400">• {currentChallenge.lessonTitle}</span>}
+                  </span>
+                )}
+              </div>
               <h3 className="font-bold text-sm text-slate-700 dark:text-slate-300 truncate">
                 {currentChallenge.title}
               </h3>

@@ -14,20 +14,20 @@ export interface LanguageOption {
 }
 
 export const GAME_LANGUAGES: LanguageOption[] = [
-  { id: 'all', label: 'All Languages', iconBadge: 'Mix' },
-  { id: 'python', label: 'Python', iconBadge: 'PY' },
-  { id: 'javascript', label: 'JavaScript', iconBadge: 'JS' },
+  { id: 'all', label: 'All Courses & Languages', iconBadge: 'All' },
+  { id: 'python', label: 'Python (Course 101)', iconBadge: 'PY' },
+  { id: 'javascript', label: 'JavaScript (Course 201)', iconBadge: 'JS' },
   { id: 'typescript', label: 'TypeScript', iconBadge: 'TS' },
-  { id: 'java', label: 'Java', iconBadge: 'JV' },
-  { id: 'sql', label: 'SQL', iconBadge: 'DB' },
+  { id: 'java', label: 'Java (Course 301)', iconBadge: 'JV' },
+  { id: 'sql', label: 'SQL Database', iconBadge: 'DB' },
 ]
 
 export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'speedrun',
     title: 'Syntax Speedrun',
-    subtitle: 'Type code snippets against the clock',
-    description: 'Test your typing speed and muscle memory with real African fintech, algorithmic, and web dev snippets.',
+    subtitle: 'Course Lesson Typing Challenge',
+    description: 'Type real code snippets directly from your enrolled course lessons to build muscle memory and speed.',
     difficulty: 'Beginner',
     category: 'Speed & Accuracy',
     estimatedMins: 2,
@@ -42,8 +42,8 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'bughunt',
     title: 'Bug Hunt Blitz',
-    subtitle: 'Spot the broken line and squash the bug',
-    description: 'A buggy snippet is shown. Tap the broken line within 15 seconds and pick the right fix to keep your streak!',
+    subtitle: 'Curriculum Debugging Practice',
+    description: 'Spot broken syntax and logical errors derived from your course problem sets before the timer runs out.',
     difficulty: 'Intermediate',
     category: 'Debugging Skills',
     estimatedMins: 3,
@@ -58,8 +58,8 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'predictor',
     title: 'Output Predictor',
-    subtitle: 'Mental code execution challenge',
-    description: 'Read the snippet and guess what prints to the console before time runs out. Great for interview prep!',
+    subtitle: 'Lesson Quiz Mental Execution',
+    description: 'Predict exact runtime console outputs from your course lessons and tricky language edge-cases.',
     difficulty: 'Intermediate',
     category: 'Mental Execution',
     estimatedMins: 3,
@@ -74,8 +74,8 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'shuffle',
     title: 'Code Shuffle',
-    subtitle: 'Rearrange algorithm blocks into proper order',
-    description: 'Drag and reorder scrambled code logic blocks to build working algorithms and achieve the target output.',
+    subtitle: 'Algorithm Block Assembly',
+    description: 'Reconstruct scrambled algorithm implementations from your course curriculum into working code.',
     difficulty: 'Advanced',
     category: 'Logic & Algorithms',
     estimatedMins: 4,
@@ -90,79 +90,149 @@ export const GAMES_METADATA: GameMetadata[] = [
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 1. SPEEDRUN SNIPPETS (Python, JS, TS, Java, SQL)
+// 1. SPEEDRUN SNIPPETS (Directly linked to Course Lessons)
 // ══════════════════════════════════════════════════════════════════════════
 export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
-  // Python
+  // Python Course 101 - Lesson 1: Memory Model & Scope
   {
     id: 'sr-py-1',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 1: Memory Model',
     language: 'python',
-    title: 'Calculate Mobile Money Fee',
-    description: 'Calculate 1.5% transaction fee with max cap',
-    code: 'def calc_momo_fee(amount):\n    fee = amount * 0.015\n    return min(fee, 25.0)',
+    title: 'Clone List via Slicing',
+    description: 'Create independent shallow copy of mutable list',
+    code: 'def clone_scores(scores):\n    # Slice to prevent reference mutation\n    return scores[:]',
     timeLimitSecs: 25,
   },
+  // Python Course 101 - Lesson 2: List Comprehensions
   {
     id: 'sr-py-2',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 2: List Comprehensions',
     language: 'python',
-    title: 'Reverse a String',
-    description: 'Classic Python slicing idiom',
-    code: 'def reverse_text(text):\n    return text[::-1]',
+    title: 'Filter Positive Numbers',
+    description: 'Concise generator expression accumulator',
+    code: 'def count_positives(nums):\n    return sum(1 for x in nums if x > 0)',
     timeLimitSecs: 20,
   },
-  // JavaScript
+  // Python Course 101 - Lesson 3: Recursion
+  {
+    id: 'sr-py-3',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 3: Recursion & Scopes',
+    language: 'python',
+    title: 'Recursive Factorial Base Case',
+    description: 'Deconstruct activation frames',
+    code: 'def factorial(n):\n    if n <= 1: return 1\n    return n * factorial(n - 1)',
+    timeLimitSecs: 25,
+  },
+  // JavaScript Course 201 - Lesson 1: Async JS & Promises
   {
     id: 'sr-js-1',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Async & Promises',
     language: 'javascript',
-    title: 'Filter Active Solar Grids',
-    description: 'Filter online clean energy nodes',
-    code: 'const getActiveGrids = (grids) => grids.filter(g => g.isOnline && g.batteryLevel > 20);',
+    title: 'Async Fetch Student Data',
+    description: 'Fetch and parse JSON payload with try-catch',
+    code: 'async function fetchLearner(id) {\n  const res = await fetch(`/api/students/${id}`);\n  return await res.json();\n}',
     timeLimitSecs: 30,
   },
+  // JavaScript Course 201 - Lesson 1: Event Loop
   {
     id: 'sr-js-2',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Event Loop',
     language: 'javascript',
-    title: 'Format Currency (GHS / NGN)',
-    description: 'Format monetary value into 2 decimal places',
-    code: 'const formatCurrency = (val, sym = "GHS") => `${sym} ${val.toFixed(2)}`;',
+    title: 'Microtask Queue Deferral',
+    description: 'Queue high-priority microtask callback',
+    code: 'const deferTask = (fn) => queueMicrotask(() => fn());',
+    timeLimitSecs: 25,
+  },
+  // Java Course 301 - Lesson 1: Classes & Constructors
+  {
+    id: 'sr-java-1',
+    courseId: 'course-java-301',
+    courseTitle: 'Java OOP Patterns',
+    lessonTitle: 'Lesson 1: Classes & Constructors',
+    language: 'java',
+    title: 'Instantiate Student Object',
+    description: 'Parameterized JVM constructor initialization',
+    code: 'public Student(String name, int score) {\n    this.name = name;\n    this.score = score;\n}',
     timeLimitSecs: 30,
   },
-  // TypeScript
+  // Java Course 301 - Lesson 2: Polymorphism & Interfaces
+  {
+    id: 'sr-java-2',
+    courseId: 'course-java-301',
+    courseTitle: 'Java OOP Patterns',
+    lessonTitle: 'Lesson 2: Polymorphism',
+    language: 'java',
+    title: 'Implement Interface Method',
+    description: 'Contract method implementation with @Override',
+    code: '@Override\npublic double calculateGrade() {\n    return this.score * 1.05;\n}',
+    timeLimitSecs: 30,
+  },
+  // TypeScript & SQL
   {
     id: 'sr-ts-1',
+    courseTitle: 'TypeScript Foundations',
+    lessonTitle: 'Type Contracts',
     language: 'typescript',
     title: 'Typed Student Record',
     description: 'TypeScript interface and getter function',
     code: 'interface Student { id: string; name: string; score: number; }\nconst isHonorRoll = (s: Student): boolean => s.score >= 85;',
-    timeLimitSecs: 35,
+    timeLimitSecs: 30,
   },
-  // Java
-  {
-    id: 'sr-java-1',
-    language: 'java',
-    title: 'Find Maximum in Array',
-    description: 'Iterate and track peak number',
-    code: 'public static int findMax(int[] arr) {\n    int max = arr[0];\n    for (int num : arr) if (num > max) max = num;\n    return max;\n}',
-    timeLimitSecs: 35,
-  },
-  // SQL
   {
     id: 'sr-sql-1',
+    courseTitle: 'Database & SQL',
+    lessonTitle: 'Query Filters',
     language: 'sql',
     title: 'Top Performing Students',
     description: 'Query top learners by score',
     code: 'SELECT name, score FROM students WHERE score >= 80 ORDER BY score DESC LIMIT 5;',
-    timeLimitSecs: 35,
+    timeLimitSecs: 30,
   },
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 2. BUG HUNT CHALLENGES (Python, JS, TS, Java, SQL)
+// 2. BUG HUNT CHALLENGES (Directly linked to Course Lessons)
 // ══════════════════════════════════════════════════════════════════════════
 export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
-  // Python
+  // Python Course 101 - Lesson 1: Memory Model
   {
     id: 'bh-py-1',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 1: Memory Model',
+    language: 'python',
+    title: 'Shared Mutable Default Argument',
+    description: 'Adding courses to a default list shares state across every caller in Python.',
+    lines: [
+      'def add_course(title, courses=[]):',
+      '    courses.append(title)',
+      '    return courses',
+    ],
+    buggyLineIndex: 0,
+    bugExplanation: 'Using a mutable list as default parameter causes unexpected shared state across all function calls.',
+    correctOptions: [
+      { text: 'def add_course(title, courses=None):', isCorrect: true },
+      { text: 'def add_course(title, courses: list):', isCorrect: false },
+      { text: 'def add_course(title, courses=()):', isCorrect: false },
+    ],
+    timeLimitSecs: 20,
+  },
+  // Python Course 101 - Lesson 2: Loop Accumulators
+  {
+    id: 'bh-py-2',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 2: Iteration & Loops',
     language: 'python',
     title: 'Loop Counter Off-By-One',
     description: 'This function should sum numbers from 1 to n inclusive.',
@@ -182,51 +252,15 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  {
-    id: 'bh-py-2',
-    language: 'python',
-    title: 'Mutable Default Argument',
-    description: 'Adding items to a default list shares state across multiple calls.',
-    lines: [
-      'def add_course(title, courses=[]):',
-      '    courses.append(title)',
-      '    return courses',
-    ],
-    buggyLineIndex: 0,
-    bugExplanation: 'Using a mutable list as default parameter causes unexpected shared state.',
-    correctOptions: [
-      { text: 'def add_course(title, courses=None):', isCorrect: true },
-      { text: 'def add_course(title, courses: list):', isCorrect: false },
-      { text: 'def add_course(title, courses=()):', isCorrect: false },
-    ],
-    timeLimitSecs: 20,
-  },
-  // JavaScript
+  // JavaScript Course 201 - Lesson 1: Async JS & Promises
   {
     id: 'bh-js-1',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Async & Promises',
     language: 'javascript',
-    title: 'Array Mutation Trap',
-    description: 'This function should add an item without mutating the original array.',
-    lines: [
-      'function addStudent(list, student) {',
-      '    list.push(student)',
-      '    return list',
-      '}',
-    ],
-    buggyLineIndex: 1,
-    bugExplanation: '.push() mutates the original list in-place instead of creating a fresh copy.',
-    correctOptions: [
-      { text: 'return [...list, student]', isCorrect: true },
-      { text: 'list.concat()', isCorrect: false },
-      { text: 'return list + student', isCorrect: false },
-    ],
-    timeLimitSecs: 20,
-  },
-  {
-    id: 'bh-js-2',
-    language: 'javascript',
-    title: 'Missing Await Keyword',
-    description: 'Fetching user data returns a Promise rather than the resolved object.',
+    title: 'Unresolved Promise Trap',
+    description: 'Fetching user data returns a Promise rather than the resolved response object.',
     lines: [
       'async function getUser(id) {',
       '    const res = fetch(`/api/users/${id}`)',
@@ -235,7 +269,7 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
       '}',
     ],
     buggyLineIndex: 1,
-    bugExplanation: 'Missing "await" before fetch() means res is an unresolved Promise.',
+    bugExplanation: 'Missing "await" before fetch() means res is an unresolved Promise rather than a Response.',
     correctOptions: [
       { text: 'const res = await fetch(`/api/users/${id}`)', isCorrect: true },
       { text: 'const res = sync fetch(`/api/users/${id}`)', isCorrect: false },
@@ -243,33 +277,39 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  // TypeScript
+  // JavaScript Course 201 - Lesson 1: Immutability
   {
-    id: 'bh-ts-1',
-    language: 'typescript',
-    title: 'Nullable Property Access',
-    description: 'Accessing property on potentially undefined user object.',
+    id: 'bh-js-2',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Immutability',
+    language: 'javascript',
+    title: 'Array Mutation Side Effect',
+    description: 'This function should add a student without mutating the original input array.',
     lines: [
-      'interface User { profile?: { email: string } }',
-      'function getEmail(user: User): string {',
-      '    return user.profile.email;',
+      'function addStudent(list, student) {',
+      '    list.push(student)',
+      '    return list',
       '}',
     ],
-    buggyLineIndex: 2,
-    bugExplanation: 'user.profile may be undefined, requiring optional chaining (?.) or fallback.',
+    buggyLineIndex: 1,
+    bugExplanation: '.push() mutates the original list in-place. Use the spread operator [...list, student] instead.',
     correctOptions: [
-      { text: 'return user.profile?.email ?? "no-email";', isCorrect: true },
-      { text: 'return user.profile!.email;', isCorrect: false },
-      { text: 'return user.profile as string;', isCorrect: false },
+      { text: 'return [...list, student]', isCorrect: true },
+      { text: 'list.concat()', isCorrect: false },
+      { text: 'return list + student', isCorrect: false },
     ],
     timeLimitSecs: 20,
   },
-  // Java
+  // Java Course 301 - Lesson 1: Reference vs Value Semantics
   {
     id: 'bh-java-1',
+    courseId: 'course-java-301',
+    courseTitle: 'Java OOP Patterns',
+    lessonTitle: 'Lesson 1: Reference Semantics',
     language: 'java',
-    title: 'String Equality Comparison',
-    description: 'Comparing string contents with == instead of .equals()',
+    title: 'String Reference Equality Comparison',
+    description: 'Comparing string values with == instead of .equals() in Java.',
     lines: [
       'public boolean checkPass(String input, String expected) {',
       '    if (input == expected) {',
@@ -279,7 +319,7 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
       '}',
     ],
     buggyLineIndex: 1,
-    bugExplanation: 'In Java, "==" compares object reference memory addresses, not string value equality.',
+    bugExplanation: 'In Java, "==" compares JVM memory addresses. Use input.equals(expected) for character value equality.',
     correctOptions: [
       { text: 'if (input.equals(expected)) {', isCorrect: true },
       { text: 'if (input.compareTo(expected) == 1) {', isCorrect: false },
@@ -287,118 +327,97 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  // SQL
-  {
-    id: 'bh-sql-1',
-    language: 'sql',
-    title: 'Missing GROUP BY in Aggregate',
-    description: 'Selecting department with COUNT without grouping.',
-    lines: [
-      'SELECT department, COUNT(*)',
-      'FROM employees',
-      'WHERE salary > 50000;',
-    ],
-    buggyLineIndex: 0,
-    bugExplanation: 'Aggregate functions mixed with non-aggregated columns require a GROUP BY clause.',
-    correctOptions: [
-      { text: 'SELECT department, COUNT(*) FROM employees WHERE salary > 50000 GROUP BY department;', isCorrect: true },
-      { text: 'SELECT department, SUM(*) FROM employees;', isCorrect: false },
-      { text: 'SELECT ALL department, COUNT(*) FROM employees;', isCorrect: false },
-    ],
-    timeLimitSecs: 20,
-  },
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 3. OUTPUT PREDICTOR CHALLENGES (Python, JS, TS, Java, SQL)
+// 3. OUTPUT PREDICTOR CHALLENGES (Directly linked to Course Lessons)
 // ══════════════════════════════════════════════════════════════════════════
 export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
-  // JavaScript
-  {
-    id: 'op-js-1',
-    language: 'javascript',
-    title: 'Type Coercion & Addition',
-    code: 'console.log(1 + "2" + 3);',
-    options: ['"123"', '6', '"15"', 'NaN'],
-    correctIndex: 0,
-    explanation: '1 + "2" coerces 1 to string yielding "12", then "12" + 3 concatenates to produce "123".',
-    timeLimitSecs: 15,
-  },
-  {
-    id: 'op-js-2',
-    language: 'javascript',
-    title: 'Array Slicing vs Splice',
-    code: 'const arr = [10, 20, 30, 40];\narr.slice(1, 3);\nconsole.log(arr.length);',
-    options: ['4', '2', '3', 'undefined'],
-    correctIndex: 0,
-    explanation: 'slice() does NOT mutate the original array, so arr.length remains 4!',
-    timeLimitSecs: 15,
-  },
-  {
-    id: 'op-js-3',
-    language: 'javascript',
-    title: 'Truthy / Falsy in Array Filter',
-    code: 'const items = [0, "Africa", "", null, 42, undefined];\nconsole.log(items.filter(Boolean).length);',
-    options: ['2', '3', '4', '6'],
-    correctIndex: 0,
-    explanation: 'Only "Africa" and 42 are truthy values (0, "", null, and undefined are falsy). Hence, length is 2.',
-    timeLimitSecs: 15,
-  },
-  // Python
+  // Python Course 101 - Lesson 1: Memory Model
   {
     id: 'op-py-1',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 1: Memory Model',
     language: 'python',
-    title: 'List Multiplication Shallow Copy',
+    title: 'Variable Reference Mutation',
+    code: 'a = [1, 2]\nb = a\nb.append(3)\nprint(a)',
+    options: ['[1, 2, 3]', '[1, 2]', 'None', 'SyntaxError'],
+    correctIndex: 0,
+    explanation: 'In Python, assignment (b = a) copies the object reference. Mutating b also mutates a because both point to the same list!',
+    timeLimitSecs: 15,
+  },
+  // Python Course 101 - Lesson 1: Shallow Multiplications
+  {
+    id: 'op-py-2',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 1: Memory Model',
+    language: 'python',
+    title: 'Matrix Multiplication Shallow Copy',
     code: 'matrix = [[0]] * 2\nmatrix[0][0] = 5\nprint(matrix[1][0])',
     options: ['5', '0', 'IndexError', 'None'],
     correctIndex: 0,
-    explanation: 'Multiplying a list containing a mutable inner list copies the reference. Modifying matrix[0][0] also changes matrix[1][0].',
+    explanation: 'Multiplying a list containing a mutable inner list copies the pointer reference. Changing row 0 modifies row 1.',
     timeLimitSecs: 18,
   },
+  // JavaScript Course 201 - Lesson 1: Event Loop Microtasks
   {
-    id: 'op-py-2',
-    language: 'python',
-    title: 'Dictionary Get with Default',
-    code: 'user = {"name": "Kwame", "age": 22}\nprint(user.get("city", "Accra"))',
-    options: ['"Accra"', 'None', 'KeyError', '"Kwame"'],
+    id: 'op-js-1',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Event Loop & Microtasks',
+    language: 'javascript',
+    title: 'Microtask Execution Order',
+    code: 'console.log(1);\nPromise.resolve().then(() => console.log(2));\nconsole.log(3);',
+    options: ['1, 3, 2', '1, 2, 3', '2, 1, 3', '3, 2, 1'],
     correctIndex: 0,
-    explanation: 'The "city" key does not exist in user, so .get() returns the provided default fallback "Accra".',
+    explanation: 'Synchronous console.log(1) and (3) run on the main thread stack first; Promise microtasks run immediately after stack clears.',
+    timeLimitSecs: 18,
+  },
+  // JavaScript Course 201 - Lesson 1: Type Coercion
+  {
+    id: 'op-js-2',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Types & Coercion',
+    language: 'javascript',
+    title: 'String Concatenation Coercion',
+    code: 'console.log(1 + "2" + 3);',
+    options: ['"123"', '6', '"15"', 'NaN'],
+    correctIndex: 0,
+    explanation: '1 + "2" coerces number 1 to string "12", then "12" + 3 concatenates to produce "123".',
     timeLimitSecs: 15,
   },
-  // TypeScript
-  {
-    id: 'op-ts-1',
-    language: 'typescript',
-    title: 'Nullish Coalescing (??) vs OR (||)',
-    code: 'const score = 0;\nconst display = score ?? 100;\nconsole.log(display);',
-    options: ['0', '100', 'null', 'undefined'],
-    correctIndex: 0,
-    explanation: 'The nullish coalescing operator (??) only falls back for null or undefined, preserving the valid falsy number 0.',
-    timeLimitSecs: 15,
-  },
-  // Java
+  // Java Course 301 - Lesson 1: Primitive Types & Division
   {
     id: 'op-java-1',
+    courseId: 'course-java-301',
+    courseTitle: 'Java OOP Patterns',
+    lessonTitle: 'Lesson 1: Primitive Types',
     language: 'java',
     title: 'Integer Division Truncation',
     code: 'int a = 7;\nint b = 2;\nSystem.out.println(a / b);',
     options: ['3', '3.5', '4', 'Compilation Error'],
     correctIndex: 0,
-    explanation: 'In Java, dividing two integers produces an integer result, truncating 3.5 down to 3.',
+    explanation: 'In Java, dividing two integers performs integer division, discarding the decimal fraction to yield 3.',
     timeLimitSecs: 15,
   },
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 4. CODE SHUFFLE CHALLENGES (Python, JS, TS, Java, SQL)
+// 4. CODE SHUFFLE CHALLENGES (Directly linked to Course Lessons)
 // ══════════════════════════════════════════════════════════════════════════
 export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
-  // Python
+  // Python Course 101 - Lesson 3: Recursion & Algorithms
   {
     id: 'cs-py-1',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 3: Functions & Recursion',
     language: 'python',
     title: 'Fibonacci Sequence Generator',
-    goalDescription: 'Generate the first n numbers of the Fibonacci series.',
+    goalDescription: 'Assemble the Fibonacci sequence generator taught in Lesson 3.',
     expectedOutput: '[0, 1, 1, 2, 3, 5]',
     scrambledBlocks: [
       { id: 'b4', content: 'fib.append(fib[-1] + fib[-2])', indent: 2 },
@@ -408,48 +427,37 @@ export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
       { id: 'b2', content: 'fib = [0, 1]', indent: 1 },
     ],
     correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
-    explanation: 'Function declaration -> initialize base values -> loop from 2 to n -> append sum of last two items -> return sliced list.',
+    explanation: 'Function header -> initialize base values [0, 1] -> loop 2 to n -> append sum -> return slice.',
   },
-  // JavaScript
+  // JavaScript Course 201 - Lesson 1: Async Fetch Algorithm
   {
     id: 'cs-js-1',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 1: Async JavaScript & Promises',
     language: 'javascript',
-    title: 'Linear Search Algorithm',
-    goalDescription: 'Search for a target value in an array and return its index or -1.',
-    expectedOutput: 'Index of target or -1',
+    title: 'Asynchronous API Fetch Handler',
+    goalDescription: 'Assemble an async JSON fetch function with status checks.',
+    expectedOutput: 'Parsed JSON Response',
     scrambledBlocks: [
-      { id: 'b3', content: 'if (arr[i] === target) return i;', indent: 2 },
-      { id: 'b1', content: 'function findIndex(arr, target) {', indent: 0 },
-      { id: 'b4', content: 'return -1;', indent: 1 },
-      { id: 'b2', content: 'for (let i = 0; i < arr.length; i++) {', indent: 1 },
+      { id: 'b3', content: 'const data = await res.json();', indent: 1 },
+      { id: 'b1', content: 'async function getStudentData(url) {', indent: 0 },
+      { id: 'b4', content: 'return data;', indent: 1 },
+      { id: 'b2', content: 'const res = await fetch(url);', indent: 1 },
       { id: 'b5', content: '}', indent: 0 },
     ],
     correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
-    explanation: 'Function definition -> iterate through array -> check equality -> fallback return -1 -> close function block.',
+    explanation: 'Async function header -> await fetch request -> await JSON parsing -> return data payload -> close brace.',
   },
-  // TypeScript
-  {
-    id: 'cs-ts-1',
-    language: 'typescript',
-    title: 'Generic Stack Push/Pop',
-    goalDescription: 'Assemble a generic Stack class in TypeScript.',
-    expectedOutput: 'Typed Stack Instance',
-    scrambledBlocks: [
-      { id: 'b2', content: 'private items: T[] = [];', indent: 1 },
-      { id: 'b1', content: 'class Stack<T> {', indent: 0 },
-      { id: 'b4', content: 'pop(): T | undefined { return this.items.pop(); }', indent: 1 },
-      { id: 'b3', content: 'push(item: T): void { this.items.push(item); }', indent: 1 },
-      { id: 'b5', content: '}', indent: 0 },
-    ],
-    correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
-    explanation: 'Class header with generic <T> -> private storage array -> push method -> pop method -> closing brace.',
-  },
-  // Java
+  // Java Course 301 - Lesson 2: String & Palindrome Algorithm
   {
     id: 'cs-java-1',
+    courseId: 'course-java-301',
+    courseTitle: 'Java OOP Patterns',
+    lessonTitle: 'Lesson 2: Algorithm Methods',
     language: 'java',
-    title: 'Check Palindrome Word',
-    goalDescription: 'Check if a string reads the same backwards.',
+    title: 'Two-Pointer Palindrome Verifier',
+    goalDescription: 'Assemble the two-pointer palindrome checking method from Lesson 2.',
     expectedOutput: 'true / false',
     scrambledBlocks: [
       { id: 'b3', content: 'while (left < right) {', indent: 1 },
@@ -459,6 +467,6 @@ export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
       { id: 'b5', content: 'return true;\n}', indent: 1 },
     ],
     correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
-    explanation: 'Method header -> two pointers -> while loop -> character comparison -> return true.',
+    explanation: 'Method header -> two pointers (left/right) -> while loop -> compare characters -> return true.',
   },
 ]

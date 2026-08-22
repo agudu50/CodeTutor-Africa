@@ -21,6 +21,9 @@ export interface GameMetadata {
 // 1. Syntax Speedrun Types
 export interface SpeedrunSnippet {
   id: string
+  courseId?: string
+  courseTitle?: string
+  lessonTitle?: string
   language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   description: string
@@ -31,6 +34,9 @@ export interface SpeedrunSnippet {
 // 2. Bug Hunt Types
 export interface BugHuntChallenge {
   id: string
+  courseId?: string
+  courseTitle?: string
+  lessonTitle?: string
   language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   description: string
@@ -48,6 +54,9 @@ export interface BugHuntChallenge {
 // 3. Output Predictor Types
 export interface OutputPredictorChallenge {
   id: string
+  courseId?: string
+  courseTitle?: string
+  lessonTitle?: string
   language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   code: string
@@ -60,6 +69,9 @@ export interface OutputPredictorChallenge {
 // 4. Code Shuffle Types
 export interface CodeShuffleChallenge {
   id: string
+  courseId?: string
+  courseTitle?: string
+  lessonTitle?: string
   language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   goalDescription: string

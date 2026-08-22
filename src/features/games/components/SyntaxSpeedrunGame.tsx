@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
-import { SPEEDRUN_SNIPPETS } from '../data/gameData'
 import { SpeedrunSnippet, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
 import { CyberRacer3D } from './3d/CyberRacer3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
@@ -16,27 +16,31 @@ import {
   Volume2,
   VolumeX,
   WifiOff,
+  BookOpen,
 } from 'lucide-react'
 
 interface SyntaxSpeedrunGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
   initialLanguage?: GameLanguage
+  initialCourseId?: string
 }
 
 export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   onBack,
   onScoreUpdate,
   initialLanguage = 'all',
+  initialCourseId = 'all',
 }) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
 
   const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const courseSnippets = courseGameAdapter.getSpeedrunSnippets(initialCourseId)
   const filteredSnippets = selectedLanguage === 'all'
-    ? SPEEDRUN_SNIPPETS
-    : SPEEDRUN_SNIPPETS.filter((s) => s.language === selectedLanguage)
-  const activeSnippets = filteredSnippets.length > 0 ? filteredSnippets : SPEEDRUN_SNIPPETS
+    ? courseSnippets
+    : courseSnippets.filter((s) => s.language === selectedLanguage)
+  const activeSnippets = filteredSnippets.length > 0 ? filteredSnippets : courseSnippets
 
   const [snippetIndex, setSnippetIndex] = useState(0)
   const [userInput, setUserInput] = useState('')
@@ -150,9 +154,9 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
       gameSound.playSuccess()
     }
 
-    if (snippetIndex + 1 < SPEEDRUN_SNIPPETS.length) {
-      setSnippetIndex((prev) => prev + 1)
-      const nextSnippet = SPEEDRUN_SNIPPETS[snippetIndex + 1]
+    if (snippetIndex + 1 < activeSnippets.length) {
+      setSnippetIndex((prev: number) => prev + 1)
+      const nextSnippet = activeSnippets[snippetIndex + 1]
       setUserInput('')
       setTimeLeft(nextSnippet.timeLimitSecs)
       startTimeRef.current = Date.now()
@@ -302,11 +306,20 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
           {/* Snippet Card */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800">
-                  {currentSnippet.language} • Challenge {snippetIndex + 1} of {SPEEDRUN_SNIPPETS.length}
-                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800">
+                    {currentSnippet.language} • Challenge {snippetIndex + 1} of {activeSnippets.length}
+                  </span>
+                  {currentSnippet.courseTitle && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      <BookOpen className="w-3 h-3 text-brand-500" />
+                      <span>{currentSnippet.courseTitle}</span>
+                      {currentSnippet.lessonTitle && <span className="text-slate-400">• {currentSnippet.lessonTitle}</span>}
+                    </span>
+                  )}
+                </div>
                 <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white mt-1">
                   {currentSnippet.title}
                 </h3>
