@@ -16,3 +16,6 @@ export interface IAIService {
   analyzeTicketIssue(request: AnalyzeTicketRequest): Promise<AnalyzeTicketResponse>
   checkModelHealth(): Promise<boolean>
 }
+
+export { hybridAIService as aiService } from './hybrid-ai.service'
+

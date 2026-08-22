@@ -5,7 +5,7 @@ import {
   SAMPLE_ERROR_MESSAGES,
   MOCK_DEBUG_RESULTS_BY_LANGUAGE,
 } from '../data/mockDebuggerData'
-import { aiService } from '@/services/ai/mock-ai.service'
+import { aiService } from '@/services/ai/ai.service'
 import { FixSuggestionCard } from '../components/FixSuggestionCard'
 import { Button, Dropdown, Textarea } from '@/components/ui'
 import { Bug, Sparkles, RotateCcw, Shield, Terminal, AlertCircle, Code2 } from 'lucide-react'

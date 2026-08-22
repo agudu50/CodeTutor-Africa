@@ -5,7 +5,7 @@ import {
   IssueCategory,
   issueSupportService,
 } from '@/services/support/issue-support.service'
-import { aiService } from '@/services/ai/mock-ai.service'
+import { aiService } from '@/services/ai/ai.service'
 import { AnalyzeTicketResponse } from '@/services/ai/ai.types'
 import { Button, Textarea, Input } from '@/components/ui'
 import { CodeBlock } from '@/features/tutor/components/CodeBlock'

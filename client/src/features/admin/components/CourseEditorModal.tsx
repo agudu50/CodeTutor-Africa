@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo } from 'react'
 import { Course, ProgrammingLanguage, DifficultyLevel, Module, QuizQuestion } from '@/types'
 import { courseStoreService } from '@/services/learning/course-store.service'
-import { aiService } from '@/services/ai/mock-ai.service'
+import { aiService } from '@/services/ai/ai.service'
 import { Button, Input, Textarea, Dropdown } from '@/components/ui'
 import {
   GraduationCap,

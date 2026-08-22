@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { ChatMessage, ProgrammingLanguage, TutorMode, TutorSession } from '@/types'
-import { aiService } from '@/services/ai/mock-ai.service'
+import { aiService } from '@/services/ai/ai.service'
 import { MOCK_TUTOR_SESSIONS, MOCK_INITIAL_MESSAGES } from '../data/mockTutorData'
 
 export function useTutorSession(initialSessionId: string = 'session-1') {
