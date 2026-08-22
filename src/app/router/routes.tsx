@@ -11,6 +11,7 @@ const TutorPage = lazy(() => import('@/features/tutor/pages/TutorPage'))
 const PracticeListPage = lazy(() => import('@/features/practice/pages/PracticeListPage'))
 const PracticeWorkspacePage = lazy(() => import('@/features/practice/pages/PracticeWorkspacePage'))
 const DebuggerPage = lazy(() => import('@/features/debugger/pages/DebuggerPage'))
+const GamesHubPage = lazy(() => import('@/features/games/pages/GamesHubPage'))
 const CourseListPage = lazy(() => import('@/features/learning/pages/CourseListPage'))
 const CourseDetailPage = lazy(() => import('@/features/learning/pages/CourseDetailPage'))
 const LessonViewPage = lazy(() => import('@/features/learning/pages/LessonViewPage'))
@@ -67,6 +68,10 @@ export const routes: RouteObject[] = [
             element: <PracticeWorkspacePage />,
           },
         ],
+      },
+      {
+        path: 'games',
+        element: <GamesHubPage />,
       },
       {
         path: 'debugger',

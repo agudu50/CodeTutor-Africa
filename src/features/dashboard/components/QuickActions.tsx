@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
-import { Bot, Bug, Code2, GraduationCap, ArrowRight, Sparkles } from 'lucide-react'
+import { Bot, Bug, Code2, Gamepad2, ArrowRight, Sparkles } from 'lucide-react'
 
 export const QuickActions: React.FC = memo(() => {
   const actions = [
@@ -13,6 +13,15 @@ export const QuickActions: React.FC = memo(() => {
       iconColor: 'text-brand-600 dark:text-brand-400',
       iconBg: 'bg-brand-50 dark:bg-brand-950/70 border-brand-200 dark:border-brand-800/80',
       tag: '100% Offline',
+    },
+    {
+      title: 'Coding Arcade',
+      description: 'Play rapid-fire typing racers, bug blitz, and output predictor games',
+      path: '/games',
+      icon: Gamepad2,
+      iconColor: 'text-emerald-600 dark:text-emerald-400',
+      iconBg: 'bg-emerald-50 dark:bg-emerald-950/70 border-emerald-200 dark:border-emerald-800/80',
+      tag: 'Mini-Games',
     },
     {
       title: 'Debug My Code',
@@ -31,15 +40,6 @@ export const QuickActions: React.FC = memo(() => {
       iconColor: 'text-amber-600 dark:text-amber-400',
       iconBg: 'bg-amber-50 dark:bg-amber-950/70 border-amber-200 dark:border-amber-800/80',
       tag: '50+ Problems',
-    },
-    {
-      title: 'Browse Courses',
-      description: 'Explore full modular courses for Python, JavaScript, and Java',
-      path: '/learning',
-      icon: GraduationCap,
-      iconColor: 'text-sky-600 dark:text-sky-400',
-      iconBg: 'bg-sky-50 dark:bg-sky-950/70 border-sky-200 dark:border-sky-800/80',
-      tag: 'Structured Tracks',
     },
   ]
 

@@ -2,7 +2,7 @@ export interface NavItem {
   id: string
   label: string
   path: string
-  iconName: 'LayoutDashboard' | 'Bot' | 'Code2' | 'Bug' | 'GraduationCap' | 'BarChart3' | 'Settings' | 'ShieldCheck'
+  iconName: 'LayoutDashboard' | 'Bot' | 'Code2' | 'Bug' | 'GraduationCap' | 'BarChart3' | 'Settings' | 'ShieldCheck' | 'Gamepad2'
   badge?: string
 }
 
@@ -25,6 +25,13 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: 'Practice',
     path: '/practice',
     iconName: 'Code2',
+  },
+  {
+    id: 'games',
+    label: 'Games',
+    path: '/games',
+    iconName: 'Gamepad2',
+    badge: 'New',
   },
   {
     id: 'debugger',

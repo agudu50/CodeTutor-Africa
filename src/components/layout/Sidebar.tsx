@@ -12,6 +12,7 @@ import {
   BarChart3,
   Settings,
   ShieldCheck,
+  Gamepad2,
   Sparkles,
   ChevronLeft,
   ChevronRight,
@@ -31,6 +32,7 @@ const iconMap = {
   BarChart3,
   Settings,
   ShieldCheck,
+  Gamepad2,
 }
 
 interface SidebarProps {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, BookOpen, Code2, Bot, Bug, BarChart3, Settings, ArrowRight, X, Sparkles } from 'lucide-react'
+import { Search, BookOpen, Code2, Bot, Bug, BarChart3, Settings, Gamepad2, ArrowRight, X, Sparkles } from 'lucide-react'
 
 interface SearchItem {
   id: string
@@ -21,6 +21,15 @@ const SEARCH_INDEX: SearchItem[] = [
     category: 'Workspace',
     path: '/dashboard',
     icon: BarChart3,
+  },
+  {
+    id: 'ws-games',
+    title: 'Coding Arcade & Mini-Games',
+    subtitle: 'Syntax speedrun, bug blitz, output predictor & algorithm shuffle',
+    category: 'Workspace',
+    path: '/games',
+    icon: Gamepad2,
+    badge: 'New Arcade',
   },
   {
     id: 'ws-tutor',

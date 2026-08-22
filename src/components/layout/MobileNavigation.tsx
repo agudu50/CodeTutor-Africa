@@ -11,6 +11,7 @@ import {
   BarChart3,
   Settings,
   ShieldCheck,
+  Gamepad2,
   Sparkles,
   X,
   Shield,
@@ -26,6 +27,7 @@ const iconMap = {
   BarChart3,
   Settings,
   ShieldCheck,
+  Gamepad2,
 }
 
 interface MobileNavigationProps {

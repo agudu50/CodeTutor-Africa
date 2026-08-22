@@ -15,7 +15,9 @@ declare module 'lucide-react' {
 
   export const AlertCircle: LucideIcon
   export const AlertTriangle: LucideIcon
+  export const ArrowDown: LucideIcon
   export const ArrowRight: LucideIcon
+  export const ArrowUp: LucideIcon
   export const BarChart3: LucideIcon
   export const BatteryCharging: LucideIcon
   export const BookOpen: LucideIcon
@@ -39,6 +41,7 @@ declare module 'lucide-react' {
   export const Eye: LucideIcon
   export const EyeOff: LucideIcon
   export const Flame: LucideIcon
+  export const Gamepad2: LucideIcon
   export const Globe: LucideIcon
   export const GraduationCap: LucideIcon
   export const HardDrive: LucideIcon
@@ -64,14 +67,18 @@ declare module 'lucide-react' {
   export const Settings: LucideIcon
   export const Shield: LucideIcon
   export const ShieldCheck: LucideIcon
+  export const Shuffle: LucideIcon
   export const Sparkles: LucideIcon
   export const Sun: LucideIcon
   export const Target: LucideIcon
   export const Terminal: LucideIcon
+  export const Timer: LucideIcon
   export const Trophy: LucideIcon
   export const User: LucideIcon
   export const UserCheck: LucideIcon
   export const Users: LucideIcon
+  export const Volume2: LucideIcon
+  export const VolumeX: LucideIcon
   export const Wifi: LucideIcon
   export const WifiOff: LucideIcon
   export const X: LucideIcon
