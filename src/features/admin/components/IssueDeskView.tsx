@@ -673,19 +673,19 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                   ═══════════════════════════════════════════════════════════ */}
               <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/70 shrink-0 space-y-3">
                 {/* 1-Click Pedagogical Quick Reply Templates with Full Wrapping */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
-                      1-Click Pedagogical Quick Replies (Click to Insert):
+                <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      1-Click Pedagogical Quick Replies:
                     </span>
                     {!aiDiagnosis && (
                       <button
                         type="button"
                         onClick={handleAnalyzeTicketWithAI}
-                        className="text-[10px] font-mono font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-950/70 hover:bg-brand-100 dark:hover:bg-brand-900 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 text-xs font-bold transition-all shadow-2xs cursor-pointer w-fit"
                       >
-                        <Sparkles className="w-3 h-3" />
-                        <span>Or Ask AI to Draft Reply & Code</span>
+                        <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                        <span>Ask AI to Draft Reply & Code</span>
                       </button>
                     )}
                   </div>
@@ -695,7 +695,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         key={tIdx}
                         type="button"
                         onClick={() => setReplyText(template)}
-                        className="text-[11px] font-sans p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-all text-left cursor-pointer shadow-2xs whitespace-normal break-words leading-relaxed"
+                        className="text-[11px] font-sans p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-all text-left cursor-pointer shadow-2xs whitespace-normal break-words leading-relaxed"
                       >
                         {template}
                       </button>
@@ -705,19 +705,23 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
 
                 <form onSubmit={handleSendReply} className="space-y-3">
                   {/* Resolution Text Note */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <div className="space-y-1.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                      <label className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                         <span>Send Instructor Solution Note to Student</span>
                       </label>
                       <button
                         type="button"
                         onClick={() => setIsCodeEditorOpen(!isCodeEditorOpen)}
-                        className="text-[11px] font-mono font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 cursor-pointer"
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold transition-all cursor-pointer w-fit ${
+                          isCodeEditorOpen
+                            ? 'bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700 shadow-2xs'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-400 hover:text-brand-600'
+                        }`}
                       >
-                        <Code2 className="w-3 h-3" />
-                        <span>{isCodeEditorOpen ? 'Hide Updated Code Editor' : '+ Add Updated / Corrected Code'}</span>
+                        <Code2 className="w-3.5 h-3.5" />
+                        <span>{isCodeEditorOpen ? 'Hide Code Editor' : '+ Add Updated / Corrected Code'}</span>
                       </button>
                     </div>
                     <Textarea
