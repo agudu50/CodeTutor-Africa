@@ -13,8 +13,13 @@ export interface ModelInfo {
 
 export interface SystemStatus {
   network: NetworkStatus
+  isSimulatedOffline: boolean
+  effectiveNetwork: NetworkStatus
   modelStatus: AIModelStatus
   activeModel: ModelInfo
   batteryLevel?: number
   storageRemainingMb?: number
+  lastSyncedAt: Date | null
+  pendingSyncCount: number
+  isSyncing: boolean
 }

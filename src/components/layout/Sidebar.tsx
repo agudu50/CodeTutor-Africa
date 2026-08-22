@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import { NavLink } from 'react-router-dom'
 import { NAVIGATION_ITEMS } from '@/app/config/navigation'
+import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { cn } from '@/utils/cn'
 import {
   LayoutDashboard,
@@ -16,6 +17,9 @@ import {
   ChevronRight,
   Shield,
   Cpu,
+  Wifi,
+  WifiOff,
+  Database,
 } from 'lucide-react'
 
 const iconMap = {
@@ -35,6 +39,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = memo(({ collapsed, onToggleCollapse }) => {
+  const { effectiveNetwork } = useSystemStatus()
+  const isOffline = effectiveNetwork === 'offline'
   return (
     <aside
       className={cn(
@@ -121,30 +127,64 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ collapsed, onToggleCollap
         })}
       </div>
 
-      {/* Offline Status & Hardware Footer */}
+      {/* Offline / Online Status & Hardware Footer */}
       {!collapsed ? (
-        <div className="p-3 mx-3 mb-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 space-y-2 shadow-2xs shrink-0">
+        <div
+          className={`p-3 mx-3 mb-3 rounded-2xl border space-y-2 shadow-2xs shrink-0 ${
+            isOffline
+              ? 'border-amber-200 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20'
+              : 'border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20'
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
-              <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Air-Gapped Privacy</span>
+              {isOffline ? (
+                <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              ) : (
+                <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              )}
+              <span>{isOffline ? 'Offline Mode' : 'Online'}</span>
             </div>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+            <span
+              className={`w-2 h-2 rounded-full inline-block ${
+                isOffline ? 'bg-amber-500' : 'bg-emerald-500'
+              }`}
+            />
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
-            Courses, interactive practice, and local AI reasoning run 100% offline.
+            {isOffline
+              ? 'All courses, coding challenges, and the AI Tutor work without internet.'
+              : 'Connected to internet. Progress is automatically backed up.'}
           </p>
-          <div className="pt-1.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-400">
+          <div className="pt-1.5 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-slate-400">
             <span className="flex items-center gap-1">
-              <Cpu className="w-3 h-3 text-brand-500" /> Gemma 2B Local
+              <Cpu className="w-3 h-3 text-brand-500" />
+              {isOffline ? 'Local AI Tutor' : 'Cloud AI'}
             </span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold">0 KB Data</span>
+            <span
+              className={`font-bold ${
+                isOffline ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
+              }`}
+            >
+              {isOffline ? 'No Internet Needed' : 'Connected'}
+            </span>
           </div>
         </div>
       ) : (
-        <div className="p-2 mx-2 mb-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 shrink-0">
-          <Shield className="w-4 h-4" />
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        <div
+          className={`p-2 mx-2 mb-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-[10px] font-mono shrink-0 ${
+            isOffline
+              ? 'border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/40 text-amber-600'
+              : 'border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/40 text-emerald-600'
+          }`}
+          title={isOffline ? 'Offline Mode' : 'Online'}
+        >
+          {isOffline ? <WifiOff className="w-4 h-4" /> : <Wifi className="w-4 h-4" />}
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              isOffline ? 'bg-amber-500' : 'bg-emerald-500'
+            }`}
+          />
         </div>
       )}
     </aside>

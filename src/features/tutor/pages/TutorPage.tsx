@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTutorSession } from '../hooks/useTutorSession'
+import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { ChatMessageItem } from '../components/ChatMessageItem'
 import { Button, Badge, Dropdown, EmptyState } from '@/components/ui'
 import {
@@ -12,6 +13,7 @@ import {
   CornerDownLeft,
   Shield,
   X,
+  Wifi,
 } from 'lucide-react'
 import { ProgrammingLanguage, TutorMode } from '@/types'
 
@@ -30,6 +32,9 @@ export const TutorPage: React.FC = () => {
     switchSession,
     createNewSession,
   } = useTutorSession(sessionId || 'session-1')
+
+  const { effectiveNetwork } = useSystemStatus()
+  const isOffline = effectiveNetwork === 'offline'
 
   const [inputVal, setInputVal] = useState('')
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
@@ -183,11 +188,22 @@ export const TutorPage: React.FC = () => {
         {/* Local Hardware Status Footer */}
         <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-mono">
           <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-            <Cpu className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" /> Gemma 2B (Local)
+            <Cpu className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+            {isOffline ? 'Gemma 2B (Local)' : 'Cloud AI Engine'}
           </span>
-          <span className="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-            100% Offline
+          <span
+            className={`inline-flex items-center gap-1 font-bold ${
+              isOffline
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-emerald-600 dark:text-emerald-400'
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full inline-block animate-pulse ${
+                isOffline ? 'bg-amber-500' : 'bg-emerald-500'
+              }`}
+            />
+            {isOffline ? '100% Offline' : 'Cloud Synced'}
           </span>
         </div>
       </div>
@@ -217,11 +233,25 @@ export const TutorPage: React.FC = () => {
 
           <div className="hidden sm:flex items-center gap-3 text-xs font-mono shrink-0">
             <span className="hidden lg:flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-              <Shield className="w-3.5 h-3.5 text-emerald-500" /> Air-Gapped
+              {isOffline ? (
+                <>
+                  <Shield className="w-3.5 h-3.5 text-amber-500" /> Air-Gapped Local
+                </>
+              ) : (
+                <>
+                  <Wifi className="w-3.5 h-3.5 text-emerald-500" /> Cloud Connected
+                </>
+              )}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-50 dark:bg-brand-950/70 border border-brand-200 dark:border-brand-800/80 text-brand-700 dark:text-brand-300 font-semibold text-[11px]">
+            <span
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border font-semibold text-[11px] ${
+                isOffline
+                  ? 'bg-amber-50 dark:bg-amber-950/70 border-amber-200 dark:border-amber-800/80 text-amber-800 dark:text-amber-300'
+                  : 'bg-brand-50 dark:bg-brand-950/70 border border-brand-200 dark:border-brand-800/80 text-brand-700 dark:text-brand-300'
+              }`}
+            >
               <Sparkles className="w-3 h-3 text-brand-600 dark:text-brand-400" />
-              On-Device Neural Tutor
+              {isOffline ? 'On-Device Neural Tutor' : 'High-Precision Cloud AI'}
             </span>
           </div>
         </div>

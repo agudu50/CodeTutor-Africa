@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { MobileNavigation } from './MobileNavigation'
+import { ConnectivityBanner } from './ConnectivityBanner'
 
 export const MainLayout: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -25,6 +26,7 @@ export const MainLayout: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <Topbar onOpenMobileNav={() => setMobileNavOpen(true)} />
+        <ConnectivityBanner />
         <main className="flex-1 flex flex-col overflow-y-auto min-w-0 w-full">
           <Outlet />
         </main>

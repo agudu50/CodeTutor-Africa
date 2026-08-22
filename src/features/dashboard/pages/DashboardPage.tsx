@@ -31,18 +31,12 @@ export const DashboardPage: React.FC = () => {
           />
 
           <div className="space-y-1 min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-                Welcome back,{' '}
-                <span className="text-brand-600 dark:text-brand-400 font-extrabold">
-                  {profile.fullName}
-                </span>
-              </h1>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                100% Offline AI
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+              Welcome back,{' '}
+              <span className="text-brand-600 dark:text-brand-400 font-extrabold">
+                {profile.fullName}
               </span>
-            </div>
+            </h1>
 
             <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
               <span className="font-medium text-slate-600 dark:text-slate-300 truncate">
