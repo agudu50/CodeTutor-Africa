@@ -1,23 +1,21 @@
-import { lazy } from 'react'
 import { RouteObject, Navigate } from 'react-router-dom'
 import { MainLayout } from '@/components/layout/MainLayout'
 
-// Lazy-loaded route pages for optimal bundle splitting and 8GB laptop performance
-const LandingPage = lazy(() => import('@/features/landing/pages/LandingPage'))
-const SignInPage = lazy(() => import('@/features/auth/pages/SignInPage'))
-const SignUpPage = lazy(() => import('@/features/auth/pages/SignUpPage'))
-const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'))
-const TutorPage = lazy(() => import('@/features/tutor/pages/TutorPage'))
-const PracticeListPage = lazy(() => import('@/features/practice/pages/PracticeListPage'))
-const PracticeWorkspacePage = lazy(() => import('@/features/practice/pages/PracticeWorkspacePage'))
-const DebuggerPage = lazy(() => import('@/features/debugger/pages/DebuggerPage'))
-const GamesHubPage = lazy(() => import('@/features/games/pages/GamesHubPage'))
-const CourseListPage = lazy(() => import('@/features/learning/pages/CourseListPage'))
-const CourseDetailPage = lazy(() => import('@/features/learning/pages/CourseDetailPage'))
-const LessonViewPage = lazy(() => import('@/features/learning/pages/LessonViewPage'))
-const ProgressPage = lazy(() => import('@/features/progress/pages/ProgressPage'))
-const SettingsPage = lazy(() => import('@/features/settings/pages/SettingsPage'))
-const AdminDashboardPage = lazy(() => import('@/features/admin/pages/AdminDashboardPage'))
+import LandingPage from '@/features/landing/pages/LandingPage'
+import SignInPage from '@/features/auth/pages/SignInPage'
+import SignUpPage from '@/features/auth/pages/SignUpPage'
+import DashboardPage from '@/features/dashboard/pages/DashboardPage'
+import TutorPage from '@/features/tutor/pages/TutorPage'
+import PracticeListPage from '@/features/practice/pages/PracticeListPage'
+import PracticeWorkspacePage from '@/features/practice/pages/PracticeWorkspacePage'
+import DebuggerPage from '@/features/debugger/pages/DebuggerPage'
+import GamesHubPage from '@/features/games/pages/GamesHubPage'
+import CourseListPage from '@/features/learning/pages/CourseListPage'
+import CourseDetailPage from '@/features/learning/pages/CourseDetailPage'
+import LessonViewPage from '@/features/learning/pages/LessonViewPage'
+import ProgressPage from '@/features/progress/pages/ProgressPage'
+import SettingsPage from '@/features/settings/pages/SettingsPage'
+import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage'
 
 export const routes: RouteObject[] = [
   // Public standalone routes
