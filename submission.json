@@ -3,38 +3,41 @@
   "profiler_version": "adtc-profiler 0.1.0",
   "submission": {
     "team_id": "codetutor-africa",
+    "domain": "coding_assistants",
+    "language_scope": [
+      "en"
+    ],
+    "african_alpha_claim": true,
+    "budget_laptop_claim": true,
     "submitter": {
       "name": "CodeTutor Africa Team",
       "email": "contact@codetutor.africa",
       "github_handle": "agudu50"
     },
-    "domain": "coding_assistants",
-    "language_scope": [
-      "en"
-    ],
-    "budget_laptop_claim": true,
-    "african_alpha_claim": true,
     "cross_disciplinary_pairing": {
-      "discipline": "Computer Science Education & Pedagogical AI",
+      "discipline": "education",
       "load_bearing": true,
       "description": "Offline Socratic tutoring system delivering compiler-guided diagnostics and localized curriculum scaffolding for African engineering students."
     },
     "test_prompts": [
       {
-        "prompt_id": "prompt_1",
+        "prompt_id": "tp_001",
         "prompt": "Explain the difference between mutable and immutable data types in Python with code examples."
       },
       {
-        "prompt_id": "prompt_2",
+        "prompt_id": "tp_002",
         "prompt": "Write a Python function to find the maximum element in a list without using the built-in max() function."
       }
     ],
     "model": {
       "name": "Qwen2.5-Coder-1.5B-Instruct",
       "runtime": "llama.cpp",
-      "quantization": "Q4_K_M",
-      "parameters_estimate": "1.78B",
+      "quantization": "GGUF Q4_K_M",
+      "parameters_estimate": "1.5B",
       "packaging": "binary_bundle"
+    },
+    "_runtime": {
+      "model_path": "model/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
     }
   },
   "environment": {
@@ -70,7 +73,7 @@
     "params_count": 1777088000,
     "context_length": 32768,
     "architecture": "qwen2",
-    "claimed_params_estimate": "1.78B",
+    "claimed_params_estimate": "1.5B",
     "params_match": true
   }
 }
