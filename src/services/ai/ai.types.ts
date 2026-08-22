@@ -62,5 +62,6 @@ export interface AnalyzeTicketResponse {
   codeDiagnosis: string
   suggestedReply: string
   suggestedAction: string
+  updatedCode?: string
   suggestedStatus: 'open' | 'in_review' | 'resolved'
 }

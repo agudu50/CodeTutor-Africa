@@ -287,8 +287,24 @@ console.log(processData([10, 20, 30]));`
       return {
         summary: `The student (${request.studentName}) observed that test case 2 expects phrases like "A man a plan a canal Panama" to ignore whitespace and casing, which was ambiguous in the problem description.`,
         codeDiagnosis: `The student's submitted recursive function \`is_palindrome\` correctly attempts whitespace normalization with \`s.replace(" ", "").lower()\`. While \`replace(" ", "")\` removes spaces, multi-word phrases require all spaces removed. The student's question is primarily a curriculum clarification request for problem requirements.`,
-        suggestedReply: `Hi ${request.studentName}, thank you for reaching out! You are absolutely right—we have updated the Palindrome Checker problem description to explicitly state that all whitespace and casing must be stripped before recursive evaluation. Great eye for detail and happy coding!`,
-        suggestedAction: 'Update Problem Description & Resolve',
+        suggestedReply: `Hi ${request.studentName}, thank you for reaching out! You are absolutely right—we have updated the Palindrome Checker problem description to explicitly state that all whitespace and casing must be stripped before recursive evaluation. I have attached the optimized reference solution below. Great eye for detail and happy coding!`,
+        suggestedAction: 'Update Problem Description & Provide Optimized Code',
+        updatedCode: `def is_palindrome(s: str) -> bool:
+    # 1. Normalize: strip all non-alphanumeric characters & convert to lowercase
+    cleaned = "".join(ch.lower() for ch in s if ch.isalnum())
+    
+    # 2. Recursive Base Cases
+    if len(cleaned) <= 1:
+        return True
+    if cleaned[0] != cleaned[-1]:
+        return False
+        
+    # 3. Recursive Step
+    return is_palindrome(cleaned[1:-1])
+
+# Test assertions
+print(is_palindrome("A man a plan a canal Panama")) # True
+print(is_palindrome("race a car"))                  # False`,
         suggestedStatus: 'resolved',
       }
     }
@@ -297,8 +313,18 @@ console.log(processData([10, 20, 30]));`
       return {
         summary: `The student reported a potential listener or stream resource lifecycle warning.`,
         codeDiagnosis: `Event listener lifecycle has been reinforced with automatic unsubscription on view teardown.`,
-        suggestedReply: `Hello ${request.studentName}, thank you for the feedback. We have verified the stream listener lifecycle and patched the teardown hook for air-gapped runtimes.`,
+        suggestedReply: `Hello ${request.studentName}, thank you for the feedback. We have verified the stream listener lifecycle and patched the teardown hook for air-gapped runtimes with the updated cleanup handler below.`,
         suggestedAction: 'Patch Lifecycle Hook',
+        updatedCode: `// Event Listener Teardown Patch
+useEffect(() => {
+  const handler = () => { /* Handle update */ };
+  emitter.on('data', handler);
+  
+  // Teardown unbind on unmount
+  return () => {
+    emitter.off('data', handler);
+  };
+}, []);`,
         suggestedStatus: 'resolved',
       }
     }
@@ -309,8 +335,11 @@ console.log(processData([10, 20, 30]));`
       codeDiagnosis: code
         ? `Code analysis confirms syntax structure. The inquiry relates to test case boundary expectations.`
         : `Pedagogical question regarding curriculum concepts.`,
-      suggestedReply: `Hi ${request.studentName}, thank you for bringing this to our attention! We have investigated the issue and updated our curriculum notes accordingly.`,
-      suggestedAction: 'Send Pedagogical Clarification',
+      suggestedReply: `Hi ${request.studentName}, thank you for bringing this to our attention! We have investigated the issue and provided the updated solution structure below.`,
+      suggestedAction: 'Send Pedagogical Clarification & Updated Code',
+      updatedCode: code
+        ? `# Corrected Solution & Structure\n${code}`
+        : undefined,
       suggestedStatus: 'resolved',
     }
   }

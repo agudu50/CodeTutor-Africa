@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react'
+import React, { useState, useEffect, memo } from 'react'
 import {
   IssueReport,
   IssueStatus,
@@ -23,6 +23,7 @@ import {
   Quote,
   Bot,
   Lightbulb,
+  Code2,
 } from 'lucide-react'
 
 interface IssueDeskViewProps {
@@ -37,6 +38,8 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
   const [statusFilter, setStatusFilter] = useState<'all' | IssueStatus>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [replyText, setReplyText] = useState('')
+  const [updatedCodeText, setUpdatedCodeText] = useState('')
+  const [isCodeEditorOpen, setIsCodeEditorOpen] = useState(false)
   const [isSendingReply, setIsSendingReply] = useState(false)
   const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false)
   const [isAnalyzingTicket, setIsAnalyzingTicket] = useState(false)
@@ -59,10 +62,22 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
 
   const selectedIssue = issues.find((i) => i.id === selectedIssueId) || filteredIssues[0]
 
+  useEffect(() => {
+    if (selectedIssue) {
+      setUpdatedCodeText(selectedIssue.updatedCodeSnippet || '')
+      if (selectedIssue.updatedCodeSnippet) {
+        setIsCodeEditorOpen(true)
+      }
+    }
+  }, [selectedIssue?.id])
+
   const handleSelectIssue = (id: string) => {
     setSelectedIssueId(id)
     setIsMobileDetailOpen(true)
     setAiDiagnosis(null) // Reset analysis for newly selected issue
+    const target = issues.find((i) => i.id === id)
+    setUpdatedCodeText(target?.updatedCodeSnippet || '')
+    setIsCodeEditorOpen(Boolean(target?.updatedCodeSnippet))
   }
 
   const handleStatusChange = (id: string, newStatus: IssueStatus) => {
@@ -86,6 +101,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
         studentName: selectedIssue.userName,
       })
       setAiDiagnosis(result)
+      if (result.updatedCode) {
+        setUpdatedCodeText(result.updatedCode)
+        setIsCodeEditorOpen(true)
+      }
     } catch (e) {
       console.error('Failed to analyze ticket with AI', e)
     } finally {
@@ -96,8 +115,17 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
   const handleApplyAISuggestion = () => {
     if (!aiDiagnosis) return
     setReplyText(aiDiagnosis.suggestedReply)
+    if (aiDiagnosis.updatedCode) {
+      setUpdatedCodeText(aiDiagnosis.updatedCode)
+      setIsCodeEditorOpen(true)
+    }
     if (selectedIssue && aiDiagnosis.suggestedStatus) {
-      issueSupportService.updateIssueStatus(selectedIssue.id, aiDiagnosis.suggestedStatus)
+      issueSupportService.updateIssueStatus(
+        selectedIssue.id,
+        aiDiagnosis.suggestedStatus,
+        aiDiagnosis.suggestedReply,
+        aiDiagnosis.updatedCode || updatedCodeText.trim() || undefined
+      )
       onUpdated()
     }
   }
@@ -112,7 +140,8 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
     issueSupportService.updateIssueStatus(
       selectedIssue.id,
       selectedIssue.status === 'open' ? 'in_review' : selectedIssue.status,
-      replyText.trim()
+      replyText.trim(),
+      updatedCodeText.trim() || undefined
     )
 
     setReplyText('')
@@ -159,7 +188,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
     const text = `${snippet || ''} ${subject || ''}`.toLowerCase()
     if (text.includes('def ') || text.includes('import ') || text.includes('python') || text.includes('is_palindrome')) return 'python'
     if (text.includes('public class') || text.includes('system.out') || text.includes('java')) return 'java'
-    if (text.includes('const ') || text.includes('function') || text.includes('javascript') || text.includes('=>')) return 'javascript'
+    if (text.includes('const ') || text.includes('function') || text.includes('javascript') || text.includes('=>') || text.includes('useeffect')) return 'javascript'
     return 'python'
   }
 
@@ -383,7 +412,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                   <button
                     type="button"
                     onClick={() => handleDeleteIssue(selectedIssue.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer shrink-0"
                     title="Delete ticket"
                   >
                     <X className="w-4 h-4" />
@@ -478,7 +507,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 </div>
 
                 {/* ═══════════════════════════════════════════════════════════
-                    SYNTAX HIGHLIGHTED CODE SNIPPET (VS CODE DARK THEME)
+                    SYNTAX HIGHLIGHTED SUBMITTED CODE (VS CODE DARK THEME)
                     ═══════════════════════════════════════════════════════════ */}
                 {selectedIssue.codeSnippet && (
                   <div className="space-y-1.5">
@@ -501,53 +530,96 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 )}
 
                 {/* ═══════════════════════════════════════════════════════════
-                    OFFLINE AI DIAGNOSTIC & SOLUTION NOTE CARD
+                    OFFLINE AI DIAGNOSTIC & SOLUTION NOTE CARD (CLEAN SOLID)
                     ═══════════════════════════════════════════════════════════ */}
                 {aiDiagnosis && (
-                  <div className="p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 space-y-3 animate-in fade-in zoom-in-95 duration-150 shadow-xs">
-                    <div className="flex items-center justify-between border-b border-indigo-200/80 dark:border-indigo-800/80 pb-2">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3.5 shadow-2xs">
+                    {/* Header Row: Title & Action Controls */}
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
                       <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs">
+                        <div className="w-7 h-7 rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 flex items-center justify-center shrink-0">
                           <Bot className="w-4 h-4" />
                         </div>
-                        <div>
-                          <h5 className="text-xs font-bold text-indigo-950 dark:text-indigo-200">
-                            Offline AI Ticket Diagnosis & Action Plan
-                          </h5>
-                          <span className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 block">
-                            Recommended Action: {aiDiagnosis.suggestedAction}
-                          </span>
-                        </div>
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                          Offline AI Ticket Diagnosis & Action Plan
+                        </h4>
                       </div>
 
-                      <Button
-                        type="button"
-                        variant="primary"
-                        size="sm"
-                        onClick={handleApplyAISuggestion}
-                        className="h-7 text-[11px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs"
-                        leftIcon={<Sparkles className="w-3 h-3" />}
-                      >
-                        Apply to Response
-                      </Button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="sm"
+                          onClick={handleApplyAISuggestion}
+                          className="h-7.5 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-lg px-3 shadow-2xs cursor-pointer"
+                          leftIcon={<Sparkles className="w-3.5 h-3.5" />}
+                        >
+                          Apply AI Solution & Code
+                        </Button>
+
+                        <button
+                          type="button"
+                          onClick={() => setAiDiagnosis(null)}
+                          className="h-7.5 px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Dismiss AI Diagnosis"
+                          aria-label="Close AI Diagnosis"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          <span>Dismiss</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="space-y-2 text-xs text-indigo-900 dark:text-indigo-200">
+                    {/* Dedicated Recommended Action Bar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-[11px] uppercase text-slate-500 dark:text-slate-400">
+                          Recommended Action:
+                        </span>
+                        <span className="font-semibold text-slate-900 dark:text-white">
+                          {aiDiagnosis.suggestedAction}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-bold uppercase px-1.5 py-0.5 rounded bg-brand-50 dark:bg-brand-950 border border-brand-200 dark:border-brand-800">
+                        AI Recommended
+                      </span>
+                    </div>
+
+                    <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300">
                       <div className="space-y-0.5">
-                        <span className="font-mono font-bold text-[10px] uppercase text-indigo-700 dark:text-indigo-400 block">
+                        <span className="font-mono font-bold text-[10px] uppercase text-slate-500 dark:text-slate-400 block">
                           Issue Breakdown:
                         </span>
-                        <p className="font-sans leading-relaxed">{aiDiagnosis.summary}</p>
+                        <p className="font-sans leading-relaxed text-slate-800 dark:text-slate-200">
+                          {aiDiagnosis.summary}
+                        </p>
                       </div>
 
                       <div className="space-y-0.5">
-                        <span className="font-mono font-bold text-[10px] uppercase text-indigo-700 dark:text-indigo-400 block">
+                        <span className="font-mono font-bold text-[10px] uppercase text-slate-500 dark:text-slate-400 block">
                           Technical & Code Diagnosis:
                         </span>
-                        <p className="font-sans leading-relaxed">{aiDiagnosis.codeDiagnosis}</p>
+                        <p className="font-sans leading-relaxed text-slate-800 dark:text-slate-200">
+                          {aiDiagnosis.codeDiagnosis}
+                        </p>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-800 space-y-1">
+                      {/* AI Suggested Updated Code Preview */}
+                      {aiDiagnosis.updatedCode && (
+                        <div className="space-y-1 pt-1">
+                          <span className="font-mono font-bold text-[10px] text-slate-500 dark:text-slate-400 uppercase block flex items-center gap-1">
+                            <Code2 className="w-3 h-3 text-brand-600 dark:text-brand-400" />
+                            <span>AI Suggested Reference Code Solution:</span>
+                          </span>
+                          <CodeBlock
+                            code={aiDiagnosis.updatedCode}
+                            language={detectLanguage(aiDiagnosis.updatedCode, selectedIssue.subject)}
+                            caption="AI Corrected Solution"
+                          />
+                        </div>
+                      )}
+
+                      <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
                         <span className="font-mono font-bold text-[10px] text-brand-600 dark:text-brand-400 uppercase block flex items-center gap-1">
                           <Lightbulb className="w-3 h-3 text-amber-500" />
                           <span>AI Drafted Response Note:</span>
@@ -560,9 +632,11 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                   </div>
                 )}
 
-                {/* Admin Reply History */}
+                {/* ═══════════════════════════════════════════════════════════
+                    ADMIN PUBLISHED UPDATED CODE & RESPONSE HISTORY
+                    ═══════════════════════════════════════════════════════════ */}
                 {selectedIssue.adminReply && (
-                  <div className="p-4 rounded-2xl bg-brand-50/80 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 space-y-1.5 text-xs shadow-2xs">
+                  <div className="p-4 rounded-2xl bg-brand-50/80 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 space-y-2 text-xs shadow-2xs">
                     <div className="flex items-center justify-between">
                       <span className="font-mono font-bold text-xs text-brand-700 dark:text-brand-300 uppercase flex items-center gap-1.5">
                         <Shield className="w-3.5 h-3.5" />
@@ -575,11 +649,28 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                     <p className="text-slate-800 dark:text-slate-200 font-sans leading-relaxed text-xs sm:text-sm">
                       {selectedIssue.adminReply}
                     </p>
+
+                    {/* Previously Attached Updated Code Snippet */}
+                    {selectedIssue.updatedCodeSnippet && (
+                      <div className="pt-2 border-t border-brand-200/60 dark:border-brand-800/60 space-y-1">
+                        <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 uppercase flex items-center gap-1.5">
+                          <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                          <span>Attached Corrected Solution Code:</span>
+                        </span>
+                        <CodeBlock
+                          code={selectedIssue.updatedCodeSnippet}
+                          language={detectLanguage(selectedIssue.updatedCodeSnippet, selectedIssue.subject)}
+                          caption="Delivered Reference Solution"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              {/* Pinned Bottom Resolution Composer with Full Untruncated Templates */}
+              {/* ═══════════════════════════════════════════════════════════
+                  PINNED BOTTOM RESOLUTION COMPOSER & UPDATED CODE SECTION
+                  ═══════════════════════════════════════════════════════════ */}
               <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/70 shrink-0 space-y-3">
                 {/* 1-Click Pedagogical Quick Reply Templates with Full Wrapping */}
                 <div className="space-y-1.5">
@@ -594,7 +685,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         className="text-[10px] font-mono font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 cursor-pointer"
                       >
                         <Sparkles className="w-3 h-3" />
-                        <span>Or Ask AI to Draft Reply</span>
+                        <span>Or Ask AI to Draft Reply & Code</span>
                       </button>
                     )}
                   </div>
@@ -612,22 +703,98 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                   </div>
                 </div>
 
-                <form onSubmit={handleSendReply} className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                      <span>Send Instructor Solution Note to Student</span>
-                    </label>
-                    <span className="text-[10px] font-mono text-slate-400">Air-Gapped Dispatch</span>
+                <form onSubmit={handleSendReply} className="space-y-3">
+                  {/* Resolution Text Note */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                        <span>Send Instructor Solution Note to Student</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setIsCodeEditorOpen(!isCodeEditorOpen)}
+                        className="text-[11px] font-mono font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <Code2 className="w-3 h-3" />
+                        <span>{isCodeEditorOpen ? 'Hide Updated Code Editor' : '+ Add Updated / Corrected Code'}</span>
+                      </button>
+                    </div>
+                    <Textarea
+                      rows={2}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="Type an empathetic explanation, patch note, or resolution update to the student..."
+                      className="text-xs font-sans resize-none"
+                    />
                   </div>
-                  <Textarea
-                    rows={2}
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Type an empathetic explanation, patch note, or resolution update to the student..."
-                    className="text-xs font-sans resize-none"
-                  />
-                  <div className="flex justify-end">
+
+                  {/* ═══════════════════════════════════════════════════════════
+                      UPDATED / CORRECTED CODE SNIPPET ATTACHMENT SECTION
+                      ═══════════════════════════════════════════════════════════ */}
+                  {isCodeEditorOpen && (
+                    <div className="space-y-2 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs animate-in fade-in">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                          <label className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
+                            Updated / Corrected Solution Code
+                          </label>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          {aiDiagnosis?.updatedCode && (
+                            <button
+                              type="button"
+                              onClick={() => setUpdatedCodeText(aiDiagnosis.updatedCode || '')}
+                              className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold hover:underline cursor-pointer"
+                            >
+                              Reset to AI Suggestion
+                            </button>
+                          )}
+                          {updatedCodeText && (
+                            <button
+                              type="button"
+                              onClick={() => setUpdatedCodeText('')}
+                              className="text-[10px] font-mono text-rose-500 hover:underline cursor-pointer"
+                            >
+                              Clear Code
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <textarea
+                        rows={5}
+                        value={updatedCodeText}
+                        onChange={(e) => setUpdatedCodeText(e.target.value)}
+                        placeholder="# Paste or edit the corrected solution code that will be delivered to the student..."
+                        className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-mono text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500 leading-relaxed resize-y"
+                        spellCheck={false}
+                      />
+
+                      {/* Live Syntax Preview if present */}
+                      {updatedCodeText.trim() && (
+                        <div className="space-y-1 pt-1">
+                          <span className="text-[10px] font-mono font-bold uppercase text-slate-400 block">
+                            Live Student Code Preview:
+                          </span>
+                          <CodeBlock
+                            code={updatedCodeText}
+                            language={detectLanguage(updatedCodeText, selectedIssue.subject)}
+                            caption="Updated Solution Preview"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Submit Action */}
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {updatedCodeText.trim() ? 'Code solution attached ✓' : 'Text note only'}
+                    </span>
+
                     <Button
                       type="submit"
                       size="sm"

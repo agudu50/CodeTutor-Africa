@@ -21,6 +21,7 @@ export interface IssueReport {
   status: IssueStatus
   description: string
   codeSnippet?: string
+  updatedCodeSnippet?: string
   errorMessage?: string
   adminReply?: string
   createdAt: string
@@ -126,7 +127,12 @@ class IssueSupportService {
     return newIssue
   }
 
-  updateIssueStatus(id: string, status: IssueStatus, adminReply?: string): IssueReport | undefined {
+  updateIssueStatus(
+    id: string,
+    status: IssueStatus,
+    adminReply?: string,
+    updatedCodeSnippet?: string
+  ): IssueReport | undefined {
     const idx = this.issues.findIndex((i) => i.id === id)
     if (idx === -1) return undefined
 
@@ -134,6 +140,7 @@ class IssueSupportService {
       ...this.issues[idx],
       status,
       adminReply: adminReply !== undefined ? adminReply : this.issues[idx].adminReply,
+      updatedCodeSnippet: updatedCodeSnippet !== undefined ? updatedCodeSnippet : this.issues[idx].updatedCodeSnippet,
       resolvedAt: status === 'resolved' ? new Date().toISOString() : undefined,
     }
     this.save()
