@@ -4,7 +4,10 @@ import {
   GenerateTutorReplyResponse,
   AnalyzeCodeDebugRequest,
   AnalyzeCodeDebugResponse,
+  GenerateCurriculumRequest,
+  GenerateCurriculumResponse,
 } from './ai.types'
+import { QuizQuestion } from '@/types'
 
 export class MockAIService implements IAIService {
   async generateTutorResponse(request: GenerateTutorReplyRequest): Promise<GenerateTutorReplyResponse> {
@@ -103,6 +106,170 @@ export class MockAIService implements IAIService {
       suggestedFix: `Iterate directly over elements using \`for score in scores:\` or constrain index generation to \`range(len(scores))\`.`,
       fixedCode: request.code.replace(/range\(len\(([^)]+)\)\s*\+\s*1\)/g, 'range(len($1))'),
       keyConcepts: ['Zero-based Indexing', 'IndexError Prevention', 'Idiomatic Python For-Loops'],
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // AI CURRICULUM, THEORY & MULTI-FORMAT ASSESSMENT GENERATOR
+  // ══════════════════════════════════════════════════════════════════════
+  async generateLessonCurriculum(request: GenerateCurriculumRequest): Promise<GenerateCurriculumResponse> {
+    // Simulate on-device local model synthesis
+    await new Promise((resolve) => setTimeout(resolve, 800))
+
+    const topic = request.topic.trim() || 'Fundamentals & Core Concepts'
+    const lang = request.language
+    const langLabel = lang === 'python' ? 'Python 3' : lang === 'java' ? 'Java 21' : 'JavaScript (ES2024)'
+
+    // Recommended YouTube Links by language & domain
+    const recommendedVideoUrl =
+      lang === 'python'
+        ? 'https://www.youtube.com/watch?v=kqtD5dpn9C8'
+        : lang === 'java'
+        ? 'https://www.youtube.com/watch?v=A74TOX803D0'
+        : 'https://www.youtube.com/watch?v=W6NZfCO5SIk'
+
+    // Pre-video rich markdown theory content
+    const contentMarkdown = `# ${topic}
+
+Welcome to this in-depth guide on **${topic}** in **${langLabel}**. Read through this conceptual breakdown before proceeding to the video tutorial and assessment.
+
+---
+
+## 1. Core Architectural Concepts
+
+Understanding ${topic.toLowerCase()} is vital for building robust, scalable software. In ${langLabel}, the runtime manages this logic efficiently through standard compiler/interpreter optimizations.
+
+### Key Principles:
+- **First Principles**: Establishing a clean mental model before writing production code.
+- **Memory & Lifecycle**: How references and variables reside on the call stack vs. dynamic heap memory.
+- **Predictability & Invariants**: Designing functions that avoid unintended side-effects.
+
+---
+
+## 2. Practical Syntax & Implementation
+
+\`\`\`${lang}
+${
+  lang === 'python'
+    ? `# ${topic} Example in Python
+def process_data(items: list) -> dict:
+    result = {"count": len(items), "valid": True}
+    for item in items:
+        if item is None:
+            result["valid"] = False
+            break
+    return result
+
+print(process_data([10, 20, 30]))`
+    : lang === 'java'
+    ? `// ${topic} Example in Java
+import java.util.*;
+
+public class DataProcessor {
+    public static Map<String, Object> processData(List<Integer> items) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("count", items.size());
+        result.put("valid", !items.contains(null));
+        return result;
+    }
+}`
+    : `// ${topic} Example in JavaScript
+function processData(items) {
+  return {
+    count: items.length,
+    valid: !items.some((x) => x == null),
+  };
+}
+
+console.log(processData([10, 20, 30]));`
+}
+\`\`\`
+
+---
+
+## 3. Common Pitfalls & Edge Cases
+
+> [!WARNING]
+> Always guard against boundary conditions such as empty collections, \`null\`/\`None\` references, and unexpected type coercions.
+
+1. **Unchecked Bounds**: Verify array/list bounds before direct indexing.
+2. **Resource Cleanup**: Ensure open streams or async promises resolve cleanly.
+3. **Time Complexity**: Aim for optimal time complexity (e.g. O(1) or O(N)) when processing large inputs.
+`
+
+    // Multi-Format Assessments (MCQs, Fill-in-the-Blank, and Practical Coding)
+    const quizQuestions: QuizQuestion[] = [
+      {
+        id: `q-mcq-1-${Date.now()}`,
+        type: 'mcq',
+        question: `In ${langLabel}, what is the primary advantage of validating boundary conditions before processing collections?`,
+        options: [
+          'It eliminates compile-time type verification entirely',
+          'It prevents runtime exceptions (such as out-of-bounds or null reference crashes)',
+          'It doubles the CPU clock frequency of the host machine',
+          'It replaces the need for unit tests',
+        ],
+        correctAnswer: 1, // Second option
+        explanation: 'Validating inputs and boundary conditions upfront protects the runtime against fatal crashes such as null pointer dereferences and index out-of-range exceptions.',
+        hint: 'Think about runtime safety and crash prevention.',
+      },
+      {
+        id: `q-mcq-2-${Date.now()}`,
+        type: 'mcq',
+        question: `What is the expected time complexity for searching an unsorted sequence of N items using linear traversal in ${langLabel}?`,
+        options: [
+          'O(1) Constant Time',
+          'O(log N) Logarithmic Time',
+          'O(N) Linear Time',
+          'O(N^2) Quadratic Time',
+        ],
+        correctAnswer: 2, // Third option
+        explanation: 'In an unsorted collection, finding an item in the worst case requires inspecting every element one-by-one from start to finish, yielding O(N) complexity.',
+        hint: 'Linear search checks each element in sequence.',
+      },
+      {
+        id: `q-fill-1-${Date.now()}`,
+        type: 'fill_in',
+        question: `Fill in the missing keyword in ${langLabel} to terminate a loop immediately upon meeting a search condition:`,
+        codeSnippet:
+          lang === 'python'
+            ? `for item in items:\n    if item == target:\n        found = True\n        _____ # Terminate loop immediately`
+            : `for (let i = 0; i < items.length; i++) {\n    if (items[i] === target) {\n        found = true;\n        _____; // Terminate loop immediately\n    }\n}`,
+        correctAnswer: 'break',
+        explanation: 'The `break` statement halts the execution of the innermost enclosing loop and continues program execution at the following statement.',
+        hint: 'The standard loop termination keyword in C, Python, JavaScript, and Java.',
+      },
+      {
+        id: `q-code-1-${Date.now()}`,
+        type: 'code',
+        question: `Practical Coding: Implement a function that takes an array of numbers and returns the sum of all strictly positive numbers (> 0).`,
+        initialCode:
+          lang === 'python'
+            ? `def sum_positive_numbers(numbers: list) -> int:\n    # Write your solution here\n    pass`
+            : lang === 'java'
+            ? `public class Solution {\n    public static int sumPositiveNumbers(int[] numbers) {\n        // Write your solution here\n        return 0;\n    }\n}`
+            : `function sumPositiveNumbers(numbers) {\n  // Write your solution here\n}`,
+        testCases: [
+          { input: '[1, -4, 7, 12]', expectedOutput: '20' },
+          { input: '[-1, -2, -3]', expectedOutput: '0' },
+          { input: '[10, 20, 30]', expectedOutput: '60' },
+        ],
+        correctAnswer:
+          lang === 'python'
+            ? `def sum_positive_numbers(numbers):\n    return sum(x for x in numbers if x > 0)`
+            : `function sumPositiveNumbers(numbers) {\n  return numbers.filter(x => x > 0).reduce((acc, x) => acc + x, 0);\n}`,
+        explanation: 'Iterate through the array and accumulate values that satisfy the condition (> 0).',
+        hint: 'Filter or loop through elements and check if x > 0.',
+      },
+    ]
+
+    return {
+      title: topic,
+      description: `Comprehensive breakdown of ${topic} with interactive theory, video guide, and verified quizzes.`,
+      durationMinutes: 30,
+      recommendedVideoUrl,
+      contentMarkdown,
+      quizQuestions,
     }
   }
 

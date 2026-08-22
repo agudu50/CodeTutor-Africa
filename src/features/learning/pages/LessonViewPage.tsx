@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { Card, Button, Badge, MarkdownRenderer } from '@/components/ui'
 import { VideoLessonPlayer } from '../components/VideoLessonPlayer'
+import { LessonQuizSection } from '../components/LessonQuizSection'
 import {
   ChevronLeft,
   CheckCircle2,
@@ -14,6 +15,7 @@ import {
   BookOpen,
   Clock,
   Play,
+  Sparkles,
 } from 'lucide-react'
 
 export const LessonViewPage: React.FC = () => {
@@ -24,6 +26,7 @@ export const LessonViewPage: React.FC = () => {
   let foundLesson = courses[0]?.modules[0]?.lessons[0]
   let courseTitle = courses[0]?.title || 'Course Track'
   let courseId = courses[0]?.id || 'course-py-101'
+  let courseLanguage = courses[0]?.language || 'python'
 
   for (const c of courses) {
     for (const m of c.modules) {
@@ -32,6 +35,7 @@ export const LessonViewPage: React.FC = () => {
         foundLesson = l
         courseTitle = c.title
         courseId = c.id
+        courseLanguage = c.language
         break
       }
     }
@@ -98,6 +102,12 @@ export const LessonViewPage: React.FC = () => {
                 <span>Video Lesson</span>
               </span>
             )}
+            {foundLesson.quizQuestions && foundLesson.quizQuestions.length > 0 && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/80">
+                <Sparkles className="w-2.5 h-2.5" />
+                <span>{foundLesson.quizQuestions.length} Quizzes</span>
+              </span>
+            )}
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -109,10 +119,53 @@ export const LessonViewPage: React.FC = () => {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
-            INTEGRATED YOUTUBE VIDEO LESSON PLAYER
+            PHASE 1: PRE-VIDEO READING TEXT & CONCEPTUAL THEORY
+            ═══════════════════════════════════════════════════════════════ */}
+        <div className="space-y-4">
+          <div className="p-3 rounded-xl bg-brand-50/70 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 flex items-center justify-between gap-3 text-xs font-mono">
+            <span className="flex items-center gap-2 text-brand-700 dark:text-brand-300 font-bold">
+              <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+              <span>Phase 1: Pre-Video Reading Notes & Theory</span>
+            </span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+              Read theory before watching video
+            </span>
+          </div>
+
+          {/* Objectives Box */}
+          <div className="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+            <h2 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+              <span>Key Learning Objectives:</span>
+            </h2>
+            <ul className="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-slate-700 dark:text-slate-300 pl-1 leading-relaxed">
+              <li>Understand the foundational mental model and runtime behavior.</li>
+              <li>Master idiomatic syntax and avoid common anti-patterns.</li>
+              <li>Verify knowledge through interactive assessments and code assertions.</li>
+            </ul>
+          </div>
+
+          {/* Rich Pre-Video Lesson Content via MarkdownRenderer */}
+          <div className="py-2">
+            <MarkdownRenderer content={foundLesson.contentMarkdown} />
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            PHASE 2: INTEGRATED YOUTUBE VIDEO LESSON PLAYER
             ═══════════════════════════════════════════════════════════════ */}
         {foundLesson.videoUrl && (
-          <div className="space-y-2">
+          <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="p-3 rounded-xl bg-rose-50/70 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 flex items-center justify-between gap-3 text-xs font-mono">
+              <span className="flex items-center gap-2 text-rose-700 dark:text-rose-300 font-bold">
+                <Play className="w-4 h-4 fill-rose-600 dark:fill-rose-400 text-rose-600 dark:text-rose-400" />
+                <span>Phase 2: Video Tutorial Stream</span>
+              </span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                Full-screen & HD playback supported
+              </span>
+            </div>
+
             <VideoLessonPlayer
               videoUrl={foundLesson.videoUrl}
               title={foundLesson.title}
@@ -120,23 +173,27 @@ export const LessonViewPage: React.FC = () => {
           </div>
         )}
 
-        {/* Objectives Box */}
-        <div className="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
-          <h2 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-            <span>Key Objectives:</span>
-          </h2>
-          <ul className="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-slate-700 dark:text-slate-300 pl-1 leading-relaxed">
-            <li>Understand internal memory layout of the call stack vs heap frames.</li>
-            <li>Learn how recursive stack frames store parameters and return points.</li>
-            <li>Prevent stack overflow errors by architecting proper base cases.</li>
-          </ul>
-        </div>
+        {/* ═══════════════════════════════════════════════════════════════
+            PHASE 3: MULTI-FORMAT AI QUIZZES & PRACTICAL CODING RUNNER
+            ═══════════════════════════════════════════════════════════════ */}
+        {foundLesson.quizQuestions && foundLesson.quizQuestions.length > 0 && (
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+            <div className="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 flex items-center justify-between gap-3 text-xs font-mono">
+              <span className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold">
+                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Phase 3: Interactive Knowledge Check & Coding</span>
+              </span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                Automated offline evaluation
+              </span>
+            </div>
 
-        {/* Rich Lesson Content via MarkdownRenderer */}
-        <div className="py-2">
-          <MarkdownRenderer content={foundLesson.contentMarkdown} />
-        </div>
+            <LessonQuizSection
+              questions={foundLesson.quizQuestions}
+              language={courseLanguage}
+            />
+          </div>
+        )}
 
         {/* Quick Practice Prompt */}
         <div className="p-4 sm:p-5 rounded-xl border border-brand-200 dark:border-brand-800/80 bg-brand-50/60 dark:bg-brand-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">

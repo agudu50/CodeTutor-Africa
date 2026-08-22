@@ -1,4 +1,4 @@
-import { ChatMessage, TutorMode, ProgrammingLanguage } from '@/types'
+import { ChatMessage, TutorMode, ProgrammingLanguage, QuizQuestion } from '@/types'
 
 export interface GenerateTutorReplyRequest {
   sessionId: string
@@ -32,4 +32,19 @@ export interface AnalyzeCodeDebugResponse {
   suggestedFix: string
   fixedCode: string
   keyConcepts: string[]
+}
+
+export interface GenerateCurriculumRequest {
+  topic: string
+  language: ProgrammingLanguage
+  difficulty?: string
+}
+
+export interface GenerateCurriculumResponse {
+  title: string
+  description: string
+  durationMinutes: number
+  recommendedVideoUrl?: string
+  contentMarkdown: string
+  quizQuestions: QuizQuestion[]
 }

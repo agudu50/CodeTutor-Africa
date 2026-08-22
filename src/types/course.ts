@@ -1,5 +1,18 @@
 import { BaseEntity, DifficultyLevel, ProgrammingLanguage } from './common'
 
+export interface QuizQuestion {
+  id: string
+  type: 'mcq' | 'fill_in' | 'code'
+  question: string
+  options?: string[]
+  correctAnswer: string | number // number index for MCQ or string token for fill_in / code
+  explanation: string
+  codeSnippet?: string
+  initialCode?: string
+  testCases?: Array<{ input: string; expectedOutput: string }>
+  hint?: string
+}
+
 export interface Lesson extends BaseEntity {
   courseId: string
   title: string
@@ -9,6 +22,7 @@ export interface Lesson extends BaseEntity {
   order: number
   contentMarkdown: string
   videoUrl?: string
+  quizQuestions?: QuizQuestion[]
   codeSnippets?: Array<{
     language: ProgrammingLanguage
     code: string
