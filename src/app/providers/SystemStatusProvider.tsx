@@ -15,66 +15,66 @@ export interface CapabilityItem {
 export const SYSTEM_CAPABILITIES: CapabilityItem[] = [
   {
     id: 'ai-tutor',
-    title: 'Interactive AI Coding Tutor',
-    description: 'Real-time pedagogical code analysis, error explanation, and concept tutoring.',
+    title: 'AI Coding Assistant',
+    description: 'Ask coding questions, get hints, and understand programming concepts.',
     category: 'ai',
     isAvailableOffline: true,
     isAvailableOnline: true,
-    offlineFallbackNote: 'Runs via on-device quantized Gemma 2B model with zero internet required.',
+    offlineFallbackNote: 'Works completely offline on your device with no internet needed.',
   },
   {
     id: 'course-curriculum',
-    title: 'Offline Course Library & Lessons',
-    description: 'Comprehensive curriculum with theory, interactive diagrams, and assessment quizzes.',
+    title: 'Course Lessons & Quizzes',
+    description: 'All courses for Python, JavaScript, and Java with practice quizzes.',
     category: 'core',
     isAvailableOffline: true,
     isAvailableOnline: true,
-    offlineFallbackNote: '100% pre-cached locally in IndexedDB/LocalStorage.',
+    offlineFallbackNote: 'All lessons are saved directly on your device.',
   },
   {
     id: 'code-execution',
-    title: 'Browser Code Playground & Debugger',
-    description: 'Real-time client-side JavaScript & Python execution environment and step debugger.',
+    title: 'Code Runner & Playground',
+    description: 'Write and run your code instantly to see outputs and fix mistakes.',
     category: 'core',
     isAvailableOffline: true,
     isAvailableOnline: true,
-    offlineFallbackNote: 'Runs in-browser sandbox with zero server latency.',
+    offlineFallbackNote: 'Runs directly inside your browser with no internet needed.',
   },
   {
     id: 'practice-exercises',
-    title: 'Algorithm Practice & Test Runner',
-    description: 'Hands-on coding challenges with multi-case unit test validation and feedback.',
+    title: 'Coding Challenges',
+    description: 'Solve interactive programming challenges with instant test results.',
     category: 'core',
     isAvailableOffline: true,
     isAvailableOnline: true,
-    offlineFallbackNote: 'All unit test suites evaluate locally on-device.',
+    offlineFallbackNote: 'Test checks run offline on your device.',
   },
   {
     id: 'support-inquiries',
-    title: 'Student Support & Ticket Desk',
-    description: 'File curriculum errata or test suite bug reports directly to course instructors.',
+    title: 'Ask Instructor for Help',
+    description: 'Send questions or report issues with coding exercises.',
     category: 'admin',
     isAvailableOffline: true,
     isAvailableOnline: true,
-    offlineFallbackNote: 'Queued locally when offline; automatically synced to instructors when reconnected.',
+    offlineFallbackNote: 'Saved on your device and sent to instructors when you go online.',
   },
   {
     id: 'cloud-backup',
-    title: 'Automated Cloud Progress Backup',
-    description: 'Synchronize learning milestones, streak data, and code practice solutions to the cloud.',
+    title: 'Automatic Cloud Backup',
+    description: 'Back up your study progress and test scores when connected.',
     category: 'sync',
     isAvailableOffline: false,
     isAvailableOnline: true,
-    offlineFallbackNote: 'Safely cached locally until connection is restored.',
+    offlineFallbackNote: 'Saved safely on this device while offline.',
   },
   {
     id: 'curriculum-patches',
-    title: 'Live Errata & Course Patch Downloader',
-    description: 'Download new course modules, updated test boundary assertions, and live patch bundles.',
+    title: 'New Courses & Updates',
+    description: 'Download new courses and updated coding exercises.',
     category: 'sync',
     isAvailableOffline: false,
     isAvailableOnline: true,
-    offlineFallbackNote: 'Requires internet to fetch new content packs; existing courses remain 100% available.',
+    offlineFallbackNote: 'Requires internet to check for new courses.',
   },
 ]
 
@@ -149,35 +149,104 @@ export const SystemStatusProvider: React.FC<{ children: React.ReactNode }> = ({ 
     recalculatePendingItems()
   }, [recalculatePendingItems])
 
+  // Active real-time connectivity checker
+  const checkRealConnection = useCallback(async () => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setNetwork((prev) => (prev !== 'offline' ? 'offline' : prev))
+      return false
+    }
+
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 2000)
+
+      // Lightweight probe
+      const res = await fetch('/api/health', {
+        method: 'HEAD',
+        cache: 'no-store',
+        signal: controller.signal,
+      }).catch(() => null)
+
+      clearTimeout(timeoutId)
+
+      const isActuallyOnline = !!res || (typeof navigator !== 'undefined' && navigator.onLine)
+      const newStatus: NetworkStatus = isActuallyOnline ? 'online' : 'offline'
+
+      setNetwork((prev) => {
+        if (prev !== newStatus) {
+          // If automatically detected back online, trigger silent background sync
+          if (newStatus === 'online') {
+            setIsSyncing(true)
+            cloudSyncService.performBackgroundSync().then((result) => {
+              if (result.success) {
+                setLastSyncedAt(result.syncedAt)
+                setPendingSyncCount(0)
+              }
+              setIsSyncing(false)
+            })
+          }
+          return newStatus
+        }
+        return prev
+      })
+
+      return isActuallyOnline
+    } catch {
+      const fallback = typeof navigator !== 'undefined' && navigator.onLine ? 'online' : 'offline'
+      setNetwork(fallback)
+      return fallback === 'online'
+    }
+  }, [])
+
   // Real-time browser network event listeners with automated background sync
   useEffect(() => {
     const handleOnline = async () => {
       setNetwork('online')
+      setIsSimulatedOffline(false)
+      try {
+        localStorage.removeItem(STORAGE_SIMULATED_KEY)
+      } catch {
+        // Fallback
+      }
+
       recalculatePendingItems()
       // Automatically trigger silent background sync when internet connection is detected
-      if (!isSimulatedOffline) {
-        setIsSyncing(true)
-        const result = await cloudSyncService.performBackgroundSync()
-        if (result.success) {
-          setLastSyncedAt(result.syncedAt)
-          setPendingSyncCount(0)
-        }
-        setIsSyncing(false)
+      setIsSyncing(true)
+      const result = await cloudSyncService.performBackgroundSync()
+      if (result.success) {
+        setLastSyncedAt(result.syncedAt)
+        setPendingSyncCount(0)
       }
+      setIsSyncing(false)
     }
 
     const handleOffline = () => {
       setNetwork('offline')
     }
 
+    const handleFocus = () => {
+      checkRealConnection()
+    }
+
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
+    window.addEventListener('focus', handleFocus)
+
+    // Periodic heartbeat every 8 seconds for real-time detection without manual refresh
+    const intervalId = setInterval(() => {
+      checkRealConnection()
+    }, 8000)
+
+    // Run initial probe
+    checkRealConnection()
 
     return () => {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
+      window.removeEventListener('focus', handleFocus)
+      clearInterval(intervalId)
     }
-  }, [recalculatePendingItems, isSimulatedOffline])
+  }, [recalculatePendingItems, checkRealConnection])
 
   const effectiveNetwork: NetworkStatus = isSimulatedOffline ? 'offline' : network
 
@@ -185,7 +254,11 @@ export const SystemStatusProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setIsSimulatedOffline((prev) => {
       const next = !prev
       try {
-        localStorage.setItem(STORAGE_SIMULATED_KEY, String(next))
+        if (next) {
+          localStorage.setItem(STORAGE_SIMULATED_KEY, 'true')
+        } else {
+          localStorage.removeItem(STORAGE_SIMULATED_KEY)
+        }
       } catch {
         // Fallback
       }

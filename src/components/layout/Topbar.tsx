@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef, memo } from 'react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { useTheme } from '@/app/providers/ThemeProvider'
 import { useUserProfile } from '@/app/providers/UserProfileProvider'
+import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { QuickSearchModal } from './QuickSearchModal'
+import { SystemStatusIndicator, SystemStatusModal } from './SystemStatusIndicator'
 import { ReportIssueModal } from '@/components/support/ReportIssueModal'
 import { Avatar } from '@/components/ui'
 import {
@@ -18,6 +20,8 @@ import {
   ShieldCheck,
   HelpCircle,
   X,
+  Wifi,
+  WifiOff,
 } from 'lucide-react'
 
 interface TopbarProps {
@@ -27,12 +31,16 @@ interface TopbarProps {
 export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
   const { theme, setTheme, isDark } = useTheme()
   const { profile } = useUserProfile()
+  const { effectiveNetwork } = useSystemStatus()
+  const isOffline = effectiveNetwork === 'offline'
+
   const location = useLocation()
   const navigate = useNavigate()
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
   const profileMenuRef = useRef<HTMLDivElement>(null)
 
   // Listen for global Ctrl+K / Cmd+K shortcut and Escape key
@@ -146,6 +154,11 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
             <span>Report Issue</span>
           </button>
 
+          {/* System Online/Offline Status Indicator (Desktop/Tablet) */}
+          <div className="hidden sm:block">
+            <SystemStatusIndicator onOpen={() => setIsStatusModalOpen(true)} />
+          </div>
+
           {/* Streak Counter (Mobile & Desktop) */}
           <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 text-xs font-bold font-mono shadow-2xs shrink-0">
             <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
@@ -214,19 +227,14 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0">
-                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                        Offline
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                        aria-label="Close profile menu"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                      aria-label="Close profile menu"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   </div>
 
                   <div className="pt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
@@ -235,6 +243,34 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                   <div className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-semibold truncate">
                     {profile.location}
                   </div>
+                </div>
+
+                {/* Network & Connectivity Status (Always accessible in dropdown) */}
+                <div className="pt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileOpen(false)
+                      setIsStatusModalOpen(true)
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                      isOffline
+                        ? 'bg-amber-50/80 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60'
+                        : 'bg-emerald-50/80 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {isOffline ? (
+                        <WifiOff className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                      ) : (
+                        <Wifi className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      )}
+                      <span>{isOffline ? 'Offline Mode' : 'Online Mode'}</span>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 border border-current opacity-90">
+                      {isOffline ? 'Details' : 'Synced'}
+                    </span>
+                  </button>
                 </div>
 
                 {/* Quick Navigation Actions */}
@@ -323,6 +359,9 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
 
       {/* Support & Issue Ticket Modal */}
       <ReportIssueModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} />
+
+      {/* System & Connection Status Modal (Persistently mounted) */}
+      <SystemStatusModal isOpen={isStatusModalOpen} onClose={() => setIsStatusModalOpen(false)} />
     </>
   )
 })
