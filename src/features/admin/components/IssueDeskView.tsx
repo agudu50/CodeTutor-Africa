@@ -203,11 +203,11 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
     <div className="space-y-4">
       {/* Top Filter & Status Overview Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs font-semibold">
+        <div className="grid grid-cols-2 sm:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs font-semibold w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
-            className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
               statusFilter === 'all'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -218,7 +218,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           <button
             type="button"
             onClick={() => setStatusFilter('open')}
-            className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
               statusFilter === 'open'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -229,7 +229,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           <button
             type="button"
             onClick={() => setStatusFilter('in_review')}
-            className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
               statusFilter === 'in_review'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -240,7 +240,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           <button
             type="button"
             onClick={() => setStatusFilter('resolved')}
-            className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
               statusFilter === 'resolved'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -250,15 +250,15 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <Input
               type="text"
-              placeholder="Search by student, topic, email..."
+              placeholder="Search student, topic, email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 text-xs font-sans h-8"
+              className="pl-8 text-xs font-sans h-8 w-full"
             />
           </div>
         </div>
@@ -267,7 +267,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
       {/* ═══════════════════════════════════════════════════════════════
           HUMAN-CENTERED BALANCED MASTER-DETAIL SUPPORT SHELL
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 min-h-[680px] lg:min-h-[780px]">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 min-h-[520px] lg:min-h-[750px]">
         {/* LEFT COLUMN: TICKET INBOX STREAM (lg:col-span-5) */}
         <div
           className={`lg:col-span-5 flex flex-col h-full bg-slate-50/70 dark:bg-slate-950/60 lg:border-r border-slate-200 dark:border-slate-800 ${
@@ -365,37 +365,37 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           {selectedIssue ? (
             <>
               {/* Header Details with Mobile Back Button and AI Analyzer Action */}
-              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between gap-3 shrink-0 bg-slate-50/40 dark:bg-slate-950/40">
+              <div className="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-start justify-between gap-3 shrink-0 bg-slate-50/40 dark:bg-slate-950/40">
                 <div className="space-y-1.5 min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {/* Mobile Back Button */}
                     <button
                       type="button"
                       onClick={() => setIsMobileDetailOpen(false)}
-                      className="lg:hidden p-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 mr-1 cursor-pointer"
+                      className="lg:hidden px-2.5 py-1 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 mr-1 text-xs font-bold flex items-center gap-1 cursor-pointer shrink-0"
                     >
-                      <ChevronLeft className="w-4 h-4" />
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>Inbox</span>
                     </button>
 
                     <span className="font-mono text-xs font-bold text-brand-600 dark:text-brand-400">
                       #{selectedIssue.id}
                     </span>
-                    <span className="text-xs text-slate-400">•</span>
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
                     <span className="text-xs font-mono text-slate-600 dark:text-slate-400 font-semibold">
                       {getCategoryLabel(selectedIssue.category)}
                     </span>
-                    <span className="text-xs text-slate-400">•</span>
                     <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
                       {getInstitutionBadge(selectedIssue.userEmail)}
                     </span>
                   </div>
 
-                  <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
+                  <h4 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
                     {selectedIssue.subject}
                   </h4>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-start">
                   {/* AI Analyze Ticket Action Button */}
                   <Button
                     type="button"
@@ -421,7 +421,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
               </div>
 
               {/* Scrollable Inspector Body */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+              <div className="flex-1 overflow-y-auto p-3.5 sm:p-5 space-y-4">
                 {/* Human Submitter Bio Card */}
                 <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
                   <div className="flex items-center gap-3">
@@ -448,38 +448,38 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 </div>
 
                 {/* Status Action Switcher with Human State Explanations */}
-                <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
-                  <div className="flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between gap-2.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 uppercase">
                       Ticket Stage:
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="grid grid-cols-3 sm:flex items-center gap-1.5 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'open')}
-                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
                           selectedIssue.status === 'open'
                             ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-amber-400'
                         }`}
                       >
-                        Needs Attention
+                        Attention
                       </button>
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'in_review')}
-                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
                           selectedIssue.status === 'in_review'
                             ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-sky-400'
                         }`}
                       >
-                        Investigating
+                        In Review
                       </button>
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'resolved')}
-                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
                           selectedIssue.status === 'resolved'
                             ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-emerald-400'
@@ -490,7 +490,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-mono text-slate-400">
+                  <span className="text-[11px] font-mono text-slate-400 block text-right sm:text-left">
                     {selectedIssue.status === 'resolved' ? 'Closed' : 'Active Ticket'}
                   </span>
                 </div>
