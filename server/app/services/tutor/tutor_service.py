@@ -48,7 +48,8 @@ class TutorService:
         """Processes a student tutoring request and returns structured guidance."""
         logger.info(f"Processing Tutor request (lang={request.language}, mode={request.mode})")
 
-        prompt = self._build_tutoring_prompt(request)
+        sources = self._get_relevant_sources(request)
+        prompt = self._build_tutoring_prompt(request, sources)
         system_prompt = self._build_system_prompt(request)
 
         answer, metrics = await inference_service.generate_response(
@@ -56,7 +57,6 @@ class TutorService:
             system_prompt=system_prompt,
         )
 
-        sources = self._get_relevant_sources(request)
         followups = self._generate_suggested_followups(request)
 
         return TutorChatResponse(
@@ -72,7 +72,8 @@ class TutorService:
 
     async def stream_chat(self, request: TutorChatRequest) -> AsyncGenerator[str, None]:
         """Streams tutoring tokens token-by-token for responsive frontend display."""
-        prompt = self._build_tutoring_prompt(request)
+        sources = self._get_relevant_sources(request)
+        prompt = self._build_tutoring_prompt(request, sources)
         system_prompt = self._build_system_prompt(request)
 
         async for token in inference_service.stream_response(
@@ -91,16 +92,17 @@ class TutorService:
             f"Current Pedagogical Strategy: {mode_instruction}"
         )
 
-    def _build_prompt(self, request: TutorChatRequest) -> str:
-        return self._build_tutoring_prompt(request)
-
-    def _build_tutoring_prompt(self, request: TutorChatRequest) -> str:
+    def _build_tutoring_prompt(self, request: TutorChatRequest, sources: List[TutorSource]) -> str:
         prompt_parts = []
 
         if request.course_id:
             prompt_parts.append(f"Course Context: {request.course_id}")
         if request.lesson_id:
             prompt_parts.append(f"Lesson Context: {request.lesson_id}")
+        if sources:
+            knowledge_snippets = "\n".join([f"[{s.document}]: {s.snippet}" for s in sources if s.snippet])
+            if knowledge_snippets:
+                prompt_parts.append(f"Relevant Curriculum Material:\n{knowledge_snippets}")
         if request.code_context:
             prompt_parts.append(f"Student Code Context:\n```{request.language}\n{request.code_context}\n```")
 
@@ -108,8 +110,13 @@ class TutorService:
         return "\n\n".join(prompt_parts)
 
     def _get_relevant_sources(self, request: TutorChatRequest) -> List[TutorSource]:
-        sources = []
-        if request.course_id:
+        from app.services.rag.knowledge_service import knowledge_service
+        sources = knowledge_service.retrieve_context(
+            query=f"{request.message} {request.code_context or ''}",
+            course_id=request.course_id,
+            top_k=2,
+        )
+        if not sources and request.course_id:
             sources.append(TutorSource(
                 document="CodeTutor Africa Standard Curriculum",
                 course_id=request.course_id,

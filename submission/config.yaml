@@ -1,0 +1,25 @@
+# ADTC 2026 Laptop LLM Track - Submission Engine Configuration
+# Target: 8 GB RAM / CPU-Only Commodity Laptop
+
+model:
+  path: "models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
+  fallback_path: "models/qwen2.5-coder-3b-instruct-q4_k_m.gguf"
+  n_ctx: 2048
+  n_threads: 4
+  n_batch: 256
+  n_gpu_layers: 0
+  use_mmap: true
+  use_mlock: false
+
+sampling:
+  temperature: 0.2
+  top_p: 0.95
+  top_k: 40
+  repeat_penalty: 1.1
+  max_tokens: 512
+
+benchmarks:
+  tps_reference: 15.0
+  ram_limit_gb: 7.0
+  thermal_alert_celsius: 80.0
+  max_concurrent_inferences: 1

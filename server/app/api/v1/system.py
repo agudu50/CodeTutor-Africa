@@ -23,6 +23,8 @@ async def get_system_status():
     settings = get_settings()
     model_info = model_manager.get_status()
     resources = performance_monitor.get_system_metrics()
+    from app.services.rag.knowledge_service import knowledge_service
+    rag_stats = knowledge_service.get_stats()
 
     return SystemStatusResponse(
         app_name=settings.APP_NAME,
@@ -39,9 +41,9 @@ async def get_system_status():
             gpu_layers=model_info.get("gpu_layers", settings.MODEL_GPU_LAYERS),
         ),
         rag=RAGStatusInfo(
-            status="ready",
-            documents_indexed=42,
-            embedding_model="lightweight-local",
+            status=rag_stats.get("status", "ready"),
+            documents_indexed=rag_stats.get("documents_indexed", 4),
+            embedding_model=rag_stats.get("embedding_model", "LightweightSparse-128D"),
         ),
         database=DatabaseStatusInfo(
             status="ready",
