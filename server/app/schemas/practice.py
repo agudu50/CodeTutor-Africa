@@ -9,6 +9,7 @@ DifficultyLevel = Literal["beginner", "intermediate", "advanced"]
 
 
 class TestCase(BaseModel):
+    __test__ = False
     input: str
     expected_output: str
     is_hidden: bool = False
@@ -34,6 +35,7 @@ class SubmissionRequest(BaseModel):
 
 
 class TestCaseResult(BaseModel):
+    __test__ = False
     passed: bool
     input: str
     expected: str
