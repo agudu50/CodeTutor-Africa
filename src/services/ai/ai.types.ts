@@ -48,3 +48,19 @@ export interface GenerateCurriculumResponse {
   contentMarkdown: string
   quizQuestions: QuizQuestion[]
 }
+
+export interface AnalyzeTicketRequest {
+  subject: string
+  category: string
+  description: string
+  codeSnippet?: string
+  studentName: string
+}
+
+export interface AnalyzeTicketResponse {
+  summary: string
+  codeDiagnosis: string
+  suggestedReply: string
+  suggestedAction: string
+  suggestedStatus: 'open' | 'in_review' | 'resolved'
+}

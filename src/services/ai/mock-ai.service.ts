@@ -273,9 +273,52 @@ console.log(processData([10, 20, 30]));`
     }
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // AI TICKET & STUDENT ISSUE DIAGNOSTIC ASSISTANT
+  // ══════════════════════════════════════════════════════════════════════
+  async analyzeTicketIssue(request: import('./ai.types').AnalyzeTicketRequest): Promise<import('./ai.types').AnalyzeTicketResponse> {
+    await new Promise((resolve) => setTimeout(resolve, 600))
+
+    const sub = request.subject.toLowerCase()
+    const desc = request.description.toLowerCase()
+    const code = request.codeSnippet || ''
+
+    if (sub.includes('palindrome') || desc.includes('palindrome') || code.includes('palindrome')) {
+      return {
+        summary: `The student (${request.studentName}) observed that test case 2 expects phrases like "A man a plan a canal Panama" to ignore whitespace and casing, which was ambiguous in the problem description.`,
+        codeDiagnosis: `The student's submitted recursive function \`is_palindrome\` correctly attempts whitespace normalization with \`s.replace(" ", "").lower()\`. While \`replace(" ", "")\` removes spaces, multi-word phrases require all spaces removed. The student's question is primarily a curriculum clarification request for problem requirements.`,
+        suggestedReply: `Hi ${request.studentName}, thank you for reaching out! You are absolutely right—we have updated the Palindrome Checker problem description to explicitly state that all whitespace and casing must be stripped before recursive evaluation. Great eye for detail and happy coding!`,
+        suggestedAction: 'Update Problem Description & Resolve',
+        suggestedStatus: 'resolved',
+      }
+    }
+
+    if (sub.includes('leak') || desc.includes('memory') || desc.includes('listener')) {
+      return {
+        summary: `The student reported a potential listener or stream resource lifecycle warning.`,
+        codeDiagnosis: `Event listener lifecycle has been reinforced with automatic unsubscription on view teardown.`,
+        suggestedReply: `Hello ${request.studentName}, thank you for the feedback. We have verified the stream listener lifecycle and patched the teardown hook for air-gapped runtimes.`,
+        suggestedAction: 'Patch Lifecycle Hook',
+        suggestedStatus: 'resolved',
+      }
+    }
+
+    // Default intelligent pedagogical diagnosis
+    return {
+      summary: `Inquiry regarding "${request.subject}" submitted by ${request.studentName}.`,
+      codeDiagnosis: code
+        ? `Code analysis confirms syntax structure. The inquiry relates to test case boundary expectations.`
+        : `Pedagogical question regarding curriculum concepts.`,
+      suggestedReply: `Hi ${request.studentName}, thank you for bringing this to our attention! We have investigated the issue and updated our curriculum notes accordingly.`,
+      suggestedAction: 'Send Pedagogical Clarification',
+      suggestedStatus: 'resolved',
+    }
+  }
+
   async checkModelHealth(): Promise<boolean> {
     return true
   }
 }
 
 export const aiService: IAIService = new MockAIService()
+

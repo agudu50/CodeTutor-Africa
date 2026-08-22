@@ -5,14 +5,24 @@ import {
   IssueCategory,
   issueSupportService,
 } from '@/services/support/issue-support.service'
-import { Button, Textarea } from '@/components/ui'
+import { aiService } from '@/services/ai/mock-ai.service'
+import { AnalyzeTicketResponse } from '@/services/ai/ai.types'
+import { Button, Textarea, Input } from '@/components/ui'
+import { CodeBlock } from '@/features/tutor/components/CodeBlock'
 import {
   CheckCircle2,
   MessageSquare,
   Check,
   Shield,
-  Code2,
   X,
+  Search,
+  ChevronLeft,
+  Clock,
+  GraduationCap,
+  Sparkles,
+  Quote,
+  Bot,
+  Lightbulb,
 } from 'lucide-react'
 
 interface IssueDeskViewProps {
@@ -25,19 +35,71 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
     issues[0]?.id || null
   )
   const [statusFilter, setStatusFilter] = useState<'all' | IssueStatus>('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [replyText, setReplyText] = useState('')
   const [isSendingReply, setIsSendingReply] = useState(false)
+  const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false)
+  const [isAnalyzingTicket, setIsAnalyzingTicket] = useState(false)
+  const [aiDiagnosis, setAiDiagnosis] = useState<AnalyzeTicketResponse | null>(null)
 
   const filteredIssues = issues.filter((i) => {
-    if (statusFilter === 'all') return true
-    return i.status === statusFilter
+    if (statusFilter !== 'all' && i.status !== statusFilter) return false
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      return (
+        i.subject.toLowerCase().includes(q) ||
+        i.userName.toLowerCase().includes(q) ||
+        i.userEmail.toLowerCase().includes(q) ||
+        i.id.toLowerCase().includes(q) ||
+        i.description.toLowerCase().includes(q)
+      )
+    }
+    return true
   })
 
   const selectedIssue = issues.find((i) => i.id === selectedIssueId) || filteredIssues[0]
 
+  const handleSelectIssue = (id: string) => {
+    setSelectedIssueId(id)
+    setIsMobileDetailOpen(true)
+    setAiDiagnosis(null) // Reset analysis for newly selected issue
+  }
+
   const handleStatusChange = (id: string, newStatus: IssueStatus) => {
     issueSupportService.updateIssueStatus(id, newStatus)
     onUpdated()
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // AI TICKET & ROOT CAUSE DIAGNOSIS ASSISTANT
+  // ══════════════════════════════════════════════════════════════════════
+  const handleAnalyzeTicketWithAI = async () => {
+    if (!selectedIssue) return
+
+    setIsAnalyzingTicket(true)
+    try {
+      const result = await aiService.analyzeTicketIssue({
+        subject: selectedIssue.subject,
+        category: selectedIssue.category,
+        description: selectedIssue.description,
+        codeSnippet: selectedIssue.codeSnippet,
+        studentName: selectedIssue.userName,
+      })
+      setAiDiagnosis(result)
+    } catch (e) {
+      console.error('Failed to analyze ticket with AI', e)
+    } finally {
+      setIsAnalyzingTicket(false)
+    }
+  }
+
+  const handleApplyAISuggestion = () => {
+    if (!aiDiagnosis) return
+    setReplyText(aiDiagnosis.suggestedReply)
+    if (selectedIssue && aiDiagnosis.suggestedStatus) {
+      issueSupportService.updateIssueStatus(selectedIssue.id, aiDiagnosis.suggestedStatus)
+      onUpdated()
+    }
   }
 
   const handleSendReply = async (e: React.FormEvent) => {
@@ -82,11 +144,37 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
     }
   }
 
+  const getInstitutionBadge = (email: string) => {
+    if (!email) return 'Learner'
+    const domain = email.split('@')[1]?.toLowerCase() || ''
+    if (domain.includes('knust')) return 'KNUST Student'
+    if (domain.includes('ug.edu') || domain.includes('ug.gh')) return 'UG Legon'
+    if (domain.includes('ashesi')) return 'Ashesi Univ'
+    if (domain.includes('ucc')) return 'UCC'
+    if (domain.includes('alx')) return 'ALX Scholar'
+    return 'Active Learner'
+  }
+
+  const detectLanguage = (snippet?: string, subject?: string) => {
+    const text = `${snippet || ''} ${subject || ''}`.toLowerCase()
+    if (text.includes('def ') || text.includes('import ') || text.includes('python') || text.includes('is_palindrome')) return 'python'
+    if (text.includes('public class') || text.includes('system.out') || text.includes('java')) return 'java'
+    if (text.includes('const ') || text.includes('function') || text.includes('javascript') || text.includes('=>')) return 'javascript'
+    return 'python'
+  }
+
+  const QUICK_REPLIES = [
+    'Thanks for pointing this out! I have clarified the whitespace trimming requirement in the problem description.',
+    'Great catch! The test suite assertion boundary has been updated. Please re-run your solution.',
+    'Your approach is solid! Remember that in this challenge, punctuation and casing must also be normalized.',
+    'Under investigation with our curriculum team. We will push an update in the next offline sync bundle.',
+  ]
+
   return (
     <div className="space-y-4">
-      {/* Status Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+      {/* Top Filter & Status Overview Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
@@ -96,7 +184,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            All Tickets ({issues.length})
+            All ({issues.length})
           </button>
           <button
             type="button"
@@ -133,225 +221,431 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           </button>
         </div>
 
-        <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-          Instant Offline Support Desk
-        </span>
+        <div className="flex items-center gap-2">
+          <div className="relative w-full sm:w-64">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Input
+              type="text"
+              placeholder="Search by student, topic, email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 text-xs font-sans h-8"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* 2-Column Support Layout: List (Left) & Ticket Inspector (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Left Column: Ticket Feed */}
-        <div className="lg:col-span-5 space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
-          {filteredIssues.length === 0 ? (
-            <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-400 space-y-2">
-              <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 opacity-60" />
-              <p className="text-xs font-semibold">No issues in this view.</p>
-            </div>
-          ) : (
-            filteredIssues.map((issue) => {
-              const isSelected = selectedIssue?.id === issue.id
-              const priorityBadge =
-                issue.priority === 'urgent' || issue.priority === 'high'
-                  ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800'
-                  : issue.priority === 'medium'
-                  ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+      {/* ═══════════════════════════════════════════════════════════════
+          HUMAN-CENTERED BALANCED MASTER-DETAIL SUPPORT SHELL
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 min-h-[680px] lg:min-h-[780px]">
+        {/* LEFT COLUMN: TICKET INBOX STREAM (lg:col-span-5) */}
+        <div
+          className={`lg:col-span-5 flex flex-col h-full bg-slate-50/70 dark:bg-slate-950/60 lg:border-r border-slate-200 dark:border-slate-800 ${
+            isMobileDetailOpen ? 'hidden lg:flex' : 'flex'
+          }`}
+        >
+          {/* Inbox Header */}
+          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-100/60 dark:bg-slate-900/60">
+            <span className="text-xs font-mono font-bold uppercase text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <MessageSquare className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+              <span>Student Inquiries ({filteredIssues.length})</span>
+            </span>
+            <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+              Community Desk
+            </span>
+          </div>
 
-              const statusBadge =
-                issue.status === 'resolved'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
-                  : issue.status === 'in_review'
-                  ? 'bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-800'
-                  : 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+          {/* Scrollable Ticket List */}
+          <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+            {filteredIssues.length === 0 ? (
+              <div className="p-8 text-center text-slate-400 space-y-2 my-auto">
+                <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 opacity-60" />
+                <p className="text-xs font-semibold">No issues matching this filter.</p>
+              </div>
+            ) : (
+              filteredIssues.map((issue) => {
+                const isSelected = selectedIssue?.id === issue.id
+                const priorityBadge =
+                  issue.priority === 'urgent' || issue.priority === 'high'
+                    ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800'
+                    : issue.priority === 'medium'
+                    ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
 
-              return (
-                <div
-                  key={issue.id}
-                  onClick={() => setSelectedIssueId(issue.id)}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-2 select-none ${
-                    isSelected
-                      ? 'bg-white dark:bg-slate-900 border-brand-500 shadow-md ring-1 ring-brand-500/30'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800">
-                      {getCategoryLabel(issue.category)}
-                    </span>
+                const statusBadge =
+                  issue.status === 'resolved'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+                    : issue.status === 'in_review'
+                    ? 'bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-800'
+                    : 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
 
-                    <div className="flex items-center gap-1.5 font-mono text-[10px]">
-                      <span className={`px-2 py-0.5 rounded-md border font-bold uppercase ${priorityBadge}`}>
-                        {issue.priority}
-                      </span>
-                      <span className={`px-2 py-0.5 rounded-md border font-bold uppercase ${statusBadge}`}>
-                        {issue.status.replace('_', ' ')}
-                      </span>
+                return (
+                  <div
+                    key={issue.id}
+                    onClick={() => handleSelectIssue(issue.id)}
+                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-2 select-none ${
+                      isSelected
+                        ? 'bg-white dark:bg-slate-900 border-brand-500 shadow-sm ring-1 ring-brand-500/30'
+                        : 'bg-white/80 dark:bg-slate-900/80 border-slate-200/90 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800">
+                          {getCategoryLabel(issue.category)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 font-mono text-[10px]">
+                        <span className={`px-1.5 py-0.5 rounded-md border font-bold uppercase ${priorityBadge}`}>
+                          {issue.priority}
+                        </span>
+                        <span className={`px-1.5 py-0.5 rounded-md border font-bold uppercase ${statusBadge}`}>
+                          {issue.status.replace('_', ' ')}
+                        </span>
+                      </div>
+                    </div>
+
+                    <h5 className="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2">
+                      {issue.subject}
+                    </h5>
+
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center gap-1.5 truncate max-w-[140px]">
+                        <div className="w-4 h-4 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-bold text-[9px] flex items-center justify-center shrink-0">
+                          {issue.userName.charAt(0)}
+                        </div>
+                        <span className="truncate">{issue.userName}</span>
+                      </div>
+                      <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-
-                  <h5 className="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2">
-                    {issue.subject}
-                  </h5>
-
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono pt-1 border-t border-slate-100 dark:border-slate-800/80">
-                    <span className="truncate">{issue.userName}</span>
-                    <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              )
-            })
-          )}
+                )
+              })
+            )}
+          </div>
         </div>
 
-        {/* Right Column: Selected Ticket Inspector */}
-        <div className="lg:col-span-7">
+        {/* RIGHT COLUMN: HUMAN-CENTERED TICKET INSPECTOR & RESPONSE DESK (lg:col-span-7) */}
+        <div
+          className={`lg:col-span-7 flex flex-col h-full bg-white dark:bg-slate-900 ${
+            !isMobileDetailOpen ? 'hidden lg:flex' : 'flex'
+          }`}
+        >
           {selectedIssue ? (
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4 text-slate-900 dark:text-slate-100">
-              {/* Header Details */}
-              <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+            <>
+              {/* Header Details with Mobile Back Button and AI Analyzer Action */}
+              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between gap-3 shrink-0 bg-slate-50/40 dark:bg-slate-950/40">
+                <div className="space-y-1.5 min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Mobile Back Button */}
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileDetailOpen(false)}
+                      className="lg:hidden p-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 mr-1 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
                     <span className="font-mono text-xs font-bold text-brand-600 dark:text-brand-400">
                       #{selectedIssue.id}
                     </span>
                     <span className="text-xs text-slate-400">•</span>
-                    <span className="text-xs font-mono text-slate-500">
+                    <span className="text-xs font-mono text-slate-600 dark:text-slate-400 font-semibold">
                       {getCategoryLabel(selectedIssue.category)}
                     </span>
+                    <span className="text-xs text-slate-400">•</span>
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                      {getInstitutionBadge(selectedIssue.userEmail)}
+                    </span>
                   </div>
-                  <h4 className="text-base font-bold text-slate-900 dark:text-white">
+
+                  <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
                     {selectedIssue.subject}
                   </h4>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => handleDeleteIssue(selectedIssue.id)}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
-                  title="Delete ticket"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* AI Analyze Ticket Action Button */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    isLoading={isAnalyzingTicket}
+                    onClick={handleAnalyzeTicketWithAI}
+                    className="h-8 text-[11px] font-bold text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 hover:bg-brand-100"
+                    leftIcon={<Bot className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
+                  >
+                    {isAnalyzingTicket ? 'Analyzing...' : 'Analyze with AI'}
+                  </Button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteIssue(selectedIssue.id)}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
+                    title="Delete ticket"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Submitter Bio */}
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs font-mono">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-bold flex items-center justify-center border border-brand-200 dark:border-brand-800">
-                    {selectedIssue.userName.charAt(0)}
+              {/* Scrollable Inspector Body */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+                {/* Human Submitter Bio Card */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
+                      {selectedIssue.userName.charAt(0)}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900 dark:text-white text-sm block">
+                          {selectedIssue.userName}
+                        </span>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                          Verified Student
+                        </span>
+                      </div>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">{selectedIssue.userEmail}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-bold text-slate-800 dark:text-slate-200 block font-sans">
-                      {selectedIssue.userName}
+
+                  <div className="text-[11px] text-slate-500 flex items-center gap-1.5 font-mono shrink-0 sm:self-center">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{new Date(selectedIssue.createdAt).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {/* Status Action Switcher with Human State Explanations */}
+                <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 uppercase">
+                      Ticket Stage:
                     </span>
-                    <span className="text-[11px] text-slate-400">{selectedIssue.userEmail}</span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(selectedIssue.id, 'open')}
+                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                          selectedIssue.status === 'open'
+                            ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-amber-400'
+                        }`}
+                      >
+                        Needs Attention
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(selectedIssue.id, 'in_review')}
+                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                          selectedIssue.status === 'in_review'
+                            ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-sky-400'
+                        }`}
+                      >
+                        Investigating
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(selectedIssue.id, 'resolved')}
+                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                          selectedIssue.status === 'resolved'
+                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-emerald-400'
+                        }`}
+                      >
+                        Resolved ✓
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <div className="text-right text-[11px] text-slate-500">
-                  <span>{new Date(selectedIssue.createdAt).toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Status Action Buttons */}
-              <div className="flex items-center gap-2 pt-1">
-                <span className="text-xs font-bold font-mono text-slate-500 uppercase">
-                  Status:
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleStatusChange(selectedIssue.id, 'open')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold border transition-colors cursor-pointer ${
-                    selectedIssue.status === 'open'
-                      ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
-                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
-                  }`}
-                >
-                  Open
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleStatusChange(selectedIssue.id, 'in_review')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold border transition-colors cursor-pointer ${
-                    selectedIssue.status === 'in_review'
-                      ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
-                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
-                  }`}
-                >
-                  In Review
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleStatusChange(selectedIssue.id, 'resolved')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold border transition-colors cursor-pointer ${
-                    selectedIssue.status === 'resolved'
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
-                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
-                  }`}
-                >
-                  Resolved
-                </button>
-              </div>
-
-              {/* Description Content */}
-              <div className="space-y-1.5 text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-sans bg-slate-50/60 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
-                <p>{selectedIssue.description}</p>
-              </div>
-
-              {/* Code snippet if present */}
-              {selectedIssue.codeSnippet && (
-                <div className="space-y-1">
-                  <span className="text-[11px] font-mono font-bold uppercase text-slate-400 flex items-center gap-1">
-                    <Code2 className="w-3 h-3" /> Submitted Code / Trace
+                  <span className="text-[11px] font-mono text-slate-400">
+                    {selectedIssue.status === 'resolved' ? 'Closed' : 'Active Ticket'}
                   </span>
-                  <pre className="p-3 bg-slate-900 text-slate-100 font-mono text-xs rounded-xl overflow-x-auto border border-slate-800">
-                    {selectedIssue.codeSnippet}
-                  </pre>
                 </div>
-              )}
 
-              {/* Admin Reply History */}
-              {selectedIssue.adminReply && (
-                <div className="p-3.5 rounded-xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/80 space-y-1 text-xs">
-                  <span className="font-mono font-bold text-[11px] text-brand-700 dark:text-brand-400 uppercase flex items-center gap-1">
-                    <Shield className="w-3.5 h-3.5" /> Admin Response / Patch Note:
-                  </span>
-                  <p className="text-slate-800 dark:text-slate-200 font-sans leading-relaxed">
-                    {selectedIssue.adminReply}
+                {/* Human Dialogue Narrative / Student Issue Summary */}
+                <div className="space-y-2 p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 leading-relaxed shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400 font-bold text-xs font-mono uppercase tracking-wider">
+                    <Quote className="w-3.5 h-3.5" />
+                    <span>Student Feedback & Context:</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-sans pl-1 leading-relaxed">
+                    {selectedIssue.description}
                   </p>
                 </div>
-              )}
 
-              {/* Reply Form */}
-              <form onSubmit={handleSendReply} className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Send Response / Solution Note
-                </label>
-                <Textarea
-                  rows={2}
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Type an administrative answer, patch note, or resolution update..."
-                  className="text-xs font-sans"
-                />
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    size="sm"
-                    variant="primary"
-                    isLoading={isSendingReply}
-                    className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs"
-                    leftIcon={<Check className="w-3.5 h-3.5" />}
-                  >
-                    Post Admin Reply & Update
-                  </Button>
+                {/* ═══════════════════════════════════════════════════════════
+                    SYNTAX HIGHLIGHTED CODE SNIPPET (VS CODE DARK THEME)
+                    ═══════════════════════════════════════════════════════════ */}
+                {selectedIssue.codeSnippet && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                        <span>Submitted Code / Traceback</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400 uppercase">
+                        {detectLanguage(selectedIssue.codeSnippet, selectedIssue.subject)}
+                      </span>
+                    </div>
+
+                    <CodeBlock
+                      code={selectedIssue.codeSnippet}
+                      language={detectLanguage(selectedIssue.codeSnippet, selectedIssue.subject)}
+                      caption="Student Submission Snapshot"
+                    />
+                  </div>
+                )}
+
+                {/* ═══════════════════════════════════════════════════════════
+                    OFFLINE AI DIAGNOSTIC & SOLUTION NOTE CARD
+                    ═══════════════════════════════════════════════════════════ */}
+                {aiDiagnosis && (
+                  <div className="p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 space-y-3 animate-in fade-in zoom-in-95 duration-150 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-indigo-200/80 dark:border-indigo-800/80 pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs">
+                          <Bot className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h5 className="text-xs font-bold text-indigo-950 dark:text-indigo-200">
+                            Offline AI Ticket Diagnosis & Action Plan
+                          </h5>
+                          <span className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 block">
+                            Recommended Action: {aiDiagnosis.suggestedAction}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="primary"
+                        size="sm"
+                        onClick={handleApplyAISuggestion}
+                        className="h-7 text-[11px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs"
+                        leftIcon={<Sparkles className="w-3 h-3" />}
+                      >
+                        Apply to Response
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2 text-xs text-indigo-900 dark:text-indigo-200">
+                      <div className="space-y-0.5">
+                        <span className="font-mono font-bold text-[10px] uppercase text-indigo-700 dark:text-indigo-400 block">
+                          Issue Breakdown:
+                        </span>
+                        <p className="font-sans leading-relaxed">{aiDiagnosis.summary}</p>
+                      </div>
+
+                      <div className="space-y-0.5">
+                        <span className="font-mono font-bold text-[10px] uppercase text-indigo-700 dark:text-indigo-400 block">
+                          Technical & Code Diagnosis:
+                        </span>
+                        <p className="font-sans leading-relaxed">{aiDiagnosis.codeDiagnosis}</p>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-800 space-y-1">
+                        <span className="font-mono font-bold text-[10px] text-brand-600 dark:text-brand-400 uppercase block flex items-center gap-1">
+                          <Lightbulb className="w-3 h-3 text-amber-500" />
+                          <span>AI Drafted Response Note:</span>
+                        </span>
+                        <p className="font-sans italic text-slate-700 dark:text-slate-300 leading-relaxed text-xs">
+                          "{aiDiagnosis.suggestedReply}"
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Admin Reply History */}
+                {selectedIssue.adminReply && (
+                  <div className="p-4 rounded-2xl bg-brand-50/80 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 space-y-1.5 text-xs shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-bold text-xs text-brand-700 dark:text-brand-300 uppercase flex items-center gap-1.5">
+                        <Shield className="w-3.5 h-3.5" />
+                        <span>Instructor Response & Solution Note:</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800">
+                        Delivered
+                      </span>
+                    </div>
+                    <p className="text-slate-800 dark:text-slate-200 font-sans leading-relaxed text-xs sm:text-sm">
+                      {selectedIssue.adminReply}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Pinned Bottom Resolution Composer with Full Untruncated Templates */}
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/70 shrink-0 space-y-3">
+                {/* 1-Click Pedagogical Quick Reply Templates with Full Wrapping */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
+                      1-Click Pedagogical Quick Replies (Click to Insert):
+                    </span>
+                    {!aiDiagnosis && (
+                      <button
+                        type="button"
+                        onClick={handleAnalyzeTicketWithAI}
+                        className="text-[10px] font-mono font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Or Ask AI to Draft Reply</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {QUICK_REPLIES.map((template, tIdx) => (
+                      <button
+                        key={tIdx}
+                        type="button"
+                        onClick={() => setReplyText(template)}
+                        className="text-[11px] font-sans p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-all text-left cursor-pointer shadow-2xs whitespace-normal break-words leading-relaxed"
+                      >
+                        {template}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </form>
-            </div>
+
+                <form onSubmit={handleSendReply} className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                      <span>Send Instructor Solution Note to Student</span>
+                    </label>
+                    <span className="text-[10px] font-mono text-slate-400">Air-Gapped Dispatch</span>
+                  </div>
+                  <Textarea
+                    rows={2}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Type an empathetic explanation, patch note, or resolution update to the student..."
+                    className="text-xs font-sans resize-none"
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      size="sm"
+                      variant="primary"
+                      isLoading={isSendingReply}
+                      className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs text-xs px-4"
+                      leftIcon={<Check className="w-3.5 h-3.5" />}
+                    >
+                      Post Instructor Reply & Update Status
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </>
           ) : (
-            <div className="p-12 text-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400">
+            <div className="p-12 text-center my-auto text-slate-400">
               <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-semibold">Select an issue from the list to view details.</p>
+              <p className="text-sm font-semibold">Select an inquiry from the inbox to view details.</p>
             </div>
           )}
         </div>
