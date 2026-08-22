@@ -17,15 +17,17 @@ def execute_inference(model_path: str, prompt: str, max_tokens: int = 256, threa
         sys.exit(1)
 
     try:
-        from llama_cpp import Llama
-    except ImportError:
+        import importlib
+        llama_module = importlib.import_module("llama_cpp")
+        llama_cls = getattr(llama_module, "Llama")
+    except (ImportError, ModuleNotFoundError):
         print("Error: `llama-cpp-python` is not installed.", file=sys.stderr)
         print("Install via: pip install llama-cpp-python", file=sys.stderr)
         sys.exit(1)
 
     print(f"Loading model: {model_path} (threads={threads}, ctx=2048, gpu_layers=0)")
     start_load = time.perf_counter()
-    llm = Llama(
+    llm = llama_cls(
         model_path=model_path,
         n_ctx=2048,
         n_threads=threads,
