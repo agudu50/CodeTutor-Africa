@@ -28,13 +28,13 @@ export const DashboardPage: React.FC = () => {
             src={profile.avatarUrl || undefined}
             fallbackName={profile.fullName || 'User'}
             size="lg"
-            className="bg-brand-600 text-white font-bold shrink-0 shadow-sm ring-2 ring-brand-500/20 w-11 h-11 sm:w-13 sm:h-13 text-base sm:text-lg"
+            className="bg-[#005F02] text-white font-bold shrink-0 shadow-sm ring-2 ring-[#005F02]/20 w-11 h-11 sm:w-13 sm:h-13 text-base sm:text-lg"
           />
 
           <div className="space-y-1 min-w-0 flex-1">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
               Welcome back,{' '}
-              <span className="text-brand-600 dark:text-brand-400 font-extrabold">
+              <span className="text-[#005F02] font-black">
                 {firstName}
               </span>
             </h1>

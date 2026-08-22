@@ -189,7 +189,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                 src={profile.avatarUrl || undefined}
                 fallbackName={profile.fullName || 'User'}
                 size="sm"
-                className="bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-xs transition-colors w-7 h-7 sm:w-8 sm:h-8 text-xs"
+                className="bg-[#005F02] text-white font-bold shadow-xs transition-colors w-7 h-7 sm:w-8 sm:h-8 text-xs"
               />
             </button>
 
@@ -213,11 +213,11 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                         src={profile.avatarUrl || undefined}
                         fallbackName={profile.fullName || 'User'}
                         size="md"
-                        className="bg-brand-600 text-white font-bold shrink-0 shadow-2xs"
+                        className="bg-[#005F02] text-white font-bold shrink-0 shadow-2xs"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
+                          <span className="text-xs font-bold text-[#005F02] block truncate">
                             {profile.fullName}
                           </span>
                         </div>
