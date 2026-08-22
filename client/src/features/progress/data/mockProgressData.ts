@@ -1,0 +1,85 @@
+import { LearningProgress } from '@/types'
+
+export const MOCK_PROGRESS_DATA: LearningProgress = {
+  userId: 'usr-1',
+  overallCompletionPercentage: 64,
+  streakDays: 7,
+  totalStudyHours: 21.4,
+  problemsSolvedCount: 38,
+  lessonsCompletedCount: 22,
+  topicMasteries: [
+    {
+      topic: 'Python Control Flow & Loops',
+      language: 'python',
+      masteryPercentage: 95,
+      level: 'beginner',
+      problemsSolved: 12,
+      totalProblems: 12,
+    },
+    {
+      topic: 'Recursion & Call Stacks',
+      language: 'python',
+      masteryPercentage: 55,
+      level: 'intermediate',
+      problemsSolved: 4,
+      totalProblems: 8,
+    },
+    {
+      topic: 'Asynchronous JavaScript & Promises',
+      language: 'javascript',
+      masteryPercentage: 70,
+      level: 'intermediate',
+      problemsSolved: 7,
+      totalProblems: 10,
+    },
+    {
+      topic: 'Java Object-Oriented Principles',
+      language: 'java',
+      masteryPercentage: 40,
+      level: 'intermediate',
+      problemsSolved: 3,
+      totalProblems: 10,
+    },
+    {
+      topic: 'Data Structures: Hash Tables & Maps',
+      language: 'python',
+      masteryPercentage: 80,
+      level: 'intermediate',
+      problemsSolved: 8,
+      totalProblems: 10,
+    },
+  ],
+  strengths: [
+    'Iterative logic & clean list comprehensions',
+    'Hash map O(1) optimization strategies',
+    'Consistent daily coding habits (7-day streak)',
+  ],
+  weakAreas: [
+    'Recursive state reduction and base conditions',
+    'Asynchronous race conditions and error catching in JavaScript',
+    'Java interface vs abstract class design choices',
+  ],
+  recentActivities: [
+    {
+      id: 'act-1',
+      type: 'practice_solved',
+      title: 'Solved "Two Sum with Optimal Hash Map"',
+      description: 'Achieved O(N) runtime in Python with 100% test accuracy.',
+      timestamp: '2 hours ago',
+    },
+    {
+      id: 'act-2',
+      type: 'tutor_chat',
+      title: 'AI Tutor Session on Call Stack & Recursion',
+      description: 'Discussed base cases and prevention of RecursionError.',
+      timestamp: 'Yesterday',
+    },
+    {
+      id: 'act-3',
+      type: 'lesson_completed',
+      title: 'Completed "Async JavaScript & Promises"',
+      description: 'Finished interactive code walkthrough on microtask queues.',
+      timestamp: '3 days ago',
+    },
+  ],
+}
