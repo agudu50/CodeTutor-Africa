@@ -1,4 +1,5 @@
 export type GameId = 'speedrun' | 'bughunt' | 'predictor' | 'shuffle'
+export type GameLanguage = 'all' | 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
 
 export interface GameMetadata {
   id: GameId
@@ -20,7 +21,7 @@ export interface GameMetadata {
 // 1. Syntax Speedrun Types
 export interface SpeedrunSnippet {
   id: string
-  language: 'python' | 'javascript' | 'typescript' | 'sql'
+  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   description: string
   code: string
@@ -30,7 +31,7 @@ export interface SpeedrunSnippet {
 // 2. Bug Hunt Types
 export interface BugHuntChallenge {
   id: string
-  language: 'python' | 'javascript' | 'java'
+  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   description: string
   lines: string[]
@@ -47,7 +48,7 @@ export interface BugHuntChallenge {
 // 3. Output Predictor Types
 export interface OutputPredictorChallenge {
   id: string
-  language: 'python' | 'javascript' | 'typescript'
+  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   code: string
   options: string[]
@@ -59,7 +60,7 @@ export interface OutputPredictorChallenge {
 // 4. Code Shuffle Types
 export interface CodeShuffleChallenge {
   id: string
-  language: 'python' | 'javascript'
+  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
   title: string
   goalDescription: string
   expectedOutput: string

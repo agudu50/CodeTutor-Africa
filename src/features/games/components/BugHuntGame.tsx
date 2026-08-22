@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { BUG_HUNT_CHALLENGES } from '../data/gameData'
-import { BugHuntChallenge } from '../types/games.types'
+import { BugHuntChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { GameLanguageSelector } from './GameLanguageSelector'
 import { CircuitBugScanner3D } from './3d/CircuitBugScanner3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
@@ -22,16 +23,29 @@ import {
 interface BugHuntGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
+  initialLanguage?: GameLanguage
 }
 
-export const BugHuntGame: React.FC<BugHuntGameProps> = ({ onBack, onScoreUpdate }) => {
+export const BugHuntGame: React.FC<BugHuntGameProps> = ({
+  onBack,
+  onScoreUpdate,
+  initialLanguage = 'all',
+}) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
+
+  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const filteredChallenges = selectedLanguage === 'all'
+    ? BUG_HUNT_CHALLENGES
+    : BUG_HUNT_CHALLENGES.filter((c) => c.language === selectedLanguage)
+  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : BUG_HUNT_CHALLENGES
+
   const [challengeIndex, setChallengeIndex] = useState(0)
   const [selectedLineIndex, setSelectedLineIndex] = useState<number | null>(null)
   const [isLineConfirmed, setIsLineConfirmed] = useState(false)
   const [feedback, setFeedback] = useState<{ isSuccess: boolean; message: string } | null>(null)
-  const [timeLeft, setTimeLeft] = useState(BUG_HUNT_CHALLENGES[0].timeLimitSecs)
+  const currentChallenge: BugHuntChallenge = activeChallenges[challengeIndex] || activeChallenges[0]
+  const [timeLeft, setTimeLeft] = useState(currentChallenge.timeLimitSecs)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isGameOver, setIsGameOver] = useState(false)
   const [score, setScore] = useState(0)
@@ -39,7 +53,17 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({ onBack, onScoreUpdate 
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const currentChallenge: BugHuntChallenge = BUG_HUNT_CHALLENGES[challengeIndex] || BUG_HUNT_CHALLENGES[0]
+
+  const handleLanguageChange = (lang: GameLanguage) => {
+    setSelectedLanguage(lang)
+    setChallengeIndex(0)
+    setSelectedLineIndex(null)
+    setIsLineConfirmed(false)
+    setFeedback(null)
+    setIsPlaying(false)
+    setIsGameOver(false)
+    setStreak(0)
+  }
 
   const handleToggleSound = () => {
     const next = gameSound.toggleSound()
@@ -212,6 +236,14 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({ onBack, onScoreUpdate 
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
         </div>
+      </div>
+
+      {/* Language Selector */}
+      <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <GameLanguageSelector
+          selectedLanguage={selectedLanguage}
+          onSelectLanguage={handleLanguageChange}
+        />
       </div>
 
       {/* Main Game Surface */}

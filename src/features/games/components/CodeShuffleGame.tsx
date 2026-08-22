@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { CODE_SHUFFLE_CHALLENGES } from '../data/gameData'
-import { CodeShuffleChallenge } from '../types/games.types'
+import { CodeShuffleChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { GameLanguageSelector } from './GameLanguageSelector'
 import { AlgorithmBlocks3D } from './3d/AlgorithmBlocks3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
@@ -22,13 +23,25 @@ import {
 interface CodeShuffleGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
+  initialLanguage?: GameLanguage
 }
 
-export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({ onBack, onScoreUpdate }) => {
+export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
+  onBack,
+  onScoreUpdate,
+  initialLanguage = 'all',
+}) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
+
+  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const filteredChallenges = selectedLanguage === 'all'
+    ? CODE_SHUFFLE_CHALLENGES
+    : CODE_SHUFFLE_CHALLENGES.filter((c) => c.language === selectedLanguage)
+  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : CODE_SHUFFLE_CHALLENGES
+
   const [challengeIndex, setChallengeIndex] = useState(0)
-  const currentChallenge: CodeShuffleChallenge = CODE_SHUFFLE_CHALLENGES[challengeIndex] || CODE_SHUFFLE_CHALLENGES[0]
+  const currentChallenge: CodeShuffleChallenge = activeChallenges[challengeIndex] || activeChallenges[0]
 
   const [blocks, setBlocks] = useState(currentChallenge.scrambledBlocks)
   const [feedback, setFeedback] = useState<{ isSuccess: boolean; message: string } | null>(null)
@@ -36,6 +49,17 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({ onBack, onScor
   const [isGameOver, setIsGameOver] = useState(false)
   const [score, setScore] = useState(0)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
+
+  const handleLanguageChange = (lang: GameLanguage) => {
+    setSelectedLanguage(lang)
+    setChallengeIndex(0)
+    const nextChallenges = lang === 'all' ? CODE_SHUFFLE_CHALLENGES : CODE_SHUFFLE_CHALLENGES.filter((c) => c.language === lang)
+    const firstChallenge = nextChallenges[0] || CODE_SHUFFLE_CHALLENGES[0]
+    setBlocks(firstChallenge.scrambledBlocks)
+    setFeedback(null)
+    setIsPlaying(false)
+    setIsGameOver(false)
+  }
 
   const handleToggleSound = () => {
     const next = gameSound.toggleSound()
@@ -142,6 +166,14 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({ onBack, onScor
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
         </div>
+      </div>
+
+      {/* Language Selector */}
+      <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <GameLanguageSelector
+          selectedLanguage={selectedLanguage}
+          onSelectLanguage={handleLanguageChange}
+        />
       </div>
 
       {!isPlaying && !isGameOver ? (

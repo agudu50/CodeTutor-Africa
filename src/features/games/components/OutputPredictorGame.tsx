@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { OUTPUT_PREDICTOR_CHALLENGES } from '../data/gameData'
-import { OutputPredictorChallenge } from '../types/games.types'
+import { OutputPredictorChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { GameLanguageSelector } from './GameLanguageSelector'
 import { MemoryStackFlow3D } from './3d/MemoryStackFlow3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
@@ -22,15 +23,28 @@ import {
 interface OutputPredictorGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
+  initialLanguage?: GameLanguage
 }
 
-export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({ onBack, onScoreUpdate }) => {
+export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
+  onBack,
+  onScoreUpdate,
+  initialLanguage = 'all',
+}) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
+
+  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const filteredChallenges = selectedLanguage === 'all'
+    ? OUTPUT_PREDICTOR_CHALLENGES
+    : OUTPUT_PREDICTOR_CHALLENGES.filter((c) => c.language === selectedLanguage)
+  const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : OUTPUT_PREDICTOR_CHALLENGES
+
   const [challengeIndex, setChallengeIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<{ isSuccess: boolean; message: string } | null>(null)
-  const [timeLeft, setTimeLeft] = useState(OUTPUT_PREDICTOR_CHALLENGES[0].timeLimitSecs)
+  const currentChallenge: OutputPredictorChallenge = activeChallenges[challengeIndex] || activeChallenges[0]
+  const [timeLeft, setTimeLeft] = useState(currentChallenge.timeLimitSecs)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isGameOver, setIsGameOver] = useState(false)
   const [score, setScore] = useState(0)
@@ -38,7 +52,16 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({ onBack
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const currentChallenge: OutputPredictorChallenge = OUTPUT_PREDICTOR_CHALLENGES[challengeIndex] || OUTPUT_PREDICTOR_CHALLENGES[0]
+
+  const handleLanguageChange = (lang: GameLanguage) => {
+    setSelectedLanguage(lang)
+    setChallengeIndex(0)
+    setSelectedOption(null)
+    setFeedback(null)
+    setIsPlaying(false)
+    setIsGameOver(false)
+    setStreak(0)
+  }
 
   const handleToggleSound = () => {
     const next = gameSound.toggleSound()
@@ -189,6 +212,14 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({ onBack
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
         </div>
+      </div>
+
+      {/* Language Selector */}
+      <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <GameLanguageSelector
+          selectedLanguage={selectedLanguage}
+          onSelectLanguage={handleLanguageChange}
+        />
       </div>
 
       {/* Main Game State */}

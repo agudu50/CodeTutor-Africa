@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { SPEEDRUN_SNIPPETS } from '../data/gameData'
-import { SpeedrunSnippet } from '../types/games.types'
+import { SpeedrunSnippet, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
+import { GameLanguageSelector } from './GameLanguageSelector'
 import { CyberRacer3D } from './3d/CyberRacer3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
@@ -20,14 +21,27 @@ import {
 interface SyntaxSpeedrunGameProps {
   onBack: () => void
   onScoreUpdate: (score: number) => void
+  initialLanguage?: GameLanguage
 }
 
-export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({ onBack, onScoreUpdate }) => {
+export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
+  onBack,
+  onScoreUpdate,
+  initialLanguage = 'all',
+}) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
+
+  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>(initialLanguage)
+  const filteredSnippets = selectedLanguage === 'all'
+    ? SPEEDRUN_SNIPPETS
+    : SPEEDRUN_SNIPPETS.filter((s) => s.language === selectedLanguage)
+  const activeSnippets = filteredSnippets.length > 0 ? filteredSnippets : SPEEDRUN_SNIPPETS
+
   const [snippetIndex, setSnippetIndex] = useState(0)
   const [userInput, setUserInput] = useState('')
-  const [timeLeft, setTimeLeft] = useState(SPEEDRUN_SNIPPETS[0].timeLimitSecs)
+  const currentSnippet: SpeedrunSnippet = activeSnippets[snippetIndex] || activeSnippets[0]
+  const [timeLeft, setTimeLeft] = useState(currentSnippet.timeLimitSecs)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isGameOver, setIsGameOver] = useState(false)
   const [score, setScore] = useState(0)
@@ -40,7 +54,14 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({ onBack, 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(0)
 
-  const currentSnippet: SpeedrunSnippet = SPEEDRUN_SNIPPETS[snippetIndex] || SPEEDRUN_SNIPPETS[0]
+  const handleLanguageChange = (lang: GameLanguage) => {
+    setSelectedLanguage(lang)
+    setSnippetIndex(0)
+    setUserInput('')
+    setIsPlaying(false)
+    setIsGameOver(false)
+    setStreak(0)
+  }
 
   const handleToggleSound = () => {
     const next = gameSound.toggleSound()
@@ -205,6 +226,14 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({ onBack, 
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
         </div>
+      </div>
+
+      {/* Language Selector */}
+      <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <GameLanguageSelector
+          selectedLanguage={selectedLanguage}
+          onSelectLanguage={handleLanguageChange}
+        />
       </div>
 
       {/* Main Game Surface */}

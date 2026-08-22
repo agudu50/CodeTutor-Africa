@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { GAMES_METADATA } from '../data/gameData'
-import { GameId, PlayerGameStats } from '../types/games.types'
+import { GameId, PlayerGameStats, GameLanguage } from '../types/games.types'
 import { SyntaxSpeedrunGame } from '../components/SyntaxSpeedrunGame'
 import { BugHuntGame } from '../components/BugHuntGame'
 import { OutputPredictorGame } from '../components/OutputPredictorGame'
 import { CodeShuffleGame } from '../components/CodeShuffleGame'
+import { GameLanguageSelector } from '../components/GameLanguageSelector'
 import { Arcade3DHero } from '../components/3d/Arcade3DHero'
 import { gameSound } from '../services/gameSound.service'
 import {
@@ -41,6 +42,7 @@ export const GamesHubPage: React.FC = () => {
   const isOffline = effectiveNetwork === 'offline'
 
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
+  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage>('all')
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
   const [stats, setStats] = useState<PlayerGameStats>(() => {
     const saved = localStorage.getItem(STATS_STORAGE_KEY)
@@ -97,21 +99,25 @@ export const GamesHubPage: React.FC = () => {
         <SyntaxSpeedrunGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('speedrun', score)}
+          initialLanguage={selectedLanguage}
         />
       ) : activeGame === 'bughunt' ? (
         <BugHuntGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('bughunt', score)}
+          initialLanguage={selectedLanguage}
         />
       ) : activeGame === 'predictor' ? (
         <OutputPredictorGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('predictor', score)}
+          initialLanguage={selectedLanguage}
         />
       ) : activeGame === 'shuffle' ? (
         <CodeShuffleGame
           onBack={() => setActiveGame(null)}
           onScoreUpdate={(score) => handleScoreUpdate('shuffle', score)}
+          initialLanguage={selectedLanguage}
         />
       ) : (
         <>
@@ -220,6 +226,25 @@ export const GamesHubPage: React.FC = () => {
                 {stats.highScores.bughunt || 0} pts
               </p>
             </div>
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════════════
+              LANGUAGE SELECTION & FILTER TOOLBAR
+              ═══════════════════════════════════════════════════════════════ */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div className="space-y-0.5">
+              <span className="text-xs font-bold text-slate-900 dark:text-white block">
+                Choose Practice Language
+              </span>
+              <p className="text-[11px] text-slate-500">
+                Filter challenges by your target programming language or practice in mixed mode.
+              </p>
+            </div>
+
+            <GameLanguageSelector
+              selectedLanguage={selectedLanguage}
+              onSelectLanguage={setSelectedLanguage}
+            />
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
