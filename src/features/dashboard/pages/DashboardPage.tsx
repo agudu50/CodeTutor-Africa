@@ -15,6 +15,7 @@ import { Target, BookOpen, Bot } from 'lucide-react'
 export const DashboardPage: React.FC = () => {
   const data = MOCK_DASHBOARD_DATA
   const { profile } = useUserProfile()
+  const firstName = profile.fullName ? profile.fullName.trim().split(' ')[0] : 'Learner'
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-4 sm:space-y-6">
@@ -34,7 +35,7 @@ export const DashboardPage: React.FC = () => {
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
               Welcome back,{' '}
               <span className="text-brand-600 dark:text-brand-400 font-extrabold">
-                {profile.fullName}
+                {firstName}
               </span>
             </h1>
 
