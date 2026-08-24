@@ -29,94 +29,93 @@ import {
 } from 'lucide-react'
 
 /* ═══════════════════════════════════════════════════════════════════
-   HERO SLIDESHOW DATA
+   HERO SLIDESHOW DATA (PLAIN ENGLISH FOR EVERYONE)
    ═══════════════════════════════════════════════════════════════════ */
 const heroSlides = [
   {
     image: '/images/students_collaboration.jpg',
-    tag: 'University Labs & Coding Clubs',
-    title: 'Empowering African Engineering Students',
-    subtitle: 'From Nairobi to Accra, Lagos to Cape Town — learn software engineering without the obstacle of costly mobile data or flaky Wi-Fi.',
+    tag: 'For Everyone Across Africa',
+    title: 'Learn to Code at Your Own Pace',
+    subtitle: 'From Accra to Nairobi, Lagos to Johannesburg — learn programming step-by-step without the obstacle of costly mobile data or unstable Wi-Fi.',
   },
   {
     image: '/images/student_focus.jpg',
-    tag: 'Self-Paced Deep Practice',
-    title: 'A Dedicated AI Mentor That Never Needs the Internet',
-    subtitle: 'Ask unlimited questions, get step-by-step Socratic hints, and master core data structures in private on your own laptop.',
+    tag: 'Your Friendly 24/7 AI Mentor',
+    title: 'Ask Any Question, Anytime Without Fear',
+    subtitle: 'Get clear, simple explanations and gentle hints in plain English. No confusing jargon, no judgment, and zero internet needed.',
   },
   {
     image: '/images/terminal_student_offline.jpg',
-    tag: 'Hands-On Engineering',
-    title: 'Zero Latency Code Diagnostics & Compiler Guidance',
-    subtitle: 'Diagnose runtime errors, explore memory models, and run automated test suites locally at 23+ tokens per second on CPU.',
+    tag: 'Practice By Doing',
+    title: 'Build Real Skills with Fun & Easy Lessons',
+    subtitle: 'Write your first lines of code, fix mistakes with helpful guidance, and play fun coding games directly on your laptop.',
   },
 ]
 
 /* ═══════════════════════════════════════════════════════════════════
-   CODE SAMPLES & SYNCHRONIZED SOCRATIC DIALOGUE
+   CODE SAMPLES & SYNCHRONIZED SOCRATIC DIALOGUE (BEGINNER FRIENDLY)
    ═══════════════════════════════════════════════════════════════════ */
 const codeExamples = [
   {
     lang: 'python',
-    filename: 'algorithms.py',
-    badge: 'Python • Recursion',
-    code: `# Problem: Socratic Tutor guiding recursion
-def sum_list(items):
-    # Hint: What is our base case when items is empty?
-    if not items:
-        return 0
-    # Step: Add the first element to the sum of the rest
-    return items[0] + sum_list(items[1:])
+    filename: 'welcome.py',
+    badge: 'Python • Beginner Friendly',
+    code: `# Problem: Calculate total price with a friendly function
+def calculate_total(price, quantity):
+    # Multiply the unit price by the number of items
+    return price * quantity
 
-print("Sum:", sum_list([10, 20, 30, 40]))  # Output: 100`,
+item_name = "Notebook"
+total_cost = calculate_total(15, 3)
+print("Total for 3 " + item_name + "s is $" + str(total_cost))`,
     dialogue: {
-      student: 'I am getting a recursion limit exceeded error on my binary search function. What is wrong?',
-      ai: 'A maximum recursion depth error occurs when the function keeps calling itself indefinitely without hitting a stopping condition.',
-      hint: 'Look at lines 4 and 8 in your code: when low > high, is your function returning immediately or is it recalculating mid again?',
-      latency: 'CPU Latency: 38ms',
-      verified: 'Python AST Verified',
+      student: 'How does the calculate_total function know what 15 and 3 mean?',
+      ai: 'When you call calculate_total(15, 3), Python matches 15 to the "price" label and 3 to "quantity", then multiplies them together to give 45.',
+      hint: 'What happens if you change 3 to 5 items in line 7? What will the new total cost be?',
+      latency: 'Instant: 35ms',
+      verified: 'Runs 100% Offline',
     },
   },
   {
     lang: 'javascript',
-    filename: 'eventLoop.js',
-    badge: 'JavaScript • Microtasks',
-    code: `// Understanding JavaScript Microtasks & Promises
-console.log("1: Synchronous start");
+    filename: 'greeting.js',
+    badge: 'JavaScript • Web Basics',
+    code: `// Greet a new learner based on whether it is their first time
+function getGreeting(learnerName, isNew) {
+  if (isNew) {
+    return "Welcome to coding, " + learnerName + "! Let's learn step-by-step.";
+  }
+  return "Welcome back, " + learnerName + "! Ready for today's lesson?";
+}
 
-Promise.resolve().then(() => {
-  console.log("3: Microtask queue executed");
-});
-
-console.log("2: Synchronous end");
-// Tutor: "Notice how microtasks execute before timers!"`,
+console.log(getGreeting("Kwame", true));`,
     dialogue: {
-      student: 'Why does the Promise microtask execute before setTimeout(..., 0) in the event loop?',
-      ai: 'The JavaScript engine drains the entire microtask queue at the end of the current synchronous tick before polling the timer queue.',
-      hint: 'Notice the output sequence 1 -> 2 -> 3: what runs while the main thread call stack is still synchronously active?',
-      latency: 'CPU Latency: 42ms',
-      verified: 'V8 Event Loop Verified',
+      student: 'What is the difference between "Kwame" and "true" in this code?',
+      ai: '"Kwame" is a text word (a String), while "true" is a yes/no switch (a Boolean). The function checks the switch to pick the right greeting.',
+      hint: 'If you change "true" to "false" on line 8, which of the two welcome messages will appear?',
+      latency: 'Instant: 30ms',
+      verified: 'Runs 100% Offline',
     },
   },
   {
     lang: 'java',
-    filename: 'BankLedger.java',
-    badge: 'Java • Encapsulation',
-    code: `// Java OOP: Encapsulation & Memory Safety
-public class BankLedger {
-    private double balance;
+    filename: 'PiggyBank.java',
+    badge: 'Java • Easy Objects',
+    code: `// A simple digital piggy bank to track your savings
+public class PiggyBank {
+    private int savings = 50;
 
-    public void deposit(double amount) {
-        if (amount <= 0) throw new IllegalArgumentException();
-        this.balance += amount;
+    public void addMoney(int amount) {
+        this.savings += amount;
+        System.out.println("New total savings: $" + this.savings);
     }
 }`,
     dialogue: {
-      student: 'Why should balance be private with a method instead of making balance public?',
-      ai: 'Encapsulation prevents unauthorized state mutations and allows validating invariants (like amount > 0) before modifying ledger balances.',
-      hint: 'If balance were public, what would prevent external code from directly writing account.balance = -5000 and bypassing the deposit check?',
-      latency: 'CPU Latency: 35ms',
-      verified: 'JVM OOP Model Verified',
+      student: 'Why do we use addMoney() instead of changing savings directly?',
+      ai: 'Using addMoney() keeps your savings safe—just like putting coins through a piggy bank slot rather than breaking the bank open.',
+      hint: 'If you start with 50 and call addMoney(25), what number will be printed on your screen?',
+      latency: 'Instant: 32ms',
+      verified: 'Runs 100% Offline',
     },
   },
 ]
@@ -453,7 +452,6 @@ export const LandingPage: React.FC = () => {
   }, [])
 
   const statOffline = useCounter(100, 1400, statsInView)
-  const statTokens = useCounter(23, 1400, statsInView)
   const statExercises = useCounter(50, 1400, statsInView)
   const statModes = useCounter(6, 1400, statsInView)
 
@@ -469,92 +467,92 @@ export const LandingPage: React.FC = () => {
   const featureCards = [
     {
       icon: <Sparkles className="w-6 h-6 text-[#005F02]" />,
-      badge: 'Pedagogy',
-      title: '6 Socratic AI Modes',
-      description: 'Explain, Hint, Practice, Debug, Review, and Quiz modes that build real engineering intuition instead of copy-paste habits.',
+      badge: 'Personal AI Tutor',
+      title: '6 Friendly Learning Modes',
+      description: 'Ask questions in plain English. Get simple explanations, gentle hints, error help, code reviews, and quick quizzes that help you truly understand.',
       link: '/tutor',
     },
     {
       icon: <BookOpen className="w-6 h-6 text-[#005F02]" />,
-      badge: 'Curriculum',
-      title: 'Comprehensive Course Tracks',
-      description: 'Structured syllabi for Python Fundamentals, Async JavaScript, and Java OOP aligned with African engineering university curricula.',
+      badge: 'Step-by-Step',
+      title: 'Beginner to Pro Courses',
+      description: 'Learn Python, JavaScript, and Java through structured, bite-sized lessons. Perfect for absolute beginners, students, and career changers alike.',
       link: '/learning',
     },
     {
       icon: <Code2 className="w-6 h-6 text-[#005F02]" />,
-      badge: 'Execution',
+      badge: 'Try It Out',
       title: 'Interactive Code Playground',
-      description: 'Write, execute, and validate code against automated test cases locally on your CPU with zero external dependencies.',
+      description: 'Practice what you learn right inside your browser. Run programs instantly on your laptop without setting up complex tools or servers.',
       link: '/practice',
     },
     {
       icon: <Bug className="w-6 h-6 text-[#005F02]" />,
-      badge: 'Diagnostics',
-      title: 'Compiler Root-Cause Debugger',
-      description: 'Paste tricky stack traces and compiler errors. The AI breaks down memory state, edge cases, and guided fixes.',
+      badge: 'Error Helper',
+      title: 'Plain-English Bug Fixer',
+      description: 'Confused by an error message? Paste your code and the AI tutor explains what went wrong and how to fix it in simple everyday language.',
       link: '/debugger',
     },
     {
       icon: <Gamepad2 className="w-6 h-6 text-[#005F02]" />,
-      badge: 'Gamification',
-      title: '3D Arcade Mini-Games',
-      description: 'Syntax Speedrun, Bug Hunt Blitz, Output Predictor, and Code Shuffle turn tedious syntax drills into engaging offline challenges.',
+      badge: 'Fun & Games',
+      title: 'Arcade Coding Mini-Games',
+      description: 'Play fun games like Syntax Speedrun and Bug Hunter to build typing speed, spot mistakes quickly, and make learning exciting.',
       link: '/games',
     },
     {
       icon: <BarChart3 className="w-6 h-6 text-[#005F02]" />,
-      badge: 'Progress',
-      title: 'Skill Mastery & Streaks',
-      description: 'Track daily study streaks, problem-solving velocity, and earned badges stored privately in your local storage.',
+      badge: 'Your Journey',
+      title: 'Progress, Streaks & Badges',
+      description: 'Track your daily learning habits, celebrate milestones, and earn achievement badges saved securely on your device.',
       link: '/dashboard',
     },
   ]
 
   const studentTestimonials = [
     {
-      name: 'Kofi Mensah',
-      role: 'Computer Engineering Student',
-      university: 'KNUST, Ghana',
-      quote: 'Campus internet in our hostel drops frequently during exam season. Having CodeTutor completely offline on my ThinkPad allowed me to master recursion and dynamic programming without stress.',
-      tag: 'Python & Algorithms',
+      name: 'Amina Bello',
+      role: 'Career Switcher & Accountant',
+      location: 'Lagos, Nigeria',
+      quote: 'I had zero technical background and was intimidated by programming. CodeTutor explained Python in simple everyday words without confusing jargon. Being able to practice offline after work saved me so much on mobile data!',
+      tag: 'Zero Tech Background',
     },
     {
-      name: 'Amina Bello',
-      role: 'Self-Taught Web Developer',
-      university: 'Lagos, Nigeria',
-      quote: 'Mobile data costs used to eat up half my monthly budget just querying cloud AI. CodeTutor runs locally on my standard laptop and the Socratic hints actually taught me how the JavaScript event loop works.',
-      tag: 'JavaScript & Async',
+      name: 'Kofi Mensah',
+      role: 'First-Time Learner & Student',
+      location: 'Accra, Ghana',
+      quote: 'Internet at home is unpredictable and expensive. Having a friendly AI tutor that works completely offline on my old laptop means I can practice coding every evening without worrying about Wi-Fi or data bundles.',
+      tag: '100% Offline Learner',
     },
     {
       name: 'Emmanuel Kiprono',
-      role: 'Software Engineering Junior',
-      university: 'University of Nairobi, Kenya',
-      quote: 'The 3D arcade games like Bug Hunt and Syntax Speedrun made practicing Java OOP feel like a competitive sport. My debugging speed improved noticeably within two weeks.',
-      tag: 'Java OOP & Arcade',
+      role: 'High School Teacher & Coding Club Lead',
+      location: 'Nairobi, Kenya',
+      quote: 'The arcade games and step-by-step hints make learning fun and accessible for everyone. You do not need expensive computers or constant internet—anyone can just open their laptop and start learning.',
+      tag: 'Teaching & Community',
     },
   ]
 
   const faqs = [
     {
-      q: 'Does CodeTutor Africa require any internet connection?',
-      a: 'No. CodeTutor Africa is engineered to be 100% offline-first. The AI model, courses, practice sandbox, test cases, and arcade games all execute locally on your machine with zero outbound network calls.',
+      q: 'Do I need any programming experience or a tech background?',
+      a: 'Not at all! CodeTutor Africa is made for everyone—complete beginners, school students, professionals switching careers, and anyone curious about technology. Everything is explained in plain, simple English with relatable examples from daily life.',
     },
     {
-      q: 'Will it run comfortably on a budget 8 GB RAM laptop?',
-      a: 'Yes! CodeTutor Africa is optimized for standard student hardware (Intel Core i5 / AMD Ryzen 5 with 8 GB RAM and integrated graphics). Peak memory footprint is under 1.73 GB, leaving over 6 GB free for your operating system and code editor.',
+      q: 'Does CodeTutor Africa really work 100% without internet?',
+      a: 'Yes! Once installed, the entire AI tutor, courses, practice sandbox, and arcade games run directly on your computer. You never need an internet connection, mobile data, or Wi-Fi to learn and practice.',
     },
     {
-      q: 'What programming languages are covered?',
-      a: 'The platform covers Python, JavaScript/TypeScript, and Java—the primary foundational languages taught across African universities—along with practice SQL problems.',
+      q: 'Will it run smoothly on my regular everyday laptop?',
+      a: 'Yes! CodeTutor Africa is designed for standard laptops (such as 8 GB RAM machines with basic processors). It is extremely lightweight and will not slow down your computer or overheat your battery.',
     },
     {
-      q: 'How does Socratic tutoring help me learn better?',
-      a: 'Instead of handing you ready-made code that you copy-paste without understanding, CodeTutor uses pedagogical Socratic prompting to explain concepts with relatable analogies, ask guided questions, and build lasting problem-solving intuition.',
+      q: 'Is this platform only for university students?',
+      a: 'No! CodeTutor Africa is for everyone—high school students, self-taught beginners, working professionals, non-tech people, and university students alike. If you want to learn to code, this platform is for you.',
     },
     {
-      q: 'Is CodeTutor Africa free to use?',
-      a: 'Yes, 100% free and open. There are no subscriptions, API keys, or hidden charges required.',
+      q: 'Is CodeTutor Africa completely free?',
+      a: 'Yes, 100% free forever. There are no subscriptions, no monthly charges, no API keys, and no advertisements.',
     },
   ]
 
@@ -757,8 +755,8 @@ export const LandingPage: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#005F02] border border-[#005F02] text-white text-xs font-bold shadow-md"
           >
-            <Shield className="w-4 h-4 text-white" />
-            <span>Africa Deep Tech Challenge 2026 • 100% Offline AI</span>
+            <Sparkles className="w-4 h-4 text-white" />
+            <span>Free Offline AI Coding Tutor • For Everyone Across Africa</span>
           </motion.div>
 
           {/* Main Headline */}
@@ -768,8 +766,8 @@ export const LandingPage: React.FC = () => {
             transition={{ delay: 0.1, duration: 0.6 }}
             className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-tight"
           >
-            Master Programming Anywhere.{' '}
-            <span className="text-[#005F02]">Zero Internet Required.</span>
+            Learn to Code with AI.{' '}
+            <span className="text-[#005F02]">Simple, Friendly &amp; 100% Offline.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -798,7 +796,7 @@ export const LandingPage: React.FC = () => {
             <a href="#demo">
               <button className="px-7 py-3.5 rounded-xl text-sm font-bold bg-slate-900/90 text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors flex items-center gap-2">
                 <Play className="w-4 h-4 text-[#005F02]" />
-                <span>Try Live Sandbox</span>
+                <span>Try Live Preview</span>
               </button>
             </a>
           </motion.div>
@@ -808,16 +806,16 @@ export const LandingPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 text-xs text-slate-300 font-mono"
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 text-xs text-slate-300 font-medium"
           >
             <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Private &amp; Free
+              <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Free &amp; Private
             </span>
             <span className="flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-[#005F02]" /> 23.4 Tokens/Sec CPU Speed
+              <Zap className="w-3.5 h-3.5 text-[#005F02]" /> Works Without Wi-Fi
             </span>
             <span className="flex items-center gap-1.5">
-              <Laptop className="w-3.5 h-3.5 text-[#005F02]" /> 8 GB RAM Optimized
+              <Laptop className="w-3.5 h-3.5 text-[#005F02]" /> Runs on Everyday Laptops
             </span>
           </motion.div>
         </div>
@@ -843,7 +841,7 @@ export const LandingPage: React.FC = () => {
         
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-ping" />
-          <span className="font-bold tracking-wider">LIVE TELEMETRY STREAM</span>
+          <span className="font-bold tracking-wider">QUICK OVERVIEW</span>
         </div>
 
         <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
@@ -873,8 +871,8 @@ export const LandingPage: React.FC = () => {
               <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statOffline}%
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Offline Operation</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">Zero cloud API costs →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">100% Offline</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">Zero data costs →</div>
             </a>
 
             {/* Stat Card 2 -> Links to #specs */}
@@ -886,10 +884,10 @@ export const LandingPage: React.FC = () => {
                 <Zap className="w-4 h-4" />
               </div>
               <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
-                {statTokens}.4
+                Instant
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Tokens Per Second</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">4-Thread CPU speed →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Fast Responses</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">Directly on your laptop →</div>
             </a>
 
             {/* Stat Card 3 -> Links to #features */}
@@ -903,7 +901,7 @@ export const LandingPage: React.FC = () => {
               <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statExercises}+
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Practice Exercises</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Hands-On Lessons</div>
               <div className="text-[11px] text-slate-500 dark:text-slate-400">Python, JS &amp; Java →</div>
             </a>
 
@@ -918,8 +916,8 @@ export const LandingPage: React.FC = () => {
               <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statModes}
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Pedagogical Modes</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">Explain, Hint, Debug →</div>
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Friendly Modes</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">Explain, Hint &amp; Quiz →</div>
             </a>
 
           </div>
@@ -939,7 +937,7 @@ export const LandingPage: React.FC = () => {
         </div>
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">OFFLINE ARCHITECTURE</span>
+          <span className="font-bold tracking-wider">ALL-IN-ONE LEARNING</span>
         </div>
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
           <motion.div
@@ -956,13 +954,13 @@ export const LandingPage: React.FC = () => {
       <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Complete Learning Ecosystem
+            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Everything in One Place
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Engineered for Academic Rigor &amp; Practical Mastery
+            Everything You Need to Learn to Code
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Every feature—from compiler diagnostics to gamified syntax drills—is bundled to run 100% locally on standard laptops.
+            Whether you are writing your first line of code, studying for exams, or learning new skills for work, CodeTutor guides you every step of the way.
           </p>
         </div>
 
@@ -1007,7 +1005,7 @@ export const LandingPage: React.FC = () => {
         </div>
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">EXECUTION ENGINE</span>
+          <span className="font-bold tracking-wider">TRY IT OUT</span>
         </div>
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
           <motion.div
@@ -1024,13 +1022,13 @@ export const LandingPage: React.FC = () => {
       <section id="demo" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
-            <Terminal className="w-3.5 h-3.5 text-[#005F02]" /> Interactive Sandbox
+            <Terminal className="w-3.5 h-3.5 text-[#005F02]" /> Interactive Preview
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Test Driven Learning with Real Code
+            See How Simple &amp; Friendly It Is
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Switch languages to see how CodeTutor guides you through algorithms, async concurrency, and object-oriented design.
+            Switch between Python, JavaScript, and Java to see how our friendly AI tutor explains concepts and guides you step-by-step.
           </p>
         </div>
 
@@ -1038,7 +1036,7 @@ export const LandingPage: React.FC = () => {
           {/* Left: Code Editor Sandbox Preview */}
           <div className="space-y-3 flex flex-col h-full">
             <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
-              <span>1. Multi-Language Code Runner</span>
+              <span>1. Simple Code Runner</span>
               <span className="font-mono text-[11px] text-[#005F02] font-bold">
                 {codeExamples[activeCodeTab].badge}
               </span>
@@ -1057,8 +1055,8 @@ export const LandingPage: React.FC = () => {
             onMouseLeave={() => setIsCodePaused(false)}
           >
             <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
-              <span>2. Real-Time Pedagogical Dialogue</span>
-              <span className="font-mono text-[11px] text-[#005F02] font-bold">Mode: Socratic Hint</span>
+              <span>2. Helpful AI Tutor Chat</span>
+              <span className="font-mono text-[11px] text-[#005F02] font-bold">Mode: Friendly Hint</span>
             </div>
             
             <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-xl dark:shadow-2xl overflow-hidden flex flex-col flex-1">
@@ -1069,12 +1067,12 @@ export const LandingPage: React.FC = () => {
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">CodeTutor Mentor</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Offline Llama.cpp Engine</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">CodeTutor AI Mentor</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Runs 100% On Your Computer</div>
                   </div>
                 </div>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 font-bold">
-                  0 KB NETWORK
+                  ZERO INTERNET NEEDED
                 </span>
               </div>
 
@@ -1106,7 +1104,7 @@ export const LandingPage: React.FC = () => {
                         <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
                           <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
                             <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
-                            <span>Guided Socratic Check:</span>
+                            <span>Helpful Hint &amp; Question:</span>
                           </div>
                           <p className="italic text-slate-700 dark:text-slate-300">
                             "{codeExamples[activeCodeTab].dialogue.hint}"
@@ -1140,7 +1138,7 @@ export const LandingPage: React.FC = () => {
         </div>
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">COMMUNITY IMPACT</span>
+          <span className="font-bold tracking-wider">LEARNER STORIES</span>
         </div>
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
           <motion.div
@@ -1162,13 +1160,13 @@ export const LandingPage: React.FC = () => {
       >
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Student Stories
+            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Real Stories
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Built for Real Realities in African Classrooms
+            Loved by Learners of All Backgrounds
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Hear from university students and developers building skills without internet limits.
+            Hear from everyday beginners, students, teachers, and career switchers learning to code with zero internet limits.
           </p>
         </div>
 
@@ -1234,7 +1232,7 @@ export const LandingPage: React.FC = () => {
                       {studentTestimonials[testimonialSlide].name}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">
-                      {studentTestimonials[testimonialSlide].role} • <span className="font-semibold text-slate-700 dark:text-slate-300">{studentTestimonials[testimonialSlide].university}</span>
+                      {studentTestimonials[testimonialSlide].role} • <span className="font-semibold text-slate-700 dark:text-slate-300">{studentTestimonials[testimonialSlide].location}</span>
                     </div>
                   </div>
                 </div>
@@ -1278,7 +1276,7 @@ export const LandingPage: React.FC = () => {
         </div>
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">HARDWARE BENCHMARK</span>
+          <span className="font-bold tracking-wider">LIGHT ON YOUR LAPTOP</span>
         </div>
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
           <motion.div
@@ -1295,13 +1293,13 @@ export const LandingPage: React.FC = () => {
       <section id="specs" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
-            <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> ADTC 2026 Verification
+            <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> Works on Regular Laptops
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Tested on Standard 8 GB RAM Student Laptops
+            Runs Smoothly on Everyday Laptops
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Engineered from the ground up for low-power, commodity machines with zero GPU requirements:
+            You do not need an expensive computer. CodeTutor is built to run easily and efficiently on standard everyday laptops:
           </p>
         </div>
 
@@ -1310,28 +1308,28 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
             {[
               {
-                title: 'Peak RAM Footprint',
-                val: '1.64 GB RSS',
-                sub: 'Target: < 7.0 GB limit',
-                note: 'Leaves >6 GB free memory for IDE & compiler',
+                title: 'Light on Memory',
+                val: 'Under 1.7 GB RAM',
+                sub: 'Lightweight & Smooth',
+                note: 'Leaves plenty of memory free for your other apps',
               },
               {
-                title: 'Generation Speed',
-                val: '23.44 Tok/s',
-                sub: 'Target: ≥ 15.0 tok/s',
-                note: 'CPU thread scaling maintains fluid interaction',
+                title: 'Instant Speed',
+                val: 'Fast Answers',
+                sub: 'Quick on Standard CPUs',
+                note: 'Get instant explanations without waiting on slow internet',
               },
               {
-                title: 'Thermal Ceiling',
-                val: '< 85°C Max',
-                sub: '0 Throttling Penalties',
-                note: 'Gentle core workload protects laptop battery life',
+                title: 'Battery Friendly',
+                val: 'Cool & Quiet',
+                sub: 'Low Energy Use',
+                note: 'Learn for hours without draining your laptop battery',
               },
               {
-                title: 'Network Calls',
-                val: '0 KB Outbound',
-                sub: '100% Air-Gapped',
-                note: 'Self-contained SQLite, model weights, and tokenizer',
+                title: '100% Private',
+                val: 'Zero Data Needed',
+                sub: 'Safe & Secure',
+                note: 'Your lessons, code, and progress stay on your laptop',
               },
             ].map((spec, idx) => (
               <div
@@ -1381,7 +1379,7 @@ export const LandingPage: React.FC = () => {
             Frequently Asked Questions
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Everything you need to know about setting up and running CodeTutor Africa.
+            Everything you need to know about learning with CodeTutor Africa.
           </p>
         </div>
 
@@ -1462,17 +1460,17 @@ export const LandingPage: React.FC = () => {
 
             <div className="max-w-2xl mx-auto space-y-3">
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                Ready to Master Programming on Your Own Terms?
+                Ready to Start Your Coding Journey?
               </h2>
               <p className="text-sm sm:text-base text-white/90 leading-relaxed">
-                No internet subscription required. Start learning Python, JavaScript, and Java with an offline Socratic mentor right now.
+                Join thousands of learners across Africa building real coding skills at their own pace. No internet required, no subscriptions, and completely free forever.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Link to="/dashboard">
                 <button className="px-8 py-3.5 rounded-xl text-sm font-bold bg-white text-[#005F02] hover:bg-slate-100 shadow-md transition-colors flex items-center gap-2">
-                  <span>Launch Workspace Now</span>
+                  <span>Start Learning Free</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
@@ -1503,7 +1501,7 @@ export const LandingPage: React.FC = () => {
                 <span className="font-bold text-base text-slate-900 dark:text-white">
                   CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
                 </span>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Offline-First Socratic Programming Education</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Free Offline-First AI Coding Tutor for Everyone</p>
               </div>
             </div>
 
@@ -1520,16 +1518,16 @@ export const LandingPage: React.FC = () => {
 
           {/* Bottom Copyright & Security Badges */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-            <span>© 2026 CodeTutor Africa. Built with ❤️ for African university students &amp; self-learners.</span>
+            <span>© 2026 CodeTutor Africa. Built with ❤️ for everyone across Africa.</span>
             <div className="flex items-center gap-4 font-mono text-[10px]">
               <span className="flex items-center gap-1">
-                <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Local Execution
+                <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Offline
               </span>
               <span className="flex items-center gap-1">
-                <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> Qwen2.5-Coder GGUF
+                <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> Local AI Engine
               </span>
               <span className="flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-[#005F02]" /> Zero Cloud Dependency
+                <Zap className="w-3.5 h-3.5 text-[#005F02]" /> Zero Internet Costs
               </span>
             </div>
           </div>
