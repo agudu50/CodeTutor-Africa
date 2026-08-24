@@ -38,7 +38,7 @@ class CourseStoreService {
   }
 
   getCourseById(id: string): Course | undefined {
-    return this.courses.find((c) => c.id === id)
+    return this.courses.find((c: Course) => c.id === id)
   }
 
   createCourse(courseData: Omit<Course, 'id' | 'createdAt' | 'progressPercentage'>): Course {
@@ -54,7 +54,7 @@ class CourseStoreService {
   }
 
   updateCourse(id: string, updates: Partial<Course>): Course | undefined {
-    const idx = this.courses.findIndex((c) => c.id === id)
+    const idx = this.courses.findIndex((c: Course) => c.id === id)
     if (idx === -1) return undefined
 
     this.courses[idx] = {
@@ -67,7 +67,7 @@ class CourseStoreService {
 
   deleteCourse(id: string): boolean {
     const initialLen = this.courses.length
-    this.courses = this.courses.filter((c) => c.id !== id)
+    this.courses = this.courses.filter((c: Course) => c.id !== id)
     if (this.courses.length !== initialLen) {
       this.save()
       return true
@@ -76,7 +76,7 @@ class CourseStoreService {
   }
 
   addModuleToCourse(courseId: string, moduleData: Omit<Module, 'id' | 'courseId' | 'createdAt'>): Module | undefined {
-    const course = this.courses.find((c) => c.id === courseId)
+    const course = this.courses.find((c: Course) => c.id === courseId)
     if (!course) return undefined
 
     const newModule: Module = {
@@ -87,16 +87,16 @@ class CourseStoreService {
     }
 
     course.modules.push(newModule)
-    course.totalLessons = course.modules.reduce((acc, m) => acc + m.lessons.length, 0)
+    course.totalLessons = course.modules.reduce((acc: number, m: Module) => acc + m.lessons.length, 0)
     this.save()
     return newModule
   }
 
   addLessonToModule(courseId: string, moduleId: string, lessonData: Omit<Lesson, 'id' | 'courseId' | 'createdAt'>): Lesson | undefined {
-    const course = this.courses.find((c) => c.id === courseId)
+    const course = this.courses.find((c: Course) => c.id === courseId)
     if (!course) return undefined
 
-    const module = course.modules.find((m) => m.id === moduleId)
+    const module = course.modules.find((m: Module) => m.id === moduleId)
     if (!module) return undefined
 
     const newLesson: Lesson = {
@@ -107,7 +107,7 @@ class CourseStoreService {
     }
 
     module.lessons.push(newLesson)
-    course.totalLessons = course.modules.reduce((acc, m) => acc + m.lessons.length, 0)
+    course.totalLessons = course.modules.reduce((acc: number, m: Module) => acc + m.lessons.length, 0)
     this.save()
     return newLesson
   }

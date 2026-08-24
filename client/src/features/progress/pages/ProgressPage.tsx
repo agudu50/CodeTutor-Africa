@@ -156,7 +156,7 @@ export const ProgressPage: React.FC = () => {
           </CardHeader>
 
           <CardContent className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col justify-around">
-            {data.strengths.map((str, idx) => (
+            {data.strengths.map((str: string, idx: number) => (
               <div
                 key={idx}
                 className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 shadow-2xs"
@@ -191,7 +191,7 @@ export const ProgressPage: React.FC = () => {
           </CardHeader>
 
           <CardContent className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col justify-around">
-            {data.weakAreas.map((weak, idx) => (
+            {data.weakAreas.map((weak: string, idx: number) => (
               <div
                 key={idx}
                 className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 shadow-2xs"

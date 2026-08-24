@@ -13,12 +13,12 @@ export function useTutorSession(initialSessionId: string = 'session-1') {
   const [tutorMode, setTutorMode] = useState<TutorMode>('socratic')
   const [isLoading, setIsLoading] = useState(false)
 
-  const activeSession = sessions.find((s) => s.id === activeSessionId)
+  const activeSession = sessions.find((s: TutorSession) => s.id === activeSessionId)
 
   const switchSession = useCallback((sessionId: string) => {
     setActiveSessionId(sessionId)
     setMessages(MOCK_INITIAL_MESSAGES[sessionId] || [])
-    const sess = sessions.find((s) => s.id === sessionId)
+    const sess = sessions.find((s: TutorSession) => s.id === sessionId)
     if (sess) {
       setSelectedLanguage(sess.language)
       setTutorMode(sess.mode)
