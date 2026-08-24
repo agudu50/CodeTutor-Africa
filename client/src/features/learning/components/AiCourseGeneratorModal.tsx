@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { aiCourseGeneratorService } from '@/services/learning/ai-course-generator.service'
@@ -9,12 +9,60 @@ import {
   ArrowRight,
   Bot,
   ChevronDown,
+  Check,
 } from 'lucide-react'
 
 interface AiCourseGeneratorModalProps {
   isOpen: boolean
   onClose: () => void
 }
+
+interface LanguageOption {
+  value: ProgrammingLanguage
+  label: string
+  version: string
+  spec: string
+}
+
+const MODERN_LANGUAGES: LanguageOption[] = [
+  { value: 'python', label: 'Python', version: '3.12+', spec: 'AI & Data Backend' },
+  { value: 'typescript', label: 'TypeScript', version: '5.4+', spec: 'Type-Safe Full-Stack' },
+  { value: 'javascript', label: 'JavaScript', version: 'ES2024', spec: 'Modern Web & Streams' },
+  { value: 'rust', label: 'Rust', version: '2024', spec: 'Memory Safety & Systems' },
+  { value: 'go', label: 'Golang', version: '1.22+', spec: 'Microservices & Concurrency' },
+  { value: 'cpp', label: 'C++', version: '20/23', spec: 'Low-Latency & STL' },
+  { value: 'java', label: 'Java', version: '21 LTS', spec: 'Enterprise & Virtual Threads' },
+  { value: 'csharp', label: 'C# / .NET', version: '8.0', spec: 'Modern ASP.NET & Cloud' },
+  { value: 'php', label: 'PHP', version: '8.3', spec: 'Modern Web & Laravel' },
+  { value: 'sql', label: 'SQL', version: '2023', spec: 'PostgreSQL & Index Tuning' },
+  { value: 'html', label: 'HTML5 & CSS3', version: 'Modern', spec: 'Responsive UI & Layouts' },
+]
+
+interface DifficultyOption {
+  value: DifficultyLevel
+  label: string
+  spec: string
+}
+
+const DIFFICULTY_OPTIONS: DifficultyOption[] = [
+  { value: 'beginner', label: 'Beginner', spec: 'Foundations & Syntax' },
+  { value: 'intermediate', label: 'Intermediate', spec: 'Hands-On Architecture' },
+  { value: 'advanced', label: 'Advanced', spec: 'High-Performance Systems' },
+]
+
+interface ModuleDepthOption {
+  value: number
+  label: string
+  spec: string
+}
+
+const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
+  { value: 1, label: '1 Module', spec: '~3 Lessons • Crash Course' },
+  { value: 2, label: '2 Modules', spec: '~6 Lessons • Targeted Sprint' },
+  { value: 3, label: '3 Modules', spec: '~9 Lessons • Standard Track' },
+  { value: 4, label: '4 Modules', spec: '~12 Lessons • Specialization' },
+  { value: 5, label: '5 Modules', spec: '~15 Lessons • Masterclass' },
+]
 
 export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
   isOpen,
@@ -29,9 +77,34 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
   const [includeGames, setIncludeGames] = useState(true)
   const [includeExercises, setIncludeExercises] = useState(true)
 
+  // Custom Dropdown Open States (Opening Downward)
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false)
+  const [diffDropdownOpen, setDiffDropdownOpen] = useState(false)
+  const [depthDropdownOpen, setDepthDropdownOpen] = useState(false)
+
+  const langRef = useRef<HTMLDivElement>(null)
+  const diffRef = useRef<HTMLDivElement>(null)
+  const depthRef = useRef<HTMLDivElement>(null)
+
   // Generation state
   const [isGenerating, setIsGenerating] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
+        setLangDropdownOpen(false)
+      }
+      if (diffRef.current && !diffRef.current.contains(event.target as Node)) {
+        setDiffDropdownOpen(false)
+      }
+      if (depthRef.current && !depthRef.current.contains(event.target as Node)) {
+        setDepthDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const promptSuggestions = [
     { label: 'Rust Memory & Concurrency', prompt: 'Rust Systems Programming, Memory Safety, and Concurrent Thread Pools', lang: 'rust' as ProgrammingLanguage },
@@ -93,6 +166,10 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
       console.error('Failed to generate course', err)
     }
   }
+
+  const selectedLangObj = MODERN_LANGUAGES.find((l) => l.value === language) || MODERN_LANGUAGES[0]
+  const selectedDiffObj = DIFFICULTY_OPTIONS.find((d) => d.value === difficulty) || DIFFICULTY_OPTIONS[1]
+  const selectedDepthObj = MODULE_DEPTH_OPTIONS.find((m) => m.value === moduleCount) || MODULE_DEPTH_OPTIONS[2]
 
   if (!isOpen) return null
 
@@ -226,73 +303,213 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                 </div>
               </div>
 
-              {/* Clean, Fully-Contained Select Controls Grid */}
+              {/* Clean, Downward-Opening Dropdowns Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 w-full">
-                {/* 1. Target Language */}
-                <div className="space-y-1 min-w-0 w-full">
+                {/* 1. Target Language Dropdown (Opens Downward with Scrolling) */}
+                <div className="space-y-1 relative min-w-0 w-full" ref={langRef}>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Target Language
                   </label>
-                  <div className="relative w-full min-w-0">
-                    <select
-                      value={language}
-                      onChange={(e) => setLanguage(e.target.value as ProgrammingLanguage)}
-                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm truncate"
-                    >
-                      <option value="python">Python (3.12+)</option>
-                      <option value="typescript">TypeScript (5.4+)</option>
-                      <option value="javascript">JavaScript (ES2024)</option>
-                      <option value="rust">Rust (2024)</option>
-                      <option value="go">Golang (1.22+)</option>
-                      <option value="cpp">C++ (20/23)</option>
-                      <option value="java">Java (21 LTS)</option>
-                      <option value="csharp">C# / .NET (8.0)</option>
-                      <option value="php">PHP (8.3)</option>
-                      <option value="sql">SQL & Relational</option>
-                      <option value="html">HTML5 & CSS3</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
-                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLangDropdownOpen(!langDropdownOpen)
+                      setDiffDropdownOpen(false)
+                      setDepthDropdownOpen(false)
+                    }}
+                    className={`w-full h-10 px-3 flex items-center justify-between rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
+                      langDropdownOpen
+                        ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+                        : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+                    }`}
+                  >
+                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedLangObj.label} <span className="text-slate-400 font-normal text-[11px]">({selectedLangObj.version})</span>
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${langDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
+                  </button>
+
+                  {/* Downward-Opening Scrollable Popover */}
+                  <AnimatePresence>
+                    {langDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full max-h-52 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
+                      >
+                        {MODERN_LANGUAGES.map((langItem) => {
+                          const isSelected = langItem.value === language
+                          return (
+                            <button
+                              key={langItem.value}
+                              type="button"
+                              onClick={() => {
+                                setLanguage(langItem.value)
+                                setLangDropdownOpen(false)
+                              }}
+                              className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#005F02]/10 text-[#005F02] dark:text-[#52c256]'
+                                  : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              }`}
+                            >
+                              <div className="min-w-0 pr-2">
+                                <div className="text-xs font-semibold flex items-center gap-1.5">
+                                  <span>{langItem.label}</span>
+                                  <span className="text-[10px] text-slate-400 font-normal">
+                                    {langItem.version}
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  {langItem.spec}
+                                </div>
+                              </div>
+                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
+                            </button>
+                          )
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* 2. Difficulty Level */}
-                <div className="space-y-1 min-w-0 w-full">
+                {/* 2. Difficulty Level Dropdown (Opens Downward) */}
+                <div className="space-y-1 relative min-w-0 w-full" ref={diffRef}>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Difficulty Level
                   </label>
-                  <div className="relative w-full min-w-0">
-                    <select
-                      value={difficulty}
-                      onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
-                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm truncate"
-                    >
-                      <option value="beginner">Beginner (Foundations)</option>
-                      <option value="intermediate">Intermediate (Applied)</option>
-                      <option value="advanced">Advanced (Deep Systems)</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
-                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDiffDropdownOpen(!diffDropdownOpen)
+                      setLangDropdownOpen(false)
+                      setDepthDropdownOpen(false)
+                    }}
+                    className={`w-full h-10 px-3 flex items-center justify-between rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
+                      diffDropdownOpen
+                        ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+                        : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+                    }`}
+                  >
+                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedDiffObj.label}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${diffDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
+                  </button>
+
+                  {/* Downward Popover */}
+                  <AnimatePresence>
+                    {diffDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
+                      >
+                        {DIFFICULTY_OPTIONS.map((diffItem) => {
+                          const isSelected = diffItem.value === difficulty
+                          return (
+                            <button
+                              key={diffItem.value}
+                              type="button"
+                              onClick={() => {
+                                setDifficulty(diffItem.value)
+                                setDiffDropdownOpen(false)
+                              }}
+                              className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#005F02]/10 text-[#005F02] dark:text-[#52c256]'
+                                  : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              }`}
+                            >
+                              <div className="min-w-0 pr-2">
+                                <div className="text-xs font-semibold">
+                                  {diffItem.label}
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  {diffItem.spec}
+                                </div>
+                              </div>
+                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
+                            </button>
+                          )
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* 3. Curriculum Depth */}
-                <div className="space-y-1 min-w-0 w-full">
+                {/* 3. Curriculum Depth Dropdown (Opens Downward) */}
+                <div className="space-y-1 relative min-w-0 w-full" ref={depthRef}>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Curriculum Depth
                   </label>
-                  <div className="relative w-full min-w-0">
-                    <select
-                      value={moduleCount}
-                      onChange={(e) => setModuleCount(Number(e.target.value))}
-                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm truncate"
-                    >
-                      <option value={1}>1 Module (~3 Lessons)</option>
-                      <option value={2}>2 Modules (~6 Lessons)</option>
-                      <option value={3}>3 Modules (~9 Lessons)</option>
-                      <option value={4}>4 Modules (~12 Lessons)</option>
-                      <option value={5}>5 Modules (~15 Lessons)</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
-                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDepthDropdownOpen(!depthDropdownOpen)
+                      setLangDropdownOpen(false)
+                      setDiffDropdownOpen(false)
+                    }}
+                    className={`w-full h-10 px-3 flex items-center justify-between rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
+                      depthDropdownOpen
+                        ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+                        : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+                    }`}
+                  >
+                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedDepthObj.label}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${depthDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
+                  </button>
+
+                  {/* Downward Popover */}
+                  <AnimatePresence>
+                    {depthDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
+                      >
+                        {MODULE_DEPTH_OPTIONS.map((depthItem) => {
+                          const isSelected = depthItem.value === moduleCount
+                          return (
+                            <button
+                              key={depthItem.value}
+                              type="button"
+                              onClick={() => {
+                                setModuleCount(depthItem.value)
+                                setDepthDropdownOpen(false)
+                              }}
+                              className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#005F02]/10 text-[#005F02] dark:text-[#52c256]'
+                                  : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              }`}
+                            >
+                              <div className="min-w-0 pr-2">
+                                <div className="text-xs font-semibold">
+                                  {depthItem.label}
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  {depthItem.spec}
+                                </div>
+                              </div>
+                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
+                            </button>
+                          )
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
