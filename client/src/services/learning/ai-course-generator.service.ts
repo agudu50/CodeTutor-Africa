@@ -369,27 +369,27 @@ Welcome to this technical masterclass on **${topic}** in **${langUpper}**, creat
 
 ---
 
-## 🗺️ Curriculum Roadmap & Learning Progression
+## Curriculum Roadmap & Learning Progression
 \`\`\`
 Module 1: Foundations & Architecture  ──►  Module 2: Practical Implementation  ──►  Module 3: Advanced Optimization & Capstone
 ├── Phase 1: Pre-Video Theory (Current)
-├── Phase 2: Live HD Video Lesson Stream
-└── Phase 3: Interactive Knowledge Checks & VS Code Terminal Assertions
+├── Phase 2: Live Video Lesson Stream
+└── Phase 3: Interactive Knowledge Checks & Terminal Coding Challenges
 \`\`\`
 
 ---
 
-## 🎯 Conceptual Foundations & Mental Model
+## Conceptual Foundations & Mental Model
 To write resilient, production-grade applications, you must master how the runtime engine allocates objects, manages execution contexts, and evaluates instruction cycles.
 
-### 🏛️ Key Architectural Takeaways:
+### Key Architectural Takeaways:
 1. **Deterministic Execution**: Avoid hidden side-effects and preserve pure state transitions.
 2. **Low-Latency Memory Efficiency**: Minimize heap allocations to avoid garbage collection pauses on low-power hardware.
 3. **Defensive Boundary Validation**: Always validate inputs, bounds, and null states before mutating data structures.
 
 ---
 
-## 💡 Practical Code Walkthrough & Implementation
+## Practical Code Walkthrough & Implementation
 Inspect the idiomatic implementation below in **${langUpper}** and experiment with running it in the interactive sandbox:
 
 \`\`\`${lang}
@@ -398,14 +398,14 @@ ${codeSnippet}
 
 ---
 
-## ⚠️ Common Pitfalls & Anti-Patterns to Avoid
+## Common Pitfalls & Anti-Patterns to Avoid
 - **Unvalidated Input Mutation**: Mutating function arguments directly instead of returning immutable copies.
 - **Uncaught Exception Bubbling**: Allowing unhandled exceptions to crash the main execution loop.
 - **Memory Leaks**: Registering listeners or subscriptions without cleaning them up when lifecycles end.
 
 ---
 
-> **🧠 Socratic Question:** Notice the boundary condition check at the beginning of the function. What edge case would occur if input is \`null\` or empty? How does our defensive return prevent runtime crashes?
+> **Socratic Question:** Notice the boundary condition check at the beginning of the function. What edge case would occur if input is \`null\` or empty? How does our defensive return prevent runtime crashes?
 `
   }
 

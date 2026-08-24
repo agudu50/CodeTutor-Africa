@@ -25,9 +25,9 @@ interface LanguageOption {
   value: ProgrammingLanguage
   label: string
   version: string
-  category: 'AI & Data' | 'Web & Fullstack' | 'Systems & Performance' | 'Enterprise & JVM' | 'Database'
-  icon: string
-  badgeBg: string
+  category: string
+  tag: string
+  tagColor: string
   description: string
 }
 
@@ -37,8 +37,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'Python',
     version: 'v3.12+',
     category: 'AI & Data',
-    icon: '🐍',
-    badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+    tag: 'PY',
+    tagColor: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25',
     description: 'Modern AI, Machine Learning, FastAPIs & Automation',
   },
   {
@@ -46,8 +46,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'TypeScript',
     version: 'v5.4+',
     category: 'Web & Fullstack',
-    icon: '⚡',
-    badgeBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+    tag: 'TS',
+    tagColor: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/25',
     description: 'Type-Safe Full-Stack, Next.js, Node.js & Clean Architecture',
   },
   {
@@ -55,8 +55,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'JavaScript',
     version: 'ES2024',
     category: 'Web & Fullstack',
-    icon: '🌐',
-    badgeBg: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20',
+    tag: 'JS',
+    tagColor: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/25',
     description: 'Modern Web, Event Loop, Web Streams & DOM Manipulation',
   },
   {
@@ -64,8 +64,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'Rust',
     version: '2024 Edition',
     category: 'Systems & Performance',
-    icon: '🦀',
-    badgeBg: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20',
+    tag: 'RS',
+    tagColor: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/25',
     description: 'Memory Safety, Zero-Cost Abstractions & High-Speed Systems',
   },
   {
@@ -73,8 +73,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'Golang',
     version: 'v1.22+',
     category: 'Systems & Performance',
-    icon: '🐹',
-    badgeBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
+    tag: 'GO',
+    tagColor: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border-cyan-500/25',
     description: 'Cloud Microservices, Goroutines, Channels & High Concurrency',
   },
   {
@@ -82,8 +82,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'C++ 20/23',
     version: 'Modern C++23',
     category: 'Systems & Performance',
-    icon: '🚀',
-    badgeBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+    tag: 'C++',
+    tagColor: 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/25',
     description: 'Low-Latency Engine Design, Smart Pointers & STL Optimizations',
   },
   {
@@ -91,8 +91,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'Java',
     version: 'Java 21 LTS',
     category: 'Enterprise & JVM',
-    icon: '☕',
-    badgeBg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+    tag: 'JAVA',
+    tagColor: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25',
     description: 'Virtual Threads, Modern OOP, Spring Boot & Enterprise JVM',
   },
   {
@@ -100,8 +100,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'C# / .NET',
     version: '.NET 8 LTS',
     category: 'Enterprise & JVM',
-    icon: '🔷',
-    badgeBg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+    tag: 'C#',
+    tagColor: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/25',
     description: 'Modern ASP.NET Core, Cloud Microservices & High-Scale Web',
   },
   {
@@ -109,8 +109,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'PHP',
     version: 'v8.3 Modern',
     category: 'Web & Fullstack',
-    icon: '🐘',
-    badgeBg: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20',
+    tag: 'PHP',
+    tagColor: 'bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-500/25',
     description: 'Modern PHP 8.3 Types, Laravel Architecture & Fast Web APIs',
   },
   {
@@ -118,8 +118,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'SQL & Relational',
     version: 'SQL:2023',
     category: 'Database',
-    icon: '🗄️',
-    badgeBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    tag: 'SQL',
+    tagColor: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25',
     description: 'PostgreSQL Schemas, B-Tree Index Tuning & Query Optimization',
   },
   {
@@ -127,8 +127,8 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'HTML5 & Modern CSS3',
     version: 'Modern Standard',
     category: 'Web & Fullstack',
-    icon: '🎨',
-    badgeBg: 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20',
+    tag: 'HTML',
+    tagColor: 'bg-pink-500/10 text-pink-700 dark:text-pink-400 border-pink-500/25',
     description: 'Semantic Web, Responsive Flexbox/Grid, Animations & UI',
   },
 ]
@@ -137,7 +137,7 @@ interface DifficultyOption {
   value: DifficultyLevel
   label: string
   badge: string
-  icon: string
+  levelTag: string
   description: string
 }
 
@@ -146,21 +146,21 @@ const DIFFICULTY_OPTIONS: DifficultyOption[] = [
     value: 'beginner',
     label: 'Beginner',
     badge: 'Foundations & Syntax',
-    icon: '🌱',
+    levelTag: 'LVL 1',
     description: 'Core concepts, visual models & zero-assumption guides',
   },
   {
     value: 'intermediate',
     label: 'Intermediate',
     badge: 'Hands-On Architecture',
-    icon: '⚡',
+    levelTag: 'LVL 2',
     description: 'Real-world problem solving, modular design & best practices',
   },
   {
     value: 'advanced',
     label: 'Advanced',
     badge: 'High-Performance Systems',
-    icon: '🏆',
+    levelTag: 'LVL 3',
     description: 'Low-latency optimizations, concurrency & enterprise design',
   },
 ]
@@ -171,7 +171,7 @@ interface ModuleDepthOption {
   subtitle: string
   lessons: string
   duration: string
-  icon: string
+  stepTag: string
 }
 
 const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
@@ -181,7 +181,7 @@ const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
     subtitle: 'Crash Course',
     lessons: '~3 Lessons',
     duration: '1-2 hrs',
-    icon: '⚡',
+    stepTag: '01',
   },
   {
     value: 2,
@@ -189,7 +189,7 @@ const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
     subtitle: 'Targeted Sprint',
     lessons: '~6 Lessons',
     duration: '3-4 hrs',
-    icon: '🎯',
+    stepTag: '02',
   },
   {
     value: 3,
@@ -197,7 +197,7 @@ const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
     subtitle: 'Standard Track',
     lessons: '~9 Lessons',
     duration: '6-8 hrs',
-    icon: '📘',
+    stepTag: '03',
   },
   {
     value: 4,
@@ -205,7 +205,7 @@ const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
     subtitle: 'Deep Specialization',
     lessons: '~12 Lessons',
     duration: '10-14 hrs',
-    icon: '🚀',
+    stepTag: '04',
   },
   {
     value: 5,
@@ -213,7 +213,7 @@ const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
     subtitle: 'Masterclass & Capstone',
     lessons: '~15 Lessons',
     duration: '16-20 hrs',
-    icon: '👑',
+    stepTag: '05',
   },
 ]
 
@@ -489,7 +489,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-base leading-none">{selectedLangObj.icon}</span>
+                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${selectedLangObj.tagColor}`}>
+                        {selectedLangObj.tag}
+                      </span>
                       <div className="truncate">
                         <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                           {selectedLangObj.label}
@@ -543,7 +545,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                 }`}
                               >
                                 <div className="flex items-center gap-2.5 min-w-0">
-                                  <span className="text-base">{langItem.icon}</span>
+                                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${langItem.tagColor}`}>
+                                    {langItem.tag}
+                                  </span>
                                   <div>
                                     <div className="text-xs font-bold flex items-center gap-1.5">
                                       <span>{langItem.label}</span>
@@ -587,7 +591,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-base leading-none">{selectedDiffObj.icon}</span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                        {selectedDiffObj.levelTag}
+                      </span>
                       <div className="truncate">
                         <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                           {selectedDiffObj.label}
@@ -627,7 +633,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                               }`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <span className="text-base">{diffItem.icon}</span>
+                                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                                  {diffItem.levelTag}
+                                </span>
                                 <div>
                                   <div className="text-xs font-bold flex items-center gap-1.5">
                                     <span>{diffItem.label}</span>
@@ -670,7 +678,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-base leading-none">{selectedDepthObj.icon}</span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                        {selectedDepthObj.stepTag}
+                      </span>
                       <div className="truncate">
                         <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                           {selectedDepthObj.label}
@@ -710,7 +720,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                               }`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <span className="text-base">{depthItem.icon}</span>
+                                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                                  {depthItem.stepTag}
+                                </span>
                                 <div>
                                   <div className="text-xs font-bold flex items-center gap-1.5">
                                     <span>{depthItem.label}</span>
