@@ -17,7 +17,6 @@ import {
   VolumeX,
   WifiOff,
   BookOpen,
-  SendHorizontal,
   CheckCircle2,
   AlertTriangle,
 } from 'lucide-react'
@@ -466,7 +465,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                       : 'bg-brand-600 hover:bg-brand-500 text-white'
                   }`}
                 >
-                  <SendHorizontal className="w-3.5 h-3.5" />
+                  <Zap className="w-3.5 h-3.5" />
                   Submit Code
                 </button>
               </div>
