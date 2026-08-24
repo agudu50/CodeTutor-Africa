@@ -215,7 +215,7 @@ Return valid JSON with title, category, description, and 3 modules, each contain
                         duration_minutes=raw_les.get("duration_minutes", 30),
                         order=l_idx + 1,
                         is_completed=False,
-                        video_url="https://www.youtube.com/watch?v=kqtD5dpn9C8" if req.include_videos else None,
+                        video_url=self._infer_video_url(raw_les.get("title", ""), req.language, l_idx, m_idx) if req.include_videos else None,
                         content_markdown=raw_les.get("content_markdown", f"# {raw_les.get('title')}\n\nTechnical notes."),
                         quiz_questions=quizzes,
                     )
@@ -905,7 +905,7 @@ async function fetchStudentProgress(studentId) {
                         duration_minutes=les_data["duration"],
                         order=l_idx + 1,
                         is_completed=False,
-                        video_url="https://www.youtube.com/watch?v=kqtD5dpn9C8" if req.include_videos else None,
+                        video_url=self._infer_video_url(les_data["title"], req.language, l_idx, m_idx) if req.include_videos else None,
                         content_markdown=les_data["md"],
                         quiz_questions=[quiz_1, quiz_2, quiz_3],
                     )
@@ -956,6 +956,116 @@ async function fetchStudentProgress(studentId) {
             generated_prompt=req.prompt,
             games=games,
         )
+
+    def _infer_video_url(self, topic: str, lang: str, lesson_idx: int, module_idx: int) -> str:
+        """Infers topic-aware and language-accurate educational video URLs."""
+        t = topic.lower()
+        l = lang.lower()
+
+        # Specific Topic Keyword Matching
+        if any(k in t for k in ["loop", "iteration", "while", "for"]):
+            if l == "python":
+                return "https://www.youtube.com/watch?v=6iF8Xb7Z3wQ"
+            if l == "javascript":
+                return "https://www.youtube.com/watch?v=s9wWAKCMhNh"
+            return "https://www.youtube.com/watch?v=yYZZf_pW4zE"
+
+        if any(k in t for k in ["function", "method", "scope", "lambda"]):
+            if l == "python":
+                return "https://www.youtube.com/watch?v=9Os0o3wzS_I"
+            if l == "javascript":
+                return "https://www.youtube.com/watch?v=N8ap4k_1QEQ"
+            if l == "java":
+                return "https://www.youtube.com/watch?v=v-t1Z5-oQtE"
+            return "https://www.youtube.com/watch?v=5V_f1H8E59k"
+
+        if any(k in t for k in ["oop", "class", "object", "inherit"]):
+            if l == "python":
+                return "https://www.youtube.com/watch?v=JeznW_7DlB0"
+            if l == "javascript":
+                return "https://www.youtube.com/watch?v=2ZphE5HcQPQ"
+            if l == "java":
+                return "https://www.youtube.com/watch?v=xk4_1vDrzzo"
+            if l == "cpp":
+                return "https://www.youtube.com/watch?v=Rub-JsjMhWY"
+            return "https://www.youtube.com/watch?v=pTB0EiLXUC8"
+
+        if any(k in t for k in ["async", "promise", "event loop", "fetch"]):
+            return "https://www.youtube.com/watch?v=PoRJizFvM7s"
+
+        if any(k in t for k in ["dom", "html", "css", "ui"]):
+            return "https://www.youtube.com/watch?v=y17RuWkWdn8"
+
+        if any(k in t for k in ["recursion", "stack", "tree", "algorithm", "sort"]):
+            return "https://www.youtube.com/watch?v=8hly31xKli0"
+
+        if any(k in t for k in ["database", "sql", "query", "table"]):
+            return "https://www.youtube.com/watch?v=HXV3zeQKqGY"
+
+        if any(k in t for k in ["debug", "error", "exception", "try"]):
+            if l == "python":
+                return "https://www.youtube.com/watch?v=NIWwJbo-9_8"
+            if l == "java":
+                return "https://www.youtube.com/watch?v=r_MbozD32eo"
+            return "https://www.youtube.com/watch?v=cFTFtuEQ-10"
+
+        # Curated Sequential Language Tracks
+        language_tracks = {
+            "python": [
+                "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+                "https://www.youtube.com/watch?v=6iF8Xb7Z3wQ",
+                "https://www.youtube.com/watch?v=9Os0o3wzS_I",
+                "https://www.youtube.com/watch?v=daefaLgNkw0",
+                "https://www.youtube.com/watch?v=JeznW_7DlB0",
+                "https://www.youtube.com/watch?v=NIWwJbo-9_8",
+                "https://www.youtube.com/watch?v=0sOvCWFmrtA",
+            ],
+            "javascript": [
+                "https://www.youtube.com/watch?v=W6NZfCO5SIk",
+                "https://www.youtube.com/watch?v=s9wWAKCMhNh",
+                "https://www.youtube.com/watch?v=N8ap4k_1QEQ",
+                "https://www.youtube.com/watch?v=y17RuWkWdn8",
+                "https://www.youtube.com/watch?v=PoRJizFvM7s",
+                "https://www.youtube.com/watch?v=2ZphE5HcQPQ",
+                "https://www.youtube.com/watch?v=hdI2bqOjy3c",
+            ],
+            "java": [
+                "https://www.youtube.com/watch?v=A74TOX803D0",
+                "https://www.youtube.com/watch?v=yYZZf_pW4zE",
+                "https://www.youtube.com/watch?v=v-t1Z5-oQtE",
+                "https://www.youtube.com/watch?v=xk4_1vDrzzo",
+                "https://www.youtube.com/watch?v=viTHc_4XfCA",
+                "https://www.youtube.com/watch?v=r_MbozD32eo",
+                "https://www.youtube.com/watch?v=grEKMHGYyns",
+            ],
+            "cpp": [
+                "https://www.youtube.com/watch?v=vLnPwxZdW4Y",
+                "https://www.youtube.com/watch?v=2ybLDQapozo",
+                "https://www.youtube.com/watch?v=Rub-JsjMhWY",
+                "https://www.youtube.com/watch?v=8jLOx1hD3_o",
+                "https://www.youtube.com/watch?v=gT8_b3k0Pvg",
+            ],
+            "typescript": [
+                "https://www.youtube.com/watch?v=BCg4U1FzODs",
+                "https://www.youtube.com/watch?v=d56mG7DezGs",
+                "https://www.youtube.com/watch?v=V9XbS_K9Z_E",
+                "https://www.youtube.com/watch?v=ahCwqrYqoTU",
+            ],
+            "sql": [
+                "https://www.youtube.com/watch?v=HXV3zeQKqGY",
+                "https://www.youtube.com/watch?v=7S_tz1z_5bA",
+                "https://www.youtube.com/watch?v=ztHopE5Wnpc",
+            ],
+            "html": [
+                "https://www.youtube.com/watch?v=G3e-cpL7ofc",
+                "https://www.youtube.com/watch?v=fYq5PXgSsbE",
+                "https://www.youtube.com/watch?v=1PnVor36_40",
+            ],
+        }
+
+        track = language_tracks.get(l, language_tracks["python"])
+        overall_idx = (module_idx * 3 + lesson_idx) % len(track)
+        return track[overall_idx]
 
 
 learning_service = LearningService()

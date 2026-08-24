@@ -338,7 +338,7 @@ class AiCourseGeneratorService {
           durationMinutes: lt.duration,
           order: lIdx + 1,
           isCompleted: false,
-          videoUrl: includeVideos ? 'https://www.youtube.com/watch?v=kqtD5dpn9C8' : undefined,
+          videoUrl: includeVideos ? this.inferVideoUrl(lt.title, lang, lIdx, i) : undefined,
           createdAt: new Date().toISOString(),
           contentMarkdown: this.generateLessonContent(lt.title, lang, prompt),
           quizQuestions: this.generateQuizQuestions(lt.title, lang, prompt),
@@ -640,6 +640,105 @@ print("Processed Result:", process_data_stream(sample_input))`
         hint: 'Use list comprehension `[x for x in items if x > 0]`.',
       },
     ]
+  }
+
+  private inferVideoUrl(topic: string, lang: ProgrammingLanguage, lessonIdx: number, moduleIdx: number): string {
+    const t = topic.toLowerCase()
+
+    // Specific Topic Keyword Matching
+    if (t.includes('loop') || t.includes('iteration') || t.includes('while') || t.includes('for')) {
+      if (lang === 'python') return 'https://www.youtube.com/watch?v=6iF8Xb7Z3wQ'
+      if (lang === 'javascript') return 'https://www.youtube.com/watch?v=s9wWAKCMhNh'
+      return 'https://www.youtube.com/watch?v=yYZZf_pW4zE'
+    }
+    if (t.includes('function') || t.includes('method') || t.includes('scope') || t.includes('lambda')) {
+      if (lang === 'python') return 'https://www.youtube.com/watch?v=9Os0o3wzS_I'
+      if (lang === 'javascript') return 'https://www.youtube.com/watch?v=N8ap4k_1QEQ'
+      if (lang === 'java') return 'https://www.youtube.com/watch?v=v-t1Z5-oQtE'
+      return 'https://www.youtube.com/watch?v=5V_f1H8E59k'
+    }
+    if (t.includes('oop') || t.includes('class') || t.includes('object') || t.includes('inherit')) {
+      if (lang === 'python') return 'https://www.youtube.com/watch?v=JeznW_7DlB0'
+      if (lang === 'javascript') return 'https://www.youtube.com/watch?v=2ZphE5HcQPQ'
+      if (lang === 'java') return 'https://www.youtube.com/watch?v=xk4_1vDrzzo'
+      if (lang === 'cpp') return 'https://www.youtube.com/watch?v=Rub-JsjMhWY'
+      return 'https://www.youtube.com/watch?v=pTB0EiLXUC8'
+    }
+    if (t.includes('async') || t.includes('promise') || t.includes('event loop') || t.includes('fetch')) {
+      return 'https://www.youtube.com/watch?v=PoRJizFvM7s'
+    }
+    if (t.includes('dom') || t.includes('html') || t.includes('css') || t.includes('ui')) {
+      return 'https://www.youtube.com/watch?v=y17RuWkWdn8'
+    }
+    if (t.includes('recursion') || t.includes('stack') || t.includes('tree') || t.includes('algorithm') || t.includes('sort')) {
+      return 'https://www.youtube.com/watch?v=8hly31xKli0'
+    }
+    if (t.includes('database') || t.includes('sql') || t.includes('query') || t.includes('table')) {
+      return 'https://www.youtube.com/watch?v=HXV3zeQKqGY'
+    }
+    if (t.includes('debug') || t.includes('error') || t.includes('exception') || t.includes('try')) {
+      if (lang === 'python') return 'https://www.youtube.com/watch?v=NIWwJbo-9_8'
+      if (lang === 'java') return 'https://www.youtube.com/watch?v=r_MbozD32eo'
+      return 'https://www.youtube.com/watch?v=cFTFtuEQ-10'
+    }
+
+    // Language Curated Sequence Tracks
+    const languageTracks: Record<string, string[]> = {
+      python: [
+        'https://www.youtube.com/watch?v=kqtD5dpn9C8', // Python Basics & Setup
+        'https://www.youtube.com/watch?v=6iF8Xb7Z3wQ', // Control Flow & Logic
+        'https://www.youtube.com/watch?v=9Os0o3wzS_I', // Functions & Scope
+        'https://www.youtube.com/watch?v=daefaLgNkw0', // Data Structures (Lists, Dicts, Sets)
+        'https://www.youtube.com/watch?v=JeznW_7DlB0', // Object Oriented Python
+        'https://www.youtube.com/watch?v=NIWwJbo-9_8', // Error Handling & Files
+        'https://www.youtube.com/watch?v=0sOvCWFmrtA', // Python Project Development
+      ],
+      javascript: [
+        'https://www.youtube.com/watch?v=W6NZfCO5SIk', // JS Fundamentals
+        'https://www.youtube.com/watch?v=s9wWAKCMhNh', // Logic & Arrays
+        'https://www.youtube.com/watch?v=N8ap4k_1QEQ', // Functions & ES6
+        'https://www.youtube.com/watch?v=y17RuWkWdn8', // DOM Manipulation
+        'https://www.youtube.com/watch?v=PoRJizFvM7s', // Async & Promises
+        'https://www.youtube.com/watch?v=2ZphE5HcQPQ', // OOP & Classes
+        'https://www.youtube.com/watch?v=hdI2bqOjy3c', // Modern JS Projects
+      ],
+      java: [
+        'https://www.youtube.com/watch?v=A74TOX803D0', // Java Fundamentals
+        'https://www.youtube.com/watch?v=yYZZf_pW4zE', // Loops & Arrays
+        'https://www.youtube.com/watch?v=v-t1Z5-oQtE', // Methods & Parameters
+        'https://www.youtube.com/watch?v=xk4_1vDrzzo', // OOP, Classes & Objects
+        'https://www.youtube.com/watch?v=viTHc_4XfCA', // Collections & Generics
+        'https://www.youtube.com/watch?v=r_MbozD32eo', // Exceptions & Streams
+        'https://www.youtube.com/watch?v=grEKMHGYyns', // Java App Architecture
+      ],
+      cpp: [
+        'https://www.youtube.com/watch?v=vLnPwxZdW4Y', // C++ Basics
+        'https://www.youtube.com/watch?v=2ybLDQapozo', // Pointers & Memory
+        'https://www.youtube.com/watch?v=Rub-JsjMhWY', // OOP & Classes in C++
+        'https://www.youtube.com/watch?v=8jLOx1hD3_o', // STL & Vectors
+        'https://www.youtube.com/watch?v=gT8_b3k0Pvg', // Dynamic Memory & Structs
+      ],
+      typescript: [
+        'https://www.youtube.com/watch?v=BCg4U1FzODs', // TS Crash Course
+        'https://www.youtube.com/watch?v=d56mG7DezGs', // Interfaces & Types
+        'https://www.youtube.com/watch?v=V9XbS_K9Z_E', // Generics & Narrowing
+        'https://www.youtube.com/watch?v=ahCwqrYqoTU', // Full TS Application
+      ],
+      sql: [
+        'https://www.youtube.com/watch?v=HXV3zeQKqGY', // SQL Basics
+        'https://www.youtube.com/watch?v=7S_tz1z_5bA', // Joins & Aggregates
+        'https://www.youtube.com/watch?v=ztHopE5Wnpc', // Database Design & Indexing
+      ],
+      html: [
+        'https://www.youtube.com/watch?v=G3e-cpL7ofc', // HTML Fundamentals
+        'https://www.youtube.com/watch?v=fYq5PXgSsbE', // CSS & Flexbox
+        'https://www.youtube.com/watch?v=1PnVor36_40', // Responsive Web Layouts
+      ],
+    }
+
+    const track = languageTracks[lang] || languageTracks.python
+    const overallIdx = (moduleIdx * 3 + lessonIdx) % track.length
+    return track[overallIdx]
   }
 }
 
