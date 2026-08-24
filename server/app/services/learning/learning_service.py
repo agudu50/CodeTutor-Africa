@@ -266,6 +266,24 @@ Return valid JSON with title, category, description, and 3 modules, each contain
             games=games,
         )
 
+    @staticmethod
+    def _get_lang_label(lang: str) -> str:
+        mapping = {
+            "python": "Python",
+            "typescript": "TypeScript",
+            "javascript": "JavaScript",
+            "rust": "Rust",
+            "go": "Golang",
+            "cpp": "C++",
+            "c": "C",
+            "java": "Java",
+            "csharp": "C#",
+            "php": "PHP",
+            "sql": "SQL",
+            "html": "HTML5 & CSS3",
+        }
+        return mapping.get(lang.lower(), lang.title() if lang else "Software Engineering")
+
     def _build_domain_roadmap(self, req: GenerateCourseRequest) -> CourseDetailResponse:
         """
         Creates a complete 3-Module, 9-Lesson curriculum roadmap with
@@ -274,7 +292,7 @@ Return valid JSON with title, category, description, and 3 modules, each contain
         course_id = f"course-ai-{int(time.time())}"
         p = req.prompt.lower()
         lang = req.language
-        lang_title = lang.title()
+        lang_title = self._get_lang_label(lang)
 
         is_frontend = any(w in p for w in ["frontend", "dom", "ui", "web", "react", "html", "css"])
         is_backend = any(w in p for w in ["backend", "api", "server", "microservice", "sql", "database"])
@@ -283,12 +301,12 @@ Return valid JSON with title, category, description, and 3 modules, each contain
         if is_frontend:
             title = f"Modern Frontend Web Engineering with {lang_title}"
             category = "Frontend Web"
-            desc = "A comprehensive 9-lesson roadmap covering DOM tree mutation, reactive UI state, asynchronous REST fetching, client caching, layout reflows, and performance optimization."
+            desc = f"A comprehensive roadmap covering DOM tree mutation, reactive UI state, asynchronous REST fetching, client caching, layout reflows, and performance optimization in {lang_title}."
             
             curriculum_plan = [
                 {
                     "title": "Module 1: DOM Hierarchy, Event Architecture & State",
-                    "desc": "Master browser execution lifecycles, document tree traversal, event delegation, and reactive state management.",
+                    "desc": f"Master browser execution lifecycles, document tree traversal, event delegation, and reactive state management in {lang_title}.",
                     "lessons": [
                         {
                             "title": "DOM Tree Traversal, Node Mutation & Event Delegation",
@@ -296,7 +314,7 @@ Return valid JSON with title, category, description, and 3 modules, each contain
                             "desc": "Understand how the browser builds the DOM tree and leverage event bubbling to handle user events efficiently.",
                             "md": """# DOM Tree Traversal, Node Mutation & Event Delegation
 
-Welcome to **Lesson 1** of your Frontend Engineering Roadmap in **JavaScript**.
+Welcome to **Lesson 1** of your Frontend Engineering Roadmap in **__LANG__**.
 
 ---
 
@@ -339,7 +357,7 @@ function setupEventDelegation(listContainerId) {
 ```
 
 > **🧠 Socratic Question:** Why does `event.target.closest('li')` prevent runtime exceptions when the user clicks an icon nested inside the button?
-""",
+""".replace("__LANG__", lang_title),
                             "mcq": {
                                 "q": "Why is Event Delegation preferred over attaching listeners to 1,000 separate child elements?",
                                 "opts": [

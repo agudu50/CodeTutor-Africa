@@ -136,9 +136,27 @@ class AiCourseGeneratorService {
     return courseStoreService.createCourse(newCourseData)
   }
 
+  private getLanguageLabel(lang: ProgrammingLanguage): string {
+    const map: Record<ProgrammingLanguage, string> = {
+      python: 'Python',
+      typescript: 'TypeScript',
+      javascript: 'JavaScript',
+      rust: 'Rust',
+      go: 'Go',
+      cpp: 'C++',
+      c: 'C',
+      java: 'Java',
+      csharp: 'C#',
+      php: 'PHP',
+      sql: 'SQL',
+      html: 'HTML5 & CSS3',
+    }
+    return map[lang] || (lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : 'Programming')
+  }
+
   private inferTitle(prompt: string, lang: ProgrammingLanguage): string {
     const clean = prompt.trim()
-    const langLabel = lang === 'python' ? 'Python' : lang === 'javascript' ? 'JavaScript' : 'Java'
+    const langLabel = this.getLanguageLabel(lang)
     const p = prompt.toLowerCase()
 
     if (p.includes('frontend') || p.includes('react') || p.includes('ui') || p.includes('dom') || p.includes('web')) {
@@ -170,8 +188,8 @@ class AiCourseGeneratorService {
     return 'Applied Software Engineering'
   }
 
-  private inferDescription(prompt: string, lang: string, difficulty: string): string {
-    const langLabel = lang.charAt(0).toUpperCase() + lang.slice(1)
+  private inferDescription(prompt: string, lang: ProgrammingLanguage, difficulty: string): string {
+    const langLabel = this.getLanguageLabel(lang)
     return `An offline-first, Socratic masterclass on ${prompt}. Covers architectural principles, memory-efficient patterns, local compiler exercises, and automated test validation in ${langLabel} (${difficulty} track).`
   }
 
@@ -194,7 +212,7 @@ class AiCourseGeneratorService {
     includeVideos: boolean
   ): Module[] {
     const p = prompt.toLowerCase()
-    const langName = lang.charAt(0).toUpperCase() + lang.slice(1)
+    const langName = this.getLanguageLabel(lang)
 
     let moduleTemplates: Array<{ title: string; desc: string; lessonTopics: Array<{ title: string; duration: number }> }>
 
@@ -360,12 +378,12 @@ class AiCourseGeneratorService {
   }
 
   private generateLessonContent(topic: string, lang: ProgrammingLanguage, prompt: string): string {
-    const langUpper = lang.toUpperCase()
+    const langLabel = this.getLanguageLabel(lang)
     const codeSnippet = this.generateLanguageCodeSnippet(topic, lang, prompt)
 
     return `# ${topic}
 
-Welcome to this technical masterclass on **${topic}** in **${langUpper}**, created for your specialized focus on *${prompt}*.
+Welcome to this technical masterclass on **${topic}** in **${langLabel}**, created for your specialized focus on *${prompt}*.
 
 ---
 
@@ -390,7 +408,7 @@ To write resilient, production-grade applications, you must master how the runti
 ---
 
 ## Practical Code Walkthrough & Implementation
-Inspect the idiomatic implementation below in **${langUpper}** and experiment with running it in the interactive sandbox:
+Inspect the idiomatic implementation below in **${langLabel}** and experiment with running it in the interactive sandbox:
 
 \`\`\`${lang}
 ${codeSnippet}
