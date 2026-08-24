@@ -68,12 +68,20 @@ def calculate_total(price, quantity):
 item_name = "Notebook"
 total_cost = calculate_total(15, 3)
 print("Total for 3 " + item_name + "s is $" + str(total_cost))`,
+    output: `> Output:
+Total for 3 Notebooks is $45
+[✓ Program executed in 14ms • 100% Offline]`,
     dialogue: {
       student: 'How does the calculate_total function know what 15 and 3 mean?',
       ai: 'When you call calculate_total(15, 3), Python matches 15 to the "price" label and 3 to "quantity", then multiplies them together to give 45.',
       hint: 'What happens if you change 3 to 5 items in line 7? What will the new total cost be?',
       latency: 'Instant: 35ms',
       verified: 'Runs 100% Offline',
+    },
+    alternateDialogue: {
+      student: 'What happens if quantity is set to 0?',
+      ai: 'If quantity is 0, 15 multiplied by 0 equals 0. The program will safely print "Total for 0 Notebooks is $0" without crashing.',
+      hint: 'In a real shop app, what friendly message could you show if someone adds 0 items?',
     },
   },
   {
@@ -89,12 +97,20 @@ function getGreeting(learnerName, isNew) {
 }
 
 console.log(getGreeting("Kwame", true));`,
+    output: `> Output:
+"Welcome to coding, Kwame! Let's learn step-by-step."
+[✓ Program executed in 11ms • 100% Offline]`,
     dialogue: {
       student: 'What is the difference between "Kwame" and "true" in this code?',
       ai: '"Kwame" is a text word (a String), while "true" is a yes/no switch (a Boolean). The function checks the switch to pick the right greeting.',
       hint: 'If you change "true" to "false" on line 8, which of the two welcome messages will appear?',
       latency: 'Instant: 30ms',
       verified: 'Runs 100% Offline',
+    },
+    alternateDialogue: {
+      student: 'What happens if we pass "false" instead of "true"?',
+      ai: 'Passing "false" skips the first if-block and immediately runs the second return statement: "Welcome back, Kwame! Ready for today\'s lesson?"',
+      hint: 'Notice how the computer picks only one branch based on whether the switch is true or false!',
     },
   },
   {
@@ -110,12 +126,21 @@ public class PiggyBank {
         System.out.println("New total savings: $" + this.savings);
     }
 }`,
+    output: `> Output:
+PiggyBank created with initial $50.
+New total savings: $75
+[✓ Program executed in 16ms • 100% Offline]`,
     dialogue: {
       student: 'Why do we use addMoney() instead of changing savings directly?',
       ai: 'Using addMoney() keeps your savings safe—just like putting coins through a piggy bank slot rather than breaking the bank open.',
       hint: 'If you start with 50 and call addMoney(25), what number will be printed on your screen?',
       latency: 'Instant: 32ms',
       verified: 'Runs 100% Offline',
+    },
+    alternateDialogue: {
+      student: 'Can I add a function to withdraw money too?',
+      ai: 'Yes! You can create a function called withdrawMoney(int amount) that checks if you have enough savings before subtracting.',
+      hint: 'What safety check should we add so someone cannot withdraw more money than they currently have?',
     },
   },
 ]
@@ -214,16 +239,20 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
   onHoverChange,
 }) => {
   const [displayedCode, setDisplayedCode] = useState(codeExamples[0].code)
+  const [isRunning, setIsRunning] = useState(false)
+  const [showOutput, setShowOutput] = useState(true)
 
   // Typewriter effect on activeTab change
   useEffect(() => {
     const targetCode = codeExamples[activeTab].code
     setDisplayedCode('')
+    setIsRunning(true)
     let idx = 0
     const interval = setInterval(() => {
       idx += 6
       if (idx >= targetCode.length) {
         setDisplayedCode(targetCode)
+        setIsRunning(false)
         clearInterval(interval)
       } else {
         setDisplayedCode(targetCode.slice(0, idx))
@@ -231,6 +260,14 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
     }, 12)
     return () => clearInterval(interval)
   }, [activeTab])
+
+  const handleRunCode = () => {
+    setIsRunning(true)
+    setShowOutput(true)
+    setTimeout(() => {
+      setIsRunning(false)
+    }, 300)
+  }
 
   return (
     <div
@@ -257,15 +294,18 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
                 <button
                   key={ex.filename}
                   type="button"
-                  onClick={() => setActiveTab(i)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-2 relative ${
+                  onClick={() => {
+                    setActiveTab(i)
+                    setShowOutput(true)
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-2 relative ${
                     isActive
                       ? 'bg-[#1E1E1E] text-white shadow-md border border-[#444444] border-b-2 border-b-[#005F02]'
                       : 'bg-[#2D2D2D]/70 text-slate-400 border border-transparent hover:bg-[#333333] hover:text-slate-200'
                   }`}
                 >
                   <Code2 className={`w-3.5 h-3.5 ${isActive ? 'text-[#005F02]' : 'text-slate-400'}`} />
-                  <span className="truncate">{ex.filename}</span>
+                  <span className="whitespace-nowrap">{ex.filename}</span>
                   {isActive && (
                     <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] inline-block animate-pulse" />
                   )}
@@ -275,8 +315,17 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
           </div>
         </div>
 
-        {/* Right: High-Tech Offline Telemetry Pill */}
+        {/* Right: Run Code Button & Offline Pill */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleRunCode}
+            disabled={isRunning}
+            className="px-2.5 py-1 rounded-md bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-[10px] flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-50"
+          >
+            <Play className={`w-3 h-3 fill-current ${isRunning ? 'animate-spin' : ''}`} />
+            <span>{isRunning ? 'Running...' : 'Run Code'}</span>
+          </button>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#005F02]/15 border border-[#005F02]/40 text-[10px] font-mono font-bold text-[#005F02] shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-ping" />
             <span>100% OFFLINE</span>
@@ -285,20 +334,41 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
       </div>
 
       {/* VS Code Editor Body */}
-      <div className="p-4 overflow-x-auto flex-1 min-h-[220px] bg-[#1E1E1E] text-[#D4D4D4] leading-relaxed font-mono">
+      <div className="p-4 overflow-x-auto flex-1 min-h-[170px] bg-[#1E1E1E] text-[#D4D4D4] leading-relaxed font-mono">
         <div className="table w-full text-xs sm:text-[13px]">
           {displayedCode.split('\n').map((line, lIdx) => renderVSCodeTokens(line, lIdx))}
         </div>
       </div>
 
-      {/* Socratic Terminal Guidance Bar */}
-      <div className="px-4 py-2.5 bg-[#252526] border-t border-[#333333] flex items-center justify-between text-[11px] text-slate-400 shrink-0">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-[#005F02]" />
-          <span className="text-slate-300 font-medium">Socratic Insight:</span>
-          <span className="text-slate-400 truncate">Compiler verified locally (0 KB network)</span>
+      {/* Interactive Terminal Output Drawer */}
+      {showOutput && (
+        <div className="px-4 py-2.5 bg-[#181818] border-t border-[#333333] font-mono text-xs">
+          <div className="flex items-center justify-between text-[10px] text-slate-400 pb-1.5 border-b border-[#282828] mb-1.5">
+            <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+              <Terminal className="w-3 h-3" /> Console Output
+            </span>
+            <span className="text-[10px] text-slate-500">Zero Internet Used</span>
+          </div>
+          <div className="text-emerald-300 whitespace-pre-wrap leading-relaxed text-[11px]">
+            {isRunning ? (
+              <span className="text-slate-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> Running program locally...
+              </span>
+            ) : (
+              codeExamples[activeTab].output
+            )}
+          </div>
         </div>
-        <span className="text-[#005F02] font-bold font-mono text-[10px]">23.4 tok/s</span>
+      )}
+
+      {/* Live AI Guidance Bar */}
+      <div className="px-4 py-2 bg-[#252526] border-t border-[#333333] flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+        <div className="flex items-center gap-2 truncate">
+          <Sparkles className="w-3.5 h-3.5 text-[#005F02] shrink-0" />
+          <span className="text-slate-300 font-medium shrink-0">Helpful Hint:</span>
+          <span className="text-slate-400 truncate">Runs locally on your laptop (0 KB internet needed)</span>
+        </div>
+        <span className="text-[#005F02] font-bold font-mono text-[10px] shrink-0 ml-2">Instant Speed</span>
       </div>
     </div>
   )
@@ -406,6 +476,7 @@ export const LandingPage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isSlidePaused, setIsSlidePaused] = useState(false)
   const [activeCodeTab, setActiveCodeTab] = useState(0)
+  const [activeQuestionTab, setActiveQuestionTab] = useState<number>(0)
   const [isCodePaused, setIsCodePaused] = useState(false)
   const [testimonialSlide, setTestimonialSlide] = useState(0)
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false)
@@ -414,6 +485,11 @@ export const LandingPage: React.FC = () => {
 
   const statsRef = useRef(null)
   const statsInView = useInView(statsRef, { once: true, margin: '-60px' })
+
+  // Reset active question when code tab changes
+  useEffect(() => {
+    setActiveQuestionTab(0)
+  }, [activeCodeTab])
 
   // Auto-advance hero carousel (faster 3.2s transition)
   useEffect(() => {
@@ -727,20 +803,20 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Interactive Linked Slide Mini-Cards at Bottom of Hero */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:flex items-center gap-3">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:flex items-center gap-2.5 max-w-full px-4 overflow-x-auto">
           {heroSlides.map((slide, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => setCurrentSlide(idx)}
-              className={`px-3 py-1.5 rounded-xl border text-xs font-mono transition-all flex items-center gap-2 backdrop-blur-md ${
+              className={`px-3.5 py-1.5 rounded-xl border text-xs font-medium transition-all flex items-center gap-2 backdrop-blur-md shrink-0 ${
                 currentSlide === idx
-                  ? 'bg-[#005F02] text-white border-[#005F02] shadow-lg scale-105'
-                  : 'bg-slate-900/70 text-slate-300 border-slate-700 hover:bg-slate-800'
+                  ? 'bg-[#005F02] text-white border-[#005F02] shadow-lg scale-102'
+                  : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:bg-slate-800'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${currentSlide === idx ? 'bg-white' : 'bg-slate-500'}`} />
-              <span className="truncate max-w-[140px]">{slide.tag}</span>
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${currentSlide === idx ? 'bg-white' : 'bg-slate-500'}`} />
+              <span className="whitespace-nowrap">{slide.tag}</span>
             </button>
           ))}
         </div>
@@ -1076,10 +1152,39 @@ export const LandingPage: React.FC = () => {
                 </span>
               </div>
 
-              {/* Conversation Box (Synchronized with Active Language) */}
+              {/* Quick Interactive Question Switcher */}
+              <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
+                <span className="text-[10px] text-slate-500 font-medium shrink-0">Try Asking:</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveQuestionTab(0)}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all shrink-0 ${
+                    activeQuestionTab === 0
+                      ? 'bg-[#005F02] text-white shadow-xs'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
+                  }`}
+                >
+                  Q1: Explain Variables
+                </button>
+                {codeExamples[activeCodeTab].alternateDialogue && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveQuestionTab(1)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all shrink-0 ${
+                      activeQuestionTab === 1
+                        ? 'bg-[#005F02] text-white shadow-xs'
+                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
+                    }`}
+                  >
+                    Q2: What-If Scenario
+                  </button>
+                )}
+              </div>
+
+              {/* Conversation Box (Synchronized with Active Language & Question) */}
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={activeCodeTab}
+                  key={`${activeCodeTab}-${activeQuestionTab}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -1090,15 +1195,21 @@ export const LandingPage: React.FC = () => {
                     {/* Student Question */}
                     <div className="flex justify-end">
                       <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
-                        <p className="font-medium">{codeExamples[activeCodeTab].dialogue.student}</p>
+                        <p className="font-medium">
+                          {activeQuestionTab === 0
+                            ? codeExamples[activeCodeTab].dialogue.student
+                            : codeExamples[activeCodeTab].alternateDialogue?.student}
+                        </p>
                       </div>
                     </div>
 
                     {/* AI Tutor Socratic Guidance */}
                     <div className="flex justify-start">
-                      <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5">
+                      <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5 shadow-xs">
                         <p className="leading-relaxed">
-                          {codeExamples[activeCodeTab].dialogue.ai}
+                          {activeQuestionTab === 0
+                            ? codeExamples[activeCodeTab].dialogue.ai
+                            : codeExamples[activeCodeTab].alternateDialogue?.ai}
                         </p>
                         
                         <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
@@ -1107,7 +1218,9 @@ export const LandingPage: React.FC = () => {
                             <span>Helpful Hint &amp; Question:</span>
                           </div>
                           <p className="italic text-slate-700 dark:text-slate-300">
-                            "{codeExamples[activeCodeTab].dialogue.hint}"
+                            "{activeQuestionTab === 0
+                              ? codeExamples[activeCodeTab].dialogue.hint
+                              : codeExamples[activeCodeTab].alternateDialogue?.hint}"
                           </p>
                         </div>
                       </div>
@@ -1288,7 +1401,7 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 6: HARDWARE SPECS / ADTC BENCHMARK (LINKED STRIP)
+          SECTION 6: EVERYDAY LAPTOP PERFORMANCE (PLAIN & SIMPLE)
           ═══════════════════════════════════════════════════════════════ */}
       <section id="specs" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
         <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -1296,10 +1409,10 @@ export const LandingPage: React.FC = () => {
             <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> Works on Regular Laptops
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Runs Smoothly on Everyday Laptops
+            Runs Smoothly on Any Everyday Laptop
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            You do not need an expensive computer. CodeTutor is built to run easily and efficiently on standard everyday laptops:
+            You do not need an expensive computer. CodeTutor is built to run easily and quietly on standard laptops:
           </p>
         </div>
 
@@ -1308,28 +1421,28 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
             {[
               {
-                title: 'Light on Memory',
-                val: 'Under 1.7 GB RAM',
-                sub: 'Lightweight & Smooth',
-                note: 'Leaves plenty of memory free for your other apps',
+                title: 'Memory Friendly',
+                val: 'Super Light',
+                sub: 'Won\'t Slow Down Your Laptop',
+                note: 'Leaves plenty of room for your code editor and web browser to run smoothly.',
               },
               {
                 title: 'Instant Speed',
-                val: 'Fast Answers',
-                sub: 'Quick on Standard CPUs',
-                note: 'Get instant explanations without waiting on slow internet',
+                val: 'No Waiting',
+                sub: 'Fast Answers in Seconds',
+                note: 'Get immediate explanations and hints without waiting on slow internet.',
               },
               {
-                title: 'Battery Friendly',
+                title: 'Battery Saver',
                 val: 'Cool & Quiet',
-                sub: 'Low Energy Use',
-                note: 'Learn for hours without draining your laptop battery',
+                sub: 'Low Power Use',
+                note: 'Study and practice for hours without draining your laptop battery.',
               },
               {
                 title: '100% Private',
-                val: 'Zero Data Needed',
-                sub: 'Safe & Secure',
-                note: 'Your lessons, code, and progress stay on your laptop',
+                val: 'Zero Data Spent',
+                sub: 'Safe & Offline',
+                note: 'Your lessons, code, and progress stay completely private on your device.',
               },
             ].map((spec, idx) => (
               <div
@@ -1337,7 +1450,7 @@ export const LandingPage: React.FC = () => {
                 className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group"
               >
                 <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{spec.title}</div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-[#005F02] font-mono tracking-tight">{spec.val}</div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-[#005F02] tracking-tight">{spec.val}</div>
                 <div className="text-xs font-bold text-slate-800 dark:text-slate-200">{spec.sub}</div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/[0.06]">{spec.note}</div>
               </div>

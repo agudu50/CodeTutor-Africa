@@ -15,7 +15,8 @@ class HealthResponse(BaseModel):
     offline: bool = True
 
 
-@router.get("/health", response_model=HealthResponse)
+@router.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
+@router.api_route("/api/health", methods=["GET", "HEAD"], response_model=HealthResponse)
 async def health_check():
     """Returns basic service health status."""
     return HealthResponse()

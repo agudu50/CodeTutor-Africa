@@ -16,14 +16,14 @@ export class MockCourseService implements ICourseService {
 
   async getCourseById(courseId: string): Promise<Course | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100))
-    return MOCK_COURSES.find((c) => c.id === courseId || c.slug === courseId)
+    return MOCK_COURSES.find((c: Course) => c.id === courseId || c.slug === courseId)
   }
 
   async getLessonById(lessonId: string): Promise<Lesson | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100))
     for (const course of MOCK_COURSES) {
       for (const module of course.modules) {
-        const lesson = module.lessons.find((l) => l.id === lessonId || l.slug === lessonId)
+        const lesson = module.lessons.find((l: Lesson) => l.id === lessonId || l.slug === lessonId)
         if (lesson) return lesson
       }
     }

@@ -15,15 +15,15 @@ export class MockPracticeService implements IPracticeService {
 
   async getQuestionById(id: string): Promise<PracticeQuestion | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100))
-    return MOCK_PRACTICE_QUESTIONS.find((q) => q.id === id || q.slug === id)
+    return MOCK_PRACTICE_QUESTIONS.find((q: PracticeQuestion) => q.id === id || q.slug === id)
   }
 
   async submitSolution(questionId: string, code: string): Promise<CodeSubmission> {
     await new Promise((resolve) => setTimeout(resolve, 600))
-    const question = MOCK_PRACTICE_QUESTIONS.find((q) => q.id === questionId)
+    const question = MOCK_PRACTICE_QUESTIONS.find((q: PracticeQuestion) => q.id === questionId)
     
     // Simulate test evaluation
-    const results = (question?.testCases || []).map((tc) => ({
+    const results = (question?.testCases || []).map((tc: PracticeQuestion['testCases'][number]) => ({
       ...tc,
       actualOutput: tc.expectedOutput,
       passed: true,

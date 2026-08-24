@@ -170,15 +170,15 @@ export const SystemStatusProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const timeoutId = setTimeout(() => controller.abort(), 2000)
 
       // Lightweight probe
-      const res = await fetch('/api/health', {
-        method: 'HEAD',
+      const res = await fetch('/health', {
+        method: 'GET',
         cache: 'no-store',
         signal: controller.signal,
       }).catch(() => null)
 
       clearTimeout(timeoutId)
 
-      const isActuallyOnline = !!res || (typeof navigator !== 'undefined' && navigator.onLine)
+      const isActuallyOnline = (res && res.ok) || (typeof navigator !== 'undefined' && navigator.onLine)
       const newStatus: NetworkStatus = isActuallyOnline ? 'online' : 'offline'
 
       setNetwork((prev) => {
