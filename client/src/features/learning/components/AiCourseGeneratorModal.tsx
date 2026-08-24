@@ -11,9 +11,6 @@ import {
   ChevronDown,
   Check,
   Search,
-  BookOpen,
-  BarChart3,
-  Code2,
 } from 'lucide-react'
 
 interface AiCourseGeneratorModalProps {
@@ -26,8 +23,6 @@ interface LanguageOption {
   label: string
   version: string
   category: string
-  tag: string
-  tagColor: string
   description: string
 }
 
@@ -35,19 +30,15 @@ const MODERN_LANGUAGES: LanguageOption[] = [
   {
     value: 'python',
     label: 'Python',
-    version: 'v3.12+',
+    version: '3.12+',
     category: 'AI & Data',
-    tag: 'PY',
-    tagColor: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25',
     description: 'Modern AI, Machine Learning, FastAPIs & Automation',
   },
   {
     value: 'typescript',
     label: 'TypeScript',
-    version: 'v5.4+',
+    version: '5.4+',
     category: 'Web & Fullstack',
-    tag: 'TS',
-    tagColor: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/25',
     description: 'Type-Safe Full-Stack, Next.js, Node.js & Clean Architecture',
   },
   {
@@ -55,80 +46,62 @@ const MODERN_LANGUAGES: LanguageOption[] = [
     label: 'JavaScript',
     version: 'ES2024',
     category: 'Web & Fullstack',
-    tag: 'JS',
-    tagColor: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/25',
     description: 'Modern Web, Event Loop, Web Streams & DOM Manipulation',
   },
   {
     value: 'rust',
     label: 'Rust',
-    version: '2024 Edition',
+    version: '2024',
     category: 'Systems & Performance',
-    tag: 'RS',
-    tagColor: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/25',
     description: 'Memory Safety, Zero-Cost Abstractions & High-Speed Systems',
   },
   {
     value: 'go',
     label: 'Golang',
-    version: 'v1.22+',
+    version: '1.22+',
     category: 'Systems & Performance',
-    tag: 'GO',
-    tagColor: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border-cyan-500/25',
     description: 'Cloud Microservices, Goroutines, Channels & High Concurrency',
   },
   {
     value: 'cpp',
-    label: 'C++ 20/23',
-    version: 'Modern C++23',
+    label: 'C++',
+    version: '20/23',
     category: 'Systems & Performance',
-    tag: 'C++',
-    tagColor: 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/25',
     description: 'Low-Latency Engine Design, Smart Pointers & STL Optimizations',
   },
   {
     value: 'java',
     label: 'Java',
-    version: 'Java 21 LTS',
+    version: '21 LTS',
     category: 'Enterprise & JVM',
-    tag: 'JAVA',
-    tagColor: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25',
     description: 'Virtual Threads, Modern OOP, Spring Boot & Enterprise JVM',
   },
   {
     value: 'csharp',
     label: 'C# / .NET',
-    version: '.NET 8 LTS',
+    version: '8.0',
     category: 'Enterprise & JVM',
-    tag: 'C#',
-    tagColor: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/25',
     description: 'Modern ASP.NET Core, Cloud Microservices & High-Scale Web',
   },
   {
     value: 'php',
     label: 'PHP',
-    version: 'v8.3 Modern',
+    version: '8.3',
     category: 'Web & Fullstack',
-    tag: 'PHP',
-    tagColor: 'bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-500/25',
     description: 'Modern PHP 8.3 Types, Laravel Architecture & Fast Web APIs',
   },
   {
     value: 'sql',
     label: 'SQL & Relational',
-    version: 'SQL:2023',
+    version: '2023',
     category: 'Database',
-    tag: 'SQL',
-    tagColor: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25',
     description: 'PostgreSQL Schemas, B-Tree Index Tuning & Query Optimization',
   },
   {
     value: 'html',
-    label: 'HTML5 & Modern CSS3',
-    version: 'Modern Standard',
+    label: 'HTML5 & CSS3',
+    version: 'Modern',
     category: 'Web & Fullstack',
-    tag: 'HTML',
-    tagColor: 'bg-pink-500/10 text-pink-700 dark:text-pink-400 border-pink-500/25',
     description: 'Semantic Web, Responsive Flexbox/Grid, Animations & UI',
   },
 ]
@@ -136,8 +109,7 @@ const MODERN_LANGUAGES: LanguageOption[] = [
 interface DifficultyOption {
   value: DifficultyLevel
   label: string
-  badge: string
-  levelTag: string
+  subtitle: string
   description: string
 }
 
@@ -145,22 +117,19 @@ const DIFFICULTY_OPTIONS: DifficultyOption[] = [
   {
     value: 'beginner',
     label: 'Beginner',
-    badge: 'Foundations & Syntax',
-    levelTag: 'LVL 1',
+    subtitle: 'Foundations & Syntax',
     description: 'Core concepts, visual models & zero-assumption guides',
   },
   {
     value: 'intermediate',
     label: 'Intermediate',
-    badge: 'Hands-On Architecture',
-    levelTag: 'LVL 2',
+    subtitle: 'Hands-On Architecture',
     description: 'Real-world problem solving, modular design & best practices',
   },
   {
     value: 'advanced',
     label: 'Advanced',
-    badge: 'High-Performance Systems',
-    levelTag: 'LVL 3',
+    subtitle: 'High-Performance Systems',
     description: 'Low-latency optimizations, concurrency & enterprise design',
   },
 ]
@@ -168,52 +137,46 @@ const DIFFICULTY_OPTIONS: DifficultyOption[] = [
 interface ModuleDepthOption {
   value: number
   label: string
-  subtitle: string
   lessons: string
   duration: string
-  stepTag: string
+  description: string
 }
 
 const MODULE_DEPTH_OPTIONS: ModuleDepthOption[] = [
   {
     value: 1,
     label: '1 Module',
-    subtitle: 'Crash Course',
     lessons: '~3 Lessons',
     duration: '1-2 hrs',
-    stepTag: '01',
+    description: 'Crash course covering immediate essentials',
   },
   {
     value: 2,
     label: '2 Modules',
-    subtitle: 'Targeted Sprint',
     lessons: '~6 Lessons',
     duration: '3-4 hrs',
-    stepTag: '02',
+    description: 'Focused sprint on key features and workflows',
   },
   {
     value: 3,
     label: '3 Modules',
-    subtitle: 'Standard Track',
     lessons: '~9 Lessons',
     duration: '6-8 hrs',
-    stepTag: '03',
+    description: 'Standard comprehensive roadmap from basics to core',
   },
   {
     value: 4,
     label: '4 Modules',
-    subtitle: 'Deep Specialization',
     lessons: '~12 Lessons',
     duration: '10-14 hrs',
-    stepTag: '04',
+    description: 'Deep specialization with advanced topics and patterns',
   },
   {
     value: 5,
     label: '5 Modules',
-    subtitle: 'Masterclass & Capstone',
     lessons: '~15 Lessons',
     duration: '16-20 hrs',
-    stepTag: '05',
+    description: 'Complete masterclass including full capstone project',
   },
 ]
 
@@ -352,7 +315,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        transition={{ duration: 0.22, ease: 'easeOut' }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
         className="relative z-10 w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-6 sm:p-8 space-y-5 my-6"
       >
         {/* Modal Header */}
@@ -466,13 +429,12 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                 </div>
               </div>
 
-              {/* Enhanced Custom Dropdowns Grid */}
+              {/* Clean, Elegant Single-Line Dropdown Selectors */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
-                {/* 1. Enhanced Target Language Dropdown */}
+                {/* 1. Target Language */}
                 <div className="space-y-1 relative" ref={langRef}>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                    <Code2 className="w-3.5 h-3.5 text-[#005F02]" />
-                    <span>Target Language</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Target Language
                   </label>
                   
                   <button
@@ -482,47 +444,37 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                       setDiffDropdownOpen(false)
                       setDepthDropdownOpen(false)
                     }}
-                    className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
+                    className={`w-full h-10 px-3 flex items-center justify-between rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
                       langDropdownOpen
                         ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
                         : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${selectedLangObj.tagColor}`}>
-                        {selectedLangObj.tag}
-                      </span>
-                      <div className="truncate">
-                        <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                          {selectedLangObj.label}
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-mono">
-                          {selectedLangObj.version}
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${langDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
+                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedLangObj.label} <span className="text-slate-400 font-normal text-[11px]">({selectedLangObj.version})</span>
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${langDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
                   </button>
 
                   {/* Language Popover Menu */}
                   <AnimatePresence>
                     {langDropdownOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                        initial={{ opacity: 0, y: 4, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute left-0 right-0 top-full mt-1 z-30 max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 space-y-1"
+                        exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute left-0 right-0 top-full mt-1 z-30 max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 space-y-1"
                       >
                         {/* Search Input Inside Dropdown */}
-                        <div className="relative mb-1.5 px-1">
-                          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+                        <div className="relative mb-1 px-1">
+                          <Search className="w-3.5 h-3.5 absolute left-3 top-2 text-slate-400" />
                           <input
                             type="text"
                             value={langSearch}
                             onChange={(e) => setLangSearch(e.target.value)}
-                            placeholder="Filter language..."
-                            className="w-full pl-8 pr-2 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none border-none"
+                            placeholder="Search language..."
+                            className="w-full pl-7 pr-2 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none border-none"
                             onClick={(e) => e.stopPropagation()}
                           />
                         </div>
@@ -544,20 +496,15 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                     : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                                 }`}
                               >
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${langItem.tagColor}`}>
-                                    {langItem.tag}
-                                  </span>
-                                  <div>
-                                    <div className="text-xs font-bold flex items-center gap-1.5">
-                                      <span>{langItem.label}</span>
-                                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                                        {langItem.version}
-                                      </span>
-                                    </div>
-                                    <div className="text-[10px] text-slate-400 truncate max-w-[170px]">
-                                      {langItem.description}
-                                    </div>
+                                <div className="min-w-0 pr-2">
+                                  <div className="text-xs font-semibold flex items-center gap-1.5">
+                                    <span>{langItem.label}</span>
+                                    <span className="text-[10px] text-slate-400 font-normal">
+                                      {langItem.version}
+                                    </span>
+                                  </div>
+                                  <div className="text-[10px] text-slate-400 truncate">
+                                    {langItem.description}
                                   </div>
                                 </div>
                                 {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
@@ -570,11 +517,10 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   </AnimatePresence>
                 </div>
 
-                {/* 2. Enhanced Difficulty Level Dropdown */}
+                {/* 2. Difficulty Level */}
                 <div className="space-y-1 relative" ref={diffRef}>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                    <BarChart3 className="w-3.5 h-3.5 text-[#005F02]" />
-                    <span>Difficulty Level</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Difficulty Level
                   </label>
 
                   <button
@@ -584,37 +530,27 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                       setLangDropdownOpen(false)
                       setDepthDropdownOpen(false)
                     }}
-                    className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
+                    className={`w-full h-10 px-3 flex items-center justify-between rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
                       diffDropdownOpen
                         ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
                         : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                        {selectedDiffObj.levelTag}
-                      </span>
-                      <div className="truncate">
-                        <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                          {selectedDiffObj.label}
-                        </div>
-                        <div className="text-[10px] text-slate-400">
-                          {selectedDiffObj.badge}
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${diffDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
+                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedDiffObj.label} <span className="text-slate-400 font-normal text-[11px]">({selectedDiffObj.subtitle})</span>
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${diffDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
                   </button>
 
                   {/* Difficulty Popover Menu */}
                   <AnimatePresence>
                     {diffDropdownOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                        initial={{ opacity: 0, y: 4, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute left-0 right-0 top-full mt-1 z-30 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 space-y-1"
+                        exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute left-0 right-0 top-full mt-1 z-30 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 space-y-0.5"
                       >
                         {DIFFICULTY_OPTIONS.map((diffItem) => {
                           const isSelected = diffItem.value === difficulty
@@ -632,20 +568,15 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                   : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                               }`}
                             >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                                  {diffItem.levelTag}
-                                </span>
-                                <div>
-                                  <div className="text-xs font-bold flex items-center gap-1.5">
-                                    <span>{diffItem.label}</span>
-                                    <span className="text-[9px] font-medium px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                                      {diffItem.badge}
-                                    </span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-400 truncate max-w-[170px]">
-                                    {diffItem.description}
-                                  </div>
+                              <div className="min-w-0 pr-2">
+                                <div className="text-xs font-semibold flex items-center gap-1.5">
+                                  <span>{diffItem.label}</span>
+                                  <span className="text-[10px] text-slate-400 font-normal">
+                                    • {diffItem.subtitle}
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  {diffItem.description}
                                 </div>
                               </div>
                               {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
@@ -657,11 +588,10 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   </AnimatePresence>
                 </div>
 
-                {/* 3. Enhanced Curriculum Depth Dropdown */}
+                {/* 3. Curriculum Depth */}
                 <div className="space-y-1 relative" ref={depthRef}>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                    <BookOpen className="w-3.5 h-3.5 text-[#005F02]" />
-                    <span>Curriculum Depth</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Curriculum Depth
                   </label>
 
                   <button
@@ -671,37 +601,27 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                       setLangDropdownOpen(false)
                       setDiffDropdownOpen(false)
                     }}
-                    className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
+                    className={`w-full h-10 px-3 flex items-center justify-between rounded-xl border bg-slate-50 dark:bg-slate-950 text-left transition-all cursor-pointer shadow-sm ${
                       depthDropdownOpen
                         ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
                         : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                        {selectedDepthObj.stepTag}
-                      </span>
-                      <div className="truncate">
-                        <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                          {selectedDepthObj.label}
-                        </div>
-                        <div className="text-[10px] text-slate-400">
-                          {selectedDepthObj.lessons} • {selectedDepthObj.subtitle}
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${depthDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
+                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedDepthObj.label} <span className="text-slate-400 font-normal text-[11px]">({selectedDepthObj.lessons})</span>
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${depthDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
                   </button>
 
                   {/* Depth Popover Menu */}
                   <AnimatePresence>
                     {depthDropdownOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                        initial={{ opacity: 0, y: 4, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute left-0 right-0 top-full mt-1 z-30 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-2 space-y-1"
+                        exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute left-0 right-0 top-full mt-1 z-30 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 space-y-0.5"
                       >
                         {MODULE_DEPTH_OPTIONS.map((depthItem) => {
                           const isSelected = depthItem.value === moduleCount
@@ -719,20 +639,15 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                   : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                               }`}
                             >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                                  {depthItem.stepTag}
-                                </span>
-                                <div>
-                                  <div className="text-xs font-bold flex items-center gap-1.5">
-                                    <span>{depthItem.label}</span>
-                                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                                      {depthItem.lessons}
-                                    </span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-400">
-                                    {depthItem.subtitle} ({depthItem.duration})
-                                  </div>
+                              <div className="min-w-0 pr-2">
+                                <div className="text-xs font-semibold flex items-center gap-1.5">
+                                  <span>{depthItem.label}</span>
+                                  <span className="text-[10px] text-slate-400 font-normal">
+                                    ({depthItem.lessons} • {depthItem.duration})
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  {depthItem.description}
                                 </div>
                               </div>
                               {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
