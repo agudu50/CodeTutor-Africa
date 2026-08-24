@@ -339,7 +339,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -4, scale: 0.98 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full max-h-52 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
+                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full max-h-[142px] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
                       >
                         {MODERN_LANGUAGES.map((langItem) => {
                           const isSelected = langItem.value === language
@@ -377,7 +377,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   </AnimatePresence>
                 </div>
 
-                {/* 2. Difficulty Level Dropdown (Opens Downward) */}
+                {/* 2. Difficulty Level Dropdown (Opens Downward with 3 Visible Items) */}
                 <div className="space-y-1 relative min-w-0 w-full" ref={diffRef}>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Difficulty Level
@@ -402,7 +402,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${diffDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
                   </button>
 
-                  {/* Downward Popover */}
+                  {/* Downward Popover (3 items visible with scrolling) */}
                   <AnimatePresence>
                     {diffDropdownOpen && (
                       <motion.div
@@ -410,7 +410,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -4, scale: 0.98 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
+                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full max-h-[142px] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
                       >
                         {DIFFICULTY_OPTIONS.map((diffItem) => {
                           const isSelected = diffItem.value === difficulty
@@ -445,7 +445,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   </AnimatePresence>
                 </div>
 
-                {/* 3. Curriculum Depth Dropdown (Opens Downward) */}
+                {/* 3. Curriculum Depth Dropdown (Opens Downward with 3 Visible Items) */}
                 <div className="space-y-1 relative min-w-0 w-full" ref={depthRef}>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Curriculum Depth
@@ -470,7 +470,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${depthDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
                   </button>
 
-                  {/* Downward Popover */}
+                  {/* Downward Popover (3 items visible with scrolling) */}
                   <AnimatePresence>
                     {depthDropdownOpen && (
                       <motion.div
@@ -478,7 +478,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -4, scale: 0.98 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
+                        className="absolute left-0 right-0 top-full mt-1.5 z-50 w-full max-h-[142px] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5"
                       >
                         {MODULE_DEPTH_OPTIONS.map((depthItem) => {
                           const isSelected = depthItem.value === moduleCount
