@@ -66,10 +66,16 @@ class CourseStoreService {
   }
 
   deleteCourse(id: string): boolean {
+    const courseToDelete = this.courses.find((c: Course) => c.id === id)
     const initialLen = this.courses.length
     this.courses = this.courses.filter((c: Course) => c.id !== id)
     if (this.courses.length !== initialLen) {
       this.save()
+      window.dispatchEvent(
+        new CustomEvent('course_deleted', {
+          detail: { id, title: courseToDelete?.title || 'Course' },
+        })
+      )
       return true
     }
     return false
