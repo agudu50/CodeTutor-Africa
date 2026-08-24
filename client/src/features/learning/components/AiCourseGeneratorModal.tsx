@@ -227,69 +227,69 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
               </div>
 
               {/* Clean, Fully-Contained Select Controls Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 w-full">
                 {/* 1. Target Language */}
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                <div className="space-y-1 min-w-0 w-full">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Target Language
                   </label>
-                  <div className="relative">
+                  <div className="relative w-full min-w-0">
                     <select
                       value={language}
                       onChange={(e) => setLanguage(e.target.value as ProgrammingLanguage)}
-                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm"
+                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm truncate"
                     >
-                      <option value="python">Python 3.12+ (AI & Backend)</option>
-                      <option value="typescript">TypeScript 5.4+ (Full-Stack)</option>
-                      <option value="javascript">JavaScript ES2024 (Modern Web)</option>
-                      <option value="rust">Rust 2024 (Memory Safe Systems)</option>
-                      <option value="go">Golang 1.22+ (Microservices)</option>
-                      <option value="cpp">C++ 20/23 (Low-Latency & STL)</option>
-                      <option value="java">Java 21 LTS (Enterprise & Spring)</option>
-                      <option value="csharp">C# / .NET 8 (Enterprise Web)</option>
-                      <option value="php">PHP 8.3 (Modern Web & Laravel)</option>
-                      <option value="sql">SQL & Relational (PostgreSQL)</option>
-                      <option value="html">HTML5 & CSS3 (Responsive UI)</option>
+                      <option value="python">Python (3.12+)</option>
+                      <option value="typescript">TypeScript (5.4+)</option>
+                      <option value="javascript">JavaScript (ES2024)</option>
+                      <option value="rust">Rust (2024)</option>
+                      <option value="go">Golang (1.22+)</option>
+                      <option value="cpp">C++ (20/23)</option>
+                      <option value="java">Java (21 LTS)</option>
+                      <option value="csharp">C# / .NET (8.0)</option>
+                      <option value="php">PHP (8.3)</option>
+                      <option value="sql">SQL & Relational</option>
+                      <option value="html">HTML5 & CSS3</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
                   </div>
                 </div>
 
                 {/* 2. Difficulty Level */}
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                <div className="space-y-1 min-w-0 w-full">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Difficulty Level
                   </label>
-                  <div className="relative">
+                  <div className="relative w-full min-w-0">
                     <select
                       value={difficulty}
                       onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
-                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm"
+                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm truncate"
                     >
-                      <option value="beginner">Beginner (Foundations & Syntax)</option>
-                      <option value="intermediate">Intermediate (Hands-On Architecture)</option>
-                      <option value="advanced">Advanced (High-Performance Systems)</option>
+                      <option value="beginner">Beginner (Foundations)</option>
+                      <option value="intermediate">Intermediate (Applied)</option>
+                      <option value="advanced">Advanced (Deep Systems)</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
                   </div>
                 </div>
 
                 {/* 3. Curriculum Depth */}
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                <div className="space-y-1 min-w-0 w-full">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
                     Curriculum Depth
                   </label>
-                  <div className="relative">
+                  <div className="relative w-full min-w-0">
                     <select
                       value={moduleCount}
                       onChange={(e) => setModuleCount(Number(e.target.value))}
-                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm"
+                      className="w-full h-10 appearance-none pl-3 pr-8 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] focus:ring-2 focus:ring-[#005F02]/20 transition-all cursor-pointer shadow-sm truncate"
                     >
-                      <option value={1}>1 Module (~3 Lessons • Crash Course)</option>
-                      <option value={2}>2 Modules (~6 Lessons • Focused Sprint)</option>
-                      <option value={3}>3 Modules (~9 Lessons • Standard Track)</option>
-                      <option value={4}>4 Modules (~12 Lessons • Deep Specialization)</option>
-                      <option value={5}>5 Modules (~15 Lessons • Masterclass)</option>
+                      <option value={1}>1 Module (~3 Lessons)</option>
+                      <option value={2}>2 Modules (~6 Lessons)</option>
+                      <option value={3}>3 Modules (~9 Lessons)</option>
+                      <option value={4}>4 Modules (~12 Lessons)</option>
+                      <option value={5}>5 Modules (~15 Lessons)</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
                   </div>
