@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
+import { ConfirmDeleteModal } from '@/components/feedback/ConfirmDeleteModal'
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Progress } from '@/components/ui'
 import {
   ChevronLeft,
@@ -20,6 +21,7 @@ import {
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const courses = courseStoreService.getAllCourses()
   const course = courses.find((c) => c.id === courseId || c.slug === courseId) || courses[0]
 
@@ -48,6 +50,15 @@ export const CourseDetailPage: React.FC = () => {
 
   return (
     <PageContainer maxWidth="xl" className="space-y-6">
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteCourse}
+        title="Delete Course"
+        itemName={course.title}
+      />
+
       {/* Back to courses navigation */}
       <div className="flex items-center justify-between">
         <Link
@@ -62,7 +73,7 @@ export const CourseDetailPage: React.FC = () => {
           {course.isAiGenerated && (
             <button
               type="button"
-              onClick={handleDeleteCourse}
+              onClick={() => setIsDeleteModalOpen(true)}
               className="inline-flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />

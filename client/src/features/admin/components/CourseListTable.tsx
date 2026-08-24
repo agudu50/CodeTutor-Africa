@@ -1,6 +1,7 @@
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import { Course } from '@/types'
 import { Link } from 'react-router-dom'
+import { ConfirmDeleteModal } from '@/components/feedback/ConfirmDeleteModal'
 import {
   BookOpen,
   ArrowRight,
@@ -22,6 +23,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
   onEditCourse,
   onDeleteCourse,
 }) => {
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null)
   if (courses.length === 0) {
     return (
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-12 text-center text-slate-500 dark:text-slate-400 space-y-2">
@@ -132,7 +134,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
               <button
                 type="button"
-                onClick={() => onDeleteCourse(course.id)}
+                onClick={() => setCourseToDelete(course)}
                 className="p-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
                 title="Delete"
               >
@@ -245,7 +247,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
                       <button
                         type="button"
-                        onClick={() => onDeleteCourse(course.id)}
+                        onClick={() => setCourseToDelete(course)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
                         title="Delete course"
                       >
@@ -259,6 +261,20 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={Boolean(courseToDelete)}
+        onClose={() => setCourseToDelete(null)}
+        onConfirm={() => {
+          if (courseToDelete) {
+            onDeleteCourse(courseToDelete.id)
+            setCourseToDelete(null)
+          }
+        }}
+        title="Delete Course"
+        itemName={courseToDelete?.title}
+      />
     </div>
   )
 })
