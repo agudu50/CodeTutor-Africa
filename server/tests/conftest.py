@@ -9,13 +9,24 @@ from app.main import app
 from app.core.config import Settings, get_settings
 
 
-@pytest.fixture(scope="session")
+import os
+os.environ["MODEL_PROVIDER"] = "mock"
+os.environ["APP_ENV"] = "testing"
+
+from app.core.config import get_settings
+from app.services.model_manager.manager import model_manager
+get_settings.cache_clear()
+
+@pytest.fixture(scope="session", autouse=True)
 def test_settings() -> Settings:
-    return Settings(
+    get_settings.cache_clear()
+    settings = Settings(
         APP_ENV="testing",
         MODEL_PROVIDER="mock",
         DATABASE_URL="sqlite+aiosqlite:///:memory:",
     )
+    model_manager.reset(settings)
+    return settings
 
 
 @pytest_asyncio.fixture

@@ -47,9 +47,9 @@ class Settings(BaseSettings):
 
     # LLM / GGUF Model Runtime Configuration
     # Options: 'mock' (zero-RAM fast testing), 'gguf' (local llama.cpp runtime)
-    MODEL_PROVIDER: Literal["mock", "gguf"] = "mock"
-    MODEL_PATH: str = "./models/qwen2.5-coder-3b-instruct-q4_k_m.gguf"
-    MODEL_NAME: str = "Qwen2.5-Coder-3B-Instruct"
+    MODEL_PROVIDER: Literal["mock", "gguf"] = "gguf"
+    MODEL_PATH: str = "../models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
+    MODEL_NAME: str = "Qwen2.5-Coder-1.5B-Instruct"
     MODEL_CONTEXT_SIZE: int = Field(
         default=2048,
         description="Context window tokens. Kept bounded for 8GB RAM budget.",

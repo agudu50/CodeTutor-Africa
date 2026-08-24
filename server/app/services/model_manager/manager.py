@@ -36,6 +36,12 @@ class ModelManager:
             logger.info(f"Initializing LocalGGUFProvider with model path: {self.settings.MODEL_PATH}")
             self._provider = LocalGGUFProvider(self.settings)
 
+    def reset(self, settings: Optional[Settings] = None):
+        """Resets the model manager and re-initializes with current settings."""
+        self.settings = settings or get_settings()
+        self._provider = None
+        self._initialize_provider()
+
     @property
     def provider(self) -> LLMProvider:
         """Returns active LLM provider instance."""
@@ -44,22 +50,30 @@ class ModelManager:
         return self._provider
 
     def discover_local_models(self) -> List[Dict[str, Any]]:
-        """Scans the models directory for available .gguf files."""
-        models_dir = os.path.dirname(self.settings.MODEL_PATH)
-        if not os.path.exists(models_dir):
-            return []
-
-        gguf_files = glob.glob(os.path.join(models_dir, "*.gguf"))
+        """Scans candidate directories for available .gguf files."""
+        candidate_dirs = [
+            os.path.dirname(self.settings.MODEL_PATH),
+            "./models",
+            "../models",
+            os.path.join(os.path.dirname(__file__), "../../../../models"),
+        ]
+        
+        seen_paths = set()
         discovered = []
 
-        for path in gguf_files:
-            file_size_mb = round(os.path.getsize(path) / (1024 * 1024), 2)
-            discovered.append({
-                "filename": os.path.basename(path),
-                "path": path,
-                "size_mb": file_size_mb,
-                "is_active": os.path.abspath(path) == os.path.abspath(self.settings.MODEL_PATH),
-            })
+        for d in candidate_dirs:
+            if d and os.path.exists(d):
+                for path in glob.glob(os.path.join(d, "*.gguf")):
+                    abs_p = os.path.abspath(path)
+                    if abs_p not in seen_paths:
+                        seen_paths.add(abs_p)
+                        file_size_mb = round(os.path.getsize(abs_p) / (1024 * 1024), 2)
+                        discovered.append({
+                            "filename": os.path.basename(abs_p),
+                            "path": abs_p,
+                            "size_mb": file_size_mb,
+                            "is_active": abs_p == os.path.abspath(self.settings.MODEL_PATH) or self.provider.is_loaded(),
+                        })
 
         return discovered
 

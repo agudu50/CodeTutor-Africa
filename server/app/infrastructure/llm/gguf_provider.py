@@ -28,13 +28,31 @@ class LocalGGUFProvider(LLMProvider):
         self.model_name = settings.MODEL_NAME
         self._llm = None
 
+    def _resolve_model_path(self) -> Optional[str]:
+        candidates = [
+            self.model_path,
+            os.path.abspath(self.model_path),
+            os.path.join(os.path.dirname(__file__), "../../../../models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"),
+            os.path.join(os.getcwd(), "models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"),
+            os.path.join(os.getcwd(), "../models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"),
+            os.path.join(os.getcwd(), "submission/model.gguf"),
+            os.path.join(os.getcwd(), "../submission/model.gguf"),
+        ]
+        for p in candidates:
+            if p and os.path.exists(p) and os.path.isfile(p):
+                return os.path.abspath(p)
+        return None
+
     async def load(self) -> bool:
         if self._llm is not None:
             return True
 
-        if not os.path.exists(self.model_path):
-            logger.warning(f"GGUF model file not found at {self.model_path}")
+        resolved_path = self._resolve_model_path()
+        if not resolved_path:
+            logger.warning(f"GGUF model file not found at {self.model_path} or candidate locations")
             return False
+
+        self.model_path = resolved_path
 
         try:
             import importlib
