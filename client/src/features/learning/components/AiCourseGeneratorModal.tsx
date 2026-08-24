@@ -316,7 +316,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="relative z-10 w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-6 sm:p-8 space-y-5 my-6"
+        className="relative z-10 w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-visible p-6 sm:p-8 space-y-5 my-6"
       >
         {/* Modal Header */}
         <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -464,17 +464,17 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute left-0 right-0 top-full mt-1 z-30 max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 space-y-1"
+                        className="absolute left-0 top-full mt-1.5 z-50 w-full sm:w-[320px] max-h-72 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 space-y-1"
                       >
                         {/* Search Input Inside Dropdown */}
-                        <div className="relative mb-1 px-1">
-                          <Search className="w-3.5 h-3.5 absolute left-3 top-2 text-slate-400" />
+                        <div className="relative mb-1.5 px-1">
+                          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
                           <input
                             type="text"
                             value={langSearch}
                             onChange={(e) => setLangSearch(e.target.value)}
                             placeholder="Search language..."
-                            className="w-full pl-7 pr-2 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none border-none"
+                            className="w-full pl-8 pr-2 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none border-none"
                             onClick={(e) => e.stopPropagation()}
                           />
                         </div>
@@ -490,7 +490,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                   setLanguage(langItem.value)
                                   setLangDropdownOpen(false)
                                 }}
-                                className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                                className={`w-full flex items-start justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                                   isSelected
                                     ? 'bg-[#005F02]/10 text-[#005F02] dark:text-[#52c256]'
                                     : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -503,11 +503,11 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                       {langItem.version}
                                     </span>
                                   </div>
-                                  <div className="text-[10px] text-slate-400 truncate">
+                                  <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug pt-0.5">
                                     {langItem.description}
                                   </div>
                                 </div>
-                                {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
+                                {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0 mt-0.5" />}
                               </button>
                             )
                           })}
@@ -550,7 +550,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute left-0 right-0 top-full mt-1 z-30 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 space-y-0.5"
+                        className="absolute left-0 sm:left-1/2 sm:-translate-x-1/2 top-full mt-1.5 z-50 w-full sm:w-[300px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 space-y-1"
                       >
                         {DIFFICULTY_OPTIONS.map((diffItem) => {
                           const isSelected = diffItem.value === difficulty
@@ -562,7 +562,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                 setDifficulty(diffItem.value)
                                 setDiffDropdownOpen(false)
                               }}
-                              className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                              className={`w-full flex items-start justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                                 isSelected
                                   ? 'bg-[#005F02]/10 text-[#005F02] dark:text-[#52c256]'
                                   : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -575,11 +575,11 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                     • {diffItem.subtitle}
                                   </span>
                                 </div>
-                                <div className="text-[10px] text-slate-400 truncate">
+                                <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug pt-0.5">
                                   {diffItem.description}
                                 </div>
                               </div>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
+                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0 mt-0.5" />}
                             </button>
                           )
                         })}
@@ -621,7 +621,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute left-0 right-0 top-full mt-1 z-30 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 space-y-0.5"
+                        className="absolute right-0 top-full mt-1.5 z-50 w-full sm:w-[320px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 space-y-1"
                       >
                         {MODULE_DEPTH_OPTIONS.map((depthItem) => {
                           const isSelected = depthItem.value === moduleCount
@@ -633,7 +633,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                 setModuleCount(depthItem.value)
                                 setDepthDropdownOpen(false)
                               }}
-                              className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                              className={`w-full flex items-start justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                                 isSelected
                                   ? 'bg-[#005F02]/10 text-[#005F02] dark:text-[#52c256]'
                                   : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -646,11 +646,11 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                     ({depthItem.lessons} • {depthItem.duration})
                                   </span>
                                 </div>
-                                <div className="text-[10px] text-slate-400 truncate">
+                                <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug pt-0.5">
                                   {depthItem.description}
                                 </div>
                               </div>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
+                              {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0 mt-0.5" />}
                             </button>
                           )
                         })}
