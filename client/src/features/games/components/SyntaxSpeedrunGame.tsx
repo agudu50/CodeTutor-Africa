@@ -17,6 +17,9 @@ import {
   VolumeX,
   WifiOff,
   BookOpen,
+  SendHorizonal,
+  CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react'
 
 interface SyntaxSpeedrunGameProps {
@@ -167,6 +170,40 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     }
   }
 
+  const handleSubmitCode = () => {
+    if (!isPlaying || isGameOver) return
+    const targetCode = currentSnippet.code.trim()
+    const submittedCode = userInput.trim()
+    if (submittedCode === targetCode) {
+      handleSnippetComplete()
+    } else {
+      // Partial submit - penalise but move on with reduced score
+      if (timerRef.current) clearInterval(timerRef.current)
+      const partialBonus = Math.round(accuracy * 0.5)
+      const newScore = score + partialBonus
+      setScore(newScore)
+      onScoreUpdate(newScore)
+      gameSound.playGameOver()
+      if (snippetIndex + 1 < activeSnippets.length) {
+        setSnippetIndex((prev: number) => prev + 1)
+        const nextSnippet = activeSnippets[snippetIndex + 1]
+        setUserInput('')
+        setTimeLeft(nextSnippet.timeLimitSecs)
+        startTimeRef.current = Date.now()
+        setIsPlaying(true)
+        setTimeout(() => inputRef.current?.focus(), 50)
+      } else {
+        setIsGameOver(true)
+        setIsPlaying(false)
+      }
+    }
+  }
+
+  const isCodeComplete = userInput.trim() === currentSnippet?.code.trim()
+  const completionPercent = currentSnippet?.code.length > 0
+    ? Math.min(100, Math.round((userInput.length / currentSnippet.code.length) * 100))
+    : 0
+
   const restartGame = () => {
     setSnippetIndex(0)
     setScore(0)
@@ -296,13 +333,54 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         </div>
       ) : (
         <div className="space-y-4">
-          {/* 3D Cyber Racer Track visualizer driven by typing progress and errors */}
-          <CyberRacer3D
-            progressPercent={currentSnippet.code.length > 0 ? Math.min(100, Math.round((userInput.length / currentSnippet.code.length) * 100)) : 0}
-            wpm={wpm}
-            hasError={accuracy < 90 && userInput.length > 0}
-            isCompleted={userInput === currentSnippet.code}
-          />
+          {/* ═══ IMMERSIVE 3D GAME WORLD ═══ */}
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800">
+            <CyberRacer3D
+              progressPercent={completionPercent}
+              wpm={wpm}
+              hasError={accuracy < 90 && userInput.length > 0}
+              isCompleted={isCodeComplete}
+            />
+            {/* HUD overlay on top of 3D canvas */}
+            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between px-4 pb-3 pointer-events-none">
+              {/* Progress bar */}
+              <div className="w-full max-w-xs">
+                <div className="flex items-center justify-between text-[10px] font-mono font-bold mb-1">
+                  <span className="text-emerald-400">PROGRESS</span>
+                  <span className="text-white">{completionPercent}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-slate-800/80 overflow-hidden backdrop-blur-sm">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${completionPercent}%`,
+                      background: isCodeComplete
+                        ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
+                        : accuracy < 90 && userInput.length > 0
+                        ? 'linear-gradient(90deg,#f43f5e,#fb7185)'
+                        : 'linear-gradient(90deg,#00ffcc,#06b6d4)',
+                    }}
+                  />
+                </div>
+              </div>
+              {/* Status badge */}
+              <div className="ml-3 shrink-0">
+                {isCodeComplete ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/90 text-black text-[10px] font-extrabold font-mono backdrop-blur-sm">
+                    <CheckCircle2 className="w-3 h-3" /> COMPLETE!
+                  </span>
+                ) : accuracy < 90 && userInput.length > 0 ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-500/90 text-white text-[10px] font-extrabold font-mono backdrop-blur-sm">
+                    <AlertTriangle className="w-3 h-3" /> ERROR
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold font-mono border border-emerald-500/40 backdrop-blur-sm">
+                    <Zap className="w-3 h-3" /> {wpm} WPM
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Snippet Card */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-2xs">
@@ -333,26 +411,55 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
             </div>
           </div>
 
-          {/* Interactive Typing Surface */}
+          {/* Interactive Typing Surface + Submit */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs font-mono text-slate-500">
-              <span>Type code below:</span>
-              <span className={accuracy < 90 ? 'text-rose-500 font-bold' : 'text-emerald-500 font-bold'}>
+              <span>Type the code below:</span>
+              <span className={accuracy < 90 && userInput.length > 0 ? 'text-rose-500 font-bold' : 'text-emerald-500 font-bold'}>
                 Accuracy: {accuracy}% • {wpm} WPM
               </span>
             </div>
-            <textarea
-              ref={inputRef}
-              value={userInput}
-              onChange={handleInputChange}
-              rows={4}
-              placeholder="Start typing the code snippet here..."
-              className="w-full p-3 sm:p-4 rounded-xl bg-white dark:bg-slate-900 border-2 border-brand-500 font-mono text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 resize-none shadow-sm"
-              autoCapitalize="none"
-              autoComplete="off"
-              autoCorrect="off"
-              spellCheck="false"
-            />
+            <div className="relative">
+              <textarea
+                ref={inputRef}
+                value={userInput}
+                onChange={handleInputChange}
+                rows={6}
+                placeholder="Start typing the code snippet here..."
+                className={`w-full p-3 sm:p-4 pb-14 rounded-xl bg-white dark:bg-slate-900 border-2 font-mono text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 resize-none shadow-sm transition-colors ${
+                  isCodeComplete
+                    ? 'border-emerald-500 focus:ring-emerald-500/30'
+                    : accuracy < 90 && userInput.length > 0
+                    ? 'border-rose-500 focus:ring-rose-500/30'
+                    : 'border-brand-500 focus:ring-brand-500/30'
+                }`}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+              />
+              {/* Submit button floated inside textarea */}
+              <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                {isCodeComplete && (
+                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Code matches!
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSubmitCode}
+                  disabled={userInput.trim().length === 0}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed ${
+                    isCodeComplete
+                      ? 'bg-emerald-500 hover:bg-emerald-400 text-white ring-2 ring-emerald-400/40 scale-105'
+                      : 'bg-brand-600 hover:bg-brand-500 text-white'
+                  }`}
+                >
+                  <SendHorizonal className="w-3.5 h-3.5" />
+                  Submit Code
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
