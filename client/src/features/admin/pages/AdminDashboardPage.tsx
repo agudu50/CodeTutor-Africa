@@ -117,11 +117,9 @@ export const AdminDashboardPage: React.FC = () => {
             variant="outline"
             size="sm"
             onClick={() => {
-              if (confirm('Reset courses to official seed defaults?')) {
-                courseStoreService.resetToDefaults()
-                reloadData()
-                setToastMessage('Courses reset to defaults.')
-              }
+              courseStoreService.resetToDefaults()
+              reloadData()
+              setToastMessage('Courses reset to defaults.')
             }}
             className="h-9 text-xs font-semibold justify-center"
             leftIcon={<RotateCcw className="w-3.5 h-3.5" />}

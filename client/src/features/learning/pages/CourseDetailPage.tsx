@@ -42,10 +42,8 @@ export const CourseDetailPage: React.FC = () => {
       : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
 
   const handleDeleteCourse = () => {
-    if (window.confirm(`Are you sure you want to remove "${course.title}" from your local offline library?`)) {
-      courseStoreService.deleteCourse(course.id)
-      navigate('/learning')
-    }
+    courseStoreService.deleteCourse(course.id)
+    navigate('/learning')
   }
 
   return (

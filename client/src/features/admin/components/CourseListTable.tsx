@@ -132,11 +132,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
               <button
                 type="button"
-                onClick={() => {
-                  if (confirm(`Are you sure you want to delete "${course.title}"?`)) {
-                    onDeleteCourse(course.id)
-                  }
-                }}
+                onClick={() => onDeleteCourse(course.id)}
                 className="p-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
                 title="Delete"
               >
@@ -249,11 +245,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
                       <button
                         type="button"
-                        onClick={() => {
-                          if (confirm(`Are you sure you want to delete "${course.title}"?`)) {
-                            onDeleteCourse(course.id)
-                          }
-                        }}
+                        onClick={() => onDeleteCourse(course.id)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
                         title="Delete course"
                       >

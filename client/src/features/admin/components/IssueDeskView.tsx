@@ -150,10 +150,8 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
   }
 
   const handleDeleteIssue = (id: string) => {
-    if (confirm('Delete this support ticket from the registry?')) {
-      issueSupportService.deleteIssue(id)
-      onUpdated()
-    }
+    issueSupportService.deleteIssue(id)
+    onUpdated()
   }
 
   const getCategoryLabel = (cat: IssueCategory) => {
