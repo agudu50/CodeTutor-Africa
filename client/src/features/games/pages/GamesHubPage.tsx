@@ -160,10 +160,8 @@ export const GamesHubPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
-                      style={{ background: 'linear-gradient(135deg,#00ffcc,#0891b2)' }}
-                    >
-                      <Gamepad2 className="w-5 h-5 text-slate-900" />
+                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg bg-brand-600">
+                      <Gamepad2 className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
