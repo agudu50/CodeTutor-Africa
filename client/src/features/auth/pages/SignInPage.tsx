@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useTheme } from '@/app/providers/ThemeProvider'
 import {
-  Sparkles,
   Lock,
   Mail,
   ArrowRight,
@@ -65,12 +64,12 @@ export const SignInPage: React.FC = () => {
         {/* Top: Brand Header */}
         <div className="relative z-10 flex items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-3.5 group">
-            <div className="w-11 h-11 rounded-2xl bg-[#005F02] text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-xl shadow-[#005F02]/40 group-hover:scale-105 transition-transform border border-white/20">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="w-11 h-11 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-xl group-hover:scale-105 transition-transform overflow-hidden">
+              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
             </div>
             <div className="flex flex-col">
               <span className="font-extrabold text-xl tracking-tight text-white">
-                CodeTutor <span className="text-[#005F02] font-black">Africa</span>
+                CodeTutor <span className="text-emerald-400 font-black">Africa</span>
               </span>
               <span className="text-[10px] font-mono text-slate-400 tracking-wider">100% OFFLINE AI MENTOR</span>
             </div>

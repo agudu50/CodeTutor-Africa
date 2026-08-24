@@ -13,7 +13,6 @@ import {
   Settings,
   ShieldCheck,
   Gamepad2,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   Shield,
@@ -53,13 +52,13 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ collapsed, onToggleCollap
       {/* Brand Header Bar */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
         <NavLink to="/dashboard" className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-base shrink-0 border border-brand-500 shadow-2xs">
-            <Sparkles className="w-4 h-4 text-white" />
+          <div className="w-9 h-9 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+            <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
               <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1 truncate">
-                CodeTutor <span className="text-[#005F02] font-extrabold">Africa</span>
+                CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-extrabold">Africa</span>
               </span>
               <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase font-semibold">
                 Offline AI Core

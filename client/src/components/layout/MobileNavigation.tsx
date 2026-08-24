@@ -12,7 +12,6 @@ import {
   Settings,
   ShieldCheck,
   Gamepad2,
-  Sparkles,
   X,
   Shield,
   Cpu,
@@ -63,12 +62,12 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = memo(({ isOpen,
         {/* Drawer Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-sm border border-brand-500 shadow-2xs">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-slate-900 dark:text-white text-sm">
-                CodeTutor <span className="text-[#005F02] font-extrabold">Africa</span>
+                CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-extrabold">Africa</span>
               </span>
               <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase font-semibold">
                 Offline Edition
