@@ -154,57 +154,80 @@ Return valid JSON with title, category, description, and 3 modules, each contain
 
         modules: List[ModuleDetailSchema] = []
         raw_modules = data.get("modules", [])
+        if isinstance(raw_modules, dict):
+            raw_modules = list(raw_modules.values())
+        elif not isinstance(raw_modules, list):
+            raw_modules = []
 
         for m_idx, raw_mod in enumerate(raw_modules):
+            if not isinstance(raw_mod, dict):
+                continue
             mod_id = f"mod-ai-{int(time.time())}-{m_idx + 1}"
             lessons: List[LessonDetailSchema] = []
 
-            for l_idx, raw_les in enumerate(raw_mod.get("lessons", [])):
+            raw_lessons = raw_mod.get("lessons", [])
+            if isinstance(raw_lessons, dict):
+                raw_lessons = list(raw_lessons.values())
+            elif not isinstance(raw_lessons, list):
+                raw_lessons = []
+
+            for l_idx, raw_les in enumerate(raw_lessons):
+                if not isinstance(raw_les, dict):
+                    continue
                 les_id = f"les-ai-{int(time.time())}-{m_idx + 1}-{l_idx + 1}"
                 quizzes: List[QuizQuestionSchema] = []
 
                 if "quiz_mcq" in raw_les:
                     mcq = raw_les["quiz_mcq"]
-                    quizzes.append(
-                        QuizQuestionSchema(
-                            id=f"q-mcq-{les_id}",
-                            type="mcq",
-                            question=mcq.get("question", f"What is the key principle of {raw_les.get('title')}?"),
-                            options=mcq.get("options", ["Option A", "Option B", "Option C", "Option D"]),
-                            correctAnswer=mcq.get("correctAnswer", 0),
-                            explanation=mcq.get("explanation", "Correct understanding of language semantics."),
-                            hint=mcq.get("hint", "Review the concept overview."),
+                    if isinstance(mcq, list) and len(mcq) > 0 and isinstance(mcq[0], dict):
+                        mcq = mcq[0]
+                    if isinstance(mcq, dict):
+                        quizzes.append(
+                            QuizQuestionSchema(
+                                id=f"q-mcq-{les_id}",
+                                type="mcq",
+                                question=mcq.get("question", f"What is the key principle of {raw_les.get('title')}?"),
+                                options=mcq.get("options", ["Option A", "Option B", "Option C", "Option D"]),
+                                correctAnswer=mcq.get("correctAnswer", 0),
+                                explanation=mcq.get("explanation", "Correct understanding of language semantics."),
+                                hint=mcq.get("hint", "Review the concept overview."),
+                            )
                         )
-                    )
 
                 if "quiz_fill_in" in raw_les:
                     fi = raw_les["quiz_fill_in"]
-                    quizzes.append(
-                        QuizQuestionSchema(
-                            id=f"q-fill-{les_id}",
-                            type="fill_in",
-                            question=fi.get("question", "Fill in the missing token:"),
-                            codeSnippet=fi.get("codeSnippet", "// Code snippet with ____"),
-                            correctAnswer=fi.get("correctAnswer", "catch" if req.language != "python" else "except"),
-                            explanation=fi.get("explanation", "Keyword usage explanation."),
-                            hint=fi.get("hint", "Think of standard language keywords."),
+                    if isinstance(fi, list) and len(fi) > 0 and isinstance(fi[0], dict):
+                        fi = fi[0]
+                    if isinstance(fi, dict):
+                        quizzes.append(
+                            QuizQuestionSchema(
+                                id=f"q-fill-{les_id}",
+                                type="fill_in",
+                                question=fi.get("question", "Fill in the missing token:"),
+                                codeSnippet=fi.get("codeSnippet", "// Code snippet with ____"),
+                                correctAnswer=fi.get("correctAnswer", "catch" if req.language != "python" else "except"),
+                                explanation=fi.get("explanation", "Keyword usage explanation."),
+                                hint=fi.get("hint", "Think of standard language keywords."),
+                            )
                         )
-                    )
 
                 if "quiz_code" in raw_les:
                     qc = raw_les["quiz_code"]
-                    quizzes.append(
-                        QuizQuestionSchema(
-                            id=f"q-code-{les_id}",
-                            type="code",
-                            question=qc.get("question", "Implement the function satisfying the test cases:"),
-                            initialCode=qc.get("initialCode", "// Write code here"),
-                            correctAnswer=qc.get("correctAnswer", "// Solution"),
-                            testCases=qc.get("testCases", [{"input": "[1, -5, 10]", "expectedOutput": "[1, 10]"}]),
-                            explanation=qc.get("explanation", "Algorithmic transformation explanation."),
-                            hint=qc.get("hint", "Apply higher-order functions."),
+                    if isinstance(qc, list) and len(qc) > 0 and isinstance(qc[0], dict):
+                        qc = qc[0]
+                    if isinstance(qc, dict):
+                        quizzes.append(
+                            QuizQuestionSchema(
+                                id=f"q-code-{les_id}",
+                                type="code",
+                                question=qc.get("question", "Implement the function satisfying the test cases:"),
+                                initialCode=qc.get("initialCode", "// Write code here"),
+                                correctAnswer=qc.get("correctAnswer", "// Solution"),
+                                testCases=qc.get("testCases", [{"input": "[1, -5, 10]", "expectedOutput": "[1, 10]"}]),
+                                explanation=qc.get("explanation", "Algorithmic transformation explanation."),
+                                hint=qc.get("hint", "Apply higher-order functions."),
+                            )
                         )
-                    )
 
                 lessons.append(
                     LessonDetailSchema(
