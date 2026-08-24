@@ -340,7 +340,7 @@ export const CyberRacer3D: React.FC<CyberRacer3DProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-52 sm:h-64 overflow-hidden rounded-2xl border border-slate-800 shadow-2xl ${className}`}
+      className={`relative w-full h-40 sm:h-48 overflow-hidden rounded-2xl border border-slate-800 shadow-xl ${className}`}
       aria-hidden="true"
     />
   )
