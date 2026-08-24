@@ -484,6 +484,134 @@ public class Solution {
 }`
     }
 
+    if (lang === 'typescript') {
+      return `// Strict TypeScript 5.x
+interface DataItem {
+    id: string;
+    value: number;
+    active: boolean;
+}
+
+export function processDataStream<T extends { value: number }>(items: T[]): number[] {
+    if (!items || items.length === 0) return [];
+    return items
+        .filter((item) => item.value > 0)
+        .map((item) => item.value * 2);
+}
+
+// Test execution
+const sample: DataItem[] = [
+    { id: '1', value: 15, active: true },
+    { id: '2', value: -4, active: false },
+    { id: '3', value: 30, active: true },
+];
+console.log("Processed Result:", processDataStream(sample));`
+    }
+
+    if (lang === 'go') {
+      return `// Golang 1.22 Idiomatic Implementation
+package main
+
+import (
+    "fmt"
+)
+
+// ProcessDataStream filters positive integers and doubles them safely
+func ProcessDataStream(items []int) []int {
+    result := make([]int, 0, len(items))
+    for _, val := range items {
+        if val > 0 {
+            result = append(result, val*2)
+        }
+    }
+    return result
+}
+
+func main() {
+    sample := []int{1, -2, 3, 0, 4}
+    fmt.Println("Processed Stream:", ProcessDataStream(sample))
+}`
+    }
+
+    if (lang === 'rust') {
+      return `// Modern Rust 2024 (Memory Safe & Zero Overhead)
+pub fn process_data_stream(items: &[i32]) -> Vec<i32> {
+    items
+        .iter()
+        .filter(|&&x| x > 0)
+        .map(|&x| x * 2)
+        .collect()
+}
+
+fn main() {
+    let sample = vec![1, -2, 3, 0, 4];
+    let result = process_data_stream(&sample);
+    println!("Processed Stream: {:?}", result);
+}`
+    }
+
+    if (lang === 'cpp' || lang === 'c') {
+      return `// Modern C++20 (STL & Zero Cost Abstractions)
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+std::vector<int> processDataStream(const std::vector<int>& items) {
+    std::vector<int> result;
+    result.reserve(items.size());
+    for (int val : items) {
+        if (val > 0) {
+            result.push_back(val * 2);
+        }
+    }
+    return result;
+}
+
+int main() {
+    std::vector<int> sample = {1, -2, 3, 0, 4};
+    auto output = processDataStream(sample);
+    std::cout << "Processed: ";
+    for (int x : output) std::cout << x << " ";
+    std::cout << std::endl;
+    return 0;
+}`
+    }
+
+    if (lang === 'sql') {
+      return `-- Optimized Relational SQL Queries & B-Tree Indexing
+CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id VARCHAR(64) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'completed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_tx_user_status ON transactions(user_id, status);
+
+-- Indexed aggregation
+SELECT user_id, SUM(amount) AS total_spent, COUNT(*) AS tx_count
+FROM transactions
+WHERE status = 'completed'
+GROUP BY user_id
+ORDER BY total_spent DESC
+LIMIT 10;`
+    }
+
+    if (lang === 'html') {
+      return `<!-- Modern Semantic HTML5 & CSS Component -->
+<section class="lesson-card">
+  <header class="lesson-header">
+    <h2>Interactive Web Foundations</h2>
+    <span class="badge badge-success">Offline Ready</span>
+  </header>
+  <div class="lesson-body">
+    <p>Master responsive flexbox layouts and semantic markup.</p>
+    <button class="btn btn-primary" onclick="alert('Module loaded!')">Start Lesson</button>
+  </div>
+</section>`
+    }
+
     // Default Python 3.12
     return `# Idiomatic Python 3.12
 def process_data_stream(items: list) -> list:

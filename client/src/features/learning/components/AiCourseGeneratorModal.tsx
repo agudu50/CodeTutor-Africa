@@ -33,12 +33,14 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
   const [progressStep, setProgressStep] = useState(0)
 
   const promptSuggestions = [
-    { label: 'Rust Memory & Concurrency', prompt: 'Rust Systems Programming, Memory Safety, and Concurrent Thread Pools', lang: 'python' as ProgrammingLanguage },
-    { label: 'Golang Distributed Backend', prompt: 'Golang Microservices, Goroutines, Channels, and Distributed Key-Value Store', lang: 'python' as ProgrammingLanguage },
-    { label: 'Competitive DSA & Algorithms', prompt: 'Dynamic Programming, Graph Traversal, and Tree Balancing Algorithms', lang: 'python' as ProgrammingLanguage },
+    { label: 'Rust Memory & Concurrency', prompt: 'Rust Systems Programming, Memory Safety, and Concurrent Thread Pools', lang: 'rust' as ProgrammingLanguage },
+    { label: 'Golang Distributed Backend', prompt: 'Golang Microservices, Goroutines, Channels, and Distributed Key-Value Store', lang: 'go' as ProgrammingLanguage },
+    { label: 'C++ Systems & STL Algorithms', prompt: 'Modern C++20 Memory Management, Smart Pointers, and STL Algorithm Optimization', lang: 'cpp' as ProgrammingLanguage },
     { label: 'Full-Stack JavaScript & Async', prompt: 'Modern JavaScript Event Loop, Async Microtasks, Web Streams, and Local SQLite', lang: 'javascript' as ProgrammingLanguage },
+    { label: 'TypeScript Enterprise Architecture', prompt: 'Advanced TypeScript Generics, Utility Types, Decorators, and Clean Architecture', lang: 'typescript' as ProgrammingLanguage },
     { label: 'Java Enterprise OOP & JVM', prompt: 'Java OOP Patterns, JVM Bytecode Optimization, and Clean Enterprise Architecture', lang: 'java' as ProgrammingLanguage },
-    { label: 'SQL Indexing & Optimization', prompt: 'High-Performance SQL Queries, B-Tree Indexes, Query Plans, and Schema Normalization', lang: 'python' as ProgrammingLanguage },
+    { label: 'Python Full-Stack & Machine Learning', prompt: 'Python Algorithmic Problem Solving, Decorators, Generators, and NumPy Foundations', lang: 'python' as ProgrammingLanguage },
+    { label: 'SQL Indexing & Query Optimization', prompt: 'High-Performance SQL Queries, B-Tree Indexes, Query Execution Plans, and Schema Normalization', lang: 'sql' as ProgrammingLanguage },
   ]
 
   const generationSteps = [
@@ -236,8 +238,16 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3 py-2 text-xs font-medium text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02]"
                   >
                     <option value="python">Python 3.12</option>
-                    <option value="javascript">JavaScript / TypeScript</option>
+                    <option value="javascript">JavaScript (ES2024)</option>
+                    <option value="typescript">TypeScript 5.x</option>
                     <option value="java">Java 21 OOP</option>
+                    <option value="cpp">C++ 20 (Systems & STL)</option>
+                    <option value="go">Golang (Go Concurrency)</option>
+                    <option value="rust">Rust (Memory Safety)</option>
+                    <option value="csharp">C# (.NET 8)</option>
+                    <option value="php">PHP 8.3 & Modern Web</option>
+                    <option value="sql">SQL & Relational Databases</option>
+                    <option value="html">HTML5, CSS3 & Responsive Web</option>
                   </select>
                 </div>
 
@@ -251,9 +261,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3 py-2 text-xs font-medium text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02]"
                   >
-                    <option value="beginner">Beginner (Foundations)</option>
-                    <option value="intermediate">Intermediate (Hands-On)</option>
-                    <option value="advanced">Advanced (System Scale)</option>
+                    <option value="beginner">Beginner (Foundations & Syntax)</option>
+                    <option value="intermediate">Intermediate (Hands-On Architecture)</option>
+                    <option value="advanced">Advanced (High-Performance & Systems)</option>
                   </select>
                 </div>
 
@@ -267,8 +277,11 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     onChange={(e) => setModuleCount(Number(e.target.value))}
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3 py-2 text-xs font-medium text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02]"
                   >
-                    <option value={3}>3 Modules (~9 Lessons)</option>
-                    <option value={4}>4 Modules (~12 Lessons)</option>
+                    <option value={1}>1 Module (~3 Lessons • Crash Course)</option>
+                    <option value={2}>2 Modules (~6 Lessons • Focused Sprint)</option>
+                    <option value={3}>3 Modules (~9 Lessons • Standard Track)</option>
+                    <option value={4}>4 Modules (~12 Lessons • Deep Specialization)</option>
+                    <option value={5}>5 Modules (~15 Lessons • Complete Masterclass)</option>
                   </select>
                 </div>
               </div>
