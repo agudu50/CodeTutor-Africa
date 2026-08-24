@@ -174,42 +174,43 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={!isGenerating ? onClose : undefined}
-        className="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity"
-      />
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4 sm:p-6 text-center">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={!isGenerating ? onClose : undefined}
+          className="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity"
+        />
 
-      {/* Modal Card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="relative z-10 w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-6 sm:p-8 space-y-5 my-6"
-      >
-        {/* Modal Header */}
-        <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#005F02]/10 border border-[#005F02]/30 flex items-center justify-center text-[#005F02]">
-                <Bot className="w-4 h-4" />
+        {/* Modal Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 12 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className="relative z-10 w-full max-w-2xl text-left rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 border-t-4 border-t-[#005F02] shadow-2xl p-6 sm:p-8 space-y-5 my-8"
+        >
+          {/* Modal Header */}
+          <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-[#005F02]/10 border border-[#005F02]/30 flex items-center justify-center text-[#005F02]">
+                  <Bot className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30">
+                  100% OFFLINE LLM ARCHITECT
+                </span>
               </div>
-              <span className="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30">
-                100% OFFLINE LLM ARCHITECT
-              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                Prompt AI Course Generator
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Describe any modern technology, framework, or concept. Synthesizes a structured curriculum locally on your CPU.
+              </p>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Prompt AI Course Generator
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Describe any modern technology, framework, or concept. Synthesizes a structured curriculum locally on your CPU.
-            </p>
-          </div>
 
           {!isGenerating && (
             <button
@@ -582,7 +583,8 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
         </AnimatePresence>
       </motion.div>
     </div>
-  )
+  </div>
+)
 }
 
 export default AiCourseGeneratorModal
