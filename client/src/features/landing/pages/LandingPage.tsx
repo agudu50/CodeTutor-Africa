@@ -62,6 +62,18 @@ const heroSlides = [
     subtitle: 'Get clear, simple explanations and gentle hints in plain English. No confusing jargon, no judgment, and zero internet needed.',
   },
   {
+    image: '/images/hero_classroom.jpg',
+    tag: 'Empowering Hubs & Schools',
+    title: 'Hands-On Learning in Every Community',
+    subtitle: 'High school students, career switchers, and coding clubs building future-ready software skills on standard, everyday laptops.',
+  },
+  {
+    image: '/images/hero_coder_outdoor.jpg',
+    tag: 'Learn Anywhere, Anytime',
+    title: 'Zero Data Obstacles, 100% Freedom',
+    subtitle: 'Study under an outdoor courtyard, on the commute, or late at night at home without worrying about Wi-Fi signals or data bundles.',
+  },
+  {
     image: '/images/terminal_student_offline.jpg',
     tag: 'Practice By Doing',
     title: 'Build Real Skills with Fun & Easy Lessons',
