@@ -827,22 +827,32 @@ export const LandingPage: React.FC = () => {
 
   const faqs = [
     {
+      num: '01',
+      tag: 'Beginners Welcome',
       q: 'Do I need any programming experience or a tech background?',
       a: 'Not at all! CodeTutor Africa is made for everyone—complete beginners, school students, professionals switching careers, and anyone curious about technology. Everything is explained in plain, simple English with relatable examples from daily life.',
     },
     {
+      num: '02',
+      tag: '100% Offline AI',
       q: 'Does CodeTutor Africa really work 100% without internet?',
       a: 'Yes! Once installed, the entire AI tutor, courses, practice sandbox, and arcade games run directly on your computer. You never need an internet connection, mobile data, or Wi-Fi to learn and practice.',
     },
     {
+      num: '03',
+      tag: 'Standard Laptops',
       q: 'Will it run smoothly on my regular everyday laptop?',
-      a: 'Yes! CodeTutor Africa is designed for standard laptops (such as 8 GB RAM machines with basic processors). It is extremely lightweight and will not slow down your computer or overheat your battery.',
+      a: 'Yes! CodeTutor Africa is designed for standard laptops (such as 4GB/8GB RAM machines with basic Intel or AMD processors). It is extremely lightweight and will not slow down your computer or overheat your battery.',
     },
     {
+      num: '04',
+      tag: 'All Backgrounds',
       q: 'Is this platform only for university students?',
       a: 'No! CodeTutor Africa is for everyone—high school students, self-taught beginners, working professionals, non-tech people, and university students alike. If you want to learn to code, this platform is for you.',
     },
     {
+      num: '05',
+      tag: '100% Free Forever',
       q: 'Is CodeTutor Africa completely free?',
       a: 'Yes, 100% free forever. There are no subscriptions, no monthly charges, no API keys, and no advertisements.',
     },
@@ -1950,49 +1960,85 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 7: FAQ ACCORDION (GLASSMORPHISM)
+          SECTION 7: FAQ ACCORDION (HOVER-ENABLED GLASSMORPHISM)
           ═══════════════════════════════════════════════════════════════ */}
       <section id="faq" className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 relative z-10">
         <div className="text-center space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
+            <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" /> Got Questions?
+          </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Frequently Asked Questions
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Everything you need to know about learning with CodeTutor Africa.
+            Hover or click any question to see how CodeTutor Africa works for you:
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {faqs.map((faq, idx) => {
             const isOpen = openFaq === idx
             return (
               <div
                 key={idx}
-                className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden transition-all shadow-sm hover:border-[#005F02]"
+                onMouseEnter={() => setOpenFaq(idx)}
+                className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm ${
+                  isOpen
+                    ? 'bg-white dark:bg-slate-900/90 border-[#005F02] dark:border-emerald-400/80 shadow-md ring-1 ring-[#005F02]/20'
+                    : 'bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200/90 dark:border-white/10 hover:border-[#005F02]/50 dark:hover:border-emerald-500/40'
+                }`}
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white hover:text-[#005F02] transition-colors"
+                  className="w-full px-5 py-4 sm:py-5 flex items-center justify-between text-left gap-4 transition-colors"
                 >
-                  <span>{faq.q}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-[#005F02]' : ''
-                    }`}
-                  />
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-mono font-black shrink-0 transition-colors ${
+                        isOpen
+                          ? 'bg-[#005F02] text-white'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                      }`}
+                    >
+                      {faq.num}
+                    </span>
+                    <div className="min-w-0">
+                      <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-white block leading-snug">
+                        {faq.q}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="hidden sm:inline-block text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                      {faq.tag}
+                    </span>
+                    <div
+                      className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                        isOpen
+                          ? 'bg-[#005F02]/10 text-[#005F02] dark:text-emerald-400 rotate-180'
+                          : 'text-slate-400'
+                      }`}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
+                  </div>
                 </button>
-                <AnimatePresence>
+
+                <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-4 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-t border-slate-200 dark:border-white/[0.06] pt-3">
-                        {faq.a}
+                      <div className="px-5 sm:px-6 pb-5 pt-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800">
+                        <div className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800/80">
+                          {faq.a}
+                        </div>
                       </div>
                     </motion.div>
                   )}
