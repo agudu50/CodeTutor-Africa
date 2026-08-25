@@ -1645,92 +1645,100 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Featured Testimonial Slideshow Box */}
-        <div className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 p-6 sm:p-10 shadow-xl dark:shadow-2xl overflow-hidden min-h-[340px] sm:min-h-[310px] flex flex-col justify-between">
+        <div className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 p-5 sm:p-8 lg:p-10 shadow-xl dark:shadow-2xl overflow-hidden min-h-[460px] md:min-h-[400px] flex flex-col justify-between">
           {/* Top Subtle Accent Beam */}
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
 
-          {/* Navigation Arrows */}
-          <div className="absolute top-6 right-6 flex items-center gap-2 z-20">
-            <button
-              type="button"
-              onClick={() => setTestimonialSlide((prev) => (prev === 0 ? studentTestimonials.length - 1 : prev - 1))}
-              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
-              aria-label="Previous testimonial"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setTestimonialSlide((prev) => (prev + 1) % studentTestimonials.length)}
-              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
-              aria-label="Next testimonial"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          {/* Top Header: Rating + Prev/Next Controls */}
+          <div className="flex items-center justify-between gap-3 pb-4 shrink-0 border-b border-slate-200/70 dark:border-slate-800/70">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-[#005F02] dark:text-emerald-400">
+                {[...Array(5)].map((_, i) => (
+                  <StarIcon key={i} className="w-4 h-4" />
+                ))}
+              </div>
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 font-mono hidden sm:inline">5.0 Verified Learner Story</span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setTestimonialSlide((prev) => (prev === 0 ? studentTestimonials.length - 1 : prev - 1))}
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
+                aria-label="Previous testimonial"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setTestimonialSlide((prev) => (prev + 1) % studentTestimonials.length)}
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
+                aria-label="Next testimonial"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          {/* Animated Testimonial Content */}
+          {/* Animated Testimonial Content (2-Column Grid on Desktop with Large Image / Stacked on Mobile) */}
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonialSlide}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.25 }}
-              className="space-y-6 flex-1 flex flex-col justify-between"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22 }}
+              className="py-4 sm:py-6 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-center flex-1"
             >
-              <div className="space-y-4 pr-16 sm:pr-24">
-                {/* 5 Stars Rating & Quote Icon */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-[#005F02] dark:text-emerald-400">
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon key={i} className="w-4 h-4" />
-                    ))}
+              {/* Left Column: Prominent Large Portrait Photo Card */}
+              <div className="md:col-span-5 lg:col-span-4 flex justify-center md:justify-start">
+                <div className="relative w-full max-w-[260px] md:max-w-none aspect-square sm:h-64 md:h-72 rounded-3xl overflow-hidden border-2 border-[#005F02]/40 dark:border-emerald-500/40 shadow-xl group">
+                  <img
+                    src={studentTestimonials[testimonialSlide].image}
+                    alt={studentTestimonials[testimonialSlide].name}
+                    className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent flex flex-col justify-end p-4 text-white">
+                    <span className="text-[10px] font-mono uppercase tracking-wider font-extrabold text-emerald-300">
+                      {studentTestimonials[testimonialSlide].tag}
+                    </span>
+                    <span className="text-sm font-extrabold flex items-center gap-1">
+                      <MapPinIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      {studentTestimonials[testimonialSlide].location}
+                    </span>
                   </div>
-                  <Quote className="w-6 h-6 text-[#005F02]/30 dark:text-emerald-400/30 shrink-0" />
                 </div>
-
-                {/* Learner Quote */}
-                <blockquote className="text-base sm:text-xl md:text-2xl text-slate-800 dark:text-slate-100 font-medium italic leading-relaxed">
-                  "{studentTestimonials[testimonialSlide].quote}"
-                </blockquote>
               </div>
 
-              {/* Author Profile Footer */}
-              <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="relative">
-                    <img
-                      src={studentTestimonials[testimonialSlide].image}
-                      alt={studentTestimonials[testimonialSlide].name}
-                      className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl object-cover border-2 border-[#005F02]/40 dark:border-emerald-500/40 shadow-md"
-                    />
-                    <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#005F02] dark:bg-emerald-400 border-2 border-white dark:border-slate-900" />
-                  </div>
-                  <div>
-                    <div className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
-                      {studentTestimonials[testimonialSlide].name}
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
-                      <span>{studentTestimonials[testimonialSlide].role}</span>
-                      <span>•</span>
-                      <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <MapPinIcon className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
-                        {studentTestimonials[testimonialSlide].location}
-                      </span>
-                    </div>
-                  </div>
+              {/* Right Column: Quote, Profile Details & Badges */}
+              <div className="md:col-span-7 lg:col-span-8 flex flex-col justify-between space-y-4 text-left">
+                <div className="space-y-3">
+                  <Quote className="w-8 h-8 text-[#005F02]/30 dark:text-emerald-400/30 shrink-0" />
+                  <blockquote className="text-base sm:text-xl md:text-2xl text-slate-800 dark:text-slate-100 font-medium italic leading-relaxed">
+                    "{studentTestimonials[testimonialSlide].quote}"
+                  </blockquote>
                 </div>
 
-                <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-[#005F02]/10 dark:bg-emerald-500/15 text-[#005F02] dark:text-emerald-300 border border-[#005F02]/30 dark:border-emerald-500/30">
-                  {studentTestimonials[testimonialSlide].tag}
-                </span>
+                <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                      {studentTestimonials[testimonialSlide].name}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      {studentTestimonials[testimonialSlide].role}
+                    </div>
+                  </div>
+
+                  <span className="text-xs font-mono font-bold px-3.5 py-1.5 rounded-xl bg-[#005F02]/10 dark:bg-emerald-500/15 text-[#005F02] dark:text-emerald-300 border border-[#005F02]/30 dark:border-emerald-500/30">
+                    {studentTestimonials[testimonialSlide].tag}
+                  </span>
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
 
           {/* Bottom Interactive Thumbnail Selector Bar */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 pt-6 mt-2 overflow-x-auto no-scrollbar">
+          <div className="flex items-center justify-start sm:justify-center gap-2 pt-3 border-t border-slate-200/70 dark:border-slate-800/70 overflow-x-auto no-scrollbar w-full px-1">
             {studentTestimonials.map((student, idx) => {
               const isCurrent = testimonialSlide === idx
               return (
@@ -1738,19 +1746,19 @@ export const LandingPage: React.FC = () => {
                   key={student.name}
                   type="button"
                   onClick={() => setTestimonialSlide(idx)}
-                  className={`px-2.5 py-1.5 rounded-2xl border transition-all flex items-center gap-2 shrink-0 ${
+                  className={`px-3 py-1.5 rounded-full border transition-all flex items-center gap-2 shrink-0 ${
                     isCurrent
-                      ? 'bg-[#005F02] text-white border-[#005F02] shadow-md scale-102'
-                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-[#005F02]/50'
+                      ? 'bg-[#005F02] text-white border-[#005F02] shadow-md scale-102 font-bold'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]/50 font-medium'
                   }`}
                   aria-label={`Show testimonial from ${student.name}`}
                 >
                   <img
                     src={student.image}
-                    alt={student.name}
-                    className="w-5 h-5 rounded-full object-cover shrink-0"
+                    alt=""
+                    className="w-6 h-6 rounded-full object-cover shrink-0 border border-white/30"
                   />
-                  <span className="text-[11px] font-bold whitespace-nowrap">{student.name.split(' ')[0]}</span>
+                  <span className="text-xs whitespace-nowrap">{student.name.split(' ')[0]}</span>
                 </button>
               )
             })}
