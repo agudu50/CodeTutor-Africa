@@ -318,7 +318,6 @@ function renderVSCodeTokens(lineText: string, lineIndex: number) {
 interface TerminalLivePreviewProps {
   activeTab: number
   onManualSelect: (tab: number) => void
-  autoAdvanceProgress: number
   isAutoAdvancing: boolean
   toggleAutoAdvance: () => void
 }
@@ -326,7 +325,6 @@ interface TerminalLivePreviewProps {
 const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
   activeTab,
   onManualSelect,
-  autoAdvanceProgress,
   isAutoAdvancing,
   toggleAutoAdvance,
 }) => {
@@ -382,9 +380,11 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
       {isAutoAdvancing && (
         <div className="absolute top-0 inset-x-0 h-1 bg-slate-800 z-20 overflow-hidden">
           <motion.div
+            key={activeTab}
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 4.2, ease: 'linear' }}
             className="h-full bg-gradient-to-r from-[#005F02] via-emerald-400 to-[#005F02]"
-            style={{ width: `${autoAdvanceProgress}%` }}
-            transition={{ ease: 'linear' }}
           />
         </div>
       )}
@@ -635,17 +635,154 @@ const AmbientLightBackground: React.FC = memo(() => {
 AmbientLightBackground.displayName = 'AmbientLightBackground'
 
 /* ═══════════════════════════════════════════════════════════════
+   NAVBAR COMPONENT (ISOLATED STATE FOR INSTANT MOBILE MENU)
+   ═══════════════════════════════════════════════════════════════ */
+interface LandingNavbarProps {
+  isDark: boolean
+  onToggleTheme: () => void
+  navLinks: { href: string; label: string }[]
+}
+
+const LandingNavbar: React.FC<LandingNavbarProps> = memo(({ isDark, onToggleTheme, navLinks }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  return (
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        {/* Brand Logo */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-2xs group-hover:border-emerald-500/50 transition-colors overflow-hidden">
+            <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
+              CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
+            </span>
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+              <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 inline-block animate-pulse" />
+              <span>100% Offline AI Mentor</span>
+            </div>
+          </div>
+        </Link>
+
+        {/* Desktop Nav Links */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#005F02] transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        {/* Right Action Buttons */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            className="p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-colors cursor-pointer touch-manipulation"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun className="w-4 h-4 text-[#005F02]" /> : <Moon className="w-4 h-4 text-slate-600" />}
+          </button>
+
+          {/* Auth CTAs */}
+          <div className="hidden sm:flex items-center gap-2">
+            <Link to="/signin">
+              <button className="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                Sign In
+              </button>
+            </Link>
+            <Link to="/dashboard">
+              <button className="px-4 py-2 rounded-lg text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer">
+                <span>Launch Workspace</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </Link>
+          </div>
+
+          {/* Mobile Hamburger */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 cursor-pointer touch-manipulation active:scale-95 transition-transform"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Dropdown Menu Drawer (Instant GPU-Accelerated Transition) */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 px-4 py-4 space-y-3 shadow-2xl overflow-hidden"
+          >
+            {/* Quick Offline Status Bar */}
+            <div className="p-2.5 rounded-xl bg-[#005F02]/10 dark:bg-emerald-950/50 border border-[#005F02]/20 flex items-center justify-between text-xs font-mono">
+              <span className="flex items-center gap-1.5 text-[#005F02] dark:text-emerald-400 font-bold">
+                <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                Local AI Engine
+              </span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">100% Offline</span>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-[#005F02] transition-colors"
+                >
+                  <span>{link.label}</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2.5">
+              <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                <button className="w-full py-3 rounded-xl text-xs font-extrabold bg-[#005F02] hover:bg-[#004e02] text-white shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                  <span>Launch Workspace</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </Link>
+              <Link to="/signin" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                <button className="w-full py-2.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer">
+                  Sign In
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  )
+})
+LandingNavbar.displayName = 'LandingNavbar'
+
+/* ═══════════════════════════════════════════════════════════════
    MAIN LANDING COMPONENT (FULL #005F02 CONSISTENCY)
    ═══════════════════════════════════════════════════════════════ */
 export const LandingPage: React.FC = () => {
   const { isDark, setTheme } = useTheme()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isSlidePaused, setIsSlidePaused] = useState(false)
   const [activeCodeTab, setActiveCodeTab] = useState(0)
   const [activeQuestionTab, setActiveQuestionTab] = useState<number>(0)
   const [isCodeAutoActive, setIsCodeAutoActive] = useState(true)
-  const [codeProgress, setCodeProgress] = useState(0)
   const [testimonialSlide, setTestimonialSlide] = useState(0)
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -668,32 +805,17 @@ export const LandingPage: React.FC = () => {
     return () => clearInterval(timer)
   }, [isSlidePaused])
 
-  // Smooth Auto-advance for Code IDE & AI Tutor Sandbox (4s cycle with progress bar)
+  // Auto-advance for Code IDE & AI Tutor Sandbox (4.2s cycle)
   useEffect(() => {
-    if (!isCodeAutoActive) {
-      setCodeProgress(0)
-      return
-    }
-    const intervalMs = 40
-    const totalMs = 4200
-    const step = (intervalMs / totalMs) * 100
-
+    if (!isCodeAutoActive) return
     const timer = setInterval(() => {
-      setCodeProgress((prev) => {
-        if (prev + step >= 100) {
-          setActiveCodeTab((curr) => (curr + 1) % codeExamples.length)
-          return 0
-        }
-        return prev + step
-      })
-    }, intervalMs)
-
+      setActiveCodeTab((curr) => (curr + 1) % codeExamples.length)
+    }, 4200)
     return () => clearInterval(timer)
   }, [isCodeAutoActive])
 
   const handleManualCodeSelect = (tabIdx: number) => {
     setActiveCodeTab(tabIdx)
-    setCodeProgress(0)
   }
 
   const toggleCodeAutoAdvance = () => {
@@ -862,131 +984,13 @@ export const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-300">
 
       {/* ═══════════════════════════════════════════════════════════════
-          HEADER NAVIGATION
+          HEADER NAVIGATION (ISOLATED PERFORMANCE OPTIMIZED COMPONENT)
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-2xs group-hover:border-emerald-500/50 transition-colors overflow-hidden">
-              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
-                CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
-              </span>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 inline-block animate-pulse" />
-                <span>100% Offline AI Mentor</span>
-              </div>
-            </div>
-          </Link>
-
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="px-3.5 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#005F02] transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Right Action Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Theme Toggle */}
-            <button
-              type="button"
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className="p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-4 h-4 text-[#005F02]" /> : <Moon className="w-4 h-4 text-slate-600" />}
-            </button>
-
-            {/* Auth CTAs */}
-            <div className="hidden sm:flex items-center gap-2">
-              <Link to="/signin">
-                <button className="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                  Sign In
-                </button>
-              </Link>
-              <Link to="/dashboard">
-                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-sm transition-colors flex items-center gap-1.5">
-                  <span>Launch Workspace</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </Link>
-            </div>
-
-            {/* Mobile Hamburger */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Dropdown Menu Drawer */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 py-5 space-y-3 shadow-2xl"
-            >
-              {/* Quick Offline Status Bar */}
-              <div className="p-2.5 rounded-xl bg-[#005F02]/10 dark:bg-emerald-950/50 border border-[#005F02]/20 flex items-center justify-between text-xs font-mono">
-                <span className="flex items-center gap-1.5 text-[#005F02] dark:text-emerald-400 font-bold">
-                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                  Local AI Engine
-                </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">100% Offline</span>
-              </div>
-
-              {/* Navigation Links */}
-              <div className="space-y-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-[#005F02] transition-colors"
-                  >
-                    <span>{link.label}</span>
-                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </a>
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2.5">
-                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                  <button className="w-full py-3 rounded-xl text-xs font-extrabold bg-[#005F02] hover:bg-[#004e02] text-white shadow-md flex items-center justify-center gap-2">
-                    <span>Launch Workspace</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </Link>
-                <Link to="/signin" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                  <button className="w-full py-2.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
-                    Sign In
-                  </button>
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
+      <LandingNavbar
+        isDark={isDark}
+        onToggleTheme={() => setTheme(isDark ? 'light' : 'dark')}
+        navLinks={navLinks}
+      />
 
       {/* ═══════════════════════════════════════════════════════════════
           SECTION 1: HERO SECTION
@@ -1486,7 +1490,6 @@ export const LandingPage: React.FC = () => {
             <TerminalLivePreview
               activeTab={activeCodeTab}
               onManualSelect={handleManualCodeSelect}
-              autoAdvanceProgress={codeProgress}
               isAutoAdvancing={isCodeAutoActive}
               toggleAutoAdvance={toggleCodeAutoAdvance}
             />

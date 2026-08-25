@@ -101,7 +101,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
           <button
             type="button"
             onClick={onOpenMobileNav}
-            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer"
+            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer touch-manipulation active:scale-95 transition-transform"
             aria-label="Open navigation menu"
           >
             <Menu className="w-4 h-4 sm:w-5 sm:h-5" />

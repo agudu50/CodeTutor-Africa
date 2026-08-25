@@ -46,19 +46,31 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = memo(({ isOpen,
     }
   }, [isOpen])
 
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 z-50 md:hidden flex">
+    <div
+      className={cn(
+        'fixed inset-0 z-50 md:hidden flex transition-[visibility] duration-200 ease-out',
+        isOpen ? 'pointer-events-auto visible' : 'pointer-events-none invisible'
+      )}
+      aria-hidden={!isOpen}
+    >
       {/* Dark Solid Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/70 transition-opacity animate-in fade-in"
+        className={cn(
+          'fixed inset-0 bg-slate-950/70 transition-opacity duration-200 ease-out',
+          isOpen ? 'opacity-100' : 'opacity-0'
+        )}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Drawer Panel */}
-      <div className="relative w-4/5 max-w-xs bg-white dark:bg-slate-900 h-full flex flex-col p-4 shadow-2xl z-10 animate-in slide-in-from-left duration-200 border-r border-slate-200 dark:border-slate-800">
+      {/* Drawer Panel (Instant GPU-Accelerated Hardware Transform) */}
+      <div
+        className={cn(
+          'relative w-4/5 max-w-xs bg-white dark:bg-slate-900 h-full flex flex-col p-4 shadow-2xl z-10 border-r border-slate-200 dark:border-slate-800 transition-transform duration-200 ease-out transform will-change-transform',
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
         {/* Drawer Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
@@ -77,7 +89,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = memo(({ isOpen,
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer touch-manipulation active:scale-95"
             aria-label="Close navigation"
           >
             <X className="w-5 h-5" />
