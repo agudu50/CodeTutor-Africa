@@ -498,7 +498,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
 TerminalLivePreview.displayName = 'TerminalLivePreview'
 
 /* ═══════════════════════════════════════════════════════════════
-   LIGHT AMBIENT BACKGROUND ANIMATION COMPONENT (VIBRANT & VISIBLE)
+   LIGHT AMBIENT BACKGROUND ANIMATION COMPONENT (GPU ACCELERATED)
    ═══════════════════════════════════════════════════════════════ */
 const AmbientLightBackground: React.FC = memo(() => {
   const particles = [
@@ -527,93 +527,56 @@ const AmbientLightBackground: React.FC = memo(() => {
 
   return (
     <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      {/* Vibrant Ambient Glow Orb 1 - Top Left */}
-      <motion.div
-        animate={{
-          x: [0, 80, -50, 0],
-          y: [0, -60, 50, 0],
-          scale: [1, 1.35, 0.9, 1],
-          opacity: [0.45, 0.8, 0.45],
-        }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-10 left-5 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#005F02]/30 via-emerald-500/20 to-transparent dark:from-[#005F02]/45 dark:via-emerald-400/25 dark:to-transparent blur-3xl"
+      {/* Vibrant Ambient Glow Orb 1 - Top Left (GPU Accelerated) */}
+      <div
+        className="absolute top-10 left-5 w-[380px] sm:w-[600px] h-[380px] sm:h-[600px] rounded-full bg-gradient-to-br from-[#005F02]/25 via-emerald-500/15 to-transparent dark:from-[#005F02]/40 dark:via-emerald-400/20 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-1 opacity-70"
       />
 
-      {/* Vibrant Ambient Glow Orb 2 - Middle Right */}
-      <motion.div
-        animate={{
-          x: [0, -90, 60, 0],
-          y: [0, 70, -60, 0],
-          scale: [1, 1.3, 0.95, 1],
-          opacity: [0.4, 0.75, 0.4],
-        }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-        className="absolute top-[30%] right-0 w-[650px] h-[650px] rounded-full bg-gradient-to-tl from-emerald-600/25 via-[#005F02]/25 to-transparent dark:from-emerald-400/35 dark:via-[#005F02]/35 dark:to-transparent blur-3xl"
+      {/* Vibrant Ambient Glow Orb 2 - Middle Right (GPU Accelerated) */}
+      <div
+        className="absolute top-[30%] right-0 w-[400px] sm:w-[650px] h-[400px] sm:h-[650px] rounded-full bg-gradient-to-tl from-emerald-600/20 via-[#005F02]/20 to-transparent dark:from-emerald-400/30 dark:via-[#005F02]/30 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-2 opacity-65"
       />
 
-      {/* Vibrant Ambient Glow Orb 3 - Lower Left */}
-      <motion.div
-        animate={{
-          x: [0, 70, -70, 0],
-          y: [0, -70, 60, 0],
-          scale: [1, 1.25, 0.9, 1],
-          opacity: [0.45, 0.85, 0.45],
-        }}
-        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-        className="absolute top-[60%] left-0 w-[620px] h-[620px] rounded-full bg-gradient-to-tr from-[#005F02]/35 via-emerald-600/20 to-transparent dark:from-[#005F02]/50 dark:via-emerald-500/30 dark:to-transparent blur-3xl"
+      {/* Vibrant Ambient Glow Orb 3 - Lower Left (GPU Accelerated) */}
+      <div
+        className="absolute top-[60%] left-0 w-[380px] sm:w-[620px] h-[380px] sm:h-[620px] rounded-full bg-gradient-to-tr from-[#005F02]/30 via-emerald-600/15 to-transparent dark:from-[#005F02]/45 dark:via-emerald-500/25 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-3 opacity-70"
       />
 
-      {/* Vibrant Ambient Glow Orb 4 - Bottom Center */}
-      <motion.div
-        animate={{
-          x: [0, -60, 50, 0],
-          y: [0, 50, -50, 0],
-          scale: [1, 1.3, 1, 1],
-          opacity: [0.35, 0.7, 0.35],
-        }}
-        transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 4.5 }}
-        className="absolute bottom-5 right-1/4 w-[580px] h-[580px] rounded-full bg-gradient-to-bl from-[#005F02]/30 via-emerald-500/20 to-transparent dark:from-[#005F02]/40 dark:via-emerald-400/25 dark:to-transparent blur-3xl"
+      {/* Vibrant Ambient Glow Orb 4 - Bottom Center (GPU Accelerated) */}
+      <div
+        className="absolute bottom-5 right-1/4 w-[360px] sm:w-[580px] h-[360px] sm:h-[580px] rounded-full bg-gradient-to-bl from-[#005F02]/25 via-emerald-500/15 to-transparent dark:from-[#005F02]/35 dark:via-emerald-400/20 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-4 opacity-60"
       />
 
-      {/* Floating Animated Code Badges */}
+      {/* Floating Animated Code Badges (GPU Accelerated) */}
       {floatingBadges.map((badge, idx) => (
-        <motion.div
+        <div
           key={idx}
-          style={{ top: badge.top, left: badge.left, right: badge.right }}
-          animate={{
-            y: [0, -22, 0],
-            opacity: [0.3, 0.75, 0.3],
+          style={{
+            top: badge.top,
+            left: badge.left,
+            right: badge.right,
+            animationDelay: `${badge.delay}s`,
           }}
-          transition={{
-            duration: 7 + idx,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: badge.delay,
-          }}
-          className="absolute hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-[#005F02]/25 dark:border-emerald-500/30 shadow-md backdrop-blur-md text-[11px] font-mono font-bold text-[#005F02] dark:text-emerald-300"
+          className="absolute hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-[#005F02]/25 dark:border-emerald-500/30 shadow-md backdrop-blur-md text-[11px] font-mono font-bold text-[#005F02] dark:text-emerald-300 animate-float-badge"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
           <span>{badge.text}</span>
-        </motion.div>
+        </div>
       ))}
 
-      {/* Floating Glowing Particle Matrix */}
+      {/* Floating Glowing Particle Matrix (GPU Accelerated) */}
       {particles.map((p, idx) => (
-        <motion.div
+        <div
           key={idx}
-          style={{ top: p.top, left: p.left, width: p.size, height: p.size }}
-          animate={{
-            y: [0, -75, 0],
-            opacity: [0.3, 1, 0.3],
-            scale: [0.8, 1.5, 0.8],
+          style={{
+            top: p.top,
+            left: p.left,
+            width: p.size,
+            height: p.size,
+            animationDuration: `${p.duration}s`,
+            animationDelay: `${p.delay}s`,
           }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: p.delay,
-          }}
-          className="absolute rounded-full bg-[#005F02] dark:bg-emerald-400 shadow-[0_0_14px_#005F02] dark:shadow-[0_0_16px_#34d399]"
+          className="absolute rounded-full bg-[#005F02] dark:bg-emerald-400 shadow-[0_0_14px_#005F02] dark:shadow-[0_0_16px_#34d399] animate-float-particle"
         />
       ))}
 
@@ -1000,20 +963,19 @@ export const LandingPage: React.FC = () => {
         onMouseEnter={() => setIsSlidePaused(true)}
         onMouseLeave={() => setIsSlidePaused(false)}
       >
-        {/* Background Image Carousel */}
-        <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentSlide}
-              src={heroSlides[currentSlide].image}
-              alt={heroSlides[currentSlide].title}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="w-full h-full object-cover object-center"
+        {/* Background Image Carousel (Smooth GPU Crossfade) */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {heroSlides.map((slide, idx) => (
+            <img
+              key={slide.image}
+              src={slide.image}
+              alt={slide.title}
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out will-change-[opacity] ${
+                currentSlide === idx ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
             />
-          </AnimatePresence>
+          ))}
 
           {/* Solid Dark Tint Overlay for High Contrast */}
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[1px]" />
@@ -1171,11 +1133,7 @@ export const LandingPage: React.FC = () => {
             ═══════════════════════════════════════════════════════════════ */}
         <div className="relative flex flex-col items-center justify-center -my-3 z-30 pointer-events-none">
         <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 40] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" />
         </div>
         
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
@@ -1184,11 +1142,7 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 40] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: 'linear', delay: 0.8 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" style={{ animationDelay: '0.9s' }} />
         </div>
       </div>
 
@@ -1351,22 +1305,14 @@ export const LandingPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" />
         </div>
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
           <span className="font-bold tracking-wider">ALL-IN-ONE LEARNING</span>
         </div>
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" style={{ animationDelay: '0.9s' }} />
         </div>
       </div>
 
@@ -1629,22 +1575,14 @@ export const LandingPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" />
         </div>
         <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
           <span className="font-bold tracking-wider">LEARNER STORIES</span>
         </div>
         <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" style={{ animationDelay: '0.9s' }} />
         </div>
       </div>
 
