@@ -979,67 +979,150 @@ export const LandingPage: React.FC = () => {
           SECTION 2: INTERCONNECTED LINKED GLASSMORPHISM STATS STRIP
           ═══════════════════════════════════════════════════════════════ */}
       <section ref={statsRef} className="pb-16 pt-2 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl overflow-hidden">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
+        <div className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 shadow-xl dark:shadow-[0_10px_35px_rgba(0,0,0,0.5)] overflow-hidden">
+          {/* Top Subtle Ambient Border Light */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 dark:divide-slate-800/80 text-center">
             
             {/* Stat Card 1 -> Links to #specs */}
             <a
               href="#specs"
-              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
-                <Shield className="w-4 h-4" />
+              {/* Category Pill Tag */}
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
+                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                  Air-Gapped
+                </span>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
+
+              {/* Icon Tile */}
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
+                <Shield className="w-5 h-5" />
+              </div>
+
+              {/* Stat Number */}
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
                 {statOffline}%
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">100% Offline</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">Zero data costs →</div>
+
+              {/* Label & Action */}
+              <div className="space-y-1">
+                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  100% Offline
+                </div>
+                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                  <span>Zero data costs</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
             </a>
 
             {/* Stat Card 2 -> Links to #specs */}
             <a
               href="#specs"
-              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
-                <Zap className="w-4 h-4" />
+              {/* Category Pill Tag */}
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
+                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                  Zero Latency
+                </span>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
+
+              {/* Icon Tile */}
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
+                <Zap className="w-5 h-5" />
+              </div>
+
+              {/* Stat Number */}
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
                 Instant
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Fast Responses</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">Directly on your laptop →</div>
+
+              {/* Label & Action */}
+              <div className="space-y-1">
+                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  Fast Responses
+                </div>
+                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                  <span>Directly on your laptop</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
             </a>
 
             {/* Stat Card 3 -> Links to #features */}
             <a
               href="#features"
-              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
-                <Code2 className="w-4 h-4" />
+              {/* Category Pill Tag */}
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
+                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                  Comprehensive
+                </span>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
+
+              {/* Icon Tile */}
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
+                <Code2 className="w-5 h-5" />
+              </div>
+
+              {/* Stat Number */}
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
                 {statExercises}+
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Hands-On Lessons</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">Python, JS &amp; Java →</div>
+
+              {/* Label & Action */}
+              <div className="space-y-1">
+                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  Hands-On Lessons
+                </div>
+                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                  <span>Python, JS &amp; Java</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
             </a>
 
             {/* Stat Card 4 -> Links to #demo */}
             <a
               href="#demo"
-              className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
+              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
-                <Bot className="w-4 h-4" />
+              {/* Category Pill Tag */}
+              <div className="flex justify-center">
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
+                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                  Socratic AI
+                </span>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
+
+              {/* Icon Tile */}
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
+                <Bot className="w-5 h-5" />
+              </div>
+
+              {/* Stat Number */}
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
                 {statModes}
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors">Friendly Modes</div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">Explain, Hint &amp; Quiz →</div>
+
+              {/* Label & Action */}
+              <div className="space-y-1">
+                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  Friendly Modes
+                </div>
+                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                  <span>Explain, Hint &amp; Quiz</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
             </a>
 
           </div>
