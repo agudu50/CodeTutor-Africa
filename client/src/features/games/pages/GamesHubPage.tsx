@@ -21,7 +21,6 @@ import {
   Trophy,
   Flame,
   Clock,
-  Sparkles,
   Volume2,
   VolumeX,
   Wifi,
@@ -179,7 +178,7 @@ export const GamesHubPage: React.FC = () => {
 
                   <div className="flex items-center gap-2 flex-wrap pt-1">
                     <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                      <Sparkles className="w-3 h-3" /> 3D Three.js
+                      <Gamepad2 className="w-3 h-3" /> 3D Three.js
                     </span>
                     {isOffline ? (
                       <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
@@ -273,7 +272,7 @@ export const GamesHubPage: React.FC = () => {
 
             <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-2xs">
               <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                <Bug className="w-3.5 h-3.5 text-emerald-500" />
                 <span className="font-medium text-[11px] uppercase">Bug Squashed</span>
               </div>
               <p className="text-lg sm:text-xl font-extrabold font-mono text-slate-900 dark:text-white">

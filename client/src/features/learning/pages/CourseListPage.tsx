@@ -8,7 +8,7 @@ import { Input, Dropdown } from '@/components/ui'
 import {
   Search,
   BookOpen,
-  Sparkles,
+  Zap,
   Bot,
   ArrowRight,
   Code2,
@@ -57,7 +57,7 @@ export const CourseListPage: React.FC = () => {
           <div className="space-y-2.5 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30 text-[10px] font-mono font-black">
-                <Sparkles className="w-3.5 h-3.5" />
+                <Zap className="w-3.5 h-3.5" />
                 <span>OFFLINE LLAMA COURSE ARCHITECT</span>
               </span>
               <span className="text-[10px] font-mono text-slate-400 font-semibold">
@@ -104,7 +104,7 @@ export const CourseListPage: React.FC = () => {
               onClick={() => setIsAiModalOpen(true)}
               className="px-6 py-3.5 rounded-2xl bg-[#005F02] hover:bg-[#004e02] active:scale-[0.99] text-white font-black text-xs sm:text-sm shadow-lg shadow-[#005F02]/30 flex items-center justify-center gap-2.5 transition-all cursor-pointer group"
             >
-              <Sparkles className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+              <Zap className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
               <span>Prompt AI to Generate Course</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -152,7 +152,7 @@ export const CourseListPage: React.FC = () => {
                 : 'text-slate-600 dark:text-slate-400 hover:text-[#005F02]'
             }`}
           >
-            <Sparkles className="w-3 h-3" />
+            <Zap className="w-3 h-3" />
             <span>AI Generated ({courses.filter((c) => c.isAiGenerated).length})</span>
           </button>
         </div>
@@ -202,7 +202,7 @@ export const CourseListPage: React.FC = () => {
             onClick={() => setIsAiModalOpen(true)}
             className="px-5 py-2.5 rounded-xl bg-[#005F02] text-white font-bold text-xs inline-flex items-center gap-2 hover:bg-[#004e02] transition-colors cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Zap className="w-3.5 h-3.5" />
             <span>Generate this Course with AI</span>
           </button>
         </div>

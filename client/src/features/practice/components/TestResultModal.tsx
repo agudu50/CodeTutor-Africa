@@ -8,7 +8,6 @@ import {
   Bot,
   Copy,
   Check,
-  Sparkles,
   X,
   ArrowRight,
   Shield,
@@ -242,7 +241,7 @@ export const TestResultModal: React.FC<TestResultModalProps> = memo(({
               {/* Case Footer Telemetry */}
               <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100/60 dark:bg-[#181818] border-t border-slate-200 dark:border-slate-800 flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                 <span className="flex items-center gap-1.5 text-emerald-600 dark:text-[#4ec9b0]">
-                  <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                  <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                   <span>Verified 0 memory leaks</span>
                 </span>
                 <span>Memory: 0.1 MB • Stack Frames: 4</span>

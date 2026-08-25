@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { aiCourseGeneratorService } from '@/services/learning/ai-course-generator.service'
 import { ProgrammingLanguage, DifficultyLevel } from '@/types/common'
 import {
-  Sparkles,
+  Zap,
   X,
   ArrowRight,
   Bot,
@@ -237,7 +237,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
               <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-slate-800" />
                 <div className="absolute inset-0 rounded-full border-4 border-[#005F02] border-t-transparent animate-spin" />
-                <Sparkles className="w-8 h-8 text-[#005F02] animate-pulse" />
+                <Zap className="w-8 h-8 text-[#005F02] animate-pulse" />
               </div>
 
               <div className="space-y-2 max-w-md mx-auto">
@@ -284,7 +284,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
               {/* Quick Suggestions Chips */}
               <div className="space-y-1.5">
                 <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-[#005F02]" />
+                  <Zap className="w-3.5 h-3.5 text-[#005F02]" />
                   <span>Popular Topic Ideas:</span>
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -573,7 +573,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   disabled={!prompt.trim()}
                   className="px-6 py-2.5 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs shadow-md shadow-[#005F02]/30 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Zap className="w-4 h-4" />
                   <span>Synthesize Full Course</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui'
 import {
-  Sparkles,
   ArrowRight,
   CheckCircle2,
   Shield,
@@ -27,7 +26,7 @@ export const CtaSection: React.FC = memo(() => {
             <div className="space-y-4 max-w-4xl mx-auto">
               {/* Step Badge */}
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-950 border border-brand-200 dark:border-brand-800 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 font-mono shadow-xs">
-                <Sparkles className="w-3.5 h-3.5" />
+                <Zap className="w-3.5 h-3.5" />
                 Step 06 • Ready to Begin?
               </span>
 

@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { ActivityItem } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
-import { CheckCircle2, Bot, BookOpen, Bug, Sparkles } from 'lucide-react'
+import { CheckCircle2, Bot, BookOpen, Bug, Zap } from 'lucide-react'
 
 const activityIcons = {
   practice_solved: {
@@ -29,7 +29,7 @@ export const ActivityFeed: React.FC<{ activities: ActivityItem[] }> = memo(({ ac
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-              <Sparkles className="w-4 h-4" />
+              <Zap className="w-4 h-4" />
             </div>
             <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
               Recent Offline Study Activity

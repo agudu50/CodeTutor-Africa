@@ -10,7 +10,7 @@ import { FixSuggestionCard } from '../components/FixSuggestionCard'
 import { Button, Dropdown } from '@/components/ui'
 import {
   Bug,
-  Sparkles,
+  Zap,
   Shield,
   Terminal,
   Code2,
@@ -328,7 +328,7 @@ export const DebuggerPage: React.FC = () => {
           isLoading={isAnalyzing}
           disabled={!code.trim()}
           className="font-bold text-sm bg-[#005F02] hover:bg-[#004e02] text-white shadow-md shadow-[#005F02]/20 px-8 py-3 rounded-2xl cursor-pointer"
-          leftIcon={<Sparkles className="w-4 h-4 text-white" />}
+          leftIcon={<Zap className="w-4 h-4 text-white" />}
         >
           {isAnalyzing ? 'Analyzing Root Cause Offline...' : 'Diagnose & Suggest Fix with AI'}
         </Button>

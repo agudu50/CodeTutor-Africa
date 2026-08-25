@@ -12,7 +12,6 @@ import {
   Cpu,
   Save,
   CheckCircle2,
-  Sparkles,
   Shield,
   Check,
   User,
@@ -501,7 +500,7 @@ export const SettingsPage: React.FC = () => {
             {/* Validation Toolbar */}
             <div className="p-4 rounded-xl bg-brand-50/60 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
               <div className="flex items-center gap-2.5 text-xs text-brand-900 dark:text-brand-200">
-                <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+                <Cpu className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
                 <span className="font-medium">
                   Offline RAG vector embeddings and pedagogical tokenizer pre-compiled in browser IndexedDB storage.
                 </span>

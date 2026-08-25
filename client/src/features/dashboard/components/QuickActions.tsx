@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
-import { Bot, Bug, Code2, Gamepad2, ArrowRight, Sparkles } from 'lucide-react'
+import { Bot, Bug, Code2, Gamepad2, ArrowRight, Zap } from 'lucide-react'
 
 export const QuickActions: React.FC = memo(() => {
   const actions = [
@@ -50,7 +50,7 @@ export const QuickActions: React.FC = memo(() => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
-                <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                <Zap className="w-4 h-4 text-brand-600 dark:text-brand-400" />
               </div>
               <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
                 Quick Access Workspaces

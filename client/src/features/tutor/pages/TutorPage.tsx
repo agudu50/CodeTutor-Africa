@@ -7,7 +7,6 @@ import { Button, Badge, Dropdown, EmptyState } from '@/components/ui'
 import {
   Plus,
   Bot,
-  Sparkles,
   MessageSquare,
   Cpu,
   CornerDownLeft,
@@ -250,7 +249,7 @@ export const TutorPage: React.FC = () => {
                   : 'bg-brand-50 dark:bg-brand-950/70 border border-brand-200 dark:border-brand-800/80 text-brand-700 dark:text-brand-300'
               }`}
             >
-              <Sparkles className="w-3 h-3 text-brand-600 dark:text-brand-400" />
+              <Cpu className="w-3 h-3 text-brand-600 dark:text-brand-400" />
               {isOffline ? 'On-Device Neural Tutor' : 'High-Precision Cloud AI'}
             </span>
           </div>

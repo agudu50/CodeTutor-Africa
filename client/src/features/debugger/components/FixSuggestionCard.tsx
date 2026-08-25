@@ -1,7 +1,7 @@
 import React, { useState, memo } from 'react'
 import { DebugResult } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent, Button, MarkdownRenderer } from '@/components/ui'
-import { Check, Copy, AlertTriangle, Sparkles, CheckCircle2 } from 'lucide-react'
+import { Check, Copy, AlertTriangle, Zap, CheckCircle2 } from 'lucide-react'
 import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 
 interface FixSuggestionCardProps {
@@ -74,7 +74,7 @@ export const FixSuggestionCard: React.FC<FixSuggestionCardProps> = memo(({
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="p-1 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800/80">
-                <Sparkles className="w-3.5 h-3.5" />
+                <Zap className="w-3.5 h-3.5" />
               </div>
               <CardTitle className="text-xs sm:text-sm font-bold text-slate-100">
                 Recommended Patch (VS Code Dark+)

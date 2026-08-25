@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { useTheme } from '@/app/providers/ThemeProvider'
 import {
-  Sparkles,
   ArrowRight,
   Sun,
   Moon,
@@ -26,6 +25,7 @@ import {
   BarChart3,
   Lightbulb,
   Quote,
+  Bot,
 } from 'lucide-react'
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -364,7 +364,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
       {/* Live AI Guidance Bar */}
       <div className="px-4 py-2 bg-[#252526] border-t border-[#333333] flex items-center justify-between text-[11px] text-slate-400 shrink-0">
         <div className="flex items-center gap-2 truncate">
-          <Sparkles className="w-3.5 h-3.5 text-[#005F02] shrink-0" />
+          <Lightbulb className="w-3.5 h-3.5 text-[#005F02] shrink-0" />
           <span className="text-slate-300 font-medium shrink-0">Helpful Hint:</span>
           <span className="text-slate-400 truncate">Runs locally on your laptop (0 KB internet needed)</span>
         </div>
@@ -542,7 +542,7 @@ export const LandingPage: React.FC = () => {
 
   const featureCards = [
     {
-      icon: <Sparkles className="w-6 h-6 text-[#005F02]" />,
+      icon: <Bot className="w-6 h-6 text-[#005F02]" />,
       badge: 'Personal AI Tutor',
       title: '6 Friendly Learning Modes',
       description: 'Ask questions in plain English. Get simple explanations, gentle hints, error help, code reviews, and quick quizzes that help you truly understand.',
@@ -832,7 +832,7 @@ export const LandingPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#005F02]/85 border border-emerald-400/40 text-emerald-100 text-xs font-semibold shadow-lg backdrop-blur-md"
           >
             <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+            <Zap className="w-3.5 h-3.5 text-emerald-300" />
             <span>100% Offline AI Coding Tutor</span>
           </motion.div>
 
@@ -988,7 +988,7 @@ export const LandingPage: React.FC = () => {
               className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group block focus:outline-hidden"
             >
               <div className="w-8 h-8 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 text-[#005F02] flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
-                <Sparkles className="w-4 h-4" />
+                <Bot className="w-4 h-4" />
               </div>
               <div className="text-3xl sm:text-4xl font-extrabold text-[#005F02] font-mono tracking-tight">
                 {statModes}
@@ -1031,7 +1031,7 @@ export const LandingPage: React.FC = () => {
       <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Everything in One Place
+            <Zap className="w-3.5 h-3.5 text-[#005F02]" /> Everything in One Place
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Everything You Need to Learn to Code
@@ -1141,7 +1141,7 @@ export const LandingPage: React.FC = () => {
               <div className="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-[#005F02] flex items-center justify-center text-white font-bold">
-                    <Sparkles className="w-4 h-4 text-white" />
+                    <Bot className="w-4 h-4 text-white" />
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white">CodeTutor AI Mentor</div>
@@ -1274,7 +1274,7 @@ export const LandingPage: React.FC = () => {
       >
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[#005F02] text-xs font-semibold font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-[#005F02]" /> Real Stories
+            <Quote className="w-3.5 h-3.5 text-[#005F02]" /> Real Stories
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Loved by Learners of All Backgrounds

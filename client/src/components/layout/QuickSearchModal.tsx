@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, BookOpen, Code2, Bot, Bug, BarChart3, Settings, Gamepad2, ArrowRight, X, Sparkles } from 'lucide-react'
+import { Search, BookOpen, Code2, Bot, Bug, BarChart3, Settings, Gamepad2, ArrowRight, X, Zap } from 'lucide-react'
 
 interface SearchItem {
   id: string
@@ -349,7 +349,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = memo(({ isOpen,
         {/* Footer info */}
         <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono shrink-0">
           <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
-            <Sparkles className="w-3 h-3" /> Quick Launcher
+            <Zap className="w-3 h-3" /> Quick Launcher
           </span>
           <div className="hidden sm:flex items-center gap-3">
             <span>↑↓ to navigate</span>

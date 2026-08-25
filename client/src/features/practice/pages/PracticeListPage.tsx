@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { Card, Badge, Button, Input, Dropdown } from '@/components/ui'
 import { MOCK_PRACTICE_QUESTIONS } from '../data/mockPracticeData'
-import { ArrowRight, Search, Sparkles, Code2, Shield } from 'lucide-react'
+import { ArrowRight, Search, Code2, Shield } from 'lucide-react'
 
 export const PracticeListPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -112,7 +112,7 @@ export const PracticeListPage: React.FC = () => {
 
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                  <Shield className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                   {question.testCases.length} Test Cases
                 </span>
                 <Link to={`/practice/${question.id}`}>

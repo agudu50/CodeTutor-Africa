@@ -9,7 +9,7 @@ import {
   Bot,
   ArrowRight,
   CheckCircle2,
-  Sparkles,
+  Zap,
 } from 'lucide-react'
 
 interface ContinueLearningProps {
@@ -172,7 +172,7 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
             </div>
 
             <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 self-center sm:self-auto sm:ml-auto">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> 100% Offline Ready
+              <Zap className="w-3.5 h-3.5 text-emerald-500" /> 100% Offline Ready
             </span>
           </div>
         </div>

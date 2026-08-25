@@ -15,7 +15,7 @@ import {
   BookOpen,
   Clock,
   Play,
-  Sparkles,
+  Zap,
   Terminal,
   Bug,
   ChevronRight,
@@ -138,7 +138,7 @@ export const LessonViewPage: React.FC = () => {
             )}
             {foundLesson.quizQuestions && foundLesson.quizQuestions.length > 0 && (
               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30">
-                <Sparkles className="w-2.5 h-2.5" />
+                <Zap className="w-2.5 h-2.5" />
                 <span>{foundLesson.quizQuestions.length} Quizzes</span>
               </span>
             )}
@@ -356,7 +356,7 @@ export const LessonViewPage: React.FC = () => {
           <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
             <div className="p-3 rounded-2xl bg-[#005F02]/10 border border-[#005F02]/30 flex items-center justify-between gap-3 text-xs font-mono">
               <span className="flex items-center gap-2 text-[#005F02] font-bold">
-                <Sparkles className="w-4 h-4 text-[#005F02]" />
+                <Zap className="w-4 h-4 text-[#005F02]" />
                 <span>Phase 3: Interactive Knowledge Check & Coding</span>
               </span>
               <span className="text-[11px] text-slate-500 dark:text-slate-400">

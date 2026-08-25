@@ -1,6 +1,6 @@
 import React from 'react'
 import { EnrolledCourseOption } from '../services/courseGameAdapter.service'
-import { GraduationCap, Sparkles, BookOpen } from 'lucide-react'
+import { GraduationCap, Zap, BookOpen } from 'lucide-react'
 
 interface CourseGameSelectorProps {
   courses: EnrolledCourseOption[]
@@ -49,7 +49,7 @@ export const CourseGameSelector: React.FC<CourseGameSelectorProps> = ({
           }`}
         >
           <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 shrink-0">
-            <Sparkles className="w-4 h-4" />
+            <Zap className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
             <span className="font-bold text-xs text-slate-900 dark:text-white block truncate">

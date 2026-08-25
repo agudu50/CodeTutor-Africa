@@ -19,7 +19,7 @@ import {
   ChevronLeft,
   Clock,
   GraduationCap,
-  Sparkles,
+  Zap,
   Quote,
   Bot,
   Lightbulb,
@@ -550,7 +550,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                           size="sm"
                           onClick={handleApplyAISuggestion}
                           className="h-7.5 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-lg px-3 shadow-2xs cursor-pointer"
-                          leftIcon={<Sparkles className="w-3.5 h-3.5" />}
+                          leftIcon={<Zap className="w-3.5 h-3.5" />}
                         >
                           Apply AI Solution & Code
                         </Button>
@@ -682,7 +682,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         onClick={handleAnalyzeTicketWithAI}
                         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-950/70 hover:bg-brand-100 dark:hover:bg-brand-900 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 text-xs font-bold transition-all shadow-2xs cursor-pointer w-fit"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                        <Zap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                         <span>Ask AI to Draft Reply & Code</span>
                       </button>
                     )}
@@ -706,7 +706,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                   <div className="space-y-1.5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                       <label className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                        <Zap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                         <span>Send Instructor Solution Note to Student</span>
                       </label>
                       <button

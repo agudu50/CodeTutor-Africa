@@ -12,7 +12,7 @@ import {
   Clock,
   BookOpen,
   Shield,
-  Sparkles,
+  Zap,
   Code2,
   Gamepad2,
   X,
@@ -114,7 +114,7 @@ export const CourseDetailPage: React.FC = () => {
             </span>
             {course.isAiGenerated && (
               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30">
-                <Sparkles className="w-3 h-3" />
+                <Zap className="w-3 h-3" />
                 <span>AI Generated from Prompt</span>
               </span>
             )}
@@ -141,7 +141,7 @@ export const CourseDetailPage: React.FC = () => {
               <strong className="text-slate-800 dark:text-slate-200">{course.estimatedHours}</strong> Estimated Hours
             </span>
             <span className="flex items-center gap-1.5 text-[#005F02] font-semibold">
-              <Sparkles className="w-4 h-4" />
+              <Zap className="w-4 h-4" />
               Pre-Cached for Local CPU
             </span>
           </div>

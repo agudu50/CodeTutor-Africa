@@ -4,7 +4,7 @@ import { Avatar } from '@/components/ui'
 import { useUserProfile } from '@/app/providers/UserProfileProvider'
 import { MarkdownContent } from './MarkdownContent'
 import { CodeBlock } from './CodeBlock'
-import { Bot, Sparkles, Cpu } from 'lucide-react'
+import { Bot, Zap, Cpu } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 interface ChatMessageItemProps {
@@ -54,7 +54,7 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = memo(({
             </span>
             {isAssistant && (
               <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70 shrink-0">
-                <Sparkles className="w-2.5 h-2.5 text-emerald-500" /> Local Inference
+                <Zap className="w-2.5 h-2.5 text-emerald-500" /> Local Inference
               </span>
             )}
           </div>
@@ -100,7 +100,7 @@ export const ChatMessageItem: React.FC<ChatMessageItemProps> = memo(({
                   onClick={() => onSelectFollowup?.(followup)}
                   className="w-full text-xs text-left px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:border-brand-400 dark:hover:border-brand-600 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-white dark:hover:bg-slate-900 transition-all shadow-2xs font-medium cursor-pointer flex items-center gap-2"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                  <Bot className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
                   <span>{followup}</span>
                 </button>
               ))}
