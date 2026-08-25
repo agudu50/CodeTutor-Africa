@@ -1814,49 +1814,113 @@ export const LandingPage: React.FC = () => {
             Runs Smoothly on Any Everyday Laptop
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            You do not need an expensive computer. CodeTutor is built to run easily and quietly on standard laptops:
+            You do not need an expensive or high-end computer. CodeTutor is engineered to run quietly and smoothly on standard laptops:
           </p>
         </div>
 
-        {/* Interconnected Linked Hardware Strip */}
-        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl overflow-hidden">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y-0 divide-x sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
-            {[
-              {
-                title: 'Memory Friendly',
-                val: 'Super Light',
-                sub: 'Won\'t Slow Down Your Laptop',
-                note: 'Leaves plenty of room for your code editor and web browser to run smoothly.',
-              },
-              {
-                title: 'Instant Speed',
-                val: 'No Waiting',
-                sub: 'Fast Answers in Seconds',
-                note: 'Get immediate explanations and hints without waiting on slow internet.',
-              },
-              {
-                title: 'Battery Saver',
-                val: 'Cool & Quiet',
-                sub: 'Low Power Use',
-                note: 'Study and practice for hours without draining your laptop battery.',
-              },
-              {
-                title: '100% Private',
-                val: 'Zero Data Spent',
-                sub: 'Safe & Offline',
-                note: 'Your lessons, code, and progress stay completely private on your device.',
-              },
-            ].map((spec, idx) => (
+        {/* Enhanced 4-Card Performance Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {[
+            {
+              icon: Cpu,
+              badge: '< 1.5 GB RAM',
+              title: 'Memory Friendly',
+              val: 'Super Light',
+              sub: "Won't Slow Down Your Laptop",
+              note: 'Leaves plenty of room for your code editor and web browser to run smoothly.',
+              metricLabel: 'RAM Footprint',
+              metricValue: 'Minimal',
+            },
+            {
+              icon: Zap,
+              badge: '< 20ms Latency',
+              title: 'Instant Speed',
+              val: 'No Waiting',
+              sub: 'Fast Answers in Seconds',
+              note: 'Get immediate explanations and hints without waiting on slow or buffered internet.',
+              metricLabel: 'Response Time',
+              metricValue: 'Instant',
+            },
+            {
+              icon: Laptop,
+              badge: 'Low CPU Load',
+              title: 'Battery Saver',
+              val: 'Cool & Quiet',
+              sub: 'Low Power Use',
+              note: 'Study and practice for hours on a single charge without draining your laptop battery.',
+              metricLabel: 'Power Efficiency',
+              metricValue: 'Optimized',
+            },
+            {
+              icon: Shield,
+              badge: '0 KB Uploaded',
+              title: '100% Private',
+              val: 'Zero Data Spent',
+              sub: 'Safe & Offline',
+              note: 'Your lessons, code, and progress stay completely private on your own device.',
+              metricLabel: 'Data Privacy',
+              metricValue: '100% Offline',
+            },
+          ].map((spec, idx) => {
+            const IconComponent = spec.icon
+            return (
               <div
                 key={idx}
-                className="p-4 sm:p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group"
+                className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-emerald-500/20 p-5 sm:p-6 shadow-lg dark:shadow-xl hover:shadow-2xl hover:border-[#005F02]/50 dark:hover:border-emerald-400/50 transition-all duration-300 group flex flex-col justify-between overflow-hidden"
               >
-                <div className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{spec.title}</div>
-                <div className="text-xl sm:text-3xl font-extrabold text-[#005F02] tracking-tight">{spec.val}</div>
-                <div className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200">{spec.sub}</div>
-                <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/[0.06]">{spec.note}</div>
+                {/* Top Subtle Hover Glow */}
+                <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#005F02]/10 dark:bg-emerald-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
+
+                <div className="space-y-4">
+                  {/* Icon & Badge Header */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="w-10 h-10 rounded-2xl bg-[#005F02]/10 dark:bg-emerald-500/15 border border-[#005F02]/30 dark:border-emerald-500/30 flex items-center justify-center text-[#005F02] dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300">
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      {spec.badge}
+                    </span>
+                  </div>
+
+                  {/* Title & Big Metric */}
+                  <div className="space-y-1">
+                    <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
+                      {spec.title}
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-extrabold text-[#005F02] dark:text-emerald-400 tracking-tight">
+                      {spec.val}
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                      {spec.sub}
+                    </div>
+                  </div>
+
+                  {/* Explanation Note */}
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pt-3 border-t border-slate-200/80 dark:border-slate-800">
+                    {spec.note}
+                  </p>
+                </div>
+
+                {/* Bottom Spec Footprint Indicator */}
+                <div className="mt-4 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                  <span>{spec.metricLabel}:</span>
+                  <span className="font-bold text-[#005F02] dark:text-emerald-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                    {spec.metricValue}
+                  </span>
+                </div>
               </div>
-            ))}
+            )
+          })}
+        </div>
+
+        {/* Compatibility Reassurance Pill */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 shadow-sm">
+            <Laptop className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />
+            <span>
+              Engineered &amp; tested for Windows, macOS, and Linux laptops with <strong>4GB+ RAM</strong> and dual-core processors.
+            </span>
           </div>
         </div>
       </section>
