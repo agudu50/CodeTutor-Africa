@@ -587,46 +587,52 @@ export const LandingPage: React.FC = () => {
 
   const featureCards = [
     {
-      icon: <Bot className="w-6 h-6 text-[#005F02]" />,
+      icon: <Bot className="w-6 h-6 text-[#005F02] dark:text-emerald-400" />,
       badge: 'Personal AI Tutor',
       title: '6 Friendly Learning Modes',
       description: 'Ask questions in plain English. Get simple explanations, gentle hints, error help, code reviews, and quick quizzes that help you truly understand.',
       link: '/tutor',
+      actionLabel: 'Launch AI Tutor',
     },
     {
-      icon: <BookOpen className="w-6 h-6 text-[#005F02]" />,
+      icon: <BookOpen className="w-6 h-6 text-[#005F02] dark:text-emerald-400" />,
       badge: 'Step-by-Step',
       title: 'Beginner to Pro Courses',
       description: 'Learn Python, JavaScript, and Java through structured, bite-sized lessons. Perfect for absolute beginners, students, and career changers alike.',
       link: '/learning',
+      actionLabel: 'Browse All Courses',
     },
     {
-      icon: <Code2 className="w-6 h-6 text-[#005F02]" />,
+      icon: <Code2 className="w-6 h-6 text-[#005F02] dark:text-emerald-400" />,
       badge: 'Try It Out',
       title: 'Interactive Code Playground',
       description: 'Practice what you learn right inside your browser. Run programs instantly on your laptop without setting up complex tools or servers.',
       link: '/practice',
+      actionLabel: 'Open Code Lab',
     },
     {
-      icon: <Bug className="w-6 h-6 text-[#005F02]" />,
+      icon: <Bug className="w-6 h-6 text-[#005F02] dark:text-emerald-400" />,
       badge: 'Error Helper',
       title: 'Plain-English Bug Fixer',
       description: 'Confused by an error message? Paste your code and the AI tutor explains what went wrong and how to fix it in simple everyday language.',
       link: '/debugger',
+      actionLabel: 'Debug My Code',
     },
     {
-      icon: <Gamepad2 className="w-6 h-6 text-[#005F02]" />,
+      icon: <Gamepad2 className="w-6 h-6 text-[#005F02] dark:text-emerald-400" />,
       badge: 'Fun & Games',
       title: 'Arcade Coding Mini-Games',
       description: 'Play fun games like Syntax Speedrun and Bug Hunter to build typing speed, spot mistakes quickly, and make learning exciting.',
       link: '/games',
+      actionLabel: 'Play Arcade Games',
     },
     {
-      icon: <BarChart3 className="w-6 h-6 text-[#005F02]" />,
+      icon: <BarChart3 className="w-6 h-6 text-[#005F02] dark:text-emerald-400" />,
       badge: 'Your Journey',
       title: 'Progress, Streaks & Badges',
       description: 'Track your daily learning habits, celebrate milestones, and earn achievement badges saved securely on your device.',
       link: '/dashboard',
+      actionLabel: 'View Dashboard',
     },
   ]
 
@@ -1170,27 +1176,48 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Linked Glassmorphism Features Container */}
-        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 sm:p-8 shadow-xl dark:shadow-2xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="relative rounded-3xl bg-white/85 dark:bg-slate-900/70 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden">
+          {/* Top Subtle Ambient Border Light */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/40 dark:via-emerald-400/40 to-transparent" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featureCards.map((card, idx) => (
               <Link
                 key={idx}
                 to={card.link}
-                className="bg-slate-50/80 dark:bg-white/[0.03] backdrop-blur-md border border-slate-200 dark:border-white/[0.06] rounded-2xl p-6 space-y-3.5 hover:border-[#005F02] hover:bg-white dark:hover:bg-white/[0.06] transition-all group shadow-sm dark:shadow-inner block"
+                className="relative bg-white dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-3xl p-6 sm:p-7 space-y-4 hover:border-[#005F02] dark:hover:border-emerald-500/60 hover:shadow-xl dark:hover:shadow-[0_12px_32px_rgba(0,95,2,0.25)] hover:-translate-y-1 transition-all duration-300 group block overflow-hidden"
               >
-                <div className="flex items-center justify-between">
-                  <div className="w-11 h-11 rounded-xl bg-[#005F02]/15 dark:bg-[#005F02]/30 border border-[#005F02]/40 flex items-center justify-center group-hover:scale-105 transition-transform">
+                {/* Top Subtle Hover Highlight Beam */}
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#005F02] dark:via-emerald-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Header Row: Floating 3D Icon Tile + Badge */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#005F02]/15 via-emerald-500/10 to-transparent dark:from-[#005F02]/30 dark:via-emerald-400/15 border border-[#005F02]/30 dark:border-emerald-500/30 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_18px_rgba(0,95,2,0.35)] transition-all duration-300">
                     {card.icon}
                   </div>
-                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md border border-[#005F02]/30 bg-[#005F02]/10 text-[#005F02]">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold uppercase px-3 py-1 rounded-full border border-[#005F02]/20 dark:border-emerald-500/25 bg-[#005F02]/10 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400 shadow-2xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
                     {card.badge}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] transition-colors flex items-center justify-between">
-                  <span>{card.title}</span>
-                  <span className="text-xs text-[#005F02] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{card.description}</p>
+
+                {/* Title & Description */}
+                <div className="space-y-2">
+                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors tracking-tight leading-snug">
+                    {card.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[48px]">
+                    {card.description}
+                  </p>
+                </div>
+
+                {/* Card Action Link Bar */}
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-[#005F02] dark:text-emerald-400">
+                  <span>{card.actionLabel}</span>
+                  <div className="w-7 h-7 rounded-xl bg-[#005F02]/10 dark:bg-emerald-500/15 flex items-center justify-center group-hover:bg-[#005F02] group-hover:text-white dark:group-hover:bg-emerald-500 dark:group-hover:text-slate-950 transition-all duration-300">
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </div>
               </Link>
             ))}
           </div>
