@@ -229,14 +229,18 @@ function renderVSCodeTokens(lineText: string, lineIndex: number) {
    ═══════════════════════════════════════════════════════════════ */
 interface TerminalLivePreviewProps {
   activeTab: number
-  setActiveTab: (tab: number) => void
-  onHoverChange: (isHovered: boolean) => void
+  onManualSelect: (tab: number) => void
+  autoAdvanceProgress: number
+  isAutoAdvancing: boolean
+  toggleAutoAdvance: () => void
 }
 
 const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
   activeTab,
-  setActiveTab,
-  onHoverChange,
+  onManualSelect,
+  autoAdvanceProgress,
+  isAutoAdvancing,
+  toggleAutoAdvance,
 }) => {
   const [displayedCode, setDisplayedCode] = useState(codeExamples[0].code)
   const [isRunning, setIsRunning] = useState(false)
@@ -249,7 +253,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
     setIsRunning(true)
     let idx = 0
     const interval = setInterval(() => {
-      idx += 6
+      idx += 8
       if (idx >= targetCode.length) {
         setDisplayedCode(targetCode)
         setIsRunning(false)
@@ -257,7 +261,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
       } else {
         setDisplayedCode(targetCode.slice(0, idx))
       }
-    }, 12)
+    }, 10)
     return () => clearInterval(interval)
   }, [activeTab])
 
@@ -269,17 +273,37 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
     }, 300)
   }
 
+  const getLangDotColor = (lang: string) => {
+    switch (lang) {
+      case 'python':
+        return 'bg-[#387eb8]'
+      case 'javascript':
+        return 'bg-[#f7df1e]'
+      case 'java':
+        return 'bg-[#f89820]'
+      default:
+        return 'bg-[#005F02]'
+    }
+  }
+
   return (
-    <div
-      onMouseEnter={() => onHoverChange(true)}
-      onMouseLeave={() => onHoverChange(false)}
-      className="flex flex-col flex-1 rounded-2xl border border-slate-300 dark:border-slate-700 bg-[#1E1E1E] shadow-2xl overflow-hidden font-mono text-xs text-left"
-    >
+    <div className="flex flex-col flex-1 rounded-3xl border border-slate-700/80 bg-[#18181b] shadow-2xl overflow-hidden font-mono text-xs text-left relative">
+      {/* Visual Auto-Advance Progress Line */}
+      {isAutoAdvancing && (
+        <div className="absolute top-0 inset-x-0 h-1 bg-slate-800 z-20 overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-[#005F02] via-emerald-400 to-[#005F02]"
+            style={{ width: `${autoAdvanceProgress}%` }}
+            transition={{ ease: 'linear' }}
+          />
+        </div>
+      )}
+
       {/* Code Editor Tab Bar (Enhanced VS Code Style) */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-[#252526] border-b border-[#333333] shrink-0 gap-3">
-        {/* Left: Window Traffic Lights & Language Tabs */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-[#202023] border-b border-[#2d2d30] shrink-0 gap-3">
+        {/* Left: Traffic Lights & Language Tabs */}
         <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
-          {/* macOS / VS Code Traffic Light Dots */}
+          {/* macOS Traffic Light Dots */}
           <div className="flex items-center gap-1.5 mr-1 shrink-0">
             <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 inline-block shadow-xs" />
             <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50 inline-block shadow-xs" />
@@ -294,20 +318,19 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
                 <button
                   key={ex.filename}
                   type="button"
-                  onClick={() => {
-                    setActiveTab(i)
-                    setShowOutput(true)
-                  }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-2 relative ${
+                  onClick={() => onManualSelect(i)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 relative ${
                     isActive
-                      ? 'bg-[#1E1E1E] text-white shadow-md border border-[#444444] border-b-2 border-b-[#005F02]'
-                      : 'bg-[#2D2D2D]/70 text-slate-400 border border-transparent hover:bg-[#333333] hover:text-slate-200'
+                      ? 'bg-[#18181b] text-white shadow-md border border-[#3f3f46] border-b-2 border-b-[#005F02]'
+                      : 'bg-[#27272a]/70 text-slate-400 border border-transparent hover:bg-[#323238] hover:text-slate-200'
                   }`}
                 >
-                  <Code2 className={`w-3.5 h-3.5 ${isActive ? 'text-[#005F02]' : 'text-slate-400'}`} />
+                  <span className={`w-2 h-2 rounded-full ${isActive ? `${getLangDotColor(ex.lang)} animate-pulse` : 'bg-slate-600'}`} />
                   <span className="whitespace-nowrap">{ex.filename}</span>
                   {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] inline-block animate-pulse" />
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#005F02]/30 text-emerald-400 font-extrabold uppercase">
+                      Live
+                    </span>
                   )}
                 </button>
               )
@@ -315,44 +338,53 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
           </div>
         </div>
 
-        {/* Right: Run Code Button & Offline Pill */}
+        {/* Right: Controls & Offline Status */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={toggleAutoAdvance}
+            className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono flex items-center gap-1 border border-slate-700 transition-colors"
+            title={isAutoAdvancing ? 'Click to Pause Auto-Switch' : 'Click to Resume Auto-Switch'}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${isAutoAdvancing ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <span>{isAutoAdvancing ? 'Auto: ON' : 'Auto: PAUSED'}</span>
+          </button>
+
           <button
             type="button"
             onClick={handleRunCode}
             disabled={isRunning}
-            className="px-2.5 py-1 rounded-md bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-[10px] flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-50"
+            className="px-3 py-1 rounded-lg bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-50"
           >
             <Play className={`w-3 h-3 fill-current ${isRunning ? 'animate-spin' : ''}`} />
             <span>{isRunning ? 'Running...' : 'Run Code'}</span>
           </button>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#005F02]/15 border border-[#005F02]/40 text-[10px] font-mono font-bold text-[#005F02] shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-ping" />
-            <span>100% OFFLINE</span>
-          </span>
         </div>
       </div>
 
       {/* VS Code Editor Body */}
-      <div className="p-4 overflow-x-auto flex-1 min-h-[170px] bg-[#1E1E1E] text-[#D4D4D4] leading-relaxed font-mono">
+      <div className="p-4 sm:p-5 overflow-x-auto flex-1 min-h-[185px] bg-[#18181b] text-[#D4D4D4] leading-relaxed font-mono">
         <div className="table w-full text-xs sm:text-[13px]">
           {displayedCode.split('\n').map((line, lIdx) => renderVSCodeTokens(line, lIdx))}
         </div>
+        {isRunning && (
+          <span className="inline-block w-2 h-4 bg-[#005F02] animate-pulse ml-1 align-middle" />
+        )}
       </div>
 
       {/* Interactive Terminal Output Drawer */}
       {showOutput && (
-        <div className="px-4 py-2.5 bg-[#181818] border-t border-[#333333] font-mono text-xs">
-          <div className="flex items-center justify-between text-[10px] text-slate-400 pb-1.5 border-b border-[#282828] mb-1.5">
+        <div className="px-4 py-3 bg-[#111113] border-t border-[#27272a] font-mono text-xs">
+          <div className="flex items-center justify-between text-[10px] text-slate-400 pb-1.5 border-b border-[#27272a] mb-1.5">
             <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-              <Terminal className="w-3 h-3" /> Console Output
+              <Terminal className="w-3.5 h-3.5" /> Console Output
             </span>
-            <span className="text-[10px] text-slate-500">Zero Internet Used</span>
+            <span className="text-[10px] text-slate-500 font-bold">100% Offline • Zero Data</span>
           </div>
-          <div className="text-emerald-300 whitespace-pre-wrap leading-relaxed text-[11px]">
+          <div className="text-emerald-300 whitespace-pre-wrap leading-relaxed text-[11px] font-mono">
             {isRunning ? (
-              <span className="text-slate-400 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> Running program locally...
+              <span className="text-slate-400 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Executing {codeExamples[activeTab].filename} locally...
               </span>
             ) : (
               codeExamples[activeTab].output
@@ -362,13 +394,13 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
       )}
 
       {/* Live AI Guidance Bar */}
-      <div className="px-4 py-2 bg-[#252526] border-t border-[#333333] flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+      <div className="px-4 py-2.5 bg-[#202023] border-t border-[#2d2d30] flex items-center justify-between text-[11px] text-slate-400 shrink-0">
         <div className="flex items-center gap-2 truncate">
-          <Lightbulb className="w-3.5 h-3.5 text-[#005F02] shrink-0" />
-          <span className="text-slate-300 font-medium shrink-0">Helpful Hint:</span>
+          <Lightbulb className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <span className="text-slate-200 font-bold shrink-0">Helpful Hint:</span>
           <span className="text-slate-400 truncate">Runs locally on your laptop (0 KB internet needed)</span>
         </div>
-        <span className="text-[#005F02] font-bold font-mono text-[10px] shrink-0 ml-2">Instant Speed</span>
+        <span className="text-emerald-400 font-bold font-mono text-[10px] shrink-0 ml-2">⚡ Instant Speed</span>
       </div>
     </div>
   )
@@ -522,7 +554,8 @@ export const LandingPage: React.FC = () => {
   const [isSlidePaused, setIsSlidePaused] = useState(false)
   const [activeCodeTab, setActiveCodeTab] = useState(0)
   const [activeQuestionTab, setActiveQuestionTab] = useState<number>(0)
-  const [isCodePaused, setIsCodePaused] = useState(false)
+  const [isCodeAutoActive, setIsCodeAutoActive] = useState(true)
+  const [codeProgress, setCodeProgress] = useState(0)
   const [testimonialSlide, setTestimonialSlide] = useState(0)
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -545,14 +578,37 @@ export const LandingPage: React.FC = () => {
     return () => clearInterval(timer)
   }, [isSlidePaused])
 
-  // Auto-advance code IDE and Socratic dialogue synchronously (4.5s transition)
+  // Smooth Auto-advance for Code IDE & AI Tutor Sandbox (4s cycle with progress bar)
   useEffect(() => {
-    if (isCodePaused) return
+    if (!isCodeAutoActive) {
+      setCodeProgress(0)
+      return
+    }
+    const intervalMs = 40
+    const totalMs = 4200
+    const step = (intervalMs / totalMs) * 100
+
     const timer = setInterval(() => {
-      setActiveCodeTab((prev) => (prev + 1) % codeExamples.length)
-    }, 4500)
+      setCodeProgress((prev) => {
+        if (prev + step >= 100) {
+          setActiveCodeTab((curr) => (curr + 1) % codeExamples.length)
+          return 0
+        }
+        return prev + step
+      })
+    }, intervalMs)
+
     return () => clearInterval(timer)
-  }, [isCodePaused])
+  }, [isCodeAutoActive])
+
+  const handleManualCodeSelect = (tabIdx: number) => {
+    setActiveCodeTab(tabIdx)
+    setCodeProgress(0)
+  }
+
+  const toggleCodeAutoAdvance = () => {
+    setIsCodeAutoActive((prev) => !prev)
+  }
 
   // Auto-advance student testimonials slide show (4.5s transition)
   useEffect(() => {
@@ -1268,71 +1324,81 @@ export const LandingPage: React.FC = () => {
           {/* Left: Code Editor Sandbox Preview */}
           <div className="space-y-3 flex flex-col h-full">
             <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
-              <span>1. Simple Code Runner</span>
-              <span className="font-mono text-[11px] text-[#005F02] font-bold">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                <span className="font-bold text-slate-900 dark:text-white">1. Live Code Runner</span>
+              </div>
+              <span className="font-mono text-[11px] text-[#005F02] dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-500/10 border border-[#005F02]/20">
                 {codeExamples[activeCodeTab].badge}
               </span>
             </div>
             <TerminalLivePreview
               activeTab={activeCodeTab}
-              setActiveTab={setActiveCodeTab}
-              onHoverChange={setIsCodePaused}
+              onManualSelect={handleManualCodeSelect}
+              autoAdvanceProgress={codeProgress}
+              isAutoAdvancing={isCodeAutoActive}
+              toggleAutoAdvance={toggleCodeAutoAdvance}
             />
           </div>
 
           {/* Right: Socratic Dialogue Simulator */}
-          <div
-            className="space-y-3 flex flex-col h-full"
-            onMouseEnter={() => setIsCodePaused(true)}
-            onMouseLeave={() => setIsCodePaused(false)}
-          >
+          <div className="space-y-3 flex flex-col h-full">
             <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-semibold px-1 shrink-0">
-              <span>2. Helpful AI Tutor Chat</span>
-              <span className="font-mono text-[11px] text-[#005F02] font-bold">Mode: Friendly Hint</span>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-bold text-slate-900 dark:text-white">2. Helpful AI Tutor Chat</span>
+              </div>
+              <span className="font-mono text-[11px] text-[#005F02] dark:text-emerald-400 font-bold">Mode: Socratic Hint</span>
             </div>
             
-            <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-xl dark:shadow-2xl overflow-hidden flex flex-col flex-1">
+            <div className="relative bg-white/95 dark:bg-slate-900/85 rounded-3xl border border-slate-200/90 dark:border-emerald-500/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_10px_35px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col flex-1">
+              {/* Top Highlight Beam */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
+
               {/* Chat Header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#005F02] flex items-center justify-center text-white font-bold">
-                    <Bot className="w-4 h-4 text-white" />
+              <div className="flex items-center justify-between px-5 py-3.5 bg-slate-100/90 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#005F02] to-emerald-600 flex items-center justify-center text-white font-bold shadow-sm">
+                    <Bot className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">CodeTutor AI Mentor</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Runs 100% On Your Computer</div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>CodeTutor AI Mentor</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                    </div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Local Inference Engine • 0ms Lag</div>
                   </div>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 font-bold">
-                  ZERO INTERNET NEEDED
+                <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/15 text-[#005F02] dark:text-emerald-300 border border-[#005F02]/30 dark:border-emerald-500/30 font-bold">
+                  ZERO DATA COST
                 </span>
               </div>
 
               {/* Quick Interactive Question Switcher */}
-              <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
-                <span className="text-[10px] text-slate-500 font-medium shrink-0">Try Asking:</span>
+              <div className="px-5 py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold shrink-0">Explore:</span>
                 <button
                   type="button"
                   onClick={() => setActiveQuestionTab(0)}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all shrink-0 ${
+                  className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 ${
                     activeQuestionTab === 0
                       ? 'bg-[#005F02] text-white shadow-xs'
                       : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
                   }`}
                 >
-                  Q1: Explain Variables
+                  Q1: Explain Concept
                 </button>
                 {codeExamples[activeCodeTab].alternateDialogue && (
                   <button
                     type="button"
                     onClick={() => setActiveQuestionTab(1)}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all shrink-0 ${
+                    className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 ${
                       activeQuestionTab === 1
                         ? 'bg-[#005F02] text-white shadow-xs'
                         : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
                     }`}
                   >
-                    Q2: What-If Scenario
+                    Q2: What-If Deep Dive
                   </button>
                 )}
               </div>
@@ -1341,17 +1407,18 @@ export const LandingPage: React.FC = () => {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${activeCodeTab}-${activeQuestionTab}`}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.25 }}
-                  className="p-5 space-y-4 text-xs sm:text-sm flex-1 flex flex-col justify-between"
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-5 sm:p-6 space-y-4 text-xs sm:text-sm flex-1 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
                     {/* Student Question */}
                     <div className="flex justify-end">
-                      <div className="bg-[#005F02] text-white rounded-2xl rounded-tr-xs px-4 py-3 max-w-[85%] space-y-1 shadow-sm">
-                        <p className="font-medium">
+                      <div className="bg-[#005F02] dark:bg-emerald-700 text-white rounded-3xl rounded-tr-xs px-4 sm:px-5 py-3 max-w-[88%] space-y-1 shadow-sm">
+                        <div className="text-[10px] font-mono opacity-80 uppercase tracking-wider font-bold">Learner Question</div>
+                        <p className="font-semibold leading-relaxed">
                           {activeQuestionTab === 0
                             ? codeExamples[activeCodeTab].dialogue.student
                             : codeExamples[activeCodeTab].alternateDialogue?.student}
@@ -1361,16 +1428,20 @@ export const LandingPage: React.FC = () => {
 
                     {/* AI Tutor Socratic Guidance */}
                     <div className="flex justify-start">
-                      <div className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-xs px-4 py-3.5 max-w-[92%] space-y-2.5 shadow-xs">
-                        <p className="leading-relaxed">
+                      <div className="bg-slate-100/90 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/90 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-xs px-4 sm:px-5 py-4 max-w-[94%] space-y-3 shadow-xs">
+                        <div className="text-[10px] font-mono text-[#005F02] dark:text-emerald-400 font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+                          <Bot className="w-3.5 h-3.5" />
+                          <span>AI Mentor Guidance</span>
+                        </div>
+                        <p className="leading-relaxed text-slate-700 dark:text-slate-300">
                           {activeQuestionTab === 0
                             ? codeExamples[activeCodeTab].dialogue.ai
                             : codeExamples[activeCodeTab].alternateDialogue?.ai}
                         </p>
                         
-                        <div className="p-3 rounded-xl bg-[#005F02]/10 dark:bg-slate-900 border border-[#005F02]/30 text-slate-800 dark:text-slate-300 text-xs">
-                          <div className="font-bold flex items-center gap-1.5 mb-1 text-[#005F02]">
-                            <Lightbulb className="w-3.5 h-3.5 text-[#005F02]" />
+                        <div className="p-3.5 rounded-2xl bg-[#005F02]/10 dark:bg-emerald-950/40 border border-[#005F02]/25 dark:border-emerald-500/30 text-slate-800 dark:text-slate-200 text-xs space-y-1">
+                          <div className="font-bold flex items-center gap-1.5 text-[#005F02] dark:text-emerald-300">
+                            <Lightbulb className="w-3.5 h-3.5" />
                             <span>Helpful Hint &amp; Question:</span>
                           </div>
                           <p className="italic text-slate-700 dark:text-slate-300">
@@ -1383,9 +1454,13 @@ export const LandingPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-2 shrink-0">
-                    <span>{codeExamples[activeCodeTab].dialogue.latency}</span>
-                    <span className="text-[#005F02] font-bold">✓ {codeExamples[activeCodeTab].dialogue.verified}</span>
+                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-2 shrink-0">
+                    <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400 font-bold">
+                      <span>⚡</span> {codeExamples[activeCodeTab].dialogue.latency}
+                    </span>
+                    <span className="text-[#005F02] dark:text-emerald-400 font-bold">
+                      ✓ {codeExamples[activeCodeTab].dialogue.verified}
+                    </span>
                   </div>
                 </motion.div>
               </AnimatePresence>
