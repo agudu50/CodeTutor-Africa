@@ -829,10 +829,11 @@ export const LandingPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#005F02] border border-[#005F02] text-white text-xs font-bold shadow-md"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#005F02]/85 border border-emerald-400/40 text-emerald-100 text-xs font-semibold shadow-lg backdrop-blur-md"
           >
-            <Sparkles className="w-4 h-4 text-white" />
-            <span>Free Offline AI Coding Tutor • For Everyone Across Africa</span>
+            <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+            <span>100% Offline AI Coding Tutor</span>
           </motion.div>
 
           {/* Main Headline */}
