@@ -57,6 +57,43 @@ const heroSlides = [
    ═══════════════════════════════════════════════════════════════════ */
 const codeExamples = [
   {
+    lang: 'html',
+    filename: 'index.html',
+    badge: 'Web Dev • HTML, CSS & JS',
+    code: `<!-- Interactive Offline Web Component -->
+<style>
+  .btn { background: #005F02; color: white; border-radius: 8px; padding: 6px 14px; }
+  .btn:hover { opacity: 0.9; cursor: pointer; }
+</style>
+
+<button class="btn" id="likeBtn">Like (0)</button>
+
+<script>
+  let count = 0;
+  document.getElementById("likeBtn").onclick = () => {
+    count++;
+    document.getElementById("likeBtn").innerText = "Liked (" + count + ")";
+  };
+</script>`,
+    output: `> DOM Loaded & Script Executed:
+[Rendered] <button class="btn">Like (0)</button>
+[Click Event] Registered on #likeBtn -> count: 1
+"Liked (1)" updated on screen instantly
+[✓ Web Page rendered in 8ms • 100% Offline]`,
+    dialogue: {
+      student: 'How do HTML, CSS, and JavaScript work together here?',
+      ai: 'HTML defines the button structure, CSS paints it green with rounded corners, and JavaScript listens for clicks to increase the like count dynamically!',
+      hint: 'What line of CSS would you change to make the button text bigger or bold?',
+      latency: 'Instant: 28ms',
+      verified: 'Runs 100% Offline',
+    },
+    alternateDialogue: {
+      student: 'Do I need internet or a web server to build HTML websites on CodeTutor?',
+      ai: 'No internet or servers needed! Browsers can read and run HTML, CSS, and JavaScript directly from your computer files.',
+      hint: 'Notice how the click handler updates document.getElementById() with 0 KB data cost!',
+    },
+  },
+  {
     lang: 'python',
     filename: 'welcome.py',
     badge: 'Python • Beginner Friendly',
@@ -174,6 +211,16 @@ function useCounter(target: number, duration = 1500, inView = false) {
    VS CODE SYNTAX TOKENIZER & HIGHLIGHTER
    ═══════════════════════════════════════════════════════════════ */
 function renderVSCodeTokens(lineText: string, lineIndex: number) {
+  // Check for HTML comment <!-- ... -->
+  if (lineText.trim().startsWith('<!--') || lineText.trim().endsWith('-->')) {
+    return (
+      <div key={lineIndex} className="table-row leading-relaxed">
+        <span className="table-cell pr-3 select-none text-slate-500 text-right w-6 font-mono text-[11px]">{lineIndex + 1}</span>
+        <span className="table-cell font-mono text-[#6A9955] italic">{lineText}</span>
+      </div>
+    )
+  }
+
   // Check for line comments (# or //)
   const commentIdx = lineText.search(/(#|\/\/)/)
   let codePart = lineText
@@ -184,19 +231,31 @@ function renderVSCodeTokens(lineText: string, lineIndex: number) {
   }
 
   // Tokenize codePart with VS Code Dark+ color palette
-  const tokenRegex = /("(?:\\.|[^"\\])*")|(\b(?:def|if|not|return|print|console|Promise|public|class|private|double|void|throw|new|this)\b)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_]\w*(?=\s*\())|(\b[A-Z]\w*\b)|([a-zA-Z_]\w*)|([^\s\w"']+|\s+)/g
+  const tokenRegex = /("(?:\\.|[^"\\])*")|(<(?:\/)?[a-zA-Z0-9]+(?:\s|>|\/)|<\/?[a-zA-Z0-9]+>)|(\b(?:def|let|const|function|if|not|return|print|console|Promise|public|class|private|double|void|throw|new|this|document|getElementById|innerText|onclick)\b)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_]\w*(?=\s*\())|(\b[A-Z]\w*\b)|([a-zA-Z_]\w*)|([^\s\w"']+|\s+)/g
   const tokens: React.ReactNode[] = []
   let match
   let k = 0
 
   while ((match = tokenRegex.exec(codePart)) !== null) {
-    const [full, str, kw, num, fn, typeCls, ident, symbol] = match
+    const [full, str, htmlTag, kw, num, fn, typeCls, ident, symbol] = match
     if (str) {
       tokens.push(<span key={k++} className="text-[#CE9178]">{str}</span>)
+    } else if (htmlTag) {
+      tokens.push(<span key={k++} className="text-[#569CD6] font-semibold">{htmlTag}</span>)
     } else if (kw) {
       const isControl = /^(if|not|return|throw|new)$/.test(kw)
+      const isJsDom = /^(document|getElementById|innerText|onclick)$/.test(kw)
       tokens.push(
-        <span key={k++} className={isControl ? "text-[#C586C0] font-semibold" : "text-[#569CD6] font-semibold"}>
+        <span
+          key={k++}
+          className={
+            isControl
+              ? "text-[#C586C0] font-semibold"
+              : isJsDom
+              ? "text-[#4EC9B0] font-medium"
+              : "text-[#569CD6] font-semibold"
+          }
+        >
           {kw}
         </span>
       )
@@ -275,6 +334,8 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
 
   const getLangDotColor = (lang: string) => {
     switch (lang) {
+      case 'html':
+        return 'bg-[#e44d26]'
       case 'python':
         return 'bg-[#387eb8]'
       case 'javascript':
@@ -400,7 +461,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
           <span className="text-slate-200 font-bold shrink-0">Helpful Hint:</span>
           <span className="text-slate-400 truncate">Runs locally on your laptop (0 KB internet needed)</span>
         </div>
-        <span className="text-emerald-400 font-bold font-mono text-[10px] shrink-0 ml-2">⚡ Instant Speed</span>
+        <span className="text-emerald-400 font-bold font-mono text-[10px] shrink-0 ml-2">Instant Speed</span>
       </div>
     </div>
   )
@@ -1316,7 +1377,7 @@ export const LandingPage: React.FC = () => {
             See How Simple &amp; Friendly It Is
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Switch between Python, JavaScript, and Java to see how our friendly AI tutor explains concepts and guides you step-by-step.
+            Switch between Web Development (HTML, CSS &amp; JS), Python, JavaScript, and Java to see how our friendly AI tutor explains concepts and guides you step-by-step.
           </p>
         </div>
 
@@ -1455,8 +1516,9 @@ export const LandingPage: React.FC = () => {
                   </div>
 
                   <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-2 shrink-0">
-                    <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400 font-bold">
-                      <span>⚡</span> {codeExamples[activeCodeTab].dialogue.latency}
+                    <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold">
+                      <Zap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                      <span>{codeExamples[activeCodeTab].dialogue.latency}</span>
                     </span>
                     <span className="text-[#005F02] dark:text-emerald-400 font-bold">
                       ✓ {codeExamples[activeCodeTab].dialogue.verified}
