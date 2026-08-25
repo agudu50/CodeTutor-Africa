@@ -2111,48 +2111,141 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 9: FOOTER
+          SECTION 9: ENHANCED FOOTER (DESKTOP & MOBILE OPTIMIZED)
           ═══════════════════════════════════════════════════════════════ */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 mt-auto transition-colors">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mt-auto transition-colors relative z-10">
+        <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
           
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-slate-200 dark:border-slate-800">
-            {/* Brand Logo & Tagline */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
-                <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
-              </div>
-              <div>
-                <span className="font-bold text-base text-slate-900 dark:text-white">
-                  CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
-                </span>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Free Offline-First AI Coding Tutor for Everyone</p>
+          {/* Main Footer Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pb-10 border-b border-slate-200 dark:border-slate-800/80">
+            
+            {/* Brand & Mission Column (Col 1-5 on Desktop) */}
+            <div className="md:col-span-5 space-y-4 text-left">
+              <Link to="/" className="inline-flex items-center gap-3 group">
+                <div className="w-11 h-11 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-sm group-hover:border-emerald-500/60 transition-colors overflow-hidden">
+                  <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
+                </div>
+                <div>
+                  <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight block">
+                    CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
+                  </span>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Free Offline-First AI Coding Tutor</p>
+                </div>
+              </Link>
+
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm">
+                Empowering the next generation of African software developers, students, and career switchers with accessible, zero-internet coding education on everyday laptops.
+              </p>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/15 border border-[#005F02]/30 dark:border-emerald-500/30 text-[11px] font-mono font-bold text-[#005F02] dark:text-emerald-300">
+                <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                <span>100% Offline • Zero Data Needed</span>
               </div>
             </div>
 
-            {/* Nav Column Links */}
-            <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs text-slate-600 dark:text-slate-400 font-medium">
-              <Link to="/dashboard" className="hover:text-[#005F02] transition-colors">Dashboard</Link>
-              <Link to="/tutor" className="hover:text-[#005F02] transition-colors">AI Tutor</Link>
-              <Link to="/learning" className="hover:text-[#005F02] transition-colors">Courses</Link>
-              <Link to="/practice" className="hover:text-[#005F02] transition-colors">Practice</Link>
-              <Link to="/games" className="hover:text-[#005F02] transition-colors">Arcade Games</Link>
-              <Link to="/debugger" className="hover:text-[#005F02] transition-colors">Debugger</Link>
+            {/* Navigation Columns (Col 6-12 on Desktop, 2-cols on Mobile) */}
+            <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 text-left">
+              
+              {/* Column 1: Learning */}
+              <div className="space-y-3">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                  <span>Learn</span>
+                </div>
+                <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400 font-medium">
+                  <li>
+                    <Link to="/learning" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Beginner Courses
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/tutor" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      AI Tutor Mentor
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/practice" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Code Playground
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 2: Tools */}
+              <div className="space-y-3">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Gamepad2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                  <span>Practice</span>
+                </div>
+                <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400 font-medium">
+                  <li>
+                    <Link to="/debugger" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Bug &amp; Error Helper
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/games" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Arcade Mini-Games
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Student Dashboard
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 3: Platform */}
+              <div className="space-y-3 col-span-2 sm:col-span-1">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Laptop className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                  <span>Explore</span>
+                </div>
+                <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400 font-medium">
+                  <li>
+                    <a href="#demo" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Interactive Sandbox
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#testimonials" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Learner Stories
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#specs" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Hardware Specs
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#faq" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      FAQ
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
             </div>
+
           </div>
 
           {/* Bottom Copyright & Security Badges */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-            <span>© 2026 CodeTutor Africa. Built with care for everyone across Africa.</span>
-            <div className="flex items-center gap-4 font-mono text-[10px]">
-              <span className="flex items-center gap-1">
-                <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Offline
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400 pt-2">
+            <span className="text-center sm:text-left">
+              &copy; 2026 CodeTutor Africa. Built with care for every learner across Africa.
+            </span>
+
+            {/* Micro Badges (Horizontal scroll on narrow mobile) */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center font-mono text-[10px]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+                <Shield className="w-3 h-3 text-[#005F02] dark:text-emerald-400" /> 100% Offline
               </span>
-              <span className="flex items-center gap-1">
-                <Cpu className="w-3.5 h-3.5 text-[#005F02]" /> Local AI Engine
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+                <Cpu className="w-3 h-3 text-[#005F02] dark:text-emerald-400" /> Local AI Engine
               </span>
-              <span className="flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-[#005F02]" /> Zero Internet Costs
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+                <Zap className="w-3 h-3 text-[#005F02] dark:text-emerald-400" /> Zero Data Cost
               </span>
             </div>
           </div>
