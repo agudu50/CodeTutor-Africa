@@ -877,34 +877,51 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Mobile Dropdown Menu Drawer */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 space-y-2"
+              transition={{ duration: 0.25 }}
+              className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 py-5 space-y-3 shadow-2xl"
             >
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-                >
-                  {link.label}
-                </a>
-              ))}
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
-                <Link to="/signin" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-2.5 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200">
-                    Sign In
+              {/* Quick Offline Status Bar */}
+              <div className="p-2.5 rounded-xl bg-[#005F02]/10 dark:bg-emerald-950/50 border border-[#005F02]/20 flex items-center justify-between text-xs font-mono">
+                <span className="flex items-center gap-1.5 text-[#005F02] dark:text-emerald-400 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                  Local AI Engine
+                </span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">100% Offline</span>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="space-y-1">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-[#005F02] transition-colors"
+                  >
+                    <span>{link.label}</span>
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </a>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2.5">
+                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                  <button className="w-full py-3 rounded-xl text-xs font-extrabold bg-[#005F02] hover:bg-[#004e02] text-white shadow-md flex items-center justify-center gap-2">
+                    <span>Launch Workspace</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </Link>
-                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-2.5 rounded-lg text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white">
-                    Launch Workspace
+                <Link to="/signin" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                  <button className="w-full py-2.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                    Sign In
                   </button>
                 </Link>
               </div>
@@ -917,7 +934,7 @@ export const LandingPage: React.FC = () => {
           SECTION 1: HERO SECTION
           ═══════════════════════════════════════════════════════════════ */}
       <section
-        className="relative min-h-[620px] sm:min-h-[680px] flex items-center justify-center overflow-hidden bg-slate-950 text-white"
+        className="relative min-h-[560px] sm:min-h-[660px] flex items-center justify-center overflow-hidden bg-slate-950 text-white"
         onMouseEnter={() => setIsSlidePaused(true)}
         onMouseLeave={() => setIsSlidePaused(false)}
       >
@@ -947,19 +964,19 @@ export const LandingPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))}
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-[#005F02] hover:border-[#005F02] transition-colors shadow-lg"
+          className="absolute left-2 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-[#005F02] hover:border-[#005F02] transition-colors shadow-lg"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 sm:w-5 h-4 sm:h-5" />
         </button>
 
         <button
           type="button"
           onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-[#005F02] hover:border-[#005F02] transition-colors shadow-lg"
+          className="absolute right-2 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-slate-900/90 text-white border border-slate-700 hover:bg-[#005F02] hover:border-[#005F02] transition-colors shadow-lg"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5" />
         </button>
 
         {/* Current Slide Tag Badge */}
@@ -970,7 +987,22 @@ export const LandingPage: React.FC = () => {
           </span>
         </div>
 
-        {/* Interactive Linked Slide Mini-Cards at Bottom of Hero */}
+        {/* Mobile Slide Dot Indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex sm:hidden items-center gap-1.5">
+          {heroSlides.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setCurrentSlide(idx)}
+              className={`h-1.5 rounded-full transition-all ${
+                currentSlide === idx ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+              }`}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Interactive Linked Slide Mini-Cards at Bottom of Hero (Desktop/Tablet) */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:flex items-center gap-2.5 max-w-full px-4 overflow-x-auto">
           {heroSlides.map((slide, idx) => (
             <button
@@ -990,14 +1022,14 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Hero Foreground Content */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 py-16 sm:py-20 space-y-6">
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 py-14 sm:py-20 space-y-5 sm:space-y-6">
           
           {/* Top Pill Badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#005F02]/85 border border-emerald-400/40 text-emerald-100 text-xs font-semibold shadow-lg backdrop-blur-md"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#005F02]/85 border border-emerald-400/40 text-emerald-100 text-[11px] sm:text-xs font-semibold shadow-lg backdrop-blur-md"
           >
             <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <Zap className="w-3.5 h-3.5 text-emerald-300" />
@@ -1020,7 +1052,7 @@ export const LandingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-sm sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal"
+            className="text-xs sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal"
           >
             {heroSlides[currentSlide].subtitle}
           </motion.p>
@@ -1030,16 +1062,16 @@ export const LandingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-3 pt-3"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 w-full max-w-sm sm:max-w-none mx-auto"
           >
-            <Link to="/dashboard">
-              <button className="px-7 py-3.5 rounded-xl text-sm font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xl flex items-center gap-2 transition-transform hover:scale-102">
+            <Link to="/dashboard" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-sm font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xl flex items-center justify-center gap-2 transition-transform hover:scale-102">
                 <span>Start Learning Free</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
-            <a href="#demo">
-              <button className="px-7 py-3.5 rounded-xl text-sm font-bold bg-slate-900/90 text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors flex items-center gap-2">
+            <a href="#demo" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-sm font-bold bg-slate-900/90 text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
                 <Play className="w-4 h-4 text-[#005F02]" />
                 <span>Try Live Preview</span>
               </button>
@@ -1051,7 +1083,7 @@ export const LandingPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 text-xs text-slate-300 font-medium"
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-3 text-[11px] sm:text-xs text-slate-300 font-medium"
           >
             <span className="flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Free &amp; Private
@@ -1106,7 +1138,7 @@ export const LandingPage: React.FC = () => {
           {/* Top Subtle Ambient Border Light */}
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 dark:divide-slate-800/80 text-center">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y-0 divide-x sm:divide-x divide-slate-200/80 dark:divide-slate-800/80 text-center">
             
             {/* Stat Card 1 -> Links to #specs */}
             <a
@@ -1711,7 +1743,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Interconnected Linked Hardware Strip */}
         <div className="rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl overflow-hidden">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y-0 divide-x sm:divide-x divide-slate-200 dark:divide-white/10 text-center">
             {[
               {
                 title: 'Memory Friendly',
@@ -1740,12 +1772,12 @@ export const LandingPage: React.FC = () => {
             ].map((spec, idx) => (
               <div
                 key={idx}
-                className="p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group"
+                className="p-4 sm:p-6 space-y-2 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all group"
               >
-                <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{spec.title}</div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-[#005F02] tracking-tight">{spec.val}</div>
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">{spec.sub}</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/[0.06]">{spec.note}</div>
+                <div className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{spec.title}</div>
+                <div className="text-xl sm:text-3xl font-extrabold text-[#005F02] tracking-tight">{spec.val}</div>
+                <div className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200">{spec.sub}</div>
+                <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/[0.06]">{spec.note}</div>
               </div>
             ))}
           </div>
@@ -1859,29 +1891,29 @@ export const LandingPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[#005F02] rounded-3xl p-8 sm:p-12 text-center text-white shadow-xl space-y-6 relative overflow-hidden">
+          <div className="bg-[#005F02] rounded-3xl p-6 sm:p-12 text-center text-white shadow-xl space-y-6 relative overflow-hidden">
             <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto shadow-sm">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
 
             <div className="max-w-2xl mx-auto space-y-3">
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
                 Ready to Start Your Coding Journey?
               </h2>
-              <p className="text-sm sm:text-base text-white/90 leading-relaxed">
+              <p className="text-xs sm:text-base text-white/90 leading-relaxed">
                 Join thousands of learners across Africa building real coding skills at their own pace. No internet required, no subscriptions, and completely free forever.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <Link to="/dashboard">
-                <button className="px-8 py-3.5 rounded-xl text-sm font-bold bg-white text-[#005F02] hover:bg-slate-100 shadow-md transition-colors flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 w-full max-w-sm sm:max-w-none mx-auto">
+              <Link to="/dashboard" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-bold bg-white text-[#005F02] hover:bg-slate-100 shadow-md transition-colors flex items-center justify-center gap-2">
                   <span>Start Learning Free</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
-              <Link to="/signup">
-                <button className="px-8 py-3.5 rounded-xl text-sm font-semibold bg-[#004e02] hover:bg-[#003e02] text-white border border-white/20 transition-colors">
+              <Link to="/signup" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-semibold bg-[#004e02] hover:bg-[#003e02] text-white border border-white/20 transition-colors">
                   Create Free Account
                 </button>
               </Link>
@@ -1924,7 +1956,7 @@ export const LandingPage: React.FC = () => {
 
           {/* Bottom Copyright & Security Badges */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-            <span>© 2026 CodeTutor Africa. Built with ❤️ for everyone across Africa.</span>
+            <span>© 2026 CodeTutor Africa. Built with care for everyone across Africa.</span>
             <div className="flex items-center gap-4 font-mono text-[10px]">
               <span className="flex items-center gap-1">
                 <Shield className="w-3.5 h-3.5 text-[#005F02]" /> 100% Offline
