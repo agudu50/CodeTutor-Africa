@@ -28,6 +28,23 @@ import {
   Bot,
 } from 'lucide-react'
 
+function StarIcon({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  )
+}
+
+function MapPinIcon({ className = 'w-3 h-3' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  )
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    HERO SLIDESHOW DATA (PLAIN ENGLISH FOR EVERYONE)
    ═══════════════════════════════════════════════════════════════════ */
@@ -758,6 +775,7 @@ export const LandingPage: React.FC = () => {
       name: 'Amina Bello',
       role: 'Career Switcher & Accountant',
       location: 'Lagos, Nigeria',
+      image: '/images/testimonials/amina.jpg',
       quote: 'I had zero technical background and was intimidated by programming. CodeTutor explained Python in simple everyday words without confusing jargon. Being able to practice offline after work saved me so much on mobile data!',
       tag: 'Zero Tech Background',
     },
@@ -765,6 +783,7 @@ export const LandingPage: React.FC = () => {
       name: 'Kofi Mensah',
       role: 'First-Time Learner & Student',
       location: 'Accra, Ghana',
+      image: '/images/testimonials/kofi.jpg',
       quote: 'Internet at home is unpredictable and expensive. Having a friendly AI tutor that works completely offline on my old laptop means I can practice coding every evening without worrying about Wi-Fi or data bundles.',
       tag: '100% Offline Learner',
     },
@@ -772,8 +791,25 @@ export const LandingPage: React.FC = () => {
       name: 'Emmanuel Kiprono',
       role: 'High School Teacher & Coding Club Lead',
       location: 'Nairobi, Kenya',
+      image: '/images/testimonials/emmanuel.jpg',
       quote: 'The arcade games and step-by-step hints make learning fun and accessible for everyone. You do not need expensive computers or constant internet—anyone can just open their laptop and start learning.',
       tag: 'Teaching & Community',
+    },
+    {
+      name: 'Fatima Diop',
+      role: 'Self-Taught Web Developer',
+      location: 'Dakar, Senegal',
+      image: '/images/testimonials/fatima.jpg',
+      quote: 'Building HTML, CSS, and JavaScript projects without needing an internet connection helped me build confidence quickly. The AI tutor explains tricky bugs patiently without making me feel bad for asking questions.',
+      tag: 'Aspiring Web Developer',
+    },
+    {
+      name: 'Thabo Molefe',
+      role: 'Career Changer & Logistics Lead',
+      location: 'Johannesburg, South Africa',
+      image: '/images/testimonials/thabo.jpg',
+      quote: 'I wanted to learn Java to automate inventory tools at my workplace. The instant offline feedback and bite-sized lessons made learning possible during my commute and late nights.',
+      tag: 'Hands-On Problem Solver',
     },
   ]
 
@@ -1609,7 +1645,10 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Featured Testimonial Slideshow Box */}
-        <div className="relative rounded-3xl bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-6 sm:p-10 shadow-xl dark:shadow-2xl overflow-hidden min-h-[300px] flex flex-col justify-between">
+        <div className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 p-6 sm:p-10 shadow-xl dark:shadow-2xl overflow-hidden min-h-[340px] sm:min-h-[310px] flex flex-col justify-between">
+          {/* Top Subtle Accent Beam */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
+
           {/* Navigation Arrows */}
           <div className="absolute top-6 right-6 flex items-center gap-2 z-20">
             <button
@@ -1634,69 +1673,87 @@ export const LandingPage: React.FC = () => {
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonialSlide}
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.35 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25 }}
               className="space-y-6 flex-1 flex flex-col justify-between"
             >
               <div className="space-y-4 pr-16 sm:pr-24">
                 {/* 5 Stars Rating & Quote Icon */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-[#005F02] text-base sm:text-lg">
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
+                  <div className="flex items-center gap-1 text-[#005F02] dark:text-emerald-400">
+                    {[...Array(5)].map((_, i) => (
+                      <StarIcon key={i} className="w-4 h-4" />
+                    ))}
                   </div>
-                  <Quote className="w-6 h-6 text-[#005F02]/40 shrink-0" />
+                  <Quote className="w-6 h-6 text-[#005F02]/30 dark:text-emerald-400/30 shrink-0" />
                 </div>
 
-                {/* Big Quote */}
-                <blockquote className="text-base sm:text-xl md:text-2xl text-slate-800 dark:text-slate-200 font-medium italic leading-relaxed">
+                {/* Learner Quote */}
+                <blockquote className="text-base sm:text-xl md:text-2xl text-slate-800 dark:text-slate-100 font-medium italic leading-relaxed">
                   "{studentTestimonials[testimonialSlide].quote}"
                 </blockquote>
               </div>
 
               {/* Author Profile Footer */}
-              <div className="pt-6 border-t border-slate-200 dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
+              <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-full bg-[#005F02] text-white font-bold flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-slate-800">
-                    {studentTestimonials[testimonialSlide].name.charAt(0)}
+                  <div className="relative">
+                    <img
+                      src={studentTestimonials[testimonialSlide].image}
+                      alt={studentTestimonials[testimonialSlide].name}
+                      className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl object-cover border-2 border-[#005F02]/40 dark:border-emerald-500/40 shadow-md"
+                    />
+                    <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#005F02] dark:bg-emerald-400 border-2 border-white dark:border-slate-900" />
                   </div>
                   <div>
-                    <div className="text-sm sm:text-base font-extrabold text-[#005F02]">
+                    <div className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
                       {studentTestimonials[testimonialSlide].name}
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      {studentTestimonials[testimonialSlide].role} • <span className="font-semibold text-slate-700 dark:text-slate-300">{studentTestimonials[testimonialSlide].location}</span>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
+                      <span>{studentTestimonials[testimonialSlide].role}</span>
+                      <span>•</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <MapPinIcon className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                        {studentTestimonials[testimonialSlide].location}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-[#005F02]/15 dark:bg-[#005F02]/30 text-[#005F02] border border-[#005F02]/40">
+                <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-[#005F02]/10 dark:bg-emerald-500/15 text-[#005F02] dark:text-emerald-300 border border-[#005F02]/30 dark:border-emerald-500/30">
                   {studentTestimonials[testimonialSlide].tag}
                 </span>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Bottom Interactive Slide Indicators */}
-          <div className="flex items-center justify-center gap-2 pt-6 mt-2">
-            {studentTestimonials.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setTestimonialSlide(idx)}
-                className={`transition-all rounded-full flex items-center gap-1.5 ${
-                  testimonialSlide === idx
-                    ? 'w-8 h-2.5 bg-[#005F02]'
-                    : 'w-2.5 h-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-[#005F02]/50'
-                }`}
-                aria-label={`Jump to slide ${idx + 1}`}
-              />
-            ))}
+          {/* Bottom Interactive Thumbnail Selector Bar */}
+          <div className="flex items-center justify-center gap-2 sm:gap-3 pt-6 mt-2 overflow-x-auto no-scrollbar">
+            {studentTestimonials.map((student, idx) => {
+              const isCurrent = testimonialSlide === idx
+              return (
+                <button
+                  key={student.name}
+                  type="button"
+                  onClick={() => setTestimonialSlide(idx)}
+                  className={`px-2.5 py-1.5 rounded-2xl border transition-all flex items-center gap-2 shrink-0 ${
+                    isCurrent
+                      ? 'bg-[#005F02] text-white border-[#005F02] shadow-md scale-102'
+                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-[#005F02]/50'
+                  }`}
+                  aria-label={`Show testimonial from ${student.name}`}
+                >
+                  <img
+                    src={student.image}
+                    alt={student.name}
+                    className="w-5 h-5 rounded-full object-cover shrink-0"
+                  />
+                  <span className="text-[11px] font-bold whitespace-nowrap">{student.name.split(' ')[0]}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
       </section>
