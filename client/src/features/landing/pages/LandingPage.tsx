@@ -380,14 +380,27 @@ TerminalLivePreview.displayName = 'TerminalLivePreview'
    ═══════════════════════════════════════════════════════════════ */
 const AmbientLightBackground: React.FC = memo(() => {
   const particles = [
-    { top: '10%', left: '15%', size: 6, duration: 8, delay: 0 },
-    { top: '22%', left: '80%', size: 8, duration: 10, delay: 1 },
-    { top: '35%', left: '30%', size: 5, duration: 7, delay: 2 },
-    { top: '48%', left: '70%', size: 7, duration: 9, delay: 0.5 },
-    { top: '60%', left: '20%', size: 6, duration: 11, delay: 1.5 },
-    { top: '72%', left: '85%', size: 8, duration: 8.5, delay: 2.5 },
-    { top: '85%', left: '40%', size: 5, duration: 9.5, delay: 3 },
-    { top: '92%', left: '65%', size: 7, duration: 12, delay: 1 },
+    { top: '8%', left: '12%', size: 8, duration: 7, delay: 0 },
+    { top: '18%', left: '84%', size: 10, duration: 9, delay: 1 },
+    { top: '32%', left: '25%', size: 7, duration: 8, delay: 2 },
+    { top: '45%', left: '75%', size: 9, duration: 10, delay: 0.5 },
+    { top: '58%', left: '15%', size: 8, duration: 8.5, delay: 1.5 },
+    { top: '70%', left: '88%', size: 11, duration: 9.5, delay: 2.5 },
+    { top: '82%', left: '35%', size: 7, duration: 7.5, delay: 3 },
+    { top: '90%', left: '68%', size: 10, duration: 11, delay: 1 },
+    { top: '25%', left: '50%', size: 6, duration: 8, delay: 1.8 },
+    { top: '65%', left: '45%', size: 8, duration: 9, delay: 0.8 },
+    { top: '40%', left: '8%', size: 7, duration: 10, delay: 2.2 },
+    { top: '78%', left: '92%', size: 9, duration: 8.2, delay: 1.2 },
+  ]
+
+  const floatingBadges = [
+    { text: '0 KB Internet', top: '12%', left: '6%', delay: 0 },
+    { text: 'def learn_python():', top: '24%', right: '8%', delay: 1.5 },
+    { text: 'RAM <= 1.4 GB', top: '42%', left: '8%', delay: 2 },
+    { text: '✓ 100% Offline AI', top: '55%', right: '6%', delay: 0.8 },
+    { text: 'Fast Local Neural CPU', top: '74%', left: '5%', delay: 2.5 },
+    { text: 'class CodeTutor()', top: '86%', right: '9%', delay: 1.2 },
   ]
 
   return (
@@ -395,60 +408,82 @@ const AmbientLightBackground: React.FC = memo(() => {
       {/* Vibrant Ambient Glow Orb 1 - Top Left */}
       <motion.div
         animate={{
-          x: [0, 60, -40, 0],
-          y: [0, -50, 40, 0],
-          scale: [1, 1.3, 0.9, 1],
-          opacity: [0.4, 0.75, 0.4],
+          x: [0, 80, -50, 0],
+          y: [0, -60, 50, 0],
+          scale: [1, 1.35, 0.9, 1],
+          opacity: [0.45, 0.8, 0.45],
         }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-10 left-10 w-[500px] h-[500px] rounded-full bg-[#005F02]/25 dark:bg-[#005F02]/35 blur-3xl"
+        className="absolute top-10 left-5 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#005F02]/30 via-emerald-500/20 to-transparent dark:from-[#005F02]/45 dark:via-emerald-400/25 dark:to-transparent blur-3xl"
       />
 
       {/* Vibrant Ambient Glow Orb 2 - Middle Right */}
       <motion.div
         animate={{
-          x: [0, -70, 50, 0],
-          y: [0, 60, -50, 0],
-          scale: [1, 1.25, 0.95, 1],
-          opacity: [0.35, 0.7, 0.35],
+          x: [0, -90, 60, 0],
+          y: [0, 70, -60, 0],
+          scale: [1, 1.3, 0.95, 1],
+          opacity: [0.4, 0.75, 0.4],
         }}
         transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-        className="absolute top-[35%] right-5 w-[550px] h-[550px] rounded-full bg-[#005F02]/25 dark:bg-[#005F02]/35 blur-3xl"
+        className="absolute top-[30%] right-0 w-[650px] h-[650px] rounded-full bg-gradient-to-tl from-emerald-600/25 via-[#005F02]/25 to-transparent dark:from-emerald-400/35 dark:via-[#005F02]/35 dark:to-transparent blur-3xl"
       />
 
       {/* Vibrant Ambient Glow Orb 3 - Lower Left */}
       <motion.div
         animate={{
-          x: [0, 50, -60, 0],
-          y: [0, -60, 50, 0],
-          scale: [1, 1.2, 0.9, 1],
-          opacity: [0.4, 0.8, 0.4],
+          x: [0, 70, -70, 0],
+          y: [0, -70, 60, 0],
+          scale: [1, 1.25, 0.9, 1],
+          opacity: [0.45, 0.85, 0.45],
         }}
         transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-        className="absolute top-[65%] left-5 w-[520px] h-[520px] rounded-full bg-[#005F02]/30 dark:bg-[#005F02]/40 blur-3xl"
+        className="absolute top-[60%] left-0 w-[620px] h-[620px] rounded-full bg-gradient-to-tr from-[#005F02]/35 via-emerald-600/20 to-transparent dark:from-[#005F02]/50 dark:via-emerald-500/30 dark:to-transparent blur-3xl"
       />
 
       {/* Vibrant Ambient Glow Orb 4 - Bottom Center */}
       <motion.div
         animate={{
-          x: [0, -50, 40, 0],
-          y: [0, 40, -40, 0],
-          scale: [1, 1.25, 1, 1],
-          opacity: [0.3, 0.65, 0.3],
+          x: [0, -60, 50, 0],
+          y: [0, 50, -50, 0],
+          scale: [1, 1.3, 1, 1],
+          opacity: [0.35, 0.7, 0.35],
         }}
         transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 4.5 }}
-        className="absolute bottom-10 right-1/4 w-[480px] h-[480px] rounded-full bg-[#005F02]/25 dark:bg-[#005F02]/35 blur-3xl"
+        className="absolute bottom-5 right-1/4 w-[580px] h-[580px] rounded-full bg-gradient-to-bl from-[#005F02]/30 via-emerald-500/20 to-transparent dark:from-[#005F02]/40 dark:via-emerald-400/25 dark:to-transparent blur-3xl"
       />
 
-      {/* Floating Sparkle Particles */}
+      {/* Floating Animated Code Badges */}
+      {floatingBadges.map((badge, idx) => (
+        <motion.div
+          key={idx}
+          style={{ top: badge.top, left: badge.left, right: badge.right }}
+          animate={{
+            y: [0, -22, 0],
+            opacity: [0.3, 0.75, 0.3],
+          }}
+          transition={{
+            duration: 7 + idx,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: badge.delay,
+          }}
+          className="absolute hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-[#005F02]/25 dark:border-emerald-500/30 shadow-md backdrop-blur-md text-[11px] font-mono font-bold text-[#005F02] dark:text-emerald-300"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+          <span>{badge.text}</span>
+        </motion.div>
+      ))}
+
+      {/* Floating Glowing Particle Matrix */}
       {particles.map((p, idx) => (
         <motion.div
           key={idx}
           style={{ top: p.top, left: p.left, width: p.size, height: p.size }}
           animate={{
-            y: [0, -60, 0],
-            opacity: [0.2, 0.9, 0.2],
-            scale: [0.8, 1.4, 0.8],
+            y: [0, -75, 0],
+            opacity: [0.3, 1, 0.3],
+            scale: [0.8, 1.5, 0.8],
           }}
           transition={{
             duration: p.duration,
@@ -456,12 +491,22 @@ const AmbientLightBackground: React.FC = memo(() => {
             ease: 'easeInOut',
             delay: p.delay,
           }}
-          className="absolute rounded-full bg-[#005F02] shadow-[0_0_10px_#005F02]"
+          className="absolute rounded-full bg-[#005F02] dark:bg-emerald-400 shadow-[0_0_14px_#005F02] dark:shadow-[0_0_16px_#34d399]"
         />
       ))}
 
-      {/* High-Contrast Cyber Grid Lines */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#005f021f_1px,transparent_1px),linear-gradient(to_bottom,#005f021f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_70%,transparent_100%)] opacity-80" />
+      {/* Layer 1: High-Contrast Cyber Grid Lines */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#005f022e_1.5px,transparent_1.5px),linear-gradient(to_bottom,#005f022e_1.5px,transparent_1.5px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_85%_65%_at_50%_50%,#000_75%,transparent_100%)] opacity-90" />
+
+      {/* Layer 2: Dot Mesh Matrix */}
+      <div
+        className="absolute inset-0 opacity-30 dark:opacity-45 [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_65%,transparent_100%)]"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, rgba(0,95,2,0.6) 1.5px, transparent 1.5px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
     </div>
   )
 })
