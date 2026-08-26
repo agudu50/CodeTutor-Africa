@@ -22,6 +22,13 @@ import {
   X,
   Wifi,
   WifiOff,
+  Sparkles,
+  BookOpen,
+  Code2,
+  Bug,
+  LayoutDashboard,
+  GraduationCap,
+  Zap,
 } from 'lucide-react'
 
 interface TopbarProps {
@@ -70,18 +77,88 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isProfileOpen])
 
-  const getPageTitle = (path: string) => {
-    if (path.startsWith('/admin')) return 'Admin Operations'
-    if (path.startsWith('/dashboard')) return 'Dashboard'
-    if (path.startsWith('/tutor')) return 'AI Tutor'
-    if (path.startsWith('/practice')) return 'Code Practice'
-    if (path.startsWith('/debugger')) return 'Debugger'
-    if (path.startsWith('/learning/lessons')) return 'Lesson'
-    if (path.startsWith('/learning')) return 'Courses'
-    if (path.startsWith('/progress')) return 'Analytics'
-    if (path.startsWith('/settings')) return 'Settings'
-    return 'CodeTutor Africa'
+  const getPageInfo = (path: string) => {
+    if (path.startsWith('/admin')) {
+      return {
+        title: 'Admin Operations',
+        subtitle: 'System Telemetry & Platform Governance',
+        icon: <ShieldCheck className="w-4 h-4 text-brand-600 dark:text-brand-400" />,
+        badge: 'Admin',
+      }
+    }
+    if (path.startsWith('/dashboard')) {
+      return {
+        title: 'Dashboard',
+        subtitle: 'Offline Programming Workspace • All Skill Levels',
+        icon: <LayoutDashboard className="w-4 h-4 text-brand-600 dark:text-brand-400" />,
+        badge: 'Workspace',
+      }
+    }
+    if (path.startsWith('/tutor')) {
+      return {
+        title: 'Socratic AI Tutor',
+        subtitle: '6-Mode Pedagogical Engine • 100% Offline LLM',
+        icon: <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+        badge: 'Qwen 1.5B',
+      }
+    }
+    if (path.startsWith('/practice')) {
+      return {
+        title: 'Code Practice & Arcade',
+        subtitle: 'Interactive Drills, Bug Hunts & Algorithmic Challenges',
+        icon: <Code2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />,
+        badge: 'Sandboxed',
+      }
+    }
+    if (path.startsWith('/debugger')) {
+      return {
+        title: 'Compiler Diagnostics',
+        subtitle: 'AST Traceback Analyzer & Guiding Error Fixes',
+        icon: <Bug className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
+        badge: 'Diagnostics',
+      }
+    }
+    if (path.startsWith('/learning/lessons')) {
+      return {
+        title: 'Interactive Lesson',
+        subtitle: 'Embedded VS Code Sandbox & Automated Concept Checks',
+        icon: <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />,
+        badge: 'Active Lesson',
+      }
+    }
+    if (path.startsWith('/learning')) {
+      return {
+        title: 'Curriculum & Courses',
+        subtitle: 'Dynamic 3-Module 9-Lesson AI Synthesis',
+        icon: <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />,
+        badge: 'Roadmaps',
+      }
+    }
+    if (path.startsWith('/progress')) {
+      return {
+        title: 'Analytics & Mastery',
+        subtitle: 'Study Streaks, Topic Competence & Telemetry',
+        icon: <BarChart3 className="w-4 h-4 text-teal-600 dark:text-teal-400" />,
+        badge: 'Telemetry',
+      }
+    }
+    if (path.startsWith('/settings')) {
+      return {
+        title: 'Settings & Runtime',
+        subtitle: 'LLM Quantization, Memory Capping & Preferences',
+        icon: <Settings className="w-4 h-4 text-slate-600 dark:text-slate-400" />,
+        badge: 'Config',
+      }
+    }
+    return {
+      title: 'CodeTutor Africa',
+      subtitle: 'Offline-First AI Tutor for African Students',
+      icon: <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400" />,
+      badge: 'ADTC 2026',
+    }
   }
+
+  const pageInfo = getPageInfo(location.pathname)
 
   const toggleTheme = () => {
     if (theme === 'dark') setTheme('light')
@@ -95,42 +172,65 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
 
   return (
     <>
-      <header className="h-14 sm:h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-20 px-3 sm:px-6 flex items-center justify-between shadow-2xs select-none w-full box-border">
-        {/* Left section: Mobile menu + Page context */}
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+      <header className="h-14 sm:h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-20 px-3 sm:px-6 flex items-center justify-between shadow-xs select-none w-full box-border transition-colors duration-200">
+        {/* Subtle decorative top accent line */}
+        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-brand-500/40 dark:via-brand-400/30 to-transparent pointer-events-none" />
+
+        {/* Left section: Mobile menu + Page context & Breadcrumbs */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
           <button
             type="button"
             onClick={onOpenMobileNav}
-            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer touch-manipulation active:scale-95 transition-transform"
+            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer touch-manipulation active:scale-95"
             aria-label="Open navigation menu"
           >
             <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
+          {/* Desktop Page Route Icon & Breadcrumb Context */}
+          <div className="hidden lg:flex items-center justify-center w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700/70 shadow-2xs shrink-0">
+            {pageInfo.icon}
+          </div>
+
           <div className="min-w-0 flex-1">
-            <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
-              {getPageTitle(location.pathname)}
-            </h1>
-            <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden md:inline-block truncate">
-              Offline Programming Workspace • All Skill Levels
-            </span>
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate tracking-tight">
+                {pageInfo.title}
+              </h1>
+
+              {/* Desktop Workspace Category Badge */}
+              <span className="hidden xl:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/60 shrink-0">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-500" />
+                </span>
+                {pageInfo.badge}
+              </span>
+            </div>
+
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden md:inline-block truncate leading-none pt-0.5">
+              {pageInfo.subtitle}
+            </p>
           </div>
         </div>
 
-        {/* Right section: Search, streak, theme toggle, user */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Search Trigger (Icon on mobile, pill on desktop) */}
+        {/* Right section: Global Search, Quick Action, System Pill, Streak, Theme, User */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Enhanced Desktop Command Search Pill */}
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs cursor-pointer hover:border-brand-400 dark:hover:border-brand-600 transition-all shadow-2xs group focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs cursor-pointer hover:border-brand-400 dark:hover:border-brand-600 hover:bg-white dark:hover:bg-slate-900 transition-all duration-200 shadow-2xs group focus:outline-none focus:ring-2 focus:ring-brand-500/40"
             title="Search courses, lessons, and practice (Ctrl+K)"
           >
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 transition-colors" />
-            <span className="text-slate-500 dark:text-slate-400 font-medium hidden lg:inline">Search topics, lessons...</span>
-            <kbd className="text-[10px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300 font-mono font-bold">
-              Ctrl K
-            </kbd>
+            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" />
+            <span className="text-slate-500 dark:text-slate-400 font-medium hidden lg:inline text-xs">
+              Search courses, drills...
+            </span>
+            <span className="inline-flex items-center gap-0.5 text-[10px] bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-1.5 py-0.5 rounded-md text-slate-600 dark:text-slate-300 font-mono font-bold shadow-3xs">
+              <span className="text-[9px] opacity-70">Ctrl</span>
+              <span>K</span>
+            </span>
           </button>
 
           {/* Mobile Icon-Only Search Button */}
@@ -143,15 +243,27 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
             <Search className="w-4 h-4" />
           </button>
 
+          {/* Quick AI Tutor Shortcut (Desktop only when not on tutor page) */}
+          {!location.pathname.startsWith('/tutor') && (
+            <Link
+              to="/tutor"
+              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 hover:border-emerald-400 text-xs font-semibold cursor-pointer transition-all shadow-2xs shrink-0"
+              title="Launch Offline Socratic AI Tutor"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Ask AI Tutor</span>
+            </Link>
+          )}
+
           {/* Report Issue Action Button (Desktop Only) */}
           <button
             type="button"
             onClick={() => setIsReportModalOpen(true)}
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-400 text-xs font-semibold cursor-pointer transition-all shadow-2xs shrink-0"
+            className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-400 text-xs font-semibold cursor-pointer transition-all shadow-2xs shrink-0"
             title="Report an issue or suggest a course"
           >
             <HelpCircle className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-            <span>Report Issue</span>
+            <span>Support</span>
           </button>
 
           {/* System Online/Offline Status Indicator (Desktop/Tablet) */}
@@ -159,29 +271,38 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
             <SystemStatusIndicator onOpen={() => setIsStatusModalOpen(true)} />
           </div>
 
-          {/* Streak Counter (Mobile & Desktop) */}
-          <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 text-xs font-bold font-mono shadow-2xs shrink-0">
-            <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
+          {/* Enhanced Learning Streak Counter Badge */}
+          <Link
+            to="/progress"
+            className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/80 dark:to-orange-950/80 border border-amber-200/90 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 text-xs font-bold font-mono shadow-2xs shrink-0 hover:border-amber-400 dark:hover:border-amber-600 transition-all cursor-pointer group"
+            title="Study Streak: 7 Consecutive Days Active (Click for analytics)"
+          >
+            <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0 group-hover:scale-110 transition-transform" />
             <span className="hidden sm:inline">7 Days</span>
-            <span className="sm:hidden">7d</span>
-          </div>
+            <span className="sm:hidden text-[11px]">7d</span>
+          </Link>
 
-          {/* Theme Toggle (Tablet/Desktop Only) */}
+          {/* Theme Toggle Button with Smooth Icon Transition */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="hidden sm:flex p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800 shadow-2xs focus:outline-none focus:ring-1 focus:ring-brand-500 cursor-pointer shrink-0"
+            className="hidden sm:flex p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-slate-200 dark:border-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 cursor-pointer shrink-0"
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+            {isDark ? (
+              <Sun className="w-4 h-4 text-amber-400 transition-transform rotate-0 hover:rotate-45" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700 transition-transform -rotate-12 hover:rotate-0" />
+            )}
           </button>
 
-          {/* Interactive User Profile Dropdown */}
+          {/* Interactive User Profile Dropdown Button */}
           <div className="relative shrink-0" ref={profileMenuRef}>
             <button
               type="button"
               onClick={() => setIsProfileOpen((prev) => !prev)}
-              className="flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-brand-500/30 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
+              className="relative flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-brand-500/40 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer group"
               aria-label="User profile menu"
               aria-expanded={isProfileOpen}
             >
@@ -191,6 +312,8 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                 size="sm"
                 className="bg-[#005F02] text-white font-bold shadow-xs transition-colors w-7 h-7 sm:w-8 sm:h-8 text-xs"
               />
+              {/* Online status indicator dot */}
+              <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-slate-900 ${isOffline ? 'bg-amber-500' : 'bg-emerald-500'}`} />
             </button>
 
             {/* Backdrop overlay for reliable outside click / tap dismissal */}
@@ -204,7 +327,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
 
             {/* Profile Dropdown Menu */}
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2.5 w-64 sm:w-68 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="absolute right-0 mt-2.5 w-68 sm:w-72 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 divide-y divide-slate-100 dark:divide-slate-800">
                 {/* User Info Header with Close Button */}
                 <div className="p-2.5 sm:p-3 space-y-1.5">
                   <div className="flex items-start justify-between gap-2">
@@ -240,12 +363,13 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                   <div className="pt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
                     {profile.email}
                   </div>
-                  <div className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-semibold truncate">
-                    {profile.location}
+                  <div className="flex items-center gap-1 text-[10px] font-mono text-brand-600 dark:text-brand-400 font-semibold truncate">
+                    <Zap className="w-3 h-3 shrink-0" />
+                    <span>{profile.location || 'African Student Scholar'}</span>
                   </div>
                 </div>
 
-                {/* Network & Connectivity Status (Always accessible in dropdown) */}
+                {/* Network & Connectivity Status */}
                 <div className="pt-1.5">
                   <button
                     type="button"
@@ -265,10 +389,10 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                       ) : (
                         <Wifi className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       )}
-                      <span>{isOffline ? 'Offline Mode' : 'Online Mode'}</span>
+                      <span>{isOffline ? '100% Offline Mode' : 'Online Sync Active'}</span>
                     </div>
                     <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 border border-current opacity-90">
-                      {isOffline ? 'Details' : 'Synced'}
+                      {isOffline ? 'Details' : 'Active'}
                     </span>
                   </button>
                 </div>
@@ -282,6 +406,15 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                   >
                     <ShieldCheck className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
                     <span>Admin Operations Portal</span>
+                  </Link>
+
+                  <Link
+                    to="/tutor"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>AI Tutor Workspace</span>
                   </Link>
 
                   <Link
@@ -311,7 +444,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                   >
                     <HelpCircle className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span>Report Issue to Admin</span>
+                    <span>Report Issue / Feedback</span>
                   </button>
 
                   <Link
@@ -320,17 +453,21 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                     className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                   >
                     <Settings className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>System Settings & Preferences</span>
+                    <span>System Settings & LLM Runtime</span>
                   </Link>
 
-                  {/* Theme Switcher */}
+                  {/* Theme Switcher in Dropdown */}
                   <button
                     type="button"
                     onClick={toggleTheme}
                     className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      {isDark ? <Sun className="w-4 h-4 text-amber-400 shrink-0" /> : <Moon className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />}
+                      {isDark ? (
+                        <Sun className="w-4 h-4 text-amber-400 shrink-0" />
+                      ) : (
+                        <Moon className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
+                      )}
                       <span>{isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</span>
                     </div>
                     <span className="text-[10px] font-mono text-slate-400 capitalize">{theme}</span>
@@ -360,10 +497,11 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
       {/* Support & Issue Ticket Modal */}
       <ReportIssueModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} />
 
-      {/* System & Connection Status Modal (Persistently mounted) */}
+      {/* System & Connection Status Modal */}
       <SystemStatusModal isOpen={isStatusModalOpen} onClose={() => setIsStatusModalOpen(false)} />
     </>
   )
 })
 
 Topbar.displayName = 'Topbar'
+
