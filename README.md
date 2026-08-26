@@ -3,7 +3,7 @@
 # 🌍 CodeTutor Africa
 
 **Offline-First AI Programming Tutor for African University Students**  
-*Built for the Africa Deep Tech Challenge (ADTC) 2026 — Laptop LLM Track*
+
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
