@@ -1,60 +1,45 @@
 <div align="center">
 
-# 🌍 CodeTutor Africa
+# 💻 CodeTutor
 
-**Offline-First AI Programming Tutor for African University Students**  
-
+**Offline-First AI Programming Tutor, Dynamic Curriculum Generator & Interactive Sandbox**
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React 19](https://img.shields.io/badge/Frontend-React%2019-61DAFB.svg?logo=react&logoColor=black)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Production Deployment](https://img.shields.io/badge/Production-code--tutor--africa.vercel.app-005F02.svg?logo=vercel&logoColor=white)](https://code-tutor-africa.vercel.app)
-[![Offline First](https://img.shields.io/badge/Architecture-100%25%20Offline--First-success.svg)](#offline-first-philosophy)
-[![ADTC Track](https://img.shields.io/badge/ADTC%202026-Laptop%20LLM%20Track-orange.svg)](#adtc-2026-profiler--scoring-alignment)
+[![Offline First](https://img.shields.io/badge/Architecture-100%25%20Offline--First-success.svg)](#-system-architecture)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 
 ---
 
-## 🌐 Live Production Demo
+## 🌐 Live Demo & Endpoints
 
-- **Production URL**: **[https://code-tutor-africa.vercel.app](https://code-tutor-africa.vercel.app)**
+- **Live Production URL**: **[https://code-tutor-africa.vercel.app](https://code-tutor-africa.vercel.app)**
 - **Local Backend**: `http://127.0.0.1:8008`
 - **Local Frontend**: `http://localhost:5173`
 
 ---
 
-## 📖 1. Problem Statement & Motivation
+## 📖 1. Overview & Motivation
 
-Across African universities, computer science and engineering students frequently encounter steep roadblocks in mastering programming:
-1. **Unreliable Internet & High Data Costs**: Cloud-hosted AI coding assistants (e.g. ChatGPT, Claude, Copilot) require constant high-speed connectivity and costly API subscriptions, rendering them inaccessible in low-bandwidth regions and offline university labs.
-2. **Commodity Hardware Constraints**: The standard university student laptop is a commodity machine (typically **8 GB RAM, Intel Core i5 10th–12th Gen or AMD Ryzen 5, integrated graphics only, and 256 GB SSD**). Running heavyweight AI systems locally often causes catastrophic out-of-memory (OOM) crashes, extreme battery drain, or severe CPU thermal throttling.
-3. **The "Copy-Paste" Pedagogical Flaw**: Generic generative LLMs provide direct, unverified answers to assignments, depriving students of essential problem-solving intuition, mental model formation, and debugging skills.
+Learning to program effectively requires active practice, guided debugging, and deep conceptual understanding. However, modern learners and academic institutions face significant hurdles:
 
-### 💡 The Solution: CodeTutor Africa
-**CodeTutor Africa** is an offline-first, highly optimized AI programming tutor, dynamic curriculum generator, and VS Code-embedded sandbox engineered to execute 100% locally on an 8 GB RAM laptop without requiring GPUs, internet access, or cloud APIs.
+1. **Connectivity & Cloud Dependency**: Mainstream AI coding assistants (e.g., ChatGPT, Claude, GitHub Copilot) demand continuous high-speed internet and expensive recurring subscriptions, rendering them unreliable in low-bandwidth regions, during commutes, or in offline campus environments.
+2. **Hardware Constraints**: Heavyweight AI systems require high-end GPUs or massive RAM allocations, causing thermal throttling, rapid battery drain, and out-of-memory (OOM) errors on standard commodity laptops (8 GB RAM, integrated graphics).
+3. **The "Copy-Paste" Pedagogical Flaw**: Generic generative models tend to dump ready-made solutions, depriving students of essential problem-solving intuition, mental model formation, and real debugging capability.
 
----
-
-## 🎯 2. ADTC 2026 Profiler & Scoring Alignment
-
-CodeTutor Africa is engineered from the ground up for the official **Africa Deep Tech Foundation (ADTC) 2026 Laptop LLM Track** competition benchmark:
-
-$$\mathbf{S_{total}} = 0.50 \cdot S_{acc} + 0.30 \cdot S_{perf} + 0.20 \cdot S_{eff} - P_{thermal}$$
-
-| Metric | Target Laptop Constraint | Formula & Engineering Strategy |
-| :--- | :--- | :--- |
-| **Accuracy ($S_{acc}$)** | 50% Scoring Weight | High-accuracy Socratic pedagogical prompting + compiler error grounding + curriculum citations. |
-| **Performance ($S_{perf}$)** | 30% Scoring Weight | $S_{perf} = \min(\text{TPS} / 15.0, 1.0) \times 100$. Optimized prompt batching and bounded context window. |
-| **Efficiency ($S_{eff}$)** | 20% Scoring Weight | $S_{eff} = \max(0, (7.0\text{ GB} - \text{Peak RSS}) / 7.0\text{ GB}) \times 100$. Backend baseline RSS is **44 MB** ($S_{eff} = \mathbf{99.4/100}$). |
-| **Thermal ($P_{thermal}$)** | $-10$ Penalty Points | 4 CPU threads allocation to maintain package temperatures below the $85^\circ\text{C}$ throttling threshold. |
+### 💡 The Solution: CodeTutor
+**CodeTutor** is a lightweight, privacy-focused, offline-first AI programming tutor, dynamic curriculum generator, and embedded sandbox. It is engineered to run seamlessly on commodity hardware with zero external API dependencies or cloud lock-in, while emphasizing **Socratic pedagogy** to guide learners step-by-step.
 
 ---
 
-## 🏗️ 3. High-Level System Architecture
+## 🏗️ 2. System Architecture
 
-CodeTutor Africa follows a strict **Modular Monolith / Clean Architecture** pattern:
+CodeTutor follows a clean **Modular Monolith** architecture separating presentation, domain logic, and provider runtimes:
 
 ```
                       ┌────────────────────────────────────────┐
@@ -62,7 +47,7 @@ CodeTutor Africa follows a strict **Modular Monolith / Clean Architecture** patt
                       │  • Socratic Chat & SSE Token Streaming │
                       │  • AI Course & Multi-Module Generator  │
                       │  • VS Code Embedded IDEs & Terminals   │
-                      │  • 4 Three.js Interactive Arcade Games │
+                      │  • 3D Three.js Interactive Arcade Drill│
                       └──────────────────┬─────────────────────┘
                                          │ HTTP REST & SSE
                                          ▼
@@ -85,112 +70,91 @@ CodeTutor Africa follows a strict **Modular Monolith / Clean Architecture** patt
                                          ▼
                       ┌────────────────────────────────────────┐
                       │    CONCURRENCY & MEMORY GOVERNANCE     │
-                      │  • asyncio.Semaphore (MAX_INFERENCES=1)│
+                      │  • asyncio.Semaphore (Inference Lock)  │
                       │  • ModelManager (Singleton Lifecycle)  │
                       └──────────────────┬─────────────────────┘
                                          │
                         ┌────────────────┴────────────────┐
                         ▼                                 ▼
-           ┌────────────────────────┐        ┌────────────────────────┐
-           │   MockLLMProvider      │        │   LocalGGUFProvider    │
-           │  (44 MB Baseline RSS)  │        │   (llama.cpp GGUF)     │
-           └────────────────────────┘        └────────────────────────┘
+            ┌────────────────────────┐        ┌────────────────────────┐
+            │   MockLLMProvider      │        │   LocalGGUFProvider    │
+            │  (Deterministic/Fast)  │        │   (llama.cpp GGUF)     │
+            └────────────────────────┘        └────────────────────────┘
 ```
 
 ---
 
-## 🚀 4. Summary of Accomplishments & Features Built
+## 🚀 3. Key Features
 
-### 🤖 A. AI Course & Dynamic Curriculum Generator *(New!)*
-- **Custom Course Synthesis**: Students and instructors can prompt the AI to generate a comprehensive, structured course on **any** programming domain (e.g. *Frontend Web Development*, *Algorithms & DSA*, *Python Backend Systems*, *Distributed Architecture*).
-- **Multi-Module 9-Lesson Roadmaps**: Synthesizes a structured 3-Module, 9-Lesson curriculum complete with:
-  - Visual module progression banners.
-  - Deep conceptual theory and memory model analysis.
-  - Practical code implementations with syntax breakdown.
-  - Common anti-patterns & common errors to avoid.
-  - Socratic self-reflection guiding questions.
-- **Automated In-Lesson Assessments**:
-  - Multiple Choice Concept Checks (MCQ).
-  - Fill-in-the-blank keyword code tokens.
-  - Embedded VS Code challenges with automated test execution assertions.
-- **Arcade Drill Linking**: Automatically generates linked Bug Hunt and Speedrun challenges tailored to the generated course.
+### 🤖 A. Dynamic AI Course & Curriculum Generator
+- **Custom Course Synthesis**: Generate tailored, comprehensive roadmaps for any topic (e.g., *Frontend Web Development*, *Algorithms & Data Structures*, *Systems Programming in Rust*, *Python Backend Engineering*).
+- **Multi-Module Structured Lessons**: 3-Module, 9-Lesson curriculums packed with conceptual theory, syntax breakdowns, memory diagrams, anti-patterns, and Socratic reflection points.
+- **Integrated Knowledge Checks**: Multiple-choice quizzes, code token completions, and automated unit-test challenge validations.
 
-### 💻 B. VS Code Embedded IDEs & Live Sandboxes *(New!)*
-- **Monaco / VS Code UI Paradigm**: Traffic light window controls (`🔴 🟡 🟢`), file tab indicators, line numbering, and syntax highlighting across reading guides.
-- **Interactive Code Runner & Terminal**: Live interactive coding sandbox embedded in lesson views and quiz challenges with deterministic execution assertions.
+### 💻 B. VS Code-Style Embedded IDE & Sandbox
+- **Familiar Developer Experience**: Monaco-powered code editor with syntax highlighting, line numbers, and file tree navigation.
+- **Interactive Code Runner & Execution Engine**: In-browser and server-evaluated sandbox with deterministic assertion feedback and compiler error analysis.
 
-### 🖥️ C. Backend Architecture (`server/`)
-- **FastAPI Modular Monolith**: Implemented with API versioning (`/api/v1`), global structured exception handling, and instantaneous `/health` check.
-- **Resource & Memory Guardrails**:
-  - `PerformanceMonitor`: Live telemetry tracking process RSS (MB/GB), CPU %, token throughput (TPS), latency (ms), and thermal status.
-  - Baseline process memory footprint: **44.02 MB** ($S_{eff} = \mathbf{99.39/100}$).
-  - Concurrency Lock: `asyncio.Semaphore(MAX_CONCURRENT_INFERENCES=1)` to prevent multi-inference memory explosions on 8 GB RAM.
-- **LLM Provider Abstraction Layer**:
-  - `LLMProvider` Abstract Base Class.
-  - `MockLLMProvider`: Deterministic pedagogical tutor response generator for instant test execution and offline dev.
-  - `LocalGGUFProvider`: CPU-optimized `llama.cpp` wrapper with memory mapping (`use_mmap=True`), 4 threads, 2048 token bounded context, and $0$ GPU layers.
-- **Socratic Tutor Engine**: 6 targeted pedagogical modes (`explain`, `hint`, `practice`, `debug`, `review`, `quiz`).
-- **Persistence & Repositories**: Async SQLite engine (`aiosqlite` + SQLAlchemy 2.0) with models for Users, Courses, Modules, Lessons, Tutor Sessions, Messages, Practice Exercises, and Student Mastery.
+### 🧠 C. Socratic AI Tutoring Engine
+- **6 Targeted Pedagogical Modes**:
+  - `explain`: Concept decomposition without giving away code answers.
+  - `hint`: Incremental, guided hints to unblock learners.
+  - `practice`: Custom micro-exercises targeted to weak areas.
+  - `debug`: Step-by-step diagnostic guidance for compiler and runtime errors.
+  - `review`: Code quality, time complexity, and style reviews.
+  - `quiz`: Diagnostic knowledge evaluation.
 
-### 🎨 D. Frontend & Interactive Learning Experience (`client/`)
-- **Modern Responsive Dark/Light UI**: Built with React 19, TypeScript, Tailwind CSS, and Lucide icons.
-- **Interactive Socratic AI Tutor Workspace**: Multi-mode selector, code editor contextualizer, and streaming token response display.
-- **3D Three.js Arcade Learning Games**:
-  - **Syntax Speedrun**: Rapid-fire syntax challenge against the clock.
-  - **Bug Hunt**: Spot and fix compiler and logic bugs.
-  - **Output Predictor**: Predict execution outcomes and memory states.
-  - **Code Shuffle**: Assemble scrambled algorithmic logic blocks.
-  - Multi-language support (Python, JavaScript, TypeScript, Java, SQL).
+### 🎮 D. Interactive 3D Arcade Learning Drills
+- **Gamified Coding Modules**:
+  - **Syntax Speedrun**: Fast-paced syntax accuracy challenges.
+  - **Bug Hunt**: Identify and resolve subtle logic and syntax defects.
+  - **Output Predictor**: Predict runtime behavior and variable state changes.
+  - **Code Shuffle**: Reassemble scrambled algorithmic blocks into valid solutions.
+  - Supports Python, JavaScript, TypeScript, Java, and SQL.
 
 ---
 
-## 🛠️ 5. Installation & Execution Guide
+## 🛠️ 4. Getting Started
 
 ### Prerequisites
-- Python 3.11+
-- Node.js 18+ and npm
+- **Python 3.11+**
+- **Node.js 18+** and **npm**
 
 ---
 
-### Step 1: Start the Backend
+### 1. Backend Setup (FastAPI)
 ```bash
 cd server
 
-# Install lightweight dependencies
+# Install dependencies
 python -m pip install -r requirements.txt
 
-# Run the FastAPI server (Default: http://127.0.0.1:8008)
+# Start the development server (runs on http://127.0.0.1:8008)
 uvicorn app.main:app --host 127.0.0.1 --port 8008 --reload
 ```
 
-#### Run Backend Verification & Benchmarks:
+#### Run Backend Tests:
 ```bash
-# Run automated test suite
+# Run unit & integration test suite
 python -m pytest tests
-
-# Run latency and token throughput benchmark
-python benchmarks/benchmark_inference.py --rounds 3 --tokens 128
-
-# Run memory footprint benchmark (ADTC Seff check)
-python benchmarks/benchmark_memory.py
 ```
 
 ---
 
-### Step 2: Start the Frontend
+### 2. Frontend Setup (React + Vite)
 ```bash
 cd client
 
-# Install frontend dependencies
+# Install frontend packages
 npm install
 
-# Start Vite dev server (Default: http://localhost:5173)
+# Start Vite development server (runs on http://localhost:5173)
 npm run dev
 ```
 
 ---
 
-## 📊 6. Backend API Endpoints Reference
+## 📊 5. REST API Reference
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -209,18 +173,19 @@ npm run dev
 
 ---
 
-## 🛣️ 7. Roadmap & Phase 2 Objectives
+## 🛣️ 6. Roadmap
 
 - [x] **Dynamic AI Course Synthesis**: Complete 3-Module, 9-Lesson curriculum generator with interactive quizzes & test runners.
 - [x] **Embedded VS Code Sandboxes**: Traffic light UI, Monaco syntax highlighter, and live terminal executor.
-- [x] **Production Vercel Cloud & Offline Local Dual-Mode**: Live production deployment with zero cloud lock-in.
-- [ ] **Quantization Profiling**: Benchmark `Qwen2.5-Coder-1.5B-Instruct` vs `3B-Instruct` at `Q4_K_M` and `Q5_K_M` using the official `adtc-profiler`.
-- [ ] **Local RAG Engine**: Ingest university course slides and PDFs into a lightweight local FAISS index with small local embeddings.
-- [ ] **Native Desktop Packaging**: Package frontend + backend into an offline bundle (e.g. Electron / Tauri) for one-click student installation.
+- [x] **Hybrid Cloud & Offline Local Modes**: Seamless operation locally or via cloud deployment.
+- [ ] **Quantized Model Profiles**: Built-in support for multiple lightweight local LLMs (`Qwen2.5-Coder`, `DeepSeek-R1-Distill`, `Llama-3.2`) with custom quantization levels (`Q4_K_M`, `Q5_K_M`).
+- [ ] **Local RAG Engine**: Ingest textbooks, university slides, and documentation into a local vector store (FAISS/Chroma) with small embedding models.
+- [ ] **Desktop Application Package**: One-click installer via Tauri / Electron for standalone offline desktop usage.
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ for African University Students & the Africa Deep Tech Challenge 2026</sub>
+  <sub>Built with ❤️ for students, educators, and developers worldwide</sub>
 </div>
+
 
