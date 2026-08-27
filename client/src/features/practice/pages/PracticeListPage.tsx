@@ -126,7 +126,7 @@ export const PracticeListPage: React.FC = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-7 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
           {filteredQuestions.map((question) => {
             const difficultyBadge =
               question.difficulty === 'beginner'
@@ -139,31 +139,31 @@ export const PracticeListPage: React.FC = () => {
               <Card
                 key={question.id}
                 hoverable
-                className="flex flex-col justify-between p-5 sm:p-6 lg:p-7 space-y-4 sm:space-y-5 border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl h-full group"
+                className="flex flex-col justify-between p-4 sm:p-5 space-y-3.5 border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl h-full group"
               >
-                <div className="space-y-3.5">
-                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800/80">
-                    <span className={`text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2.5 py-1 rounded-lg border ${difficultyBadge}`}>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                    <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyBadge}`}>
                       {question.difficulty}
                     </span>
-                    <span className="font-mono text-[10px] sm:text-[11px] uppercase font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                       {question.language}
                     </span>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors leading-snug">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors leading-snug">
                     {question.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {question.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-1.5 pt-1.5">
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
                     {question.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 font-mono border border-slate-200/80 dark:border-slate-700/80 shadow-3xs"
+                        className="text-[10px] px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 font-mono border border-slate-200/80 dark:border-slate-700/80"
                       >
                         #{tag}
                       </span>
@@ -171,8 +171,8 @@ export const PracticeListPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3">
-                  <span className="text-[11px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>{question.testCases.length} Test Cases</span>
                   </span>
@@ -180,7 +180,7 @@ export const PracticeListPage: React.FC = () => {
                     <Button
                       variant="primary"
                       size="sm"
-                      className="font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs text-xs justify-center cursor-pointer px-3.5 sm:px-4 h-9 sm:h-9"
+                      className="font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs text-xs justify-center cursor-pointer px-3 h-8"
                       rightIcon={<ArrowRight className="w-3.5 h-3.5 ml-1 opacity-80" />}
                     >
                       Solve Problem
