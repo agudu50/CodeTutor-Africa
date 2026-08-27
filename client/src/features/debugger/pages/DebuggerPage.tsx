@@ -112,9 +112,10 @@ export const DebuggerPage: React.FC = () => {
           <div className="w-full sm:w-48">
             <Dropdown
               options={[
-                { value: 'javascript', label: 'JavaScript (Node.js)' },
-                { value: 'java', label: 'Java 21 (OpenJDK)' },
-                { value: 'python', label: 'Python 3.12' },
+                { value: 'javascript', label: 'JavaScript' },
+                { value: 'typescript', label: 'TypeScript' },
+                { value: 'python', label: 'Python' },
+                { value: 'java', label: 'Java' },
               ]}
               value={language}
               onChange={handleLanguageChange}

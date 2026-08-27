@@ -169,11 +169,10 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
             className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white"
           >
             <option value="all">All Languages</option>
-            <option value="python">Python</option>
             <option value="javascript">JavaScript</option>
-            <option value="java">Java</option>
             <option value="typescript">TypeScript</option>
-            <option value="sql">SQL</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
           </select>
         </div>
 

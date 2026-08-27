@@ -362,11 +362,10 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                 onChange={(e) => setLanguage(e.target.value as ChallengeLanguage)}
                 className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
               >
-                <option value="python">Python</option>
                 <option value="javascript">JavaScript</option>
-                <option value="java">Java</option>
                 <option value="typescript">TypeScript</option>
-                <option value="sql">SQL</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
               </select>
             </div>
 

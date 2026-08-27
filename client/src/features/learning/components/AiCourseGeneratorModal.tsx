@@ -20,22 +20,13 @@ interface AiCourseGeneratorModalProps {
 interface LanguageOption {
   value: ProgrammingLanguage
   label: string
-  version: string
-  spec: string
 }
 
 const MODERN_LANGUAGES: LanguageOption[] = [
-  { value: 'python', label: 'Python', version: '3.12+', spec: 'AI & Data Backend' },
-  { value: 'typescript', label: 'TypeScript', version: '5.4+', spec: 'Type-Safe Full-Stack' },
-  { value: 'javascript', label: 'JavaScript', version: 'ES2024', spec: 'Modern Web & Streams' },
-  { value: 'rust', label: 'Rust', version: '2024', spec: 'Memory Safety & Systems' },
-  { value: 'go', label: 'Golang', version: '1.22+', spec: 'Microservices & Concurrency' },
-  { value: 'cpp', label: 'C++', version: '20/23', spec: 'Low-Latency & STL' },
-  { value: 'java', label: 'Java', version: '21 LTS', spec: 'Enterprise & Virtual Threads' },
-  { value: 'csharp', label: 'C# / .NET', version: '8.0', spec: 'Modern ASP.NET & Cloud' },
-  { value: 'php', label: 'PHP', version: '8.3', spec: 'Modern Web & Laravel' },
-  { value: 'sql', label: 'SQL', version: '2023', spec: 'PostgreSQL & Index Tuning' },
-  { value: 'html', label: 'HTML5 & CSS3', version: 'Modern', spec: 'Responsive UI & Layouts' },
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'python', label: 'Python' },
+  { value: 'java', label: 'Java' },
 ]
 
 interface DifficultyOption {
@@ -70,7 +61,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
 }) => {
   const navigate = useNavigate()
   const [prompt, setPrompt] = useState('')
-  const [language, setLanguage] = useState<ProgrammingLanguage>('python')
+  const [language, setLanguage] = useState<ProgrammingLanguage>('javascript')
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('intermediate')
   const [moduleCount, setModuleCount] = useState<number>(3)
   const [includeVideos, setIncludeVideos] = useState(true)
@@ -107,14 +98,10 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
   }, [])
 
   const promptSuggestions = [
-    { label: 'Rust Memory & Concurrency', prompt: 'Rust Systems Programming, Memory Safety, and Concurrent Thread Pools', lang: 'rust' as ProgrammingLanguage },
-    { label: 'Golang Distributed Backend', prompt: 'Golang Microservices, Goroutines, Channels, and Distributed Key-Value Store', lang: 'go' as ProgrammingLanguage },
-    { label: 'C++ Systems & STL Algorithms', prompt: 'Modern C++20 Memory Management, Smart Pointers, and STL Algorithm Optimization', lang: 'cpp' as ProgrammingLanguage },
-    { label: 'Full-Stack JavaScript & Async', prompt: 'Modern JavaScript Event Loop, Async Microtasks, Web Streams, and Local SQLite', lang: 'javascript' as ProgrammingLanguage },
-    { label: 'TypeScript Enterprise Architecture', prompt: 'Advanced TypeScript Generics, Utility Types, Decorators, and Clean Architecture', lang: 'typescript' as ProgrammingLanguage },
-    { label: 'Java Enterprise OOP & JVM', prompt: 'Java OOP Patterns, JVM Bytecode Optimization, and Clean Enterprise Architecture', lang: 'java' as ProgrammingLanguage },
-    { label: 'Python Full-Stack & ML', prompt: 'Python Algorithmic Problem Solving, Decorators, Generators, and NumPy Foundations', lang: 'python' as ProgrammingLanguage },
-    { label: 'SQL Indexing & Optimization', prompt: 'High-Performance SQL Queries, B-Tree Indexes, Query Execution Plans, and Schema Normalization', lang: 'sql' as ProgrammingLanguage },
+    { label: 'JavaScript Async & APIs', prompt: 'Modern JavaScript Event Loop, Async/Await, Web APIs, and State Management', lang: 'javascript' as ProgrammingLanguage },
+    { label: 'TypeScript Enterprise Architecture', prompt: 'Advanced TypeScript Generics, Utility Types, Interfaces, and Clean Architecture', lang: 'typescript' as ProgrammingLanguage },
+    { label: 'Python Problem Solving & Data', prompt: 'Python Algorithmic Problem Solving, Functions, Comprehensions, and Data Structures', lang: 'python' as ProgrammingLanguage },
+    { label: 'Java OOP & Scalable Design', prompt: 'Java OOP Patterns, Polymorphism, Abstract Contracts, and Collections', lang: 'java' as ProgrammingLanguage },
   ]
 
   const generationSteps = [
@@ -326,7 +313,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                     }`}
                   >
                     <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
-                      {selectedLangObj.label} <span className="text-slate-400 font-normal text-[11px]">({selectedLangObj.version})</span>
+                      {selectedLangObj.label}
                     </span>
                     <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${langDropdownOpen ? 'rotate-180 text-[#005F02]' : ''}`} />
                   </button>
@@ -357,17 +344,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                                   : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                               }`}
                             >
-                              <div className="min-w-0 pr-2">
-                                <div className="text-xs font-semibold flex items-center gap-1.5">
-                                  <span>{langItem.label}</span>
-                                  <span className="text-[10px] text-slate-400 font-normal">
-                                    {langItem.version}
-                                  </span>
-                                </div>
-                                <div className="text-[10px] text-slate-400 truncate">
-                                  {langItem.spec}
-                                </div>
-                              </div>
+                              <span className="text-xs font-semibold">{langItem.label}</span>
                               {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] shrink-0" />}
                             </button>
                           )

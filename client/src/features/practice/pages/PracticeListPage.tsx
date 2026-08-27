@@ -69,9 +69,10 @@ export const PracticeListPage: React.FC = () => {
             <Dropdown
               options={[
                 { value: 'all', label: 'All Languages' },
-                { value: 'python', label: 'Python 3.12' },
                 { value: 'javascript', label: 'JavaScript' },
-                { value: 'java', label: 'Java 21' },
+                { value: 'typescript', label: 'TypeScript' },
+                { value: 'python', label: 'Python' },
+                { value: 'java', label: 'Java' },
               ]}
               value={selectedLang}
               onChange={setSelectedLang}

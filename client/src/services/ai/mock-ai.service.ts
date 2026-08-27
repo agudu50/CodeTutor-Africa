@@ -118,7 +118,7 @@ export class MockAIService implements IAIService {
 
     const topic = request.topic.trim() || 'Fundamentals & Core Concepts'
     const lang = request.language
-    const langLabel = lang === 'python' ? 'Python 3' : lang === 'java' ? 'Java 21' : 'JavaScript (ES2024)'
+    const langLabel = lang === 'python' ? 'Python' : lang === 'java' ? 'Java' : 'JavaScript'
 
     // Recommended YouTube Links by language & domain
     const recommendedVideoUrl =

@@ -362,9 +362,10 @@ export const SettingsPage: React.FC = () => {
                   <Dropdown
                     label="Default Programming Language"
                     options={[
-                      { value: 'python', label: 'Python 3.12 (Recommended for CS)' },
-                      { value: 'javascript', label: 'JavaScript (Web & Async)' },
-                      { value: 'java', label: 'Java 21 (OOP & Systems)' },
+                      { value: 'javascript', label: 'JavaScript' },
+                      { value: 'typescript', label: 'TypeScript' },
+                      { value: 'python', label: 'Python' },
+                      { value: 'java', label: 'Java' },
                     ]}
                     value={defaultLang}
                     onChange={(val) => setDefaultLang(val as ProgrammingLanguage)}

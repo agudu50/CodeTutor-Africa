@@ -270,7 +270,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   const displayLineCount = Math.max(userLineCount, targetLineCount, 10)
 
   const fileExtension = currentSnippet?.language === 'python' ? 'py' : currentSnippet?.language === 'javascript' ? 'js' : 'java'
-  const langLabel = currentSnippet?.language === 'python' ? 'Python 3.12' : currentSnippet?.language === 'javascript' ? 'JavaScript' : 'Java 21'
+  const langLabel = currentSnippet?.language === 'python' ? 'Python' : currentSnippet?.language === 'javascript' ? 'JavaScript' : 'Java'
   const fileIconColor = currentSnippet?.language === 'python' ? 'text-[#4ec9b0]' : currentSnippet?.language === 'javascript' ? 'text-[#ffd700]' : 'text-[#e06c75]'
 
   return (

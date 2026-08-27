@@ -1,4 +1,4 @@
-import { Course, Module, Lesson, QuizQuestion, CourseGameLink } from '@/types/course'
+import { Course, Module, Lesson, QuizQuestion, CourseGameLink, TechnicalTerm } from '@/types'
 import { ProgrammingLanguage, DifficultyLevel } from '@/types/common'
 import { courseStoreService } from './course-store.service'
 
@@ -17,7 +17,7 @@ export interface GenerateCourseRequest {
 class AiCourseGeneratorService {
   /**
    * Synthesizes a complete curriculum, lesson guides, language-accurate code snippets,
-   * quizzes, and arcade game drills. Connects to the local FastAPI offline LLM backend.
+   * quizzes, and arcade game drills matching the official CodeTutor course structure.
    */
   public async generateCourse(request: GenerateCourseRequest): Promise<Course> {
     const {
@@ -53,7 +53,7 @@ class AiCourseGeneratorService {
           title: data.title,
           slug: data.slug,
           description: data.description,
-          category: data.category,
+          category: data.category || this.inferCategory(prompt),
           language: data.language as ProgrammingLanguage,
           difficulty: data.difficulty as DifficultyLevel,
           thumbnailUrl: data.thumbnail_url || this.inferThumbnail(data.category, selectedLang),
@@ -64,18 +64,31 @@ class AiCourseGeneratorService {
             title: m.title,
             description: m.description,
             order: m.order,
+            progressPercentage: 0,
+            learningObjectives: m.learning_objectives || [
+              `Understand the fundamental concepts of ${m.title}`,
+              `Apply idiomatic ${this.getLanguageLabel(selectedLang)} patterns in practical projects`,
+              `Debug common beginner gotchas and write resilient code`,
+            ],
+            technicalTerms: m.technical_terms || this.inferTechnicalTerms(m.title, selectedLang),
             lessons: m.lessons.map((l: any) => ({
               id: l.id,
               courseId: data.id,
               title: l.title,
               slug: l.slug,
               description: l.description,
-              durationMinutes: l.duration_minutes,
+              durationMinutes: l.duration_minutes || 25,
               order: l.order,
               isCompleted: false,
-              videoUrl: l.video_url,
-              contentMarkdown: l.content_markdown,
-              quizQuestions: l.quiz_questions,
+              videoUrl: l.video_url || this.inferVideoUrl(l.title, selectedLang, l.order, m.order),
+              contentMarkdown: l.content_markdown || this.generateLessonContent(l.title, selectedLang, prompt, difficulty),
+              quizQuestions: l.quiz_questions || this.generateQuizQuestions(l.title, selectedLang, prompt),
+              learningObjectives: l.learning_objectives || [
+                `Master the core mechanics of ${l.title}`,
+                `Write and test syntax-accurate code blocks`,
+                `Identify and avoid common pitfalls`,
+              ],
+              technicalTerms: l.technical_terms || this.inferTechnicalTerms(l.title, selectedLang).slice(0, 2),
             })),
           })),
           isAiGenerated: true,
@@ -159,9 +172,6 @@ class AiCourseGeneratorService {
     const langLabel = this.getLanguageLabel(lang)
     const p = prompt.toLowerCase()
 
-    if (p.includes('frontend') || p.includes('react') || p.includes('ui') || p.includes('dom') || p.includes('web')) {
-      return `Modern Frontend Web Engineering with ${langLabel}`
-    }
     if (p.includes('backend') || p.includes('api') || p.includes('microservice') || p.includes('server')) {
       return `High-Performance ${langLabel} Backend Architecture`
     }
@@ -172,107 +182,230 @@ class AiCourseGeneratorService {
       return `Mastering Data Structures & Algorithms in ${langLabel}`
     }
     if (p.includes('mobile') || p.includes('app')) {
-      return `Mobile App Architecture with ${langLabel}`
+      return `Mobile Application Engineering with ${langLabel}`
+    }
+    if (p.includes('system') || p.includes('rust') || p.includes('memory') || p.includes('concurrency')) {
+      return `${langLabel} Systems & Concurrent Architecture`
     }
 
-    return `${clean.charAt(0).toUpperCase() + clean.slice(1)}: Masterclass in ${langLabel}`
+    return `${clean.charAt(0).toUpperCase() + clean.slice(1)} in ${langLabel}`
   }
 
   private inferCategory(prompt: string): string {
     const p = prompt.toLowerCase()
     if (p.includes('algorithm') || p.includes('data structure') || p.includes('dsa')) return 'Algorithms & DSA'
-    if (p.includes('frontend') || p.includes('web') || p.includes('react') || p.includes('ui') || p.includes('dom') || p.includes('css')) return 'Frontend Web'
-    if (p.includes('backend') || p.includes('api') || p.includes('server') || p.includes('database') || p.includes('sql')) return 'Backend Systems'
+    if (p.includes('backend') || p.includes('api') || p.includes('server')) return 'Backend Systems'
+    if (p.includes('database') || p.includes('sql') || p.includes('query')) return 'Database Engineering'
     if (p.includes('mobile') || p.includes('flutter') || p.includes('android')) return 'Mobile Engineering'
-    if (p.includes('system') || p.includes('rust') || p.includes('c++') || p.includes('memory')) return 'Systems Programming'
-    return 'Applied Software Engineering'
+    if (p.includes('system') || p.includes('rust') || p.includes('c++') || p.includes('memory')) return 'Systems Architecture'
+    if (p.includes('fullstack') || p.includes('web') || p.includes('react') || p.includes('dom')) return 'Web Engineering'
+    return 'Core Programming'
   }
 
   private inferDescription(prompt: string, lang: ProgrammingLanguage, difficulty: string): string {
     const langLabel = this.getLanguageLabel(lang)
-    return `An offline-first, Socratic masterclass on ${prompt}. Covers architectural principles, memory-efficient patterns, local compiler exercises, and automated test validation in ${langLabel} (${difficulty} track).`
+    return `This course teaches fundamental and advanced programming concepts from scratch using ${langLabel}. Learners will build a solid foundation in ${prompt}, progressing through hands-on mental models, step-by-step code breakdowns, interactive VS Code sandbox challenges, and arcade drills (${difficulty} track).`
   }
 
   private inferThumbnail(category: string, _lang: string): string {
-    if (category.includes('Frontend') || category.includes('Web')) {
-      return '/images/students_collaboration.jpg'
-    }
-    if (category.includes('Backend') || category.includes('Systems')) {
+    if (category.includes('Systems') || category.includes('Backend')) {
       return '/images/terminal_student_offline.jpg'
     }
+    if (category.includes('Database')) {
+      return '/images/code_editor_screen.jpg'
+    }
     return '/images/african_student_laptop_night.jpg'
+  }
+
+  private inferTechnicalTerms(context: string, lang: ProgrammingLanguage): TechnicalTerm[] {
+    const langLabel = this.getLanguageLabel(lang)
+    const ctx = context.toLowerCase()
+
+    if (ctx.includes('variable') || ctx.includes('data') || ctx.includes('type')) {
+      return [
+        {
+          term: 'Variable',
+          definition: `A labeled box in computer memory that holds a piece of information for later use.`,
+          example: lang === 'python' ? 'user_name = "Amara"' : 'const userName = "Amara";',
+        },
+        {
+          term: 'Data Type',
+          definition: 'The classification telling the computer whether a value is text (string), number, or boolean.',
+          example: '"Hello" (String), 42 (Number), true (Boolean)',
+        },
+        {
+          term: 'Execution Flow',
+          definition: 'The order in which the computer reads instructions—from top to bottom line by line.',
+        },
+      ]
+    }
+
+    if (ctx.includes('loop') || ctx.includes('iteration') || ctx.includes('while') || ctx.includes('for')) {
+      return [
+        {
+          term: 'Loop',
+          definition: 'A code block that repeats multiple times automatically until a stopping condition is met.',
+          example: lang === 'python' ? 'for i in range(5):' : 'for (let i = 0; i < 5; i++)',
+        },
+        {
+          term: 'Iteration',
+          definition: 'A single complete lap or cycle through a loop.',
+        },
+        {
+          term: 'Infinite Loop',
+          definition: 'A critical bug where a loop never stops because its condition never turns false.',
+        },
+      ]
+    }
+
+    if (ctx.includes('function') || ctx.includes('method') || ctx.includes('modular')) {
+      return [
+        {
+          term: 'Function',
+          definition: 'A reusable mini-machine that performs a specific job whenever you call its name.',
+          example: lang === 'python' ? 'def calculate_total(price, qty):' : 'function calculateTotal(price, qty) { ... }',
+        },
+        {
+          term: 'Parameter vs Argument',
+          definition: 'A Parameter is the placeholder slot in the recipe; the Argument is the real value you pass in.',
+        },
+        {
+          term: 'Return Value',
+          definition: 'The calculated answer a function hands back to the code that called it.',
+        },
+      ]
+    }
+
+    return [
+      {
+        term: 'Syntax',
+        definition: `The spelling, punctuation, and grammar rules required by the ${langLabel} compiler.`,
+      },
+      {
+        term: 'Statement',
+        definition: 'A single complete instruction or sentence given to the computer.',
+      },
+      {
+        term: 'Runtime Environment',
+        definition: `The software system that reads, interprets, and executes your ${langLabel} code on your machine.`,
+      },
+    ]
   }
 
   private generateModules(
     courseId: string,
     prompt: string,
     lang: ProgrammingLanguage,
-    _difficulty: DifficultyLevel,
+    difficulty: DifficultyLevel,
     count: number,
     includeVideos: boolean
   ): Module[] {
     const p = prompt.toLowerCase()
     const langName = this.getLanguageLabel(lang)
 
-    let moduleTemplates: Array<{ title: string; desc: string; lessonTopics: Array<{ title: string; duration: number }> }>
+    let moduleTemplates: Array<{
+      title: string
+      desc: string
+      objectives: string[]
+      terms: TechnicalTerm[]
+      lessonTopics: Array<{
+        title: string
+        desc: string
+        duration: number
+        objectives: string[]
+      }>
+    }>
 
-    if (p.includes('frontend') || p.includes('web') || p.includes('ui') || p.includes('dom') || p.includes('react')) {
-      moduleTemplates = [
-        {
-          title: 'Module 1: DOM Hierarchy, Event Architecture & State',
-          desc: `Core browser execution lifecycle, document tree traversal, event delegation, and reactive state in ${langName}.`,
-          lessonTopics: [
-            { title: 'DOM Tree Traversal, Node Mutation & Event Delegation', duration: 25 },
-            { title: 'Reactive UI State, Immutability & Re-Rendering Triggers', duration: 35 },
-            { title: 'Forms, Input Sanitization & Real-Time Validation', duration: 30 },
-          ],
-        },
-        {
-          title: 'Module 2: Async Networking & Dynamic REST Rendering',
-          desc: `Asynchronous HTTP lifecycles, Promises, async/await, and error boundary states for web apps.`,
-          lessonTopics: [
-            { title: 'Asynchronous Data Fetching, JSON Streams & Promises', duration: 40 },
-            { title: 'Managing Network Latency, Spinners & Skeleton Screens', duration: 35 },
-            { title: 'Local Client Caching & Offline LocalStorage Sync', duration: 45 },
-          ],
-        },
-        {
-          title: 'Module 3: Responsive Architecture & UI Performance',
-          desc: `Layout reflows, CSS grid/flexbox mental models, debouncing, and memory leak prevention.`,
-          lessonTopics: [
-            { title: 'Minimizing Layout Shifts (CLS) & Browser Paint Cycles', duration: 40 },
-            { title: 'Debouncing & Throttling Heavy Input Listeners', duration: 35 },
-            { title: 'Building a Complete Offline Frontend Dashboard', duration: 60 },
-          ],
-        },
-      ]
-    } else if (p.includes('backend') || p.includes('api') || p.includes('server') || p.includes('database') || p.includes('sql')) {
+    if (p.includes('backend') || p.includes('api') || p.includes('server') || p.includes('database') || p.includes('sql')) {
       moduleTemplates = [
         {
           title: 'Module 1: HTTP Request Lifecycles & API Routers',
           desc: `Client-server architectures, stateless request handling, and RESTful routing in ${langName}.`,
+          objectives: [
+            'Understand how clients and servers exchange HTTP requests and JSON data',
+            'Define robust API routes with parameter parsing and input validation',
+            'Handle status codes, headers, and error responses gracefully',
+          ],
+          terms: this.inferTechnicalTerms('function', lang),
           lessonTopics: [
-            { title: 'HTTP Methods, Status Codes & Request Parsing', duration: 30 },
-            { title: 'Middleware Chains, Error Interceptors & Logging', duration: 35 },
-            { title: 'Structured JSON Serialization & Payload Schemas', duration: 30 },
+            {
+              title: 'HTTP Methods, Status Codes & Request Parsing',
+              desc: 'How GET, POST, PUT, and DELETE process payload buffers.',
+              duration: 25,
+              objectives: ['Differentiate HTTP methods', 'Parse incoming payloads', 'Send structured status codes'],
+            },
+            {
+              title: 'Middleware Chains, Error Interceptors & Logging',
+              desc: 'Intercepting requests, tracking execution latency, and catching exceptions.',
+              duration: 30,
+              objectives: ['Build reusable middleware', 'Log request telemetry', 'Prevent server crashes'],
+            },
+            {
+              title: 'Structured JSON Serialization & Payload Schemas',
+              desc: 'Validating boundary types and returning standard error envelopes.',
+              duration: 30,
+              objectives: ['Enforce payload schemas', 'Serialize complex types', 'Return uniform JSON envelopes'],
+            },
           ],
         },
         {
           title: 'Module 2: Data Persistence, Relational Schemas & Queries',
           desc: `Database connections, relational modeling, migrations, and ACID transactions.`,
+          objectives: [
+            'Design normalized database schemas with foreign key relationships',
+            'Write optimized SQL queries using indexes and query execution plans',
+            'Prevent SQL injection vulnerabilities using parameterized queries',
+          ],
+          terms: this.inferTechnicalTerms('data', lang),
           lessonTopics: [
-            { title: 'Relational Schemas, Primary Keys & Foreign Constraints', duration: 40 },
-            { title: 'SQL Query Optimization, Indexes & Query Plans', duration: 45 },
-            { title: 'Connection Pooling & Safe Parameterized Queries', duration: 35 },
+            {
+              title: 'Relational Schemas, Primary Keys & Foreign Constraints',
+              desc: 'Designing tables and establishing entity relations.',
+              duration: 30,
+              objectives: ['Design primary and foreign keys', 'Normalize tables', 'Enforce cascade rules'],
+            },
+            {
+              title: 'SQL Query Optimization, Indexes & Query Plans',
+              desc: 'Using B-Tree indexes to transform O(N) full table scans into O(log N) lookups.',
+              duration: 35,
+              objectives: ['Create efficient indexes', 'Analyze EXPLAIN query plans', 'Avoid table scans'],
+            },
+            {
+              title: 'Connection Pooling & Safe Parameterized Queries',
+              desc: 'Managing database connection lifecycles safely.',
+              duration: 30,
+              objectives: ['Configure connection pools', 'Prevent SQL injections', 'Manage transaction rollbacks'],
+            },
           ],
         },
         {
           title: 'Module 3: Security, Auth & High-Concurrency Scaling',
-          desc: `JWT token handling, hashing salts, rate limiting, and defensive backend architecture.`,
+          desc: `JWT token handling, password hashing salts, rate limiting, and defensive backend architecture.`,
+          objectives: [
+            'Hash user passwords securely using salted hashing algorithms',
+            'Implement stateless authentication using signed tokens',
+            'Protect backend endpoints against rate limits and abuse',
+          ],
+          terms: this.inferTechnicalTerms('syntax', lang),
           lessonTopics: [
-            { title: 'Password Hashing (bcrypt) & Token-Based Authentication', duration: 45 },
-            { title: 'Rate Limiting & Memory-Safe Connection Throttling', duration: 40 },
-            { title: 'Building an Air-Gapped High-Performance Microservice', duration: 60 },
+            {
+              title: 'Password Hashing (bcrypt) & Token Authentication',
+              desc: 'Salts, hashing iterations, and signature validation.',
+              duration: 35,
+              objectives: ['Apply cryptographic hashing', 'Sign authentication tokens', 'Validate incoming signatures'],
+            },
+            {
+              title: 'Rate Limiting & Memory-Safe Connection Throttling',
+              desc: 'Preventing brute-force attacks and socket exhaustion.',
+              duration: 30,
+              objectives: ['Implement sliding window rate limiting', 'Guard memory buffers', 'Throttle abusive clients'],
+            },
+            {
+              title: 'Building an Air-Gapped High-Performance Microservice',
+              desc: 'Complete end-to-end service assembly with local SQLite persistence.',
+              duration: 45,
+              objectives: ['Assemble end-to-end architecture', 'Run integration tests', 'Profile memory and CPU'],
+            },
           ],
         },
       ]
@@ -280,59 +413,185 @@ class AiCourseGeneratorService {
       moduleTemplates = [
         {
           title: 'Module 1: Linear Structures & Two-Pointer Patterns',
-          desc: `Memory contiguity, array indexing, pointers, and sliding window optimization.`,
+          desc: `Memory contiguity, array indexing, pointers, and sliding window optimization in ${langName}.`,
+          objectives: [
+            'Understand how arrays and memory addresses are laid out in RAM',
+            'Master the two-pointer technique to solve problems in O(N) time',
+            'Leverage hash maps for instant O(1) key-value lookups',
+          ],
+          terms: this.inferTechnicalTerms('data', lang),
           lessonTopics: [
-            { title: 'Array Memory Layout & Two-Pointer Convergence', duration: 30 },
-            { title: 'Sliding Window Dynamics for Subarray Optimization', duration: 35 },
-            { title: 'Hash Map Lookups, Collisions & O(1) Amortized Speed', duration: 35 },
+            {
+              title: 'Array Memory Layout & Two-Pointer Convergence',
+              desc: 'Navigating sorted arrays from both ends simultaneously.',
+              duration: 25,
+              objectives: ['Analyze array memory contiguous allocation', 'Implement left-right pointer traversal', 'Achieve linear time complexity'],
+            },
+            {
+              title: 'Sliding Window Dynamics for Subarray Optimization',
+              desc: 'Expanding and contracting windows to find optimal ranges.',
+              duration: 30,
+              objectives: ['Track window state dynamically', 'Avoid nested O(N^2) loops', 'Handle edge boundary cases'],
+            },
+            {
+              title: 'Hash Map Lookups, Collisions & O(1) Amortized Speed',
+              desc: 'Hash functions, bucket arrays, and constant time lookups.',
+              duration: 30,
+              objectives: ['Understand hash table mechanics', 'Handle collision resolutions', 'Optimize space-time trade-offs'],
+            },
           ],
         },
         {
           title: 'Module 2: Non-Linear Structures & Graph Traversals',
           desc: `Binary search trees, recursion frames, breadth-first and depth-first searches.`,
+          objectives: [
+            'Build and traverse binary search trees with recursive operations',
+            'Model real-world networks as graphs using adjacency lists',
+            'Implement Breadth-First Search (BFS) and Depth-First Search (DFS)',
+          ],
+          terms: this.inferTechnicalTerms('function', lang),
           lessonTopics: [
-            { title: 'Binary Trees, BST Validation & In-Order Traversal', duration: 45 },
-            { title: 'Graph Representations (Adjacency Matrix vs Lists)', duration: 40 },
-            { title: 'Breadth-First Search (BFS) & Shortest Path Queues', duration: 45 },
+            {
+              title: 'Binary Trees, BST Validation & In-Order Traversal',
+              desc: 'Tree nodes, left-right subtrees, and binary search properties.',
+              duration: 35,
+              objectives: ['Construct tree node hierarchies', 'Validate BST invariants', 'Perform in-order traversals'],
+            },
+            {
+              title: 'Graph Representations (Adjacency Matrix vs Lists)',
+              desc: 'Modeling vertices, edges, and directional graphs in code.',
+              duration: 30,
+              objectives: ['Compare graph storage representations', 'Model nodes and connections', 'Calculate space complexity'],
+            },
+            {
+              title: 'Breadth-First Search (BFS) & Shortest Path Queues',
+              desc: 'Level-order queue traversal to find the shortest path.',
+              duration: 35,
+              objectives: ['Use queues for layer traversal', 'Track visited sets to avoid cycles', 'Compute shortest path distances'],
+            },
           ],
         },
         {
           title: 'Module 3: Dynamic Programming & Algorithmic Design',
           desc: `Optimal substructure, overlapping subproblems, memoization, and bottom-up tables.`,
+          objectives: [
+            'Identify overlapping subproblems in recursive algorithms',
+            'Transform slow exponential O(2^N) solutions into fast O(N) memoization',
+            'Construct iterative bottom-up tabulation tables',
+          ],
+          terms: this.inferTechnicalTerms('loop', lang),
           lessonTopics: [
-            { title: 'Memoization vs Tabulation: Top-Down to Bottom-Up', duration: 50 },
-            { title: 'Classic DP: Knapsack, Subsequence & Coin Change', duration: 50 },
-            { title: 'Big-O Complexity Profiling & Space Reduction', duration: 60 },
+            {
+              title: 'Memoization vs Tabulation: Top-Down to Bottom-Up',
+              desc: 'Caching recursive call results and building iterative lookup tables.',
+              duration: 35,
+              objectives: ['Apply caching decorators and tables', 'Convert top-down recursion to bottom-up loops', 'Analyze call stack depth'],
+            },
+            {
+              title: 'Classic DP: Knapsack, Subsequence & Coin Change',
+              desc: 'Step-by-step solution breakdown of standard algorithmic patterns.',
+              duration: 40,
+              objectives: ['Formulate DP state transition equations', 'Construct 2D/1D solution matrices', 'Recover optimal solutions'],
+            },
+            {
+              title: 'Big-O Complexity Profiling & Space Reduction',
+              desc: 'Benchmarking performance and optimizing memory footprint.',
+              duration: 45,
+              objectives: ['Profile execution time in milliseconds', 'Compress state arrays from O(N) to O(1)', 'Write automated benchmark tests'],
+            },
           ],
         },
       ]
     } else {
       moduleTemplates = [
         {
-          title: `Module 1: Foundations & Language Architecture`,
+          title: `Module 1: Foundations & Core Concepts`,
           desc: `Core concepts, syntax mental models, local compiler setups, and memory allocations for ${langName}.`,
+          objectives: [
+            `Understand how computers execute ${langName} instructions step-by-step`,
+            'Store and manipulate data using variables, primitive types, and collections',
+            'Fix common beginner syntax traps with confidence',
+          ],
+          terms: this.inferTechnicalTerms('variable', lang),
           lessonTopics: [
-            { title: `${prompt}: Core Principles & Scoping`, duration: 25 },
-            { title: `${prompt}: Data Types, Memory Layout & Collections`, duration: 35 },
-            { title: `${prompt}: Control Flow & Idiomatic Patterns`, duration: 30 },
+            {
+              title: `${prompt}: Syntax Basics & Execution Flow`,
+              desc: `Writing your first statements and inspecting runtime outputs in ${langName}.`,
+              duration: 20,
+              objectives: ['Print outputs and inspect runtime values', 'Understand statement structure and syntax', 'Track line-by-line execution flow'],
+            },
+            {
+              title: `${prompt}: Storing Data & Memory Models`,
+              desc: 'Variables, primitive data types, mutation, and constant references.',
+              duration: 25,
+              objectives: ['Create labeled variables in memory', 'Distinguish strings, numbers, and booleans', 'Prevent accidental mutation bugs'],
+            },
+            {
+              title: `${prompt}: Decision Trees & Conditional Logic`,
+              desc: 'Making smart choices in code using if, else, and comparison operators.',
+              duration: 25,
+              objectives: ['Write multi-path conditional branches', 'Compare values strictly', 'Combine conditions with logical AND/OR'],
+            },
           ],
         },
         {
-          title: `Module 2: Deep Dive & Practical Implementation`,
-          desc: `Real-world problem solving, structural design, modular abstractions, and standard libraries.`,
+          title: `Module 2: Repetition, Functions & Modularity`,
+          desc: `Automating repetitive work with loops and building reusable, pure functions in ${langName}.`,
+          objectives: [
+            'Automate tasks cleanly without duplicate code using for and while loops',
+            'Encapsulate logic into reusable functions with parameters and return values',
+            'Follow clean code and DRY (Don’t Repeat Yourself) standards',
+          ],
+          terms: this.inferTechnicalTerms('function', lang),
           lessonTopics: [
-            { title: `${prompt}: Modular Functions & Error Handling`, duration: 40 },
-            { title: `${prompt}: Complex Transformations & Invariants`, duration: 45 },
-            { title: `${prompt}: Resilient Design & Defensive Code`, duration: 35 },
+            {
+              title: `${prompt}: Iteration & Loop Mechanics`,
+              desc: 'Count-controlled and condition-controlled loops with safety guards.',
+              duration: 25,
+              objectives: ['Write deterministic counting loops', 'Prevent infinite loops with loop guards', 'Iterate over collections and arrays'],
+            },
+            {
+              title: `${prompt}: Defining Functions & Passing Arguments`,
+              desc: 'Creating named procedures, parameters, and capturing return outputs.',
+              duration: 30,
+              objectives: ['Define modular functions', 'Pass parameters and return computed answers', 'Manage variable scopes cleanly'],
+            },
+            {
+              title: `${prompt}: Working with Collections & Structured Data`,
+              desc: 'Lists, arrays, key-value mappings, and object properties.',
+              duration: 30,
+              objectives: ['Store lists of data in collections', 'Look up values by index and key', 'Transform and filter collections'],
+            },
           ],
         },
         {
-          title: `Module 3: Advanced Optimization & Local Testing`,
-          desc: `Benchmarking, asynchronous execution, test case suites, and defensive system architecture.`,
+          title: `Module 3: Practical Architecture & Problem Solving`,
+          desc: `Error handling, real-world project assembly, optimization, and automated testing in ${langName}.`,
+          objectives: [
+            'Handle runtime exceptions defensively using try/catch blocks',
+            'Assemble a complete mini-application with modular code files',
+            'Write automated test cases and run them in the local terminal',
+          ],
+          terms: this.inferTechnicalTerms('syntax', lang),
           lessonTopics: [
-            { title: `${prompt}: Concurrency & Non-Blocking Patterns`, duration: 50 },
-            { title: `${prompt}: Performance Profiling & Big-O Reduction`, duration: 45 },
-            { title: `${prompt}: End-to-End Capstone Project`, duration: 60 },
+            {
+              title: `${prompt}: Defensive Coding & Error Handling`,
+              desc: 'Catching exceptions, boundary validation, and graceful recovery.',
+              duration: 30,
+              objectives: ['Intercept runtime errors safely', 'Validate edge inputs and null states', 'Provide helpful error messages'],
+            },
+            {
+              title: `${prompt}: Modular Architecture & Clean Code`,
+              desc: 'Structuring larger codebases into clean, readable components.',
+              duration: 35,
+              objectives: ['Organize code into separate modules', 'Apply naming conventions and clean styling', 'Document code effectively'],
+            },
+            {
+              title: `${prompt}: Capstone Project & Terminal Sandbox`,
+              desc: 'Building and executing a full practical project in the local IDE.',
+              duration: 45,
+              objectives: ['Assemble end-to-end application logic', 'Execute code in the local VS Code sandbox', 'Verify test assertions'],
+            },
           ],
         },
       ]
@@ -352,13 +611,15 @@ class AiCourseGeneratorService {
           courseId,
           title: lt.title,
           slug: lt.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-          description: `Detailed practical analysis of ${lt.title} with code explanations and compiler drills.`,
+          description: lt.desc,
           durationMinutes: lt.duration,
           order: lIdx + 1,
           isCompleted: false,
           videoUrl: includeVideos ? this.inferVideoUrl(lt.title, lang, lIdx, i) : undefined,
           createdAt: new Date().toISOString(),
-          contentMarkdown: this.generateLessonContent(lt.title, lang, prompt),
+          learningObjectives: lt.objectives,
+          technicalTerms: template.terms.slice(0, 2),
+          contentMarkdown: this.generateLessonContent(lt.title, lang, prompt, difficulty),
           quizQuestions: this.generateQuizQuestions(lt.title, lang, prompt),
         }
       })
@@ -369,6 +630,9 @@ class AiCourseGeneratorService {
         title: template.title,
         description: template.desc,
         order: i + 1,
+        progressPercentage: 0,
+        learningObjectives: template.objectives,
+        technicalTerms: template.terms,
         createdAt: new Date().toISOString(),
         lessons,
       })
@@ -377,413 +641,482 @@ class AiCourseGeneratorService {
     return modules
   }
 
-  private generateLessonContent(topic: string, lang: ProgrammingLanguage, prompt: string): string {
+  private generateLessonContent(topic: string, lang: ProgrammingLanguage, prompt: string, _difficulty: DifficultyLevel): string {
     const langLabel = this.getLanguageLabel(lang)
     const codeSnippet = this.generateLanguageCodeSnippet(topic, lang, prompt)
 
-    return `# ${topic}
+    return `# ${topic} 🚀
 
-Welcome to this technical masterclass on **${topic}** in **${langLabel}**, created for your specialized focus on *${prompt}*.
-
----
-
-## Curriculum Roadmap & Learning Progression
-\`\`\`
-Module 1: Foundations & Architecture  ──►  Module 2: Practical Implementation  ──►  Module 3: Advanced Optimization & Capstone
-├── Phase 1: Pre-Video Theory (Current)
-├── Phase 2: Live Video Lesson Stream
-└── Phase 3: Interactive Knowledge Checks & Terminal Coding Challenges
-\`\`\`
+Welcome to this comprehensive practical lesson on **${topic}** using **${langLabel}**! Whether you are building your first software feature or solidifying your engineering foundations, this guide breaks down every concept step-by-step.
 
 ---
 
-## Conceptual Foundations & Mental Model
-To write resilient, production-grade applications, you must master how the runtime engine allocates objects, manages execution contexts, and evaluates instruction cycles.
+## 💡 The Big Picture: What Problem Does This Solve?
+Computers process billions of instructions per second, but they require absolute clarity. When building **${prompt}**, software engineers need a predictable, readable, and resilient way to manage data and control flow without unexpected runtime crashes.
 
-### Key Architectural Takeaways:
-1. **Deterministic Execution**: Avoid hidden side-effects and preserve pure state transitions.
-2. **Low-Latency Memory Efficiency**: Minimize heap allocations to avoid garbage collection pauses on low-power hardware.
-3. **Defensive Boundary Validation**: Always validate inputs, bounds, and null states before mutating data structures.
+Mastering this concept empowers you to:
+- Write clean, expressive **${langLabel}** code that teammates can understand at a glance
+- Eliminate common bugs before your code even reaches production
+- Run fast, memory-efficient instructions on any CPU
 
 ---
 
-## Practical Code Walkthrough & Implementation
-Inspect the idiomatic implementation below in **${langLabel}** and experiment with running it in the interactive sandbox:
+## 📦 Real-World Analogy: How to Think About This
+Think of this concept like an **organized kitchen in a busy restaurant**:
+- **Ingredients & Containers**: Variables and data structures store your prepared food in clearly labeled bowls so nothing gets mixed up.
+- **Recipe Instructions**: Statements and functions act as the step-by-step recipe that the chef executes in exact chronological order.
+- **Quality Check Inspector**: Conditional logic and defensive validation check that every dish meets food safety standards before being served to the guest!
+
+---
+
+## 🔍 Line-by-Line Code Breakdown & Implementation
+
+Examine the production-grade **${langLabel}** example below. Notice how every variable has a clear purpose, comments explain the intent, and safety checks guard against invalid inputs:
 
 \`\`\`${lang}
 ${codeSnippet}
 \`\`\`
 
----
-
-## Common Pitfalls & Anti-Patterns to Avoid
-- **Unvalidated Input Mutation**: Mutating function arguments directly instead of returning immutable copies.
-- **Uncaught Exception Bubbling**: Allowing unhandled exceptions to crash the main execution loop.
-- **Memory Leaks**: Registering listeners or subscriptions without cleaning them up when lifecycles end.
+### 🛠️ Key Takeaways from this Code:
+1. **Clear Naming**: Variable and function names explain *what* data they hold rather than using obscure single letters.
+2. **Defensive Validation**: The code checks edge conditions immediately at the top to prevent errors from spreading deeper into the program.
+3. **Structured Returns**: The output is formatted cleanly so other parts of your application can consume it seamlessly.
 
 ---
 
-> **Socratic Question:** Notice the boundary condition check at the beginning of the function. What edge case would occur if input is \`null\` or empty? How does our defensive return prevent runtime crashes?
+## ⚠️ Common Beginner Traps & Quick Fixes
+
+| What went wrong? | Why it happened | How to fix it |
+| :--- | :--- | :--- |
+| **Missing Syntax or Brackets** | Forgetting a closing bracket, parenthesis, or semicolon. | Keep code neatly indented and verify matching pairs \`()\` \`{}\` \`[]\`. |
+| **Unchecked Null/Undefined Values** | Accessing properties on data before verifying it exists. | Always add an \`if (!data)\` or null check before operating on values. |
+| **Off-by-One Counter Bugs** | Using \`<\` instead of \`<=\` (or vice-versa) in loops. | Double check your starting index (usually 0) and terminating condition. |
+
+---
+
+## 🎯 Quick Try It Out!
+Scroll down to the **Interactive VS Code Sandbox & Terminal** below:
+1. Copy or modify the code snippet above in your editor.
+2. Press **Run in Terminal** to watch your local CPU execute the code in real-time!
+3. Complete the interactive **Knowledge Checks & Quizzes** below to solidify your understanding.
 `
   }
 
   private generateLanguageCodeSnippet(_topic: string, lang: ProgrammingLanguage, prompt: string): string {
+    const langLabel = this.getLanguageLabel(lang)
     const p = prompt.toLowerCase()
 
     if (lang === 'javascript') {
-      if (p.includes('frontend') || p.includes('dom') || p.includes('ui') || p.includes('web')) {
-        return `// Modern Frontend JavaScript (DOM & State)
-function renderUserCard(containerId, user) {
-    const container = document.getElementById(containerId);
-    if (!container || !user) return false;
+      if (p.includes('backend') || p.includes('api') || p.includes('server')) {
+        return `// Modern JavaScript Backend Route Handler
+function processUserRegistration(payload) {
+    // 1. Defensive Input Validation
+    if (!payload || !payload.email || !payload.password) {
+        return { success: false, error: 'Email and password are required.' };
+    }
 
-    // Create container card safely
-    const card = document.createElement('div');
-    card.className = 'user-profile-card';
+    // 2. Normalize and Sanitize Inputs
+    const cleanEmail = payload.email.trim().toLowerCase();
+    const isStrongPassword = payload.password.length >= 8;
 
-    const title = document.createElement('h3');
-    title.textContent = user.name || 'Anonymous Learner';
+    if (!isStrongPassword) {
+        return { success: false, error: 'Password must be at least 8 characters long.' };
+    }
 
-    const statusBadge = document.createElement('span');
-    statusBadge.textContent = user.isOnline ? 'Active Now' : 'Offline Cached';
-    statusBadge.className = user.isOnline ? 'badge-online' : 'badge-offline';
+    // 3. Construct Secure User Profile
+    const newUser = {
+        id: 'usr_' + Date.now(),
+        email: cleanEmail,
+        createdAt: new Date().toISOString(),
+        isActive: true,
+    };
 
-    card.appendChild(title);
-    card.appendChild(statusBadge);
-    container.appendChild(card);
-
-    return true;
+    console.log('User registered successfully:', newUser.email);
+    return { success: true, user: newUser };
 }
 
-// Example invocation
-const mockUser = { name: "Ama Serwaa", isOnline: true };
-console.log("Card Render Result:", renderUserCard("app-root", mockUser));`
+// Test Execution
+const result = processUserRegistration({ email: 'amina@codetutor.africa', password: 'securePassword2026' });
+console.log('Result:', result);`
       }
 
-      return `// Idiomatic JavaScript (ES2024)
-function processDataStream(items) {
-    if (!Array.isArray(items) || items.length === 0) {
-        return [];
+      return `// Modern JavaScript Practical Implementation
+function calculateStudentScores(students) {
+    // 1. Guard against empty inputs
+    if (!Array.isArray(students) || students.length === 0) {
+        return { totalStudents: 0, averageScore: 0, topPerformers: [] };
     }
 
-    // Filter, transform, and aggregate data
-    return items
-        .filter(item => item !== null && item !== undefined && typeof item === 'number')
-        .map(num => num * 2);
+    let totalPoints = 0;
+    const topPerformers = [];
+
+    // 2. Loop through each student record
+    for (const student of students) {
+        totalPoints += student.score;
+
+        if (student.score >= 80) {
+            topPerformers.push(student.name);
+        }
+    }
+
+    const average = totalPoints / students.length;
+
+    // 3. Return computed summary report
+    return {
+        totalStudents: students.length,
+        averageScore: Number(average.toFixed(1)),
+        topPerformers: topPerformers,
+    };
 }
 
-// Test execution
-const sampleInput = [1, 2, null, 4, undefined, 5];
-console.log("Processed Result:", processDataStream(sampleInput));`
+// Sample Test Data
+const classList = [
+    { name: 'Kofi Mensah', score: 88 },
+    { name: 'Amara Okafor', score: 94 },
+    { name: 'Tariq Al-Mansoor', score: 72 },
+];
+
+const report = calculateStudentScores(classList);
+console.log('Class Performance Report:', report);`
     }
 
-    if (lang === 'java') {
-      return `// OpenJDK Java 21 Implementation
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+    if (lang === 'python') {
+      return `# Python 3.12+ Practical Implementation
+def analyze_transaction_batch(transactions: list[dict]) -> dict:
+    """Processes financial transactions and flags anomalous amounts."""
+    if not transactions:
+        return {"processed": 0, "total_volume": 0.0, "flagged": []}
 
-public class Solution {
-    public static List<Integer> processDataStream(List<Integer> items) {
-        if (items == null || items.isEmpty()) {
-            return List.of();
-        }
+    total_volume = 0.0
+    flagged_ids = []
 
-        return items.stream()
-            .filter(Objects::nonNull)
-            .map(num -> num * 2)
-            .collect(Collectors.toList());
+    for tx in transactions:
+        amount = tx.get("amount", 0.0)
+        total_volume += amount
+
+        # Flag any transactions above $1,000 threshold for review
+        if amount > 1000.0:
+            flagged_ids.append(tx.get("id", "unknown"))
+
+    return {
+        "processed": len(transactions),
+        "total_volume": round(total_volume, 2),
+        "flagged_count": len(flagged_ids),
+        "flagged_ids": flagged_ids,
     }
 
-    public static void main(String[] args) {
-        List<Integer> sample = List.of(1, 2, 4, 5);
-        System.out.println("Processed: " + processDataStream(sample));
-    }
-}`
+
+# Test Execution
+sample_txs = [
+    {"id": "tx_101", "amount": 150.0},
+    {"id": "tx_102", "amount": 2450.0},
+    {"id": "tx_103", "amount": 80.0},
+]
+
+summary = analyze_transaction_batch(sample_txs)
+print("Transaction Batch Summary:", summary)`
     }
 
     if (lang === 'typescript') {
-      return `// Strict TypeScript 5.x
-interface DataItem {
+      return `// TypeScript 5.4+ Type-Safe Implementation
+interface StudentRecord {
     id: string;
-    value: number;
-    active: boolean;
+    fullName: string;
+    scores: number[];
+    isEnrolled: boolean;
 }
 
-export function processDataStream<T extends { value: number }>(items: T[]): number[] {
-    if (!items || items.length === 0) return [];
-    return items
-        .filter((item) => item.value > 0)
-        .map((item) => item.value * 2);
+interface PerformanceSummary {
+    studentId: string;
+    averageScore: number;
+    hasPassed: boolean;
 }
 
-// Test execution
-const sample: DataItem[] = [
-    { id: '1', value: 15, active: true },
-    { id: '2', value: -4, active: false },
-    { id: '3', value: 30, active: true },
-];
-console.log("Processed Result:", processDataStream(sample));`
+function evaluateStudent(record: StudentRecord): PerformanceSummary {
+    if (!record.scores || record.scores.length === 0) {
+        return { studentId: record.id, averageScore: 0, hasPassed: false };
     }
 
-    if (lang === 'go') {
-      return `// Golang 1.22 Idiomatic Implementation
-package main
+    const sum = record.scores.reduce((acc, curr) => acc + curr, 0);
+    const avg = sum / record.scores.length;
 
-import (
-    "fmt"
-)
+    return {
+        studentId: record.id,
+        averageScore: Math.round(avg * 10) / 10,
+        hasPassed: avg >= 50 && record.isEnrolled,
+    };
+}
 
-// ProcessDataStream filters positive integers and doubles them safely
-func ProcessDataStream(items []int) []int {
-    result := make([]int, 0, len(items))
-    for _, val := range items {
-        if val > 0 {
-            result = append(result, val*2)
+// Test Execution
+const testStudent: StudentRecord = {
+    id: 'std_01',
+    fullName: 'Zainab Touré',
+    scores: [85, 90, 78],
+    isEnrolled: true,
+};
+
+console.log('Evaluation:', evaluateStudent(testStudent));`
+    }
+
+    if (lang === 'java') {
+      return `// Modern Java 21 Implementation
+import java.util.List;
+import java.util.ArrayList;
+
+public class DataProcessor {
+    public record Transaction(String id, double amount) {}
+    public record BatchSummary(int count, double total, List<String> flagged) {}
+
+    public static BatchSummary process(List<Transaction> transactions) {
+        if (transactions == null || transactions.isEmpty()) {
+            return new BatchSummary(0, 0.0, List.of());
         }
-    }
-    return result
-}
 
-func main() {
-    sample := []int{1, -2, 3, 0, 4}
-    fmt.Println("Processed Stream:", ProcessDataStream(sample))
+        double total = 0.0;
+        List<String> flagged = new ArrayList<>();
+
+        for (Transaction tx : transactions) {
+            total += tx.amount();
+            if (tx.amount() > 1000.0) {
+                flagged.add(tx.id());
+            }
+        }
+
+        return new BatchSummary(transactions.size(), total, flagged);
+    }
+
+    public static void main(String[] args) {
+        List<Transaction> list = List.of(
+            new Transaction("tx_1", 250.0),
+            new Transaction("tx_2", 1500.0)
+        );
+        System.out.println(process(list));
+    }
 }`
     }
 
     if (lang === 'rust') {
-      return `// Modern Rust 2024 (Memory Safe & Zero Overhead)
-pub fn process_data_stream(items: &[i32]) -> Vec<i32> {
-    items
-        .iter()
-        .filter(|&&x| x > 0)
-        .map(|&x| x * 2)
-        .collect()
+      return `// Modern Rust Memory-Safe Implementation
+#[derive(Debug)]
+pub struct Transaction {
+    pub id: String,
+    pub amount: f64,
+}
+
+#[derive(Debug)]
+pub struct BatchReport {
+    pub total_processed: usize,
+    pub total_amount: f64,
+    pub flagged_ids: Vec<String>,
+}
+
+pub fn analyze_batch(txs: &[Transaction]) -> BatchReport {
+    let mut total = 0.0;
+    let mut flagged = Vec::new();
+
+    for tx in txs {
+        total += tx.amount;
+        if tx.amount > 1000.0 {
+            flagged.push(tx.id.clone());
+        }
+    }
+
+    BatchReport {
+        total_processed: txs.len(),
+        total_amount: total,
+        flagged_ids: flagged,
+    }
 }
 
 fn main() {
-    let sample = vec![1, -2, 3, 0, 4];
-    let result = process_data_stream(&sample);
-    println!("Processed Stream: {:?}", result);
+    let items = vec![
+        Transaction { id: "tx_1".into(), amount: 200.0 },
+        Transaction { id: "tx_2".into(), amount: 1200.0 },
+    ];
+    let report = analyze_batch(&items);
+    println!("Report: {:?}", report);
 }`
     }
 
-    if (lang === 'cpp' || lang === 'c') {
-      return `// Modern C++20 (STL & Zero Cost Abstractions)
-#include <iostream>
-#include <vector>
-#include <algorithm>
+    if (lang === 'go') {
+      return `// Modern Go Microservice Pattern
+package main
 
-std::vector<int> processDataStream(const std::vector<int>& items) {
-    std::vector<int> result;
-    result.reserve(items.size());
-    for (int val : items) {
-        if (val > 0) {
-            result.push_back(val * 2);
-        }
-    }
-    return result;
+import "fmt"
+
+type Transaction struct {
+	ID     string
+	Amount float64
 }
 
-int main() {
-    std::vector<int> sample = {1, -2, 3, 0, 4};
-    auto output = processDataStream(sample);
-    std::cout << "Processed: ";
-    for (int x : output) std::cout << x << " ";
-    std::cout << std::endl;
-    return 0;
+type BatchSummary struct {
+	Count   int
+	Total   float64
+	Flagged []string
+}
+
+func Analyze(txs []Transaction) BatchSummary {
+	var total float64
+	var flagged []string
+
+	for _, tx := range txs {
+		total += tx.Amount
+		if tx.Amount > 1000.0 {
+			flagged = append(flagged, tx.ID)
+		}
+	}
+
+	return BatchSummary{
+		Count:   len(txs),
+		Total:   total,
+		Flagged: flagged,
+	}
+}
+
+func main() {
+	sample := []Transaction{
+		{ID: "tx_101", Amount: 300.0},
+		{ID: "tx_102", Amount: 1500.0},
+	}
+	fmt.Printf("Summary: %+v\\n", Analyze(sample))
 }`
     }
 
-    if (lang === 'sql') {
-      return `-- Optimized Relational SQL Queries & B-Tree Indexing
-CREATE TABLE IF NOT EXISTS transactions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id VARCHAR(64) NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    status VARCHAR(20) DEFAULT 'completed',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+    // Default Fallback
+    return `// Idiomatic ${langLabel} Example
+function runPipeline(items) {
+    if (!items || items.length === 0) return [];
+    return items.map(x => x * 2);
+}
 
-CREATE INDEX IF NOT EXISTS idx_tx_user_status ON transactions(user_id, status);
-
--- Indexed aggregation
-SELECT user_id, SUM(amount) AS total_spent, COUNT(*) AS tx_count
-FROM transactions
-WHERE status = 'completed'
-GROUP BY user_id
-ORDER BY total_spent DESC
-LIMIT 10;`
-    }
-
-    if (lang === 'html') {
-      return `<!-- Modern Semantic HTML5 & CSS Component -->
-<section class="lesson-card">
-  <header class="lesson-header">
-    <h2>Interactive Web Foundations</h2>
-    <span class="badge badge-success">Offline Ready</span>
-  </header>
-  <div class="lesson-body">
-    <p>Master responsive flexbox layouts and semantic markup.</p>
-    <button class="btn btn-primary" onclick="alert('Module loaded!')">Start Lesson</button>
-  </div>
-</section>`
-    }
-
-    // Default Python 3.12
-    return `# Idiomatic Python 3.12
-def process_data_stream(items: list) -> list:
-    """Filters null values and multiplies remaining numbers by 2."""
-    if not items:
-        return []
-    
-    return [x * 2 for x in items if x is not None and isinstance(x, (int, float))]
-
-# Test execution
-sample_input = [1, 2, None, 4, 5]
-print("Processed Result:", process_data_stream(sample_input))`
+console.log("Output:", runPipeline([10, 20, 30]));`
   }
 
-  private generateQuizQuestions(_topic: string, lang: ProgrammingLanguage, prompt: string): QuizQuestion[] {
-    const p = prompt.toLowerCase()
+  private generateQuizQuestions(_topic: string, lang: ProgrammingLanguage, _prompt: string): QuizQuestion[] {
+    const langLabel = this.getLanguageLabel(lang)
 
     if (lang === 'javascript') {
-      const isFrontend = p.includes('frontend') || p.includes('dom') || p.includes('ui') || p.includes('web')
-
       return [
         {
           id: `q-ai-${Date.now()}-1`,
           type: 'mcq',
-          question: isFrontend
-            ? `In modern Frontend JavaScript, why is Event Delegation preferred over attaching listeners to every child element?`
-            : `When executing asynchronous tasks in JavaScript, how does the V8 Event Loop manage Promises vs setTimeout?`,
-          options: isFrontend
-            ? [
-                'It attaches a single listener on the parent and uses event bubbling to save memory',
-                'It disables the browser DOM rendering engine completely',
-                'It compiles the JavaScript code into WebAssembly ahead of time',
-                'It prevents all user clicks from registering on the page',
-              ]
-            : [
-                'Promise callbacks are placed in the Microtask queue, executing before Macrotasks like setTimeout',
-                'setTimeout always executes before Promise resolve callbacks',
-                'Both run simultaneously on separate CPU kernel threads',
-                'Promises require a cloud server to compute their resolve value',
-              ],
-          correctAnswer: 0,
-          explanation: isFrontend
-            ? 'Event delegation leverages event bubbling to handle events on parent nodes, drastically reducing memory consumption.'
-            : 'Promises execute via the Microtask queue, which has higher priority and drains before the next Macrotask turn.',
-          hint: isFrontend
-            ? 'Think about attaching 1 listener to a <ul> instead of 1,000 listeners to every <li>.'
-            : 'Remember the priority difference between Microtask and Macrotask queues.',
-        },
-        {
-          id: `q-ai-${Date.now()}-2`,
-          type: 'fill_in',
-          question: `Fill in the missing keyword in JavaScript to catch runtime errors thrown inside a \`try\` block:`,
-          codeSnippet: `try {\n    performOperation();\n} ____ (error) {\n    console.error(error);\n}`,
-          correctAnswer: 'catch',
-          explanation: 'In JavaScript, the `catch` keyword intercepts exceptions thrown within the paired `try` block.',
-          hint: 'Five letters starting with "cat".',
-        },
-        {
-          id: `q-ai-${Date.now()}-3`,
-          type: 'code',
-          question: `Write a clean JavaScript function \`filterValid(items)\` that returns an array with only positive numbers (> 0):`,
-          initialCode: `function filterValid(items) {\n    // Return array of numbers > 0\n    return items.filter(x => x > 0);\n}`,
-          testCases: [
-            { input: '[1, -5, 10, 0, 3]', expectedOutput: '[1, 10, 3]' },
-            { input: '[-1, -2, -3]', expectedOutput: '[]' },
-            { input: '[100]', expectedOutput: '[100]' },
-          ],
-          correctAnswer: `function filterValid(items) {\n    return items.filter(x => x > 0);\n}`,
-          explanation: 'Array.prototype.filter() returns a new array with all elements that satisfy the predicate `x > 0`.',
-          hint: 'Use `items.filter(x => x > 0)`.',
-        },
-      ]
-    }
-
-    if (lang === 'java') {
-      return [
-        {
-          id: `q-ai-${Date.now()}-1`,
-          type: 'mcq',
-          question: `In Java 21, what is the key difference between Primitive types (int, double) and Reference types (Integer, Double)?`,
+          question: `In JavaScript, why is it recommended to check \`if (!payload)\` at the beginning of a function?`,
           options: [
-            'Primitives are stored directly on the Stack, while Reference types allocate Heap objects',
-            'Primitives require garbage collection cycles, while Reference types do not',
-            'Primitives can store null values, but Reference types cannot',
-            'Primitives cannot be passed into methods as parameters',
+            'To guard against null or undefined inputs and prevent runtime errors',
+            'To speed up CPU clock speed',
+            'To automatically format HTML documents',
+            'To delete unnecessary memory files',
           ],
           correctAnswer: 0,
-          explanation: 'Java primitives live directly in stack memory frames with zero heap allocation overhead.',
-          hint: 'Think about stack allocation vs heap object headers.',
+          explanation: 'Guarding against null or undefined inputs prevents TypeError crashes when accessing properties.',
+          hint: 'Think about defensive programming and input validation.',
         },
         {
           id: `q-ai-${Date.now()}-2`,
           type: 'fill_in',
-          question: `Fill in the missing keyword in Java to handle runtime exceptions inside a \`try\` block:`,
-          codeSnippet: `try {\n    performOperation();\n} ____ (Exception e) {\n    e.printStackTrace();\n}`,
-          correctAnswer: 'catch',
-          explanation: 'In Java, `catch` handles checked and unchecked exceptions thrown in a `try` block.',
-          hint: 'Five letters starting with "c".',
+          question: `Fill in the blank to log a message in JavaScript: _____.log("System ready");`,
+          codeSnippet: `_____.log("System ready");`,
+          correctAnswer: 'console',
+          explanation: '`console.log()` writes output to the developer console/terminal.',
+          hint: 'Starts with the letter c.',
         },
         {
           id: `q-ai-${Date.now()}-3`,
           type: 'code',
-          question: `Write a Java method \`filterValid(int[] items)\` that returns an array with only positive numbers (> 0):`,
-          initialCode: `import java.util.Arrays;\n\npublic class Solution {\n    public static int[] filterValid(int[] items) {\n        return Arrays.stream(items).filter(x -> x > 0).toArray();\n    }\n}`,
+          question: `Write a clean JavaScript function \`filterPositive(nums)\` that returns an array with only numbers > 0:`,
+          initialCode: `function filterPositive(nums) {\n  // Write your code below\n  return nums.filter(x => x > 0);\n}`,
           testCases: [
             { input: '[1, -5, 10, 0, 3]', expectedOutput: '[1, 10, 3]' },
             { input: '[-1, -2, -3]', expectedOutput: '[]' },
             { input: '[100]', expectedOutput: '[100]' },
           ],
-          correctAnswer: `import java.util.Arrays;\npublic class Solution {\n    public static int[] filterValid(int[] items) {\n        return Arrays.stream(items).filter(x -> x > 0).toArray();\n    }\n}`,
-          explanation: 'Arrays.stream().filter().toArray() filters elements efficiently in modern Java.',
-          hint: 'Use `Arrays.stream(items).filter(x -> x > 0).toArray()`.',
+          correctAnswer: `function filterPositive(nums) {\n  return nums.filter(x => x > 0);\n}`,
+          explanation: '`nums.filter(x => x > 0)` returns a new array with only positive numbers.',
+          hint: 'Use `nums.filter(x => x > 0)`.',
         },
       ]
     }
 
-    // Default Python Track
+    if (lang === 'python') {
+      return [
+        {
+          id: `q-ai-${Date.now()}-1`,
+          type: 'mcq',
+          question: `In Python, what is the best practice for checking if a list is empty before operating on it?`,
+          options: [
+            'Use `if not my_list:` to check emptiness directly',
+            'Convert the list to a string and check its characters',
+            'Restart the Python interpreter',
+            'Delete the list from memory',
+          ],
+          correctAnswer: 0,
+          explanation: 'In Python, empty lists evaluate to `False` in boolean contexts, making `if not my_list:` the clean, idiomatic check.',
+          hint: 'Pythonic truthy and falsy checks.',
+        },
+        {
+          id: `q-ai-${Date.now()}-2`,
+          type: 'fill_in',
+          question: `Fill in the missing keyword in Python to handle runtime exceptions inside a \`try\` block:`,
+          codeSnippet: `try:\n    perform_action()\n____ Exception as err:\n    print(err)`,
+          correctAnswer: 'except',
+          explanation: 'In Python, `except` catches exceptions raised within a `try` block.',
+          hint: 'Six letters starting with "ex".',
+        },
+        {
+          id: `q-ai-${Date.now()}-3`,
+          type: 'code',
+          question: `Write a clean Python function \`filter_positive(nums: list) -> list\` that returns only numbers > 0:`,
+          initialCode: `def filter_positive(nums: list) -> list:\n    # Write your code below\n    return [x for x in nums if x > 0]`,
+          testCases: [
+            { input: '[1, -5, 10, 0, 3]', expectedOutput: '[1, 10, 3]' },
+            { input: '[-1, -2, -3]', expectedOutput: '[]' },
+            { input: '[100]', expectedOutput: '[100]' },
+          ],
+          correctAnswer: `def filter_positive(nums: list) -> list:\n    return [x for x in nums if x > 0]`,
+          explanation: 'List comprehension `[x for x in nums if x > 0]` filters numbers cleanly in Python.',
+          hint: 'Use `[x for x in nums if x > 0]`.',
+        },
+      ]
+    }
+
+    // Default Multi-language Quiz
     return [
       {
         id: `q-ai-${Date.now()}-1`,
         type: 'mcq',
-        question: `In Python 3.12, what is the primary computational benefit of a Generator expression \`(x for x in data)\` over a List comprehension \`[x for x in data]\`?`,
+        question: `Why is defensive programming and input validation crucial in ${langLabel}?`,
         options: [
-          'Generators yield elements lazily one at a time, consuming O(1) constant memory',
-          'Generators run 10x faster on multiple CPU cores automatically',
-          'Generators convert data to binary machine code before execution',
-          'Generators can only be evaluated once per application lifetime',
+          'It prevents invalid data from propagating and causing unexpected runtime crashes',
+          'It changes the color of the IDE editor',
+          'It allows programs to run without a CPU',
+          'It encrypts the internet connection',
         ],
         correctAnswer: 0,
-        explanation: 'Generators compute values on-demand using iterator protocols, avoiding loading the entire dataset into RAM.',
-        hint: 'Think about lazy streaming vs eager in-memory list creation.',
+        explanation: 'Defensive validation ensures that boundary conditions and edge cases are handled before executing critical logic.',
+        hint: 'Preventing runtime crashes.',
       },
       {
         id: `q-ai-${Date.now()}-2`,
         type: 'fill_in',
-        question: `Fill in the missing keyword in Python to handle runtime exceptions inside a \`try\` block:`,
-        codeSnippet: `try:\n    perform_operation()\n____ Exception as err:\n    print(f"Error: {err}")`,
-        correctAnswer: 'except',
-        explanation: 'In Python, `except` catches exceptions raised within a `try` block.',
-        hint: 'Six letters starting with "ex".',
+        question: `Fill in the keyword used in most languages to return a calculated value from a function: _____ result;`,
+        codeSnippet: `_____ result;`,
+        correctAnswer: 'return',
+        explanation: 'The `return` keyword hands the computed answer back from a function.',
+        hint: 'Six letters starting with "ret".',
       },
       {
         id: `q-ai-${Date.now()}-3`,
         type: 'code',
-        question: `Write a clean Python function \`filter_valid(items: list) -> list\` that returns only positive numbers (> 0):`,
-        initialCode: `def filter_valid(items: list) -> list:\n    # Return only elements where x > 0\n    return [x for x in items if x > 0]`,
+        question: `Write a function that returns an array with positive numbers only (> 0):`,
+        initialCode: `function filterPositive(nums) {\n  return nums.filter(x => x > 0);\n}`,
         testCases: [
           { input: '[1, -5, 10, 0, 3]', expectedOutput: '[1, 10, 3]' },
           { input: '[-1, -2, -3]', expectedOutput: '[]' },
           { input: '[100]', expectedOutput: '[100]' },
         ],
-        correctAnswer: `def filter_valid(items: list) -> list:\n    return [x for x in items if x > 0]`,
-        explanation: 'List comprehension `[x for x in items if x > 0]` filters elements cleanly and idiomatically in Python.',
-        hint: 'Use list comprehension `[x for x in items if x > 0]`.',
+        correctAnswer: `function filterPositive(nums) {\n  return nums.filter(x => x > 0);\n}`,
+        explanation: 'Filters elements greater than zero.',
+        hint: 'Filter elements where x > 0.',
       },
     ]
   }
@@ -791,7 +1124,6 @@ print("Processed Result:", process_data_stream(sample_input))`
   private inferVideoUrl(topic: string, lang: ProgrammingLanguage, lessonIdx: number, moduleIdx: number): string {
     const t = topic.toLowerCase()
 
-    // Specific Topic Keyword Matching
     if (t.includes('loop') || t.includes('iteration') || t.includes('while') || t.includes('for')) {
       if (lang === 'python') return 'https://www.youtube.com/watch?v=6iF8Xb7Z3wQ'
       if (lang === 'javascript') return 'https://www.youtube.com/watch?v=s9wWAKCMhNh'
@@ -813,12 +1145,6 @@ print("Processed Result:", process_data_stream(sample_input))`
     if (t.includes('async') || t.includes('promise') || t.includes('event loop') || t.includes('fetch')) {
       return 'https://www.youtube.com/watch?v=PoRJizFvM7s'
     }
-    if (t.includes('dom') || t.includes('html') || t.includes('css') || t.includes('ui')) {
-      return 'https://www.youtube.com/watch?v=y17RuWkWdn8'
-    }
-    if (t.includes('recursion') || t.includes('stack') || t.includes('tree') || t.includes('algorithm') || t.includes('sort')) {
-      return 'https://www.youtube.com/watch?v=8hly31xKli0'
-    }
     if (t.includes('database') || t.includes('sql') || t.includes('query') || t.includes('table')) {
       return 'https://www.youtube.com/watch?v=HXV3zeQKqGY'
     }
@@ -828,57 +1154,55 @@ print("Processed Result:", process_data_stream(sample_input))`
       return 'https://www.youtube.com/watch?v=cFTFtuEQ-10'
     }
 
-    // Language Curated Sequence Tracks
     const languageTracks: Record<string, string[]> = {
       python: [
-        'https://www.youtube.com/watch?v=kqtD5dpn9C8', // Python Basics & Setup
-        'https://www.youtube.com/watch?v=6iF8Xb7Z3wQ', // Control Flow & Logic
-        'https://www.youtube.com/watch?v=9Os0o3wzS_I', // Functions & Scope
-        'https://www.youtube.com/watch?v=daefaLgNkw0', // Data Structures (Lists, Dicts, Sets)
-        'https://www.youtube.com/watch?v=JeznW_7DlB0', // Object Oriented Python
-        'https://www.youtube.com/watch?v=NIWwJbo-9_8', // Error Handling & Files
-        'https://www.youtube.com/watch?v=0sOvCWFmrtA', // Python Project Development
+        'https://www.youtube.com/watch?v=kqtD5dpn9C8',
+        'https://www.youtube.com/watch?v=6iF8Xb7Z3wQ',
+        'https://www.youtube.com/watch?v=9Os0o3wzS_I',
+        'https://www.youtube.com/watch?v=daefaLgNkw0',
+        'https://www.youtube.com/watch?v=JeznW_7DlB0',
+        'https://www.youtube.com/watch?v=NIWwJbo-9_8',
+        'https://www.youtube.com/watch?v=0sOvCWFmrtA',
       ],
       javascript: [
-        'https://www.youtube.com/watch?v=W6NZfCO5SIk', // JS Fundamentals
-        'https://www.youtube.com/watch?v=s9wWAKCMhNh', // Logic & Arrays
-        'https://www.youtube.com/watch?v=N8ap4k_1QEQ', // Functions & ES6
-        'https://www.youtube.com/watch?v=y17RuWkWdn8', // DOM Manipulation
-        'https://www.youtube.com/watch?v=PoRJizFvM7s', // Async & Promises
-        'https://www.youtube.com/watch?v=2ZphE5HcQPQ', // OOP & Classes
-        'https://www.youtube.com/watch?v=hdI2bqOjy3c', // Modern JS Projects
-      ],
-      java: [
-        'https://www.youtube.com/watch?v=A74TOX803D0', // Java Fundamentals
-        'https://www.youtube.com/watch?v=yYZZf_pW4zE', // Loops & Arrays
-        'https://www.youtube.com/watch?v=v-t1Z5-oQtE', // Methods & Parameters
-        'https://www.youtube.com/watch?v=xk4_1vDrzzo', // OOP, Classes & Objects
-        'https://www.youtube.com/watch?v=viTHc_4XfCA', // Collections & Generics
-        'https://www.youtube.com/watch?v=r_MbozD32eo', // Exceptions & Streams
-        'https://www.youtube.com/watch?v=grEKMHGYyns', // Java App Architecture
-      ],
-      cpp: [
-        'https://www.youtube.com/watch?v=vLnPwxZdW4Y', // C++ Basics
-        'https://www.youtube.com/watch?v=2ybLDQapozo', // Pointers & Memory
-        'https://www.youtube.com/watch?v=Rub-JsjMhWY', // OOP & Classes in C++
-        'https://www.youtube.com/watch?v=8jLOx1hD3_o', // STL & Vectors
-        'https://www.youtube.com/watch?v=gT8_b3k0Pvg', // Dynamic Memory & Structs
+        'https://www.youtube.com/watch?v=W6NZfCO5SIk',
+        'https://www.youtube.com/watch?v=s9wWAKCMhNh',
+        'https://www.youtube.com/watch?v=N8ap4k_1QEQ',
+        'https://www.youtube.com/watch?v=y17RuWkWdn8',
+        'https://www.youtube.com/watch?v=PoRJizFvM7s',
+        'https://www.youtube.com/watch?v=2ZphE5HcQPQ',
+        'https://www.youtube.com/watch?v=hdI2bqOjy3c',
       ],
       typescript: [
-        'https://www.youtube.com/watch?v=BCg4U1FzODs', // TS Crash Course
-        'https://www.youtube.com/watch?v=d56mG7DezGs', // Interfaces & Types
-        'https://www.youtube.com/watch?v=V9XbS_K9Z_E', // Generics & Narrowing
-        'https://www.youtube.com/watch?v=ahCwqrYqoTU', // Full TS Application
+        'https://www.youtube.com/watch?v=BCg4U1FzODs',
+        'https://www.youtube.com/watch?v=d56mG7DezGs',
+        'https://www.youtube.com/watch?v=V9XbS_K9Z_E',
+        'https://www.youtube.com/watch?v=ahCwqrYqoTU',
+      ],
+      java: [
+        'https://www.youtube.com/watch?v=A74TOX803D0',
+        'https://www.youtube.com/watch?v=yYZZf_pW4zE',
+        'https://www.youtube.com/watch?v=v-t1Z5-oQtE',
+        'https://www.youtube.com/watch?v=xk4_1vDrzzo',
+        'https://www.youtube.com/watch?v=viTHc_4XfCA',
+      ],
+      cpp: [
+        'https://www.youtube.com/watch?v=vLnPwxZdW4Y',
+        'https://www.youtube.com/watch?v=2ybLDQapozo',
+        'https://www.youtube.com/watch?v=Rub-JsjMhWY',
+      ],
+      rust: [
+        'https://www.youtube.com/watch?v=zF34dRivLOw',
+        'https://www.youtube.com/watch?v=MsocPEZBd-M',
+      ],
+      go: [
+        'https://www.youtube.com/watch?v=un6ZyFkqFKo',
+        'https://www.youtube.com/watch?v=yyUHQIec83I',
       ],
       sql: [
-        'https://www.youtube.com/watch?v=HXV3zeQKqGY', // SQL Basics
-        'https://www.youtube.com/watch?v=7S_tz1z_5bA', // Joins & Aggregates
-        'https://www.youtube.com/watch?v=ztHopE5Wnpc', // Database Design & Indexing
-      ],
-      html: [
-        'https://www.youtube.com/watch?v=G3e-cpL7ofc', // HTML Fundamentals
-        'https://www.youtube.com/watch?v=fYq5PXgSsbE', // CSS & Flexbox
-        'https://www.youtube.com/watch?v=1PnVor36_40', // Responsive Web Layouts
+        'https://www.youtube.com/watch?v=HXV3zeQKqGY',
+        'https://www.youtube.com/watch?v=7S_tz1z_5bA',
+        'https://www.youtube.com/watch?v=ztHopE5Wnpc',
       ],
     }
 

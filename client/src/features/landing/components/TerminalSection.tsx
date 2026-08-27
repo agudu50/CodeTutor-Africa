@@ -44,7 +44,7 @@ const terminalScenarios: Record<string, Scenario> = {
     logs: [
       { text: '$ codetutor start --offline', type: 'cmd' },
       { text: '✓ Initializing on-device Llama/Phi neural runtime (Q4 quantized)...', type: 'info' },
-      { text: '✓ 3 Language tracks indexed (Python 3.12, JavaScript ES2024, Java 21)', type: 'success' },
+      { text: '✓ 3 Language tracks indexed (Python, JavaScript, Java)', type: 'success' },
       { text: '✓ 50+ offline coding practice exercises loaded into local cache', type: 'success' },
       { text: '● Offline AI Engine Ready — 100% Private, 0 KB Network Required [READY]', type: 'ready' },
     ],

@@ -98,7 +98,7 @@ export const CodeEditorPlaceholder: React.FC<CodeEditorProps> = memo(({
   }, [code])
 
   const fileExtension = language === 'python' ? 'py' : language === 'javascript' ? 'js' : 'java'
-  const langLabel = language === 'python' ? 'Python 3.12' : language === 'javascript' ? 'JavaScript' : 'Java 21'
+  const langLabel = language === 'python' ? 'Python' : language === 'javascript' ? 'JavaScript' : 'Java'
   const fileIconColor = language === 'python' ? 'text-[#4ec9b0]' : language === 'javascript' ? 'text-[#ffd700]' : 'text-[#e06c75]'
 
   return (

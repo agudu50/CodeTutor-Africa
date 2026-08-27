@@ -315,12 +315,10 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   }
 
   const languageOptions = [
-    { value: 'python', label: 'Python 3.12' },
-    { value: 'javascript', label: 'JavaScript (ES2024)' },
-    { value: 'java', label: 'Java 21 (OpenJDK)' },
+    { value: 'javascript', label: 'JavaScript' },
     { value: 'typescript', label: 'TypeScript' },
-    { value: 'cpp', label: 'C++' },
-    { value: 'go', label: 'Go' },
+    { value: 'python', label: 'Python' },
+    { value: 'java', label: 'Java' },
   ]
 
   const difficultyOptions = [

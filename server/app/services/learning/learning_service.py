@@ -32,7 +32,7 @@ DEFAULT_COURSES = [
         difficulty="Beginner",
         total_lessons=18,
         estimated_hours=24,
-        progress_percentage=68,
+        progress_percentage=0,
         modules=[
             ModuleSummary(
                 id="mod-1",
@@ -40,8 +40,8 @@ DEFAULT_COURSES = [
                 description="Variables, memory model, loops, and clean code principles.",
                 order=1,
                 lessons=[
-                    LessonSummary(id="les-1", title="Memory Model & Variable Scope", slug="memory-model-and-variables", duration_minutes=25, order=1, is_completed=True),
-                    LessonSummary(id="les-2", title="Iteration & List Comprehensions", slug="iteration-list-comprehensions", duration_minutes=35, order=2, is_completed=True),
+                    LessonSummary(id="les-1", title="Memory Model & Variable Scope", slug="memory-model-and-variables", duration_minutes=25, order=1, is_completed=False),
+                    LessonSummary(id="les-2", title="Iteration & List Comprehensions", slug="iteration-list-comprehensions", duration_minutes=35, order=2, is_completed=False),
                     LessonSummary(id="les-3", title="Functions & Recursion", slug="functions-and-recursion", duration_minutes=45, order=3, is_completed=False),
                 ]
             )
@@ -52,12 +52,12 @@ DEFAULT_COURSES = [
         title="Modern JavaScript & Async Architecture",
         slug="modern-javascript-async",
         description="Deep dive into event loop mechanics, microtasks, Promises, and non-blocking IO.",
-        category="Web Engineering",
+        category="Foundations",
         language="javascript",
         difficulty="Intermediate",
         total_lessons=14,
         estimated_hours=20,
-        progress_percentage=42,
+        progress_percentage=0,
         modules=[
             ModuleSummary(
                 id="mod-js-1",
@@ -65,7 +65,7 @@ DEFAULT_COURSES = [
                 description="Call stack, Task Queue, Microtask Queue, and Promises.",
                 order=1,
                 lessons=[
-                    LessonSummary(id="les-js-1", title="Asynchronous JavaScript & Promises", slug="async-js-promises", duration_minutes=40, order=1, is_completed=True),
+                    LessonSummary(id="les-js-1", title="Asynchronous JavaScript & Promises", slug="async-js-promises", duration_minutes=40, order=1, is_completed=False),
                 ]
             )
         ]
@@ -80,7 +80,7 @@ DEFAULT_COURSES = [
         difficulty="Intermediate",
         total_lessons=20,
         estimated_hours=28,
-        progress_percentage=15,
+        progress_percentage=0,
         modules=[
             ModuleSummary(
                 id="mod-java-1",
@@ -88,7 +88,7 @@ DEFAULT_COURSES = [
                 description="Class architecture, encapsulation, and reference semantics.",
                 order=1,
                 lessons=[
-                    LessonSummary(id="les-java-1", title="Classes, Objects & Constructors", slug="java-classes-and-constructors", duration_minutes=35, order=1, is_completed=True),
+                    LessonSummary(id="les-java-1", title="Classes, Objects & Constructors", slug="java-classes-and-constructors", duration_minutes=35, order=1, is_completed=False),
                     LessonSummary(id="les-java-2", title="Inheritance & Interfaces", slug="java-inheritance-interfaces", duration_minutes=45, order=2, is_completed=False),
                 ]
             )

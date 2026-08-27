@@ -52,9 +52,9 @@ export const TutorPage: React.FC = () => {
   }
 
   const languageOptions = [
-    { value: 'python', label: 'Python 3.12' },
+    { value: 'python', label: 'Python' },
     { value: 'javascript', label: 'JavaScript' },
-    { value: 'java', label: 'Java 21' },
+    { value: 'java', label: 'Java' },
     { value: 'typescript', label: 'TypeScript' },
   ]
 

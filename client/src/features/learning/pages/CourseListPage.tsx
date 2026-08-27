@@ -174,7 +174,7 @@ export const CourseListPage: React.FC = () => {
                 { value: 'all', label: 'All Languages' },
                 { value: 'javascript', label: 'JavaScript' },
                 { value: 'python', label: 'Python' },
-                { value: 'java', label: 'Java 21' },
+                { value: 'java', label: 'Java' },
                 { value: 'typescript', label: 'TypeScript' },
               ]}
               value={selectedLang}
