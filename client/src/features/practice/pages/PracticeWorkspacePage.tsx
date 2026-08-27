@@ -10,7 +10,6 @@ import {
   Bot,
   Lightbulb,
   BookOpen,
-  Shield,
   Copy,
   Check,
   CheckCircle2,
@@ -175,7 +174,7 @@ export const PracticeWorkspacePage: React.FC = () => {
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <Link
             to="/practice"
-            className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
+            className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold transition-colors px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>All Problems</span>
@@ -192,32 +191,32 @@ export const PracticeWorkspacePage: React.FC = () => {
             />
           </div>
 
-          <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border shrink-0 ${difficultyVariant}`}>
+          <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-lg border shrink-0 ${difficultyVariant}`}>
             {problem.difficulty}
           </span>
         </div>
 
         {/* View Results Button */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           <Button
             size="sm"
             variant="outline"
             onClick={() => setIsResultModalOpen(true)}
-            className="h-8 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500 shadow-2xs px-2.5 cursor-pointer"
-            leftIcon={<Terminal className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
+            className="h-8 text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-3xs px-3 cursor-pointer"
+            leftIcon={<Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
           >
             <span>Results ({passedCount}/{testResults.length})</span>
           </Button>
 
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
-            <Shield className="w-3.5 h-3.5 text-emerald-500" /> 100% Offline
+          <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> 100% Offline
           </span>
           <Link to="/tutor">
             <Button
               variant="outline"
               size="sm"
-              className="h-8 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500 hover:text-brand-600 shadow-2xs px-2.5 cursor-pointer"
-              leftIcon={<Bot className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
+              className="h-8 text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:text-[#005F02] dark:hover:text-emerald-400 shadow-3xs px-3 cursor-pointer"
+              leftIcon={<Bot className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
             >
               Ask Tutor
             </Button>
@@ -251,7 +250,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 className="h-7 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 px-2 cursor-pointer"
-                leftIcon={<Bot className="w-3 h-3 text-brand-600 dark:text-brand-400" />}
+                leftIcon={<Bot className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />}
               >
                 Ask Tutor
               </Button>
@@ -276,7 +275,7 @@ export const PracticeWorkspacePage: React.FC = () => {
             onClick={() => setMobileTab('problem')}
             className={`py-1 text-center text-xs font-bold rounded-lg transition-all ${
               mobileTab === 'problem'
-                ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-2xs'
+                ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -287,11 +286,11 @@ export const PracticeWorkspacePage: React.FC = () => {
             onClick={() => setMobileTab('editor')}
             className={`py-1 text-center text-xs font-bold rounded-lg transition-all ${
               mobileTab === 'editor'
-                ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-2xs'
+                ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400'
             }`}
           >
-            VS Code Editor
+            Code Editor
           </button>
         </div>
       </div>
@@ -317,7 +316,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                 onClick={() => setActiveTab('problem')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'problem'
-                    ? 'bg-brand-600 text-white shadow-2xs'
+                    ? 'bg-[#005F02] text-white shadow-3xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -329,7 +328,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                 onClick={() => setActiveTab('hints')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'hints'
-                    ? 'bg-brand-600 text-white shadow-2xs'
+                    ? 'bg-[#005F02] text-white shadow-3xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -338,7 +337,7 @@ export const PracticeWorkspacePage: React.FC = () => {
               </button>
             </div>
 
-            <span className="text-[11px] font-mono text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/80 px-2.5 py-0.5 rounded border border-brand-200 dark:border-brand-800/80 font-bold uppercase pr-2">
+            <span className="text-[11px] font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 font-bold uppercase">
               {problem.language}
             </span>
           </div>
@@ -347,55 +346,109 @@ export const PracticeWorkspacePage: React.FC = () => {
           <div className="p-4 sm:p-5 flex-1 overflow-y-auto space-y-4">
             {activeTab === 'problem' ? (
               <>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80">
+                    <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
                       {problem.category}
                     </span>
+                    <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      {problem.language}
+                    </span>
                   </div>
-                  <h3 className="text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-snug">
+                  <h3 className="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug">
                     {problem.title}
                   </h3>
                 </div>
 
+                {/* Plain-English Goal Callout */}
+                <div className="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-xs text-slate-800 dark:text-slate-200 space-y-1 shadow-3xs">
+                  <span className="font-bold text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5 text-[11px] uppercase font-mono">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Problem Goal
+                  </span>
+                  <p className="leading-relaxed">
+                    Write a function that checks if a word or phrase reads the exact same forward and backward.
+                  </p>
+                </div>
+
                 {/* Formatted Problem Statement */}
-                <div className="text-xs sm:text-sm leading-relaxed text-slate-800 dark:text-slate-200 space-y-2.5">
+                <div className="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-2.5">
                   <p>{problem.description}</p>
                 </div>
 
-                {/* Examples & Constraints */}
-                <div className="space-y-2 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
-                    Examples & Constraints
+                {/* Step-by-Step Logic Guide */}
+                <div className="space-y-2 pt-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
+                    How to solve with recursion:
                   </h4>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3 font-mono text-xs shadow-2xs">
-                    {/* Sample Input */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                        <span className="uppercase font-sans font-bold">Sample Input:</span>
-                        <button
-                          type="button"
-                          onClick={() => handleCopySample(problem.testCases[0]?.input || '')}
-                          className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer"
-                        >
-                          {copiedInput ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                          <span>{copiedInput ? 'Copied' : 'Copy'}</span>
-                        </button>
-                      </div>
-                      <code className="text-brand-600 dark:text-brand-400 font-bold block bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 select-all break-all">
-                        {problem.testCases[0]?.input}
-                      </code>
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-2 font-sans shadow-3xs">
+                    <div className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                        1
+                      </span>
+                      <p>
+                        <strong>Base Case:</strong> If the text has 0 or 1 characters left, it is always a palindrome (<code className="text-[#005F02] dark:text-emerald-400 font-mono">True</code>).
+                      </p>
                     </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                        2
+                      </span>
+                      <p>
+                        <strong>Comparison:</strong> Compare the first letter and last letter. If they don't match, return <code className="text-rose-600 dark:text-rose-400 font-mono">False</code>.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                        3
+                      </span>
+                      <p>
+                        <strong>Recursive Call:</strong> If they match, call the function again on the inner characters between them.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-                    {/* Sample Output */}
-                    <div className="space-y-1.5">
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                        <span className="uppercase font-sans font-bold">Sample Expected Output:</span>
+                {/* Examples & Test Cases */}
+                <div className="space-y-2 pt-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
+                    Examples & Test Cases
+                  </h4>
+                  <div className="space-y-2.5">
+                    {problem.testCases.map((tc, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 font-mono text-xs shadow-3xs"
+                      >
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                          <span className="font-sans font-bold text-slate-800 dark:text-slate-200">
+                            Example {idx + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopySample(tc.input)}
+                            className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-900 dark:hover:text-white px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer shadow-3xs"
+                          >
+                            {copiedInput ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                            <span>{copiedInput ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-[10px] text-slate-400 uppercase font-sans">Input:</span>
+                          <code className="text-[#005F02] dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800 select-all break-all">
+                            {tc.input}
+                          </code>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-[10px] text-slate-400 uppercase font-sans">Expected Output:</span>
+                          <code className="text-emerald-600 dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800 select-all">
+                            {tc.expectedOutput}
+                          </code>
+                        </div>
                       </div>
-                      <code className="text-emerald-600 dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 select-all">
-                        {problem.testCases[0]?.expectedOutput}
-                      </code>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </>
@@ -419,7 +472,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 text-xs font-bold text-brand-600 dark:text-brand-400 border-slate-200 dark:border-slate-700 hover:border-brand-500 cursor-pointer"
+                          className="h-7 text-xs font-bold text-[#005F02] dark:text-emerald-400 border-slate-200 dark:border-slate-700 hover:border-emerald-500 cursor-pointer"
                           onClick={() => setShowHintIndex(idx)}
                         >
                           Reveal Hint
