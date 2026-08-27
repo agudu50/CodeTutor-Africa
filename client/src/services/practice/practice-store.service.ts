@@ -1,7 +1,7 @@
 import { PracticeQuestion } from '@/types'
 import { MOCK_PRACTICE_QUESTIONS } from '@/features/practice/data/mockPracticeData'
 
-const PRACTICE_STORAGE_KEY = 'codetutor_practice_questions_v3'
+const PRACTICE_STORAGE_KEY = 'codetutor_practice_questions_v4'
 
 class PracticeStoreService {
   private questions: PracticeQuestion[] = []

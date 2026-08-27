@@ -9,6 +9,8 @@ import {
   CheckCircle2,
   Lightbulb,
   BookOpen,
+  Clock,
+  Shield,
 } from 'lucide-react'
 
 interface PracticeChallengeEditorModalProps {
@@ -36,6 +38,9 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('beginner')
   const [category, setCategory] = useState('Algorithms')
   const [courseId, setCourseId] = useState<string>('')
+  const [moduleId, setModuleId] = useState<string>('')
+  const [timeLimitMinutes, setTimeLimitMinutes] = useState<number>(15)
+  const [maxAttempts, setMaxAttempts] = useState<number>(3)
   const [description, setDescription] = useState('')
   const [tagsInput, setTagsInput] = useState('')
   const [starterCode, setStarterCode] = useState('')
@@ -45,6 +50,8 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
   const [hints, setHints] = useState<string[]>([''])
 
   const courses = courseStoreService.getAllCourses()
+  const selectedCourse = courses.find((c) => c.id === courseId)
+  const courseModules = selectedCourse?.modules || []
 
   useEffect(() => {
     if (editingQuestion) {
@@ -53,6 +60,9 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
       setDifficulty(editingQuestion.difficulty)
       setCategory(editingQuestion.category || 'Algorithms')
       setCourseId(editingQuestion.courseId || '')
+      setModuleId(editingQuestion.moduleId || '')
+      setTimeLimitMinutes(editingQuestion.timeLimitMinutes ?? 15)
+      setMaxAttempts(editingQuestion.maxAttempts ?? 3)
       setDescription(editingQuestion.description)
       setTagsInput(editingQuestion.tags.join(', '))
       setStarterCode(editingQuestion.starterCode)
@@ -72,9 +82,12 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
       setDifficulty('beginner')
       setCategory('Algorithms')
       setCourseId('')
+      setModuleId('')
+      setTimeLimitMinutes(15)
+      setMaxAttempts(3)
       setDescription('')
       setTagsInput('JavaScript, Arrays, Algorithms')
-      setStarterCode(`function solveProblem(input) {\n  // Write your solution here\n  return input;\n}`)
+      setStarterCode(`function solveProblem(input) {\n  // TODO: Write your solution here\n  \n}`)
       setTestCases([
         { id: 'tc-1', input: '[1, 2, 3]', expectedOutput: '[1, 2, 3]', passed: true },
       ])
@@ -86,6 +99,7 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
 
   const handleCourseChange = (id: string) => {
     setCourseId(id)
+    setModuleId('')
     if (id) {
       const selected = courses.find((c) => c.id === id)
       if (selected && ['javascript', 'typescript', 'python', 'java'].includes(selected.language)) {
@@ -146,7 +160,7 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
 
     const validTestCases = testCases.filter((tc) => tc.input.trim() || tc.expectedOutput.trim())
     const validHints = hints.map((h) => h.trim()).filter((h) => h.length > 0)
-    const selectedCourse = courses.find((c) => c.id === courseId)
+    const activeModule = courseModules.find((m) => m.id === moduleId)
 
     const questionPayload: Omit<PracticeQuestion, 'id' | 'createdAt'> = {
       title: title.trim(),
@@ -158,6 +172,10 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
       tags: tags.length > 0 ? tags : [language, 'Practice'],
       courseId: courseId || undefined,
       courseTitle: selectedCourse?.title || undefined,
+      moduleId: moduleId || undefined,
+      moduleTitle: activeModule?.title || undefined,
+      timeLimitMinutes: timeLimitMinutes > 0 ? timeLimitMinutes : undefined,
+      maxAttempts: maxAttempts > 0 ? maxAttempts : undefined,
       starterCode: starterCode.trim(),
       testCases: validTestCases.length > 0 ? validTestCases : [
         { id: 'tc-1', input: 'sample', expectedOutput: 'sample', passed: true },
@@ -190,7 +208,7 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
                 {editingQuestion ? 'Edit Practice Challenge' : 'Create Practice Challenge'}
               </h2>
               <p className="text-xs text-slate-500">
-                Design interactive coding problems with starter templates, hints, and automated test suites.
+                Design interactive coding problems with starter templates, hints, clock timers, and attempt limits.
               </p>
             </div>
           </div>
@@ -225,14 +243,14 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                placeholder="e.g. Recursion, Data Structures, Algorithms"
+                placeholder="e.g. Output, Variables, Loops, Recursion"
                 className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-medium"
               />
             </div>
           </div>
 
-          {/* Associated Course, Language & Difficulty */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Associated Course & Module */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                 <BookOpen className="w-3.5 h-3.5 text-brand-600" />
@@ -253,7 +271,27 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">Programming Language</label>
+              <label className="font-bold text-slate-700 dark:text-slate-300">Associated Module</label>
+              <select
+                value={moduleId}
+                onChange={(e) => setModuleId(e.target.value)}
+                disabled={!courseId || courseModules.length === 0}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-semibold disabled:opacity-50"
+              >
+                <option value="">All / General Module</option>
+                {courseModules.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    Module {m.order}: {m.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Language, Difficulty, Timer & Attempt Limits */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="space-y-1">
+              <label className="font-bold text-slate-700 dark:text-slate-300">Language</label>
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as ProgrammingLanguage)}
@@ -268,7 +306,7 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">Difficulty Level</label>
+              <label className="font-bold text-slate-700 dark:text-slate-300">Difficulty</label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
@@ -277,6 +315,43 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
                 <option value="advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-amber-500" />
+                <span>Timer (Mins)</span>
+              </label>
+              <select
+                value={timeLimitMinutes}
+                onChange={(e) => setTimeLimitMinutes(Number(e.target.value))}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
+              >
+                <option value="5">5 Minutes</option>
+                <option value="10">10 Minutes</option>
+                <option value="15">15 Minutes</option>
+                <option value="20">20 Minutes</option>
+                <option value="30">30 Minutes</option>
+                <option value="0">No Limit (Untimed)</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                <Shield className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Max Attempts</span>
+              </label>
+              <select
+                value={maxAttempts}
+                onChange={(e) => setMaxAttempts(Number(e.target.value))}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
+              >
+                <option value="1">1 Attempt (Exam Mode)</option>
+                <option value="3">3 Attempts</option>
+                <option value="5">5 Attempts</option>
+                <option value="10">10 Attempts</option>
+                <option value="0">Unlimited</option>
               </select>
             </div>
           </div>
@@ -288,7 +363,7 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
               type="text"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="e.g. Python, Strings, Recursion, Foundations"
+              placeholder="e.g. Python, Strings, Recursion, Module 1"
               className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-mono text-[11px]"
             />
           </div>
@@ -306,19 +381,19 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
             />
           </div>
 
-          {/* Starter Code */}
+          {/* Starter Code (Boilerplate with TODO, not full solution) */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                 <Code2 className="w-3.5 h-3.5 text-[#005F02]" />
-                <span>Starter Code Template</span>
+                <span>Starter Code Template (Scaffolding with TODO)</span>
               </label>
               <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">
                 {language}
               </span>
             </div>
             <textarea
-              rows={6}
+              rows={5}
               value={starterCode}
               onChange={(e) => setStarterCode(e.target.value)}
               placeholder="Initial function declaration or boilerplate..."

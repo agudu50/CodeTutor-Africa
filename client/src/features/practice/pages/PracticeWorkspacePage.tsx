@@ -17,6 +17,9 @@ import {
   ArrowRight,
   X,
   Terminal,
+  Clock,
+  Shield,
+  RotateCcw,
 } from 'lucide-react'
 import { TestCase } from '@/types'
 
@@ -45,15 +48,22 @@ export const PracticeWorkspacePage: React.FC = () => {
   const [showHintIndex, setShowHintIndex] = useState<number>(-1)
   const [copiedInput, setCopiedInput] = useState(false)
 
+  // Clock & Attempt State
+  const defaultMinutes = problem?.timeLimitMinutes || 15
+  const [timeLeftSecs, setTimeLeftSecs] = useState<number>(defaultMinutes * 60)
+  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(true)
+  const [attemptsUsed, setAttemptsUsed] = useState<number>(0)
+  const maxAttempts = problem?.maxAttempts ?? 3
+
   // Interactive Modals
   const [isResultModalOpen, setIsResultModalOpen] = useState(false)
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState<{
     type: 'success' | 'error' | 'info'
     title: string
     detail: string
   } | null>(null)
 
+  // Reset when problem changes
   useEffect(() => {
     if (problem) {
       setCode(problem.starterCode)
@@ -61,10 +71,34 @@ export const PracticeWorkspacePage: React.FC = () => {
       setSubmissionFeedback(undefined)
       setShowHintIndex(-1)
       setIsResultModalOpen(false)
-      setIsSubmitModalOpen(false)
       setToastMessage(null)
+      setTimeLeftSecs((problem.timeLimitMinutes || 15) * 60)
+      setIsTimerRunning(true)
+      setAttemptsUsed(0)
     }
   }, [problem])
+
+  // Countdown timer tick
+  useEffect(() => {
+    if (!isTimerRunning || timeLeftSecs <= 0) return
+
+    const interval = setInterval(() => {
+      setTimeLeftSecs((prev) => {
+        if (prev <= 1) {
+          setIsTimerRunning(false)
+          setToastMessage({
+            type: 'error',
+            title: "Time's Up!",
+            detail: 'The allocated time limit for this practice problem has expired.',
+          })
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [isTimerRunning, timeLeftSecs])
 
   // Toast Auto-dismiss
   useEffect(() => {
@@ -74,6 +108,12 @@ export const PracticeWorkspacePage: React.FC = () => {
     }, 3500)
     return () => clearTimeout(timer)
   }, [toastMessage])
+
+  const formatTimer = (secs: number) => {
+    const mins = Math.floor(secs / 60)
+    const rem = secs % 60
+    return `${mins.toString().padStart(2, '0')}:${rem.toString().padStart(2, '0')}`
+  }
 
   const handleRun = async () => {
     if (!problem) return
@@ -89,7 +129,20 @@ export const PracticeWorkspacePage: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!problem) return
+
+    if (maxAttempts > 0 && attemptsUsed >= maxAttempts) {
+      setToastMessage({
+        type: 'error',
+        title: 'Attempt Limit Reached',
+        detail: `You have used all ${maxAttempts} submission attempts allowed for this challenge. Review the hints or reset your workspace.`,
+      })
+      return
+    }
+
     setIsSubmitting(true)
+    const newAttemptCount = attemptsUsed + 1
+    setAttemptsUsed(newAttemptCount)
+
     const res = await practiceService.submitSolution(problem.id, code)
     setTestResults(res.testResults)
     setSubmissionFeedback(res.feedback)
@@ -97,7 +150,7 @@ export const PracticeWorkspacePage: React.FC = () => {
     setIsSubmitting(false)
 
     // Open Completion Modal
-    setIsSubmitModalOpen(true)
+    setIsResultModalOpen(true)
   }
 
   const handleReset = () => {
@@ -146,6 +199,7 @@ export const PracticeWorkspacePage: React.FC = () => {
   const nextProblem = allProblems.length > 0 ? allProblems[(currentIndex + 1) % allProblems.length] : problem
   const isPassedAll = testResults.every((t) => t.passed)
   const passedCount = testResults.filter((t) => t.passed).length
+  const attemptsLeft = maxAttempts > 0 ? Math.max(0, maxAttempts - attemptsUsed) : null
 
   return (
     <div className="flex-1 flex flex-col min-h-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-slate-50 dark:bg-slate-950 w-full relative">
@@ -222,8 +276,39 @@ export const PracticeWorkspacePage: React.FC = () => {
           </span>
         </div>
 
-        {/* View Results Button */}
+        {/* Timer, Attempts & Action Buttons */}
         <div className="flex items-center gap-2.5 shrink-0">
+          {/* Live Countdown Clock */}
+          <div
+            className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-xl border shadow-3xs transition-colors ${
+              timeLeftSecs === 0
+                ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800'
+                : timeLeftSecs < 180
+                ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-800 animate-pulse'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>{timeLeftSecs === 0 ? "Time's Up" : formatTimer(timeLeftSecs)}</span>
+          </div>
+
+          {/* Attempts Left Badge */}
+          {maxAttempts > 0 && (
+            <span
+              className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-2.5 py-1 rounded-xl border shadow-3xs ${
+                attemptsUsed >= maxAttempts
+                  ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800'
+                  : 'bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/80'
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>
+                {attemptsLeft !== null ? `${attemptsLeft}/${maxAttempts} Attempts` : 'Unlimited'}
+              </span>
+            </span>
+          )}
+
+          {/* View Results Button */}
           <Button
             size="sm"
             variant="outline"
@@ -234,9 +319,6 @@ export const PracticeWorkspacePage: React.FC = () => {
             <span>Results ({passedCount}/{testResults.length})</span>
           </Button>
 
-          <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> 100% Offline
-          </span>
           <Link to="/tutor">
             <Button
               variant="outline"
@@ -252,49 +334,25 @@ export const PracticeWorkspacePage: React.FC = () => {
 
       {/* Mobile 2-Tier Subheader (sm:hidden) */}
       <div className="sm:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 space-y-2 shrink-0 shadow-2xs w-full">
-        {/* Tier 1: Navigation & Actions */}
         <div className="flex items-center justify-between gap-2">
           <Link
             to="/practice"
             className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors py-0.5"
           >
-            <ChevronLeft className="w-4 h-4 text-slate-400" />
-            <span>All Problems</span>
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Problems</span>
           </Link>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setIsResultModalOpen(true)}
-              className="h-7 text-xs font-semibold px-2 cursor-pointer"
-            >
-              Results ({passedCount}/{testResults.length})
-            </Button>
-            <Link to="/tutor">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs font-semibold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 px-2 cursor-pointer"
-                leftIcon={<Bot className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />}
-              >
-                Ask Tutor
-              </Button>
-            </Link>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {formatTimer(timeLeftSecs)}
+            </span>
+            <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyVariant}`}>
+              {problem.difficulty}
+            </span>
           </div>
         </div>
 
-        {/* Tier 2: Dynamic Problem Switcher Dropdown */}
-        <div className="pt-0.5 border-t border-slate-100 dark:border-slate-800/80">
-          <Dropdown
-            options={problemOptions}
-            value={problem.id}
-            onChange={(newId) => navigate(`/practice/${newId}`)}
-            className="text-xs font-bold w-full"
-          />
-        </div>
-
-        {/* Tier 3: Mobile Section Tab Switcher (Problem / Editor) */}
         <div className="grid grid-cols-2 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
           <button
             type="button"
@@ -323,9 +381,8 @@ export const PracticeWorkspacePage: React.FC = () => {
 
       {/* ═══════════════════════════════════════════════════════════════
           WORKSPACE LAYOUT
-          - Left: Problem Description (Full height)
-          - Right: VS Code Dark+ Code Editor (100% Full Height)
-          - Results: Opens directly in interactive modal!
+          - Left: Problem Description & Interactive Hints
+          - Right: VS Code Code Editor (100% Full Height)
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 lg:overflow-hidden p-3 sm:p-4 gap-4 w-full max-w-7xl mx-auto pb-6 lg:pb-4">
         {/* Left Column: Problem Description & Progressive Hints */}
@@ -397,53 +454,13 @@ export const PracticeWorkspacePage: React.FC = () => {
                   </h3>
                 </div>
 
-                {/* Plain-English Goal Callout */}
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-xs text-slate-800 dark:text-slate-200 space-y-1 shadow-3xs">
+                {/* Formatted Problem Statement */}
+                <div className="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
                   <span className="font-bold text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5 text-[11px] uppercase font-mono">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    Problem Goal
+                    Instructions & Goal
                   </span>
-                  <p className="leading-relaxed">
-                    Write a function that checks if a word or phrase reads the exact same forward and backward.
-                  </p>
-                </div>
-
-                {/* Formatted Problem Statement */}
-                <div className="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-2.5">
-                  <p>{problem.description}</p>
-                </div>
-
-                {/* Step-by-Step Logic Guide */}
-                <div className="space-y-2 pt-1">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
-                    How to solve with recursion:
-                  </h4>
-                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-2 font-sans shadow-3xs">
-                    <div className="flex items-start gap-2">
-                      <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
-                        1
-                      </span>
-                      <p>
-                        <strong>Base Case:</strong> If the text has 0 or 1 characters left, it is always a palindrome (<code className="text-[#005F02] dark:text-emerald-400 font-mono">True</code>).
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
-                        2
-                      </span>
-                      <p>
-                        <strong>Comparison:</strong> Compare the first letter and last letter. If they don't match, return <code className="text-rose-600 dark:text-rose-400 font-mono">False</code>.
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
-                        3
-                      </span>
-                      <p>
-                        <strong>Recursive Call:</strong> If they match, call the function again on the inner characters between them.
-                      </p>
-                    </div>
-                  </div>
+                  <p className="leading-relaxed whitespace-pre-line">{problem.description}</p>
                 </div>
 
                 {/* Examples & Test Cases */}
@@ -451,38 +468,34 @@ export const PracticeWorkspacePage: React.FC = () => {
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
                     Examples & Test Cases
                   </h4>
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     {problem.testCases.map((tc, idx) => (
                       <div
-                        key={idx}
-                        className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 font-mono text-xs shadow-3xs"
+                        key={tc.id}
+                        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5 shadow-3xs"
                       >
-                        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
-                          <span className="font-sans font-bold text-slate-800 dark:text-slate-200">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
                             Example {idx + 1}
                           </span>
                           <button
                             type="button"
                             onClick={() => handleCopySample(tc.input)}
-                            className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-900 dark:hover:text-white px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer shadow-3xs"
+                            className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             {copiedInput ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                             <span>{copiedInput ? 'Copied' : 'Copy'}</span>
                           </button>
                         </div>
-
-                        <div className="space-y-1">
-                          <span className="text-[10px] text-slate-400 uppercase font-sans">Input:</span>
-                          <code className="text-[#005F02] dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800 select-all break-all">
+                        <div className="font-mono text-[11px] bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800/80 space-y-0.5">
+                          <p className="text-slate-600 dark:text-slate-400 truncate">
+                            <span className="text-slate-400 dark:text-slate-500">Input: </span>
                             {tc.input}
-                          </code>
-                        </div>
-
-                        <div className="space-y-1">
-                          <span className="text-[10px] text-slate-400 uppercase font-sans">Expected Output:</span>
-                          <code className="text-emerald-600 dark:text-emerald-400 font-bold block bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800 select-all">
+                          </p>
+                          <p className="text-slate-900 dark:text-emerald-400 font-bold truncate">
+                            <span className="text-slate-400 dark:text-slate-500 font-normal">Expected Output: </span>
                             {tc.expectedOutput}
-                          </code>
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -490,204 +503,155 @@ export const PracticeWorkspacePage: React.FC = () => {
                 </div>
               </>
             ) : (
+              /* Progressive Hints Tab */
               <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                  <span>Progressive Hints help you build your own solution step-by-step.</span>
+                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 space-y-1 shadow-3xs">
+                  <div className="flex items-center gap-1.5 font-bold">
+                    <Lightbulb className="w-4 h-4 text-amber-500" />
+                    <span>Socratic Hints</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-amber-700 dark:text-amber-400">
+                    Stuck? Reveal hints step-by-step to guide your problem-solving without giving away the answer.
+                  </p>
                 </div>
 
-                {problem.hints.map((hint, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 space-y-2 shadow-2xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
-                        Hint {idx + 1} of {problem.hints.length}
-                      </span>
-                      {showHintIndex < idx && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-7 text-xs font-bold text-[#005F02] dark:text-emerald-400 border-slate-200 dark:border-slate-700 hover:border-emerald-500 cursor-pointer"
-                          onClick={() => setShowHintIndex(idx)}
-                        >
-                          Reveal Hint
-                        </Button>
-                      )}
-                    </div>
-                    {showHintIndex >= idx ? (
-                      <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans animate-in fade-in">
-                        {hint}
-                      </p>
-                    ) : (
-                      <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-md filter blur-xs select-none" />
-                    )}
-                  </div>
-                ))}
+                <div className="space-y-2.5">
+                  {problem.hints.map((hint, idx) => {
+                    const isRevealed = idx <= showHintIndex
+                    return (
+                      <div
+                        key={idx}
+                        className={`p-3.5 rounded-xl border transition-all ${
+                          isRevealed
+                            ? 'bg-white dark:bg-slate-900 border-amber-200 dark:border-amber-800/70 shadow-2xs'
+                            : 'bg-slate-50/70 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 opacity-80'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-mono text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase">
+                            Hint #{idx + 1}
+                          </span>
+                          {!isRevealed && (
+                            <button
+                              type="button"
+                              onClick={() => setShowHintIndex(idx)}
+                              className="text-[11px] font-bold text-[#005F02] dark:text-emerald-400 hover:underline cursor-pointer"
+                            >
+                              Unlock Hint
+                            </button>
+                          )}
+                        </div>
+                        {isRevealed ? (
+                          <p className="text-xs text-slate-800 dark:text-slate-200 mt-1.5 leading-relaxed">
+                            {hint}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-slate-400 dark:text-slate-500 italic mt-1">
+                            Click 'Unlock Hint' to reveal this clue.
+                          </p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Right Column: 100% Full-Height VS Code Dark+ Editor */}
+        {/* Right Column: Interactive Code Editor & Actions */}
         <div
-          className={`lg:col-span-7 flex flex-col h-full overflow-hidden ${
-            mobileTab === 'problem' ? 'hidden lg:flex' : 'flex'
+          className={`lg:col-span-7 flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full overflow-hidden ${
+            mobileTab !== 'editor' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <CodeEditorPlaceholder
-            code={code}
-            onChange={setCode}
-            language={problem.language}
-            onRun={handleRun}
-            onSubmit={handleSubmit}
-            onReset={handleReset}
-            onOpenResults={() => setIsResultModalOpen(true)}
-            testStats={{
-              passed: passedCount,
-              total: testResults.length,
-              isPassedAll,
-            }}
-            isRunning={isRunning}
-            isSubmitting={isSubmitting}
-          />
+          {/* Editor Header Bar */}
+          <div className="p-2.5 border-b border-slate-200 dark:border-slate-800 bg-[#1e1e1e] flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <span className="text-xs font-mono font-bold text-slate-300 ml-2">
+                solution.{problem.language === 'python' ? 'py' : problem.language === 'java' ? 'java' : problem.language === 'typescript' ? 'ts' : 'js'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleReset}
+                title="Reset code to starter template"
+                className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Editor Area */}
+          <div className="flex-1 min-h-[300px] lg:min-h-0 bg-[#1e1e1e] p-2 flex flex-col">
+            <CodeEditorPlaceholder
+              code={code}
+              onChange={setCode}
+              language={problem.language}
+              onRun={handleRun}
+              onSubmit={handleSubmit}
+              onReset={handleReset}
+              isRunning={isRunning}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+
+          {/* Editor Bottom Actions Bar */}
+          <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 flex items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRun}
+                disabled={isRunning || isSubmitting}
+                className="text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-3xs cursor-pointer h-9 px-4"
+                leftIcon={<Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
+              >
+                {isRunning ? 'Running Tests...' : 'Run Test Cases'}
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSubmit}
+                disabled={isRunning || isSubmitting || (maxAttempts > 0 && attemptsUsed >= maxAttempts)}
+                className={`text-xs font-bold text-white shadow-xs cursor-pointer h-9 px-5 ${
+                  maxAttempts > 0 && attemptsUsed >= maxAttempts
+                    ? 'bg-slate-400 cursor-not-allowed'
+                    : 'bg-[#005F02] hover:bg-[#004e02]'
+                }`}
+                rightIcon={<ArrowRight className="w-3.5 h-3.5 ml-1" />}
+              >
+                {isSubmitting ? 'Evaluating...' : 'Submit Solution'}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          EXECUTION RESULTS MODAL (Opens on Run Tests or Clicking Results)
+          INTERACTIVE TEST RESULT MODAL
           ═══════════════════════════════════════════════════════════════ */}
       <TestResultModal
         isOpen={isResultModalOpen}
         onClose={() => setIsResultModalOpen(false)}
         testCases={testResults}
-        isPassedAll={isPassedAll}
         feedback={submissionFeedback}
         runtimeMs={runtimeMs}
+        isPassedAll={isPassedAll}
         onNextProblem={() => {
           setIsResultModalOpen(false)
           navigate(`/practice/${nextProblem.id}`)
         }}
       />
-
-      {/* ═══════════════════════════════════════════════════════════════
-          SUBMISSION COMPLETION DIALOG / MODAL
-          ═══════════════════════════════════════════════════════════════ */}
-      {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150">
-            {/* Header Status */}
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-3 rounded-2xl ${
-                    isPassedAll
-                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
-                      : 'bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
-                  }`}
-                >
-                  {isPassedAll ? (
-                    <CheckCircle2 className="w-7 h-7 text-emerald-500" />
-                  ) : (
-                    <XCircle className="w-7 h-7 text-rose-500" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
-                    {isPassedAll ? 'Solution Accepted' : 'Submission Needs Revision'}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {isPassedAll
-                      ? 'All test assertions executed and verified offline.'
-                      : 'Some test cases did not meet the expected return values.'}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsSubmitModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Telemetry Metrics Row */}
-            <div className="grid grid-cols-3 gap-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 font-mono text-center">
-              <div className="space-y-0.5">
-                <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Status</span>
-                <span className={`text-xs font-bold ${isPassedAll ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                  {passedCount}/{testResults.length} Passed
-                </span>
-              </div>
-              <div className="space-y-0.5 border-x border-slate-200 dark:border-slate-800">
-                <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Runtime</span>
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                  {runtimeMs || 42} ms
-                </span>
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Memory</span>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                  0.1 MB
-                </span>
-              </div>
-            </div>
-
-            {/* AI Pedagogical Feedback Box */}
-            {submissionFeedback && (
-              <div className="p-3.5 rounded-xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200/80 dark:border-brand-800/60 text-xs space-y-1">
-                <span className="font-bold text-[10px] uppercase font-mono text-brand-700 dark:text-brand-300 block">
-                  AI Tutor Pedagogical Review:
-                </span>
-                <p className="text-slate-800 dark:text-slate-200 font-sans leading-relaxed">
-                  {submissionFeedback}
-                </p>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-2.5 pt-2">
-              {isPassedAll ? (
-                <Button
-                  variant="primary"
-                  className="w-full sm:flex-1 h-10 font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs cursor-pointer"
-                  rightIcon={<ArrowRight className="w-4 h-4" />}
-                  onClick={() => {
-                    setIsSubmitModalOpen(false)
-                    navigate(`/practice/${nextProblem.id}`)
-                  }}
-                >
-                  Next Problem
-                </Button>
-              ) : (
-                <Link to="/tutor" className="w-full sm:flex-1">
-                  <Button
-                    variant="primary"
-                    className="w-full h-10 font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs cursor-pointer"
-                    leftIcon={<Bot className="w-4 h-4" />}
-                  >
-                    Ask Tutor to Explain Bug
-                  </Button>
-                </Link>
-              )}
-
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto h-10 text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 cursor-pointer"
-                onClick={() => {
-                  setIsSubmitModalOpen(false)
-                  setIsResultModalOpen(true)
-                }}
-              >
-                Inspect Test Cases
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

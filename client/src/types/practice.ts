@@ -26,6 +26,8 @@ export interface PracticeQuestion extends BaseEntity {
   moduleId?: string
   moduleTitle?: string
   moduleOrder?: number
+  timeLimitMinutes?: number
+  maxAttempts?: number
 }
 
 export interface CodeSubmission extends BaseEntity {
