@@ -89,16 +89,31 @@ export const DashboardPage: React.FC = () => {
           {/* Top/Left Section: Avatar + Dynamic Greeting + Identity + Pill Badges */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-5 min-w-0 flex-1">
             <div className="flex items-center gap-3.5 sm:block shrink-0 w-full sm:w-auto">
-              <div className="relative shrink-0">
-                <Avatar
-                  src={profile.avatarUrl || undefined}
-                  fallbackName={profile.fullName || 'User'}
-                  size="lg"
-                  className="bg-[#005F02] text-white font-bold shadow-md ring-2 sm:ring-3 ring-[#005F02]/25 dark:ring-emerald-500/20 w-12 h-12 sm:w-16 sm:h-16 text-base sm:text-xl"
-                />
-                {/* Online / Offline status badge on avatar */}
+              {/* Streak-wrapped Avatar Container */}
+              <div className="relative shrink-0 group">
+                {/* Glowing Streak Ring Border */}
+                <div className="p-0.5 sm:p-1 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 shadow-md ring-2 sm:ring-3 ring-amber-400/20 dark:ring-amber-500/10">
+                  <Avatar
+                    src={profile.avatarUrl || undefined}
+                    fallbackName={profile.fullName || 'User'}
+                    size="lg"
+                    className="bg-[#005F02] text-white font-bold w-12 h-12 sm:w-16 sm:h-16 text-base sm:text-xl ring-2 ring-white dark:ring-slate-900"
+                  />
+                </div>
+
+                {/* Flame Streak Pill Badge Anchored directly to Avatar */}
+                <Link
+                  to="/progress"
+                  className="absolute -bottom-2 inset-x-0 mx-auto w-fit flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-mono font-black text-[10px] sm:text-[11px] shadow-sm ring-2 ring-white dark:ring-slate-900 hover:scale-105 active:scale-95 transition-transform z-10"
+                  title={`${data.user.streakDays}-Day Active Learning Streak`}
+                >
+                  <Flame className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-white text-white shrink-0 animate-bounce" />
+                  <span>{data.user.streakDays}d</span>
+                </Link>
+
+                {/* Online / Offline status badge on top-right of Avatar */}
                 <span
-                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center ${
+                  className={`absolute -top-0.5 -right-0.5 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center z-10 ${
                     isOffline ? 'bg-amber-500' : 'bg-emerald-500'
                   }`}
                   title={isOffline ? 'Offline Mode Active' : 'Online Sync Active'}
@@ -108,7 +123,7 @@ export const DashboardPage: React.FC = () => {
               </div>
 
               {/* Mobile-only compact name beside avatar */}
-              <div className="sm:hidden min-w-0 flex-1">
+              <div className="sm:hidden min-w-0 flex-1 pl-1">
                 <h1 className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white truncate">
                   Welcome, <span className="text-[#005F02] dark:text-emerald-400 font-black">{firstName}</span>
                 </h1>
@@ -151,18 +166,8 @@ export const DashboardPage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Status Badges Row (Optimized for Mobile Wrapping) */}
+              {/* Status Badges Row */}
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-0.5">
-                {/* Streak Badge */}
-                <Link
-                  to="/progress"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/70 border border-amber-200/80 dark:border-amber-800/80 text-xs font-bold text-amber-700 dark:text-amber-400 font-mono shadow-3xs hover:border-amber-400 transition-colors"
-                  title="Active Learning Streak"
-                >
-                  <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
-                  <span>{data.user.streakDays}d Streak</span>
-                </Link>
-
                 {/* Offline AI Tutor Status Pill */}
                 <span
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-xs font-semibold text-emerald-800 dark:text-emerald-300 shadow-3xs"
