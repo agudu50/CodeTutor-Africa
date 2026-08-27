@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
-import { ConfirmDeleteModal } from '@/components/feedback/ConfirmDeleteModal'
 import { Button } from '@/components/ui'
 import {
   ChevronLeft,
@@ -10,15 +9,12 @@ import {
   CheckCircle2,
   Clock,
   BookOpen,
-  X,
   ChevronDown,
   ArrowRight,
 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
-  const navigate = useNavigate()
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [expandedModuleId, setExpandedModuleId] = useState<string | null>(null)
 
   const courses = courseStoreService.getAllCourses()
@@ -33,11 +29,6 @@ export const CourseDetailPage: React.FC = () => {
         </Link>
       </PageContainer>
     )
-  }
-
-  const handleDeleteCourse = () => {
-    courseStoreService.deleteCourse(course.id)
-    navigate('/learning')
   }
 
   const toggleExpand = (id: string) => {
@@ -80,15 +71,6 @@ export const CourseDetailPage: React.FC = () => {
 
   return (
     <PageContainer maxWidth="xl" className="space-y-6">
-      {/* Delete Confirmation Modal */}
-      <ConfirmDeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteCourse}
-        title="Delete Course"
-        itemName={course.title}
-      />
-
       {/* Back to courses navigation */}
       <div className="flex items-center justify-between">
         <Link
@@ -104,25 +86,14 @@ export const CourseDetailPage: React.FC = () => {
           COURSE HERO CARD (Crisp light & dark mode)
           ═══════════════════════════════════════════════════════════════ */}
       <div className="rounded-3xl border border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-[#12161A] shadow-xs sm:shadow-sm p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
-        {/* Title and Remove Button Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              {course.title}
-            </h1>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-              {course.modules.length} modules
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer shrink-0 shadow-2xs"
-          >
-            <span>Remove</span>
-            <X className="w-3.5 h-3.5" />
-          </button>
+        {/* Title Header */}
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            {course.title}
+          </h1>
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            {course.modules.length} modules
+          </p>
         </div>
 
         {/* Course Description */}
@@ -138,12 +109,11 @@ export const CourseDetailPage: React.FC = () => {
           <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
             {course.language}
           </span>
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-            WEB
-          </span>
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-            FRONTEND
-          </span>
+          {course.category && (
+            <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+              {course.category}
+            </span>
+          )}
         </div>
 
         {/* Review / Continue Action Button */}

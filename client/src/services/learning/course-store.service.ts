@@ -28,8 +28,9 @@ class CourseStoreService {
         const isClean0Percent = parsed.every((c: Course) =>
           c.modules?.every((m: Module) => (m.progressPercentage ?? 0) === 0)
         )
+        const hasUpdatedCategories = parsed.some((c: Course) => c.category === 'Foundations')
 
-        if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent && isClean0Percent) {
+        if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent && isClean0Percent && hasUpdatedCategories) {
           this.courses = parsed
         } else {
           this.courses = [...MOCK_COURSES]
