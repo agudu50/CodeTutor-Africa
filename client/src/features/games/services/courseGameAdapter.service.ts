@@ -1,16 +1,11 @@
 import { courseStoreService } from '@/services/learning/course-store.service'
+import { gameStoreService } from '@/services/games/game-store.service'
 import {
   SpeedrunSnippet,
   BugHuntChallenge,
   OutputPredictorChallenge,
   CodeShuffleChallenge,
 } from '../types/games.types'
-import {
-  SPEEDRUN_SNIPPETS,
-  BUG_HUNT_CHALLENGES,
-  OUTPUT_PREDICTOR_CHALLENGES,
-  CODE_SHUFFLE_CHALLENGES,
-} from '../data/gameData'
 
 export interface EnrolledCourseOption {
   id: string
@@ -39,80 +34,84 @@ class CourseGameAdapterService {
    * Get Speedrun snippets based on the selected course (or all courses)
    */
   getSpeedrunSnippets(courseId?: string): SpeedrunSnippet[] {
+    const all = gameStoreService.getSpeedrunSnippets()
     if (!courseId || courseId === 'all') {
-      return SPEEDRUN_SNIPPETS
+      return all
     }
 
     const course = courseStoreService.getCourseById(courseId)
     const courseLang = course?.language
 
-    const matched = SPEEDRUN_SNIPPETS.filter((s) => {
+    const matched = all.filter((s) => {
       if (s.courseId === courseId) return true
       if (courseLang && s.language === courseLang) return true
       return false
     })
 
-    return matched.length > 0 ? matched : SPEEDRUN_SNIPPETS
+    return matched.length > 0 ? matched : all
   }
 
   /**
    * Get Bug Hunt challenges based on the selected course
    */
   getBugHuntChallenges(courseId?: string): BugHuntChallenge[] {
+    const all = gameStoreService.getBugHuntChallenges()
     if (!courseId || courseId === 'all') {
-      return BUG_HUNT_CHALLENGES
+      return all
     }
 
     const course = courseStoreService.getCourseById(courseId)
     const courseLang = course?.language
 
-    const matched = BUG_HUNT_CHALLENGES.filter((c) => {
+    const matched = all.filter((c) => {
       if (c.courseId === courseId) return true
       if (courseLang && c.language === courseLang) return true
       return false
     })
 
-    return matched.length > 0 ? matched : BUG_HUNT_CHALLENGES
+    return matched.length > 0 ? matched : all
   }
 
   /**
    * Get Output Predictor challenges based on the selected course
    */
   getOutputPredictorChallenges(courseId?: string): OutputPredictorChallenge[] {
+    const all = gameStoreService.getOutputPredictorChallenges()
     if (!courseId || courseId === 'all') {
-      return OUTPUT_PREDICTOR_CHALLENGES
+      return all
     }
 
     const course = courseStoreService.getCourseById(courseId)
     const courseLang = course?.language
 
-    const matched = OUTPUT_PREDICTOR_CHALLENGES.filter((c) => {
+    const matched = all.filter((c) => {
       if (c.courseId === courseId) return true
       if (courseLang && c.language === courseLang) return true
       return false
     })
 
-    return matched.length > 0 ? matched : OUTPUT_PREDICTOR_CHALLENGES
+    return matched.length > 0 ? matched : all
   }
 
   /**
    * Get Code Shuffle challenges based on the selected course
    */
   getCodeShuffleChallenges(courseId?: string): CodeShuffleChallenge[] {
+    const all = gameStoreService.getCodeShuffleChallenges()
     if (!courseId || courseId === 'all') {
-      return CODE_SHUFFLE_CHALLENGES
+      return all
     }
 
     const course = courseStoreService.getCourseById(courseId)
     const courseLang = course?.language
 
-    const matched = CODE_SHUFFLE_CHALLENGES.filter((c) => {
+    const matched = all.filter((c) => {
       if (c.courseId === courseId) return true
       if (courseLang && c.language === courseLang) return true
       return false
     })
 
-    return matched.length > 0 ? matched : CODE_SHUFFLE_CHALLENGES
+    return matched.length > 0 ? matched : all
   }
 }
 

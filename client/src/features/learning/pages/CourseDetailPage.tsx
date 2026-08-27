@@ -3,25 +3,24 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { ConfirmDeleteModal } from '@/components/feedback/ConfirmDeleteModal'
-import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Progress } from '@/components/ui'
+import { Button } from '@/components/ui'
 import {
   ChevronLeft,
   Play,
   CheckCircle2,
-  Circle,
   Clock,
   BookOpen,
-  Shield,
-  Zap,
-  Code2,
-  Gamepad2,
   X,
+  ChevronDown,
+  ArrowRight,
 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [expandedModuleId, setExpandedModuleId] = useState<string | null>(null)
+
   const courses = courseStoreService.getAllCourses()
   const course = courses.find((c) => c.id === courseId || c.slug === courseId) || courses[0]
 
@@ -36,17 +35,48 @@ export const CourseDetailPage: React.FC = () => {
     )
   }
 
-  const difficultyVariant =
-    course.difficulty === 'beginner'
-      ? 'bg-[#005F02]/10 text-[#005F02] border-[#005F02]/30'
-      : course.difficulty === 'intermediate'
-      ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
-      : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
-
   const handleDeleteCourse = () => {
     courseStoreService.deleteCourse(course.id)
     navigate('/learning')
   }
+
+  const toggleExpand = (id: string) => {
+    setExpandedModuleId((prev) => (prev === id ? null : id))
+  }
+
+  const getProgressColor = (percent: number) => {
+    if (percent >= 65) {
+      return {
+        text: 'text-emerald-400',
+        ring: 'border-emerald-500 bg-emerald-950/40',
+      }
+    }
+    if (percent >= 40) {
+      return {
+        text: 'text-amber-400',
+        ring: 'border-amber-500 bg-amber-950/40',
+      }
+    }
+    if (percent > 0) {
+      return {
+        text: 'text-sky-400',
+        ring: 'border-sky-500 bg-sky-950/40',
+      }
+    }
+    return {
+      text: 'text-slate-500 dark:text-slate-500',
+      ring: 'border-slate-700 bg-slate-900/60',
+    }
+  }
+
+  // Find first uncompleted lesson for the primary CTA button
+  const firstUncompletedLesson = course.modules
+    .flatMap((m) => m.lessons)
+    .find((l) => !l.isCompleted) || course.modules[0]?.lessons[0]
+
+  const firstLessonUrl = firstUncompletedLesson
+    ? `/learning/lessons/${firstUncompletedLesson.id}`
+    : `/learning/lessons/${course.modules[0]?.lessons[0]?.id || ''}`
 
   return (
     <PageContainer maxWidth="xl" className="space-y-6">
@@ -68,267 +98,217 @@ export const CourseDetailPage: React.FC = () => {
           <ChevronLeft className="w-4 h-4" />
           <span>Back to Courses</span>
         </Link>
-
-        <div className="flex items-center gap-2">
-          {course.isAiGenerated && (
-            <button
-              type="button"
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="inline-flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>Delete AI Course</span>
-            </button>
-          )}
-
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 px-3 py-1 rounded-full border border-[#005F02]/30">
-            <Shield className="w-3.5 h-3.5" /> 100% Offline Ready
-          </span>
-        </div>
       </div>
 
-      {/* Course Hero Banner */}
-      <Card className="p-0 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
-        {course.thumbnailUrl && (
-          <div className="h-44 sm:h-56 w-full relative bg-slate-950 overflow-hidden border-b border-slate-200 dark:border-slate-800">
-            <img
-              src={course.thumbnailUrl}
-              alt={course.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
-          </div>
-        )}
-
-        <div className="p-6 sm:p-7 space-y-5">
-          {/* Badges Row */}
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="brand" size="sm" className="uppercase font-mono font-bold text-[10px]">
-              {course.language}
-            </Badge>
-            <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyVariant}`}>
-              {course.difficulty}
-            </span>
-            <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-              {course.category}
-            </span>
-            {course.isAiGenerated && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30">
-                <Zap className="w-3 h-3" />
-                <span>AI Generated from Prompt</span>
-              </span>
-            )}
-          </div>
-
-          {/* Title & Description */}
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+      {/* ═══════════════════════════════════════════════════════════════
+          COURSE HERO CARD (Matching user screenshot)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800/90 bg-white dark:bg-[#12161A] shadow-lg p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+        {/* Title and Remove Button Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               {course.title}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-              {course.description}
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              {course.modules.length} modules
             </p>
           </div>
 
-          {/* Telemetry Row */}
-          <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 font-medium">
-            <span className="flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-[#005F02]" />
-              <strong className="text-slate-800 dark:text-slate-200">{course.totalLessons}</strong> Total Lessons
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-amber-500" />
-              <strong className="text-slate-800 dark:text-slate-200">{course.estimatedHours}</strong> Estimated Hours
-            </span>
-            <span className="flex items-center gap-1.5 text-[#005F02] font-semibold">
-              <Zap className="w-4 h-4" />
-              Pre-Cached for Local CPU
-            </span>
-          </div>
-
-          {/* Completion Progress Bar */}
-          {course.progressPercentage !== undefined && (
-            <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <div className="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-300">
-                <span>Your Course Completion</span>
-                <span className="font-mono text-[#005F02]">{course.progressPercentage}%</span>
-              </div>
-              <Progress value={course.progressPercentage} variant="brand" size="md" />
-            </div>
-          )}
-        </div>
-      </Card>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          COURSE ARCADE GAMES & EXERCISE DRILLS SECTION
-          ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Bug Hunt Game Card */}
-        <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between space-y-3">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 text-[10px] font-mono font-bold">
-                <Gamepad2 className="w-3 h-3" />
-                <span>3D ARCADE DRILL</span>
-              </span>
-              <span className="text-[10px] font-mono text-slate-400">Time-Attack</span>
-            </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              {course.title} Bug Hunt
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Find, isolate, and fix runtime exceptions, syntax traps, and logic errors in {course.language} code under time pressure.
-            </p>
-          </div>
-
-          <Link to="/games" className="pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full h-9 text-xs font-bold border-slate-300 dark:border-slate-700 hover:border-[#005F02] hover:text-[#005F02] justify-center"
-              leftIcon={<Gamepad2 className="w-3.5 h-3.5 text-[#005F02]" />}
-            >
-              Play Bug Hunt Drill
-            </Button>
-          </Link>
+          <button
+            type="button"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer shrink-0"
+          >
+            <span>Remove</span>
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* Syntax Speedrun & Compiler Practice */}
-        <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between space-y-3">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 text-[10px] font-mono font-bold">
-                <Code2 className="w-3 h-3" />
-                <span>COMPILER WORKSPACE</span>
-              </span>
-              <span className="text-[10px] font-mono text-slate-400">Automated Tests</span>
-            </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Hands-On Coding Drills
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Run your algorithms against automated test cases in the local offline compiler with CPU latency benchmarks.
-            </p>
-          </div>
+        {/* Course Description */}
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl font-normal">
+          {course.description}
+        </p>
 
-          <Link to="/practice" className="pt-2">
-            <Button
-              variant="primary"
-              size="sm"
-              className="w-full h-9 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs justify-center"
-              leftIcon={<Code2 className="w-3.5 h-3.5" />}
+        {/* Badges Row */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+            {course.difficulty}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700">
+            {course.language}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700">
+            WEB
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700">
+            FRONTEND
+          </span>
+        </div>
+
+        {/* Review / Continue Action Button */}
+        <div className="pt-1">
+          <Link to={firstLessonUrl} className="inline-block">
+            <button
+              type="button"
+              className="px-5 py-2.5 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs sm:text-sm inline-flex items-center gap-1.5 shadow-xs cursor-pointer transition-all duration-150 active:scale-95"
             >
-              Launch Coding Exercises
-            </Button>
+              <span>Review</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </Link>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          CURRICULUM SYLLABUS & LESSON MODULES
+          MODULES IN THIS COURSE (Connected 18-module timeline roadmap)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 pt-2">
+        <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <Code2 className="w-5 h-5 text-[#005F02]" />
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              Curriculum Syllabus
+            <BookOpen className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Modules in this course
             </h2>
           </div>
-          <span className="text-xs font-mono text-slate-400 font-semibold">
-            {course.modules.length} Modules Available
+          <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+            {course.modules.length} Modules Total
           </span>
         </div>
 
-        {course.modules.length === 0 ? (
-          <div className="p-8 text-center border border-dashed rounded-2xl border-slate-200 dark:border-slate-800 text-slate-400 text-xs bg-white dark:bg-slate-900">
-            Curriculum modules for this track are being synchronized from offline local storage.
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {course.modules.map((module, mIdx) => (
-              <Card key={module.id} className="overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-                <CardHeader className="bg-slate-50 dark:bg-slate-950 p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30 font-mono text-[11px] font-bold flex items-center justify-center">
-                          {mIdx + 1}
-                        </span>
-                        <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                          {module.title}
-                        </CardTitle>
-                      </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed pl-7">
-                        {module.description}
-                      </p>
-                    </div>
-                    <span className="text-[11px] font-mono text-slate-400 self-start sm:self-center font-semibold bg-white dark:bg-slate-900 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800">
-                      {module.lessons.length} Lessons
-                    </span>
-                  </div>
-                </CardHeader>
+        {/* Connected Vertical Modules Path */}
+        <div className="relative pl-3 sm:pl-4 py-2">
+          {/* Central Vertical Connector Line running through center of circular badges */}
+          <div className="absolute left-[34px] sm:left-[38px] top-6 bottom-6 w-0.5 bg-slate-200 dark:bg-slate-800 -z-0" />
 
-                <CardContent className="p-0 divide-y divide-slate-100 dark:divide-slate-800">
-                  {module.lessons.map((lesson) => (
-                    <div
-                      key={lesson.id}
-                      className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
-                    >
-                      <div className="flex items-start sm:items-center gap-3">
-                        {lesson.isCompleted ? (
-                          <div className="p-1 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 shrink-0 mt-0.5 sm:mt-0">
-                            <CheckCircle2 className="w-4 h-4 text-[#005F02]" />
+          {/* Modules List */}
+          <div className="space-y-3 relative z-10">
+            {course.modules.map((mod) => {
+              const isExpanded = expandedModuleId === mod.id
+              const progress = mod.progressPercentage ?? 0
+              const color = getProgressColor(progress)
+
+              return (
+                <div key={mod.id} className="relative group">
+                  <div
+                    onClick={() => toggleExpand(mod.id)}
+                    className={`flex flex-col rounded-2xl border transition-all cursor-pointer overflow-hidden ${
+                      isExpanded
+                        ? 'bg-white dark:bg-[#12161A] border-emerald-500/80 ring-2 ring-emerald-500/20 shadow-md'
+                        : 'bg-white dark:bg-[#12161A] border-slate-200 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
+                    }`}
+                  >
+                    {/* Module Item Header Row */}
+                    <div className="flex items-center justify-between p-3.5 sm:p-4 gap-3">
+                      <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                        {/* Circular Progress Badge */}
+                        <div className="relative shrink-0 flex items-center justify-center">
+                          <div
+                            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-sm transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
+                          >
+                            {progress}%
                           </div>
-                        ) : (
-                          <div className="p-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0 mt-0.5 sm:mt-0">
-                            <Circle className="w-4 h-4 text-slate-400" />
-                          </div>
-                        )}
-                        <div className="space-y-0.5 min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                              {lesson.title}
-                            </h3>
-                            {lesson.videoUrl && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-1.5 py-0.2 rounded bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
-                                <Play className="w-2.5 h-2.5 fill-rose-600 dark:fill-rose-400" />
-                                <span>Video</span>
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 leading-relaxed">
-                            {lesson.description}
+                        </div>
+
+                        {/* Title */}
+                        <div className="min-w-0">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                            {mod.title}
+                          </h3>
+                          <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                            {mod.description}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-3 pl-8 sm:pl-0 shrink-0">
-                        <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-amber-500" /> {lesson.durationMinutes}m
-                        </span>
-                        <Link to={`/learning/lessons/${lesson.id}`}>
-                          <Button
-                            variant={lesson.isCompleted ? 'secondary' : 'primary'}
-                            size="sm"
-                            className={
-                              lesson.isCompleted
-                                ? 'h-8 text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border-slate-200 dark:border-slate-700'
-                                : 'h-8 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs'
-                            }
-                            leftIcon={<Play className="w-3 h-3" />}
-                          >
-                            {lesson.isCompleted ? 'Review' : 'Start'}
-                          </Button>
-                        </Link>
+                      {/* Right expand indicator */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        {progress === 100 ? (
+                          <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                            <CheckCircle2 className="w-3 h-3" /> Done
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400 font-mono hidden sm:inline">
+                            {mod.lessons.length} Lessons
+                          </span>
+                        )}
+
+                        <button
+                          type="button"
+                          className="p-1 rounded-lg text-slate-400 group-hover:text-slate-200 transition-colors"
+                        >
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
                       </div>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
+
+                    {/* Expanded Lessons Drawer */}
+                    {isExpanded && (
+                      <div className="px-4 sm:px-6 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/60 space-y-2.5 animate-in fade-in duration-150">
+                        <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
+                          <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 text-emerald-500" />
+                            Lessons in this module:
+                          </span>
+                        </div>
+
+                        <div className="space-y-2">
+                          {mod.lessons.map((lesson, lIdx) => (
+                            <div
+                              key={lesson.id}
+                              className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shadow-2xs hover:border-emerald-500/60 transition-colors"
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono text-[11px] font-bold shrink-0">
+                                  {lIdx + 1}
+                                </div>
+                                <div className="min-w-0">
+                                  <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
+                                    {lesson.title}
+                                  </span>
+                                  <span className="text-[10px] text-slate-400 font-mono flex items-center gap-2 mt-0.5">
+                                    <span className="flex items-center gap-1">
+                                      <Clock className="w-3 h-3 text-amber-500" />
+                                      {lesson.durationMinutes}m
+                                    </span>
+                                    {lesson.isCompleted && (
+                                      <span className="text-emerald-500 font-bold flex items-center gap-0.5">
+                                        <CheckCircle2 className="w-3 h-3" /> Completed
+                                      </span>
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <Link
+                                to={`/learning/lessons/${lesson.id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="shrink-0"
+                              >
+                                <Button
+                                  variant={lesson.isCompleted ? 'secondary' : 'primary'}
+                                  size="sm"
+                                  className={
+                                    lesson.isCompleted
+                                      ? 'h-7 text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                                      : 'h-7 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs'
+                                  }
+                                  leftIcon={<Play className="w-3 h-3" />}
+                                >
+                                  {lesson.isCompleted ? 'Review' : 'Start'}
+                                </Button>
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
-        )}
+        </div>
       </div>
     </PageContainer>
   )

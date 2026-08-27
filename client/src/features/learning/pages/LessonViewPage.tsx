@@ -166,18 +166,57 @@ export const LessonViewPage: React.FC = () => {
             </span>
           </div>
 
-          {/* Objectives Box */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
-            <h2 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-[#005F02]" />
-              <span>Key Learning Objectives:</span>
+          {/* Learning Objectives Box */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 space-y-2.5">
+            <h2 className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider font-mono flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Learning Objectives</span>
             </h2>
-            <ul className="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-slate-700 dark:text-slate-300 pl-1 leading-relaxed">
-              <li>Understand the foundational mental model and runtime memory layout.</li>
-              <li>Master idiomatic syntax and avoid common anti-patterns.</li>
-              <li>Verify knowledge through interactive assessments and VS Code test executions.</li>
+            <ul className="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-slate-700 dark:text-slate-200 pl-1 leading-relaxed">
+              {(foundLesson.learningObjectives && foundLesson.learningObjectives.length > 0
+                ? foundLesson.learningObjectives
+                : [
+                    'Write and execute basic programming statements',
+                    'Display calculated outputs and formatted text using the standard console',
+                    'Understand execution flow and code structure',
+                  ]
+              ).map((obj, oIdx) => (
+                <li key={oIdx}>{obj}</li>
+              ))}
             </ul>
           </div>
+
+          {/* Technical Terms Box */}
+          {foundLesson.technicalTerms && foundLesson.technicalTerms.length > 0 && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
+              <h2 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-500" />
+                <span>Technical Terms & Vocabulary</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {foundLesson.technicalTerms.map((t, tIdx) => (
+                  <div
+                    key={tIdx}
+                    className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-1 text-xs shadow-3xs"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60 text-[11px]">
+                        {t.term}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">
+                      {t.definition}
+                    </p>
+                    {t.example && (
+                      <p className="font-mono text-[10px] text-slate-500 dark:text-slate-500 pt-0.5 truncate">
+                        e.g. <code className="text-slate-800 dark:text-slate-300">{t.example}</code>
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Rich Pre-Video Lesson Content via MarkdownRenderer */}
           <div className="py-2">

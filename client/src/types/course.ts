@@ -13,6 +13,12 @@ export interface QuizQuestion {
   hint?: string
 }
 
+export interface TechnicalTerm {
+  term: string
+  definition: string
+  example?: string
+}
+
 export interface Lesson extends BaseEntity {
   courseId: string
   title: string
@@ -28,6 +34,8 @@ export interface Lesson extends BaseEntity {
     code: string
     caption?: string
   }>
+  learningObjectives?: string[]
+  technicalTerms?: TechnicalTerm[]
   isCompleted?: boolean
 }
 
@@ -36,6 +44,9 @@ export interface Module extends BaseEntity {
   title: string
   description: string
   order: number
+  progressPercentage?: number
+  learningObjectives?: string[]
+  technicalTerms?: TechnicalTerm[]
   lessons: Lesson[]
 }
 

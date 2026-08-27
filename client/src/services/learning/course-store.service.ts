@@ -14,7 +14,23 @@ class CourseStoreService {
     try {
       const stored = localStorage.getItem(COURSES_STORAGE_KEY)
       if (stored) {
-        this.courses = JSON.parse(stored)
+        const parsed = JSON.parse(stored)
+        const hasAll18ModulesWithQuizzes = parsed.some((c: Course) =>
+          c.modules?.length === 18 &&
+          c.modules.every((m: Module) =>
+            m.lessons.some((l: Lesson) => l.quizQuestions && l.quizQuestions.length > 0)
+          )
+        )
+        const hasBeginnerFriendlyContent = parsed.some((c: Course) =>
+          c.modules?.[0]?.lessons?.[0]?.contentMarkdown?.includes('Welcome to Coding')
+        )
+
+        if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent) {
+          this.courses = parsed
+        } else {
+          this.courses = [...MOCK_COURSES]
+          this.save()
+        }
       } else {
         this.courses = [...MOCK_COURSES]
         this.save()
@@ -38,7 +54,7 @@ class CourseStoreService {
   }
 
   getCourseById(id: string): Course | undefined {
-    return this.courses.find((c: Course) => c.id === id)
+    return this.courses.find((c: Course) => c.id === id || c.slug === id)
   }
 
   createCourse(courseData: Omit<Course, 'id' | 'createdAt' | 'progressPercentage'>): Course {

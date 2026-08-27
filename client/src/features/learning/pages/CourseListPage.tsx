@@ -172,9 +172,10 @@ export const CourseListPage: React.FC = () => {
             <Dropdown
               options={[
                 { value: 'all', label: 'All Languages' },
-                { value: 'python', label: 'Python' },
                 { value: 'javascript', label: 'JavaScript' },
+                { value: 'python', label: 'Python' },
                 { value: 'java', label: 'Java 21' },
+                { value: 'typescript', label: 'TypeScript' },
               ]}
               value={selectedLang}
               onChange={setSelectedLang}

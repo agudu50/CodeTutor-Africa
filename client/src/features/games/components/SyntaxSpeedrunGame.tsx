@@ -16,10 +16,14 @@ import {
   Volume2,
   VolumeX,
   WifiOff,
-  BookOpen,
   CheckCircle2,
   AlertTriangle,
+  Code2,
+  Copy,
+  Check,
+  ChevronRight,
 } from 'lucide-react'
+import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 
 interface SyntaxSpeedrunGameProps {
   onBack: () => void
@@ -55,8 +59,11 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   const [wpm, setWpm] = useState(0)
   const [accuracy, setAccuracy] = useState(100)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
+  const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 })
+  const [copiedTarget, setCopiedTarget] = useState(false)
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const gutterRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(0)
 
@@ -83,7 +90,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     gameSound.playSuccess()
     setTimeout(() => {
       inputRef.current?.focus()
-    }, 50)
+    }, 100)
   }
 
   // Timer loop
@@ -114,6 +121,24 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     gameSound.playGameOver()
   }
 
+  // Synchronize textarea scroll with line numbers gutter
+  const handleScroll = () => {
+    if (inputRef.current && gutterRef.current) {
+      gutterRef.current.scrollTop = inputRef.current.scrollTop
+    }
+  }
+
+  const updateCursorPosition = () => {
+    if (!inputRef.current) return
+    const selStart = inputRef.current.selectionStart
+    const textBefore = userInput.substring(0, selStart)
+    const lines = textBefore.split('\n')
+    setCursorPos({
+      line: lines.length,
+      col: (lines[lines.length - 1]?.length || 0) + 1,
+    })
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (!isPlaying || isGameOver) return
     const value = e.target.value
@@ -135,10 +160,32 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
       setWpm(Math.round(wordsTyped / elapsedMins))
     }
 
-    // Check completion
+    // Check completion if exact match
     if (value === targetCode) {
       handleSnippetComplete()
     }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      const target = e.currentTarget
+      const start = target.selectionStart
+      const end = target.selectionEnd
+      const next = userInput.substring(0, start) + '    ' + userInput.substring(end)
+      setUserInput(next)
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.selectionStart = inputRef.current.selectionEnd = start + 4
+          updateCursorPosition()
+        }
+      }, 0)
+    } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      // Ctrl+Enter or Cmd+Enter submits
+      e.preventDefault()
+      handleSubmitCode()
+    }
+    // Enter key creates a new line without submitting
   }
 
   const handleSnippetComplete = () => {
@@ -162,7 +209,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
       setUserInput('')
       setTimeLeft(nextSnippet.timeLimitSecs)
       startTimeRef.current = Date.now()
-      setTimeout(() => inputRef.current?.focus(), 50)
+      setTimeout(() => inputRef.current?.focus(), 80)
     } else {
       setIsGameOver(true)
       setIsPlaying(false)
@@ -190,12 +237,18 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         setTimeLeft(nextSnippet.timeLimitSecs)
         startTimeRef.current = Date.now()
         setIsPlaying(true)
-        setTimeout(() => inputRef.current?.focus(), 50)
+        setTimeout(() => inputRef.current?.focus(), 80)
       } else {
         setIsGameOver(true)
         setIsPlaying(false)
       }
     }
+  }
+
+  const handleCopyTarget = () => {
+    navigator.clipboard?.writeText(currentSnippet.code)
+    setCopiedTarget(true)
+    setTimeout(() => setCopiedTarget(false), 2000)
   }
 
   const isCodeComplete = userInput.trim() === currentSnippet?.code.trim()
@@ -211,6 +264,14 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     setAccuracy(100)
     startGame()
   }
+
+  const userLineCount = userInput.split('\n').length
+  const targetLineCount = currentSnippet?.code ? currentSnippet.code.split('\n').length : 1
+  const displayLineCount = Math.max(userLineCount, targetLineCount, 10)
+
+  const fileExtension = currentSnippet?.language === 'python' ? 'py' : currentSnippet?.language === 'javascript' ? 'js' : 'java'
+  const langLabel = currentSnippet?.language === 'python' ? 'Python 3.12' : currentSnippet?.language === 'javascript' ? 'JavaScript' : 'Java 21'
+  const fileIconColor = currentSnippet?.language === 'python' ? 'text-[#4ec9b0]' : currentSnippet?.language === 'javascript' ? 'text-[#ffd700]' : 'text-[#e06c75]'
 
   return (
     <div className="w-full space-y-4 sm:space-y-5">
@@ -273,7 +334,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         </div>
       </div>
 
-      {/* Language Selector (Visible only before round starts so it doesn't push down the game during play) */}
+      {/* Language Selector (Visible only before round starts) */}
       {!isPlaying && (
         <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-3xs">
           <GameLanguageSelector
@@ -292,7 +353,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
           <div className="max-w-md mx-auto space-y-1.5">
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Ready for the Speedrun?</h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Type the exact course code snippets as fast and accurately as you can before time expires.
+              Type the exact code snippets in the VS Code editor as fast and accurately as you can before time expires.
             </p>
           </div>
           <div className="pt-2">
@@ -341,10 +402,10 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         /* ═══ PLAYING STATE — full-width spacious side-by-side layout ═══ */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
 
-          {/* ── LEFT PANEL: 3D world + code reference ── */}
+          {/* ── LEFT PANEL: 3D world + VS Code target reference ── */}
           <div className="lg:col-span-5 flex flex-col gap-4">
             {/* Expanded 3D canvas with HUD overlay */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-64 sm:h-72 bg-slate-950">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
               <CyberRacer3D
                 progressPercent={completionPercent}
                 wpm={wpm}
@@ -398,50 +459,84 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
               </div>
             </div>
 
-            {/* Target Code reference card */}
-            <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs overflow-hidden flex-1 flex flex-col justify-between">
+            {/* Target Code VS Code Reference Window */}
+            <div className="rounded-2xl border border-slate-700/90 bg-[#1e1e1e] overflow-hidden shadow-2xl flex-1 flex flex-col justify-between text-slate-200">
               <div>
-                {/* Card header */}
-                <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex-wrap bg-slate-50/70 dark:bg-slate-950/60">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                      {currentSnippet.language} · Snippet {snippetIndex + 1}/{activeSnippets.length}
-                    </span>
-                    {currentSnippet.courseTitle && (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                        <BookOpen className="w-3.5 h-3.5 text-[#005F02]" />
-                        {currentSnippet.courseTitle}
-                      </span>
-                    )}
+                {/* VS Code Window Titlebar */}
+                <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block" />
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono font-bold">{currentSnippet.title}</span>
+
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="text-[11px] font-mono text-slate-300 font-semibold truncate">
+                      target.{fileExtension} (Snippet {snippetIndex + 1}/{activeSnippets.length})
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleCopyTarget}
+                    className="h-6 px-2 text-[10px] font-mono text-slate-400 hover:text-slate-200 hover:bg-[#333333] rounded transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Copy target snippet"
+                  >
+                    {copiedTarget ? <Check className="w-3 h-3 text-[#005F02]" /> : <Copy className="w-3 h-3" />}
+                    <span className="hidden sm:inline">{copiedTarget ? 'Copied' : 'Copy'}</span>
+                  </button>
+                </div>
+
+                {/* File Tab Bar */}
+                <div className="h-8 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0">
+                  <div className="flex items-center h-full">
+                    <div className="h-full px-3 bg-[#1E1E1E] border-t-2 border-t-amber-500 text-xs font-mono font-medium text-slate-100 flex items-center gap-2 border-r border-[#252526]">
+                      <Code2 className={`w-3.5 h-3.5 ${fileIconColor} shrink-0`} />
+                      <span className="font-semibold">target.{fileExtension}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">TARGET</span>
+                    </div>
+                  </div>
+                  {currentSnippet.courseTitle && (
+                    <span className="text-[10px] text-slate-400 font-mono hidden sm:inline truncate max-w-[160px]">
+                      {currentSnippet.courseTitle}
+                    </span>
+                  )}
                 </div>
 
                 {/* Step 1 Instructions callout */}
-                <div className="px-4 py-2 bg-emerald-50/60 dark:bg-emerald-950/30 border-b border-emerald-200/50 dark:border-emerald-900/50 flex items-center gap-2 text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+                <div className="px-3.5 py-2 bg-[#162a1a] border-b border-[#234229] flex items-center gap-2 text-xs text-emerald-300 font-medium">
                   <span className="font-bold text-xs bg-[#005F02] text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0 text-[10px]">1</span>
-                  <span><strong>Target Code to Type:</strong> Type this exact snippet into the arena on the right →</span>
+                  <span><strong>Target Code to Type:</strong> Type this exact snippet into the VS Code arena on the right →</span>
                 </div>
 
-                {/* Code block */}
-                <div className="p-4 sm:p-5 bg-slate-950 font-mono text-sm sm:text-base leading-relaxed overflow-auto select-none border-b border-slate-800/80">
-                  <pre className="whitespace-pre text-emerald-300 font-semibold">{currentSnippet.code}</pre>
+                {/* Code Canvas with Gutter + Syntax Highlight */}
+                <div className="flex overflow-auto max-h-56 bg-[#1E1E1E]">
+                  {/* Line numbers */}
+                  <div className="w-9 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
+                    {Array.from({ length: targetLineCount }).map((_, i) => (
+                      <div key={i}>{i + 1}</div>
+                    ))}
+                  </div>
+                  {/* Syntax Highlighted Target Code */}
+                  <div className="p-3 flex-1 font-mono text-xs sm:text-[13px] leading-6 overflow-x-auto select-all">
+                    {renderVSCodeSyntax(currentSnippet.code)}
+                  </div>
                 </div>
               </div>
 
               {/* Description & Concept Context */}
               {currentSnippet.description && (
-                <div className="px-4 sm:px-5 py-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-950/40 space-y-0.5">
-                  <p className="font-bold text-slate-700 dark:text-slate-200">Concept Explanation:</p>
-                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{currentSnippet.description}</p>
+                <div className="px-3.5 py-2.5 text-xs text-slate-400 bg-[#181818] border-t border-[#2D2D2D] space-y-0.5">
+                  <p className="font-bold text-slate-300">{currentSnippet.title}:</p>
+                  <p className="text-slate-400 leading-relaxed text-[11px]">{currentSnippet.description}</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* ── RIGHT PANEL: typing area + submit (Sleek & balanced) ── */}
-          <div className="lg:col-span-7 flex flex-col justify-between gap-4">
-            <div className="space-y-2.5">
+          {/* ── RIGHT PANEL: VS CODE TYPING ARENA ── */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+            <div className="space-y-2">
               {/* Accuracy / WPM bar & Step 2 Guide + INLINE TIMER */}
               <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-slate-500 px-1">
                 <div className="flex items-center gap-1.5">
@@ -466,72 +561,163 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 </div>
               </div>
 
-              {/* Textarea wrapper */}
-              <div className="relative">
-                <textarea
-                  ref={inputRef}
-                  value={userInput}
-                  onChange={handleInputChange}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      handleSubmitCode()
-                    }
-                  }}
-                  rows={8}
-                  placeholder={`Type the target code here (e.g. ${currentSnippet.code.split('\n')[0]})...\nPress Enter ↵ or click Submit Code when done!`}
-                  className={`w-full p-4 sm:p-5 pb-16 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border-2 font-mono text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none resize-none shadow-xs transition-colors leading-relaxed ${
-                    isCodeComplete
-                      ? 'border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
-                      : accuracy < 90 && userInput.length > 0
-                      ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30'
-                      : 'border-emerald-600/40 focus:border-[#005F02] focus:ring-2 focus:ring-emerald-500/30'
-                  }`}
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck="false"
-                />
-
-                {/* Submit button — fixed inside textarea bottom */}
-                <div className="absolute bottom-3.5 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
-                  <div className="flex items-center gap-1.5">
-                    {isCodeComplete ? (
-                      <span className="text-xs sm:text-sm font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Perfect match! (Auto-submitting...)
-                      </span>
-                    ) : (
-                      <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
-                        Press <strong className="text-slate-600 dark:text-slate-300">Enter ↵</strong> to submit
-                      </span>
-                    )}
+              {/* ═══════════════════════════════════════════════════════════
+                  VS CODE TYPING ARENA CONTAINER
+                  ═══════════════════════════════════════════════════════════ */}
+              <div
+                onClick={() => inputRef.current?.focus()}
+                className={`rounded-2xl border-2 overflow-hidden shadow-2xl bg-[#1e1e1e] flex flex-col transition-all text-slate-200 cursor-text ${
+                  isCodeComplete
+                    ? 'border-emerald-500 ring-2 ring-emerald-500/30'
+                    : accuracy < 90 && userInput.length > 0
+                    ? 'border-rose-500 ring-2 ring-rose-500/30'
+                    : 'border-slate-700 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20'
+                }`}
+              >
+                {/* VS Code Window Titlebar */}
+                <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0 select-none">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block shadow-xs" />
                   </div>
+
+                  <div className="flex-1 max-w-xs mx-auto flex items-center justify-center">
+                    <div className="w-full h-6 px-2.5 rounded bg-[#2A2A2A] border border-[#3A3A3A] text-[11px] text-slate-400 flex items-center justify-center gap-1.5 truncate shadow-inner">
+                      <span className="text-slate-500 text-[10px]">⌨️</span>
+                      <span className="truncate text-slate-300">speedrun.{fileExtension} — CodeTutor Arena</span>
+                    </div>
+                  </div>
+
+                  {/* Reset snippet button */}
                   <button
                     type="button"
-                    onClick={handleSubmitCode}
-                    disabled={userInput.trim().length === 0}
-                    className={`pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed ${
-                      isCodeComplete
-                        ? 'bg-[#005F02] hover:bg-[#004e02] text-white ring-2 ring-emerald-400/40 scale-105'
-                        : 'bg-[#005F02] hover:bg-[#004e02] text-white'
-                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setUserInput('')
+                      setAccuracy(100)
+                      setTimeout(() => inputRef.current?.focus(), 50)
+                    }}
+                    className="h-6 px-2 text-[10px] font-mono text-slate-400 hover:text-slate-200 hover:bg-[#333333] rounded transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Clear arena"
                   >
-                    <Zap className="w-4 h-4" />
-                    <span>Submit Code</span>
+                    <RotateCcw className="w-3 h-3" />
+                    <span className="hidden sm:inline">Clear</span>
                   </button>
                 </div>
+
+                {/* File Tab Bar & Breadcrumbs */}
+                <div className="h-8 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0 select-none">
+                  <div className="flex items-center h-full">
+                    <div className="h-full px-3 bg-[#1E1E1E] border-t-2 border-t-[#005F02] text-xs font-mono font-medium text-slate-100 flex items-center gap-2 border-r border-[#252526]">
+                      <Code2 className={`w-3.5 h-3.5 ${fileIconColor} shrink-0`} />
+                      <span className="font-semibold">speedrun.{fileExtension}</span>
+                      <span className="text-[10px] text-slate-500">●</span>
+                    </div>
+                  </div>
+
+                  <div className="hidden sm:flex items-center gap-1 text-[10px] font-mono text-slate-500">
+                    <span>speedrun</span>
+                    <ChevronRight className="w-3 h-3 text-slate-600" />
+                    <span className="text-slate-300">arena</span>
+                  </div>
+                </div>
+
+                {/* Editor Body: Line numbers + Direct VS Code Code Editor Textarea */}
+                <div className="flex min-h-[220px] sm:min-h-[260px] bg-[#1E1E1E] relative">
+                  {/* Line Numbers Gutter */}
+                  <div
+                    ref={gutterRef}
+                    className="w-10 sm:w-11 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 sm:pr-2.5 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0 overflow-hidden"
+                  >
+                    {Array.from({ length: displayLineCount }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={i + 1 === cursorPos.line ? 'text-slate-100 font-bold' : ''}
+                      >
+                        {i + 1}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Direct Native VS Code Styled Textarea */}
+                  <div className="flex-1 min-w-0 h-full relative">
+                    <textarea
+                      ref={inputRef}
+                      value={userInput}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      onKeyUp={updateCursorPosition}
+                      onClick={updateCursorPosition}
+                      onScroll={handleScroll}
+                      spellCheck={false}
+                      autoCapitalize="off"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      placeholder={`// Type the target code here (e.g. ${currentSnippet.code.split('\n')[0]})...\n// Press Enter for new lines, click Submit Code when done!`}
+                      className="w-full h-full min-h-[220px] sm:min-h-[260px] p-3 bg-transparent text-emerald-300 caret-white font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 placeholder:italic whitespace-pre selection:bg-emerald-800/50"
+                      style={{ tabSize: 4 }}
+                    />
+                  </div>
+                </div>
+
+                {/* VS Code Bottom Action Bar & Status Bar */}
+                <div className="bg-[#181818] border-t border-[#2D2D2D] p-2.5 sm:px-3 sm:py-2 flex flex-wrap items-center justify-between gap-2.5 select-none">
+                  {/* Left: VS Code Status info */}
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
+                    <span className="flex items-center gap-1.5 font-bold text-white">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                      <span>Ln {cursorPos.line}, Col {cursorPos.col}</span>
+                    </span>
+                    <span className="text-slate-600">•</span>
+                    <span className="hidden sm:inline text-slate-300">{langLabel}</span>
+                    <span className="hidden sm:inline text-slate-600">•</span>
+                    <span className="hidden sm:inline text-slate-400">Spaces: 4</span>
+                    <span className="hidden sm:inline text-slate-600">•</span>
+                    <span className="hidden md:inline text-slate-400">Enter = New Line</span>
+                  </div>
+
+                  {/* Right: Submit Button */}
+                  <div className="flex items-center gap-2">
+                    {isCodeComplete ? (
+                      <span className="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Ready to submit
+                      </span>
+                    ) : null}
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleSubmitCode()
+                      }}
+                      disabled={userInput.trim().length === 0}
+                      className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed ${
+                        isCodeComplete
+                          ? 'bg-[#005F02] hover:bg-[#004e02] text-white ring-2 ring-emerald-400/40 scale-105'
+                          : 'bg-[#005F02] hover:bg-[#004e02] text-white'
+                      }`}
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Submit Code</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* VS Code Bottom Accent Line */}
+                <div className="h-1 bg-[#005F02] w-full" />
               </div>
             </div>
 
-            {/* How to Submit instructions callout */}
-            <div className="p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-slate-900/80 border border-emerald-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-3xs">
+            {/* How to Submit guidance callout */}
+            <div className="p-3 rounded-2xl bg-emerald-50/80 dark:bg-slate-900/80 border border-emerald-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-3xs">
               <div className="flex items-center gap-2">
                 <span className="p-1 rounded-lg bg-[#005F02] text-white font-bold text-[10px]">
                   ✓
                 </span>
-                <span><strong>How to Submit:</strong> Match the target snippet above. Press <strong>Enter ↵</strong> or click <strong>Submit Code</strong> to accelerate your racer!</span>
+                <span><strong>Multi-line Editing:</strong> Press <strong>Enter ↵</strong> to make a new line. Click <strong>Submit Code</strong> (or <strong>Ctrl+Enter</strong>) when finished!</span>
               </div>
-              <span className="font-mono text-[11px] uppercase font-bold text-[#005F02] dark:text-emerald-400 shrink-0">Auto-Check Active</span>
+              <span className="font-mono text-[11px] uppercase font-bold text-[#005F02] dark:text-emerald-400 shrink-0">VS Code Mode</span>
             </div>
           </div>
         </div>
