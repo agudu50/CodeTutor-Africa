@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { MOCK_PRACTICE_QUESTIONS } from '../data/mockPracticeData'
+import { practiceStoreService } from '@/services/practice/practice-store.service'
 import { practiceService } from '@/services/practice/practice.service'
 import { CodeEditorPlaceholder } from '../components/CodeEditorPlaceholder'
 import { TestResultModal } from '../components/TestResultModal'
@@ -23,15 +23,23 @@ import { TestCase } from '@/types'
 export const PracticeWorkspacePage: React.FC = () => {
   const { practiceId } = useParams<{ practiceId: string }>()
   const navigate = useNavigate()
-  const problem = MOCK_PRACTICE_QUESTIONS.find((p) => p.id === practiceId) || MOCK_PRACTICE_QUESTIONS[0]
+  const [allProblems, setAllProblems] = useState(() => practiceStoreService.getAllQuestions())
+  
+  useEffect(() => {
+    const handlePracticeUpdate = () => setAllProblems(practiceStoreService.getAllQuestions())
+    window.addEventListener('practice_updated', handlePracticeUpdate)
+    return () => window.removeEventListener('practice_updated', handlePracticeUpdate)
+  }, [])
 
-  const [code, setCode] = useState(problem.starterCode)
+  const problem = allProblems.find((p) => p.id === practiceId || p.slug === practiceId) || allProblems[0]
+
+  const [code, setCode] = useState(problem?.starterCode || '')
   const [activeTab, setActiveTab] = useState<'problem' | 'hints'>('problem')
   const [mobileTab, setMobileTab] = useState<'problem' | 'editor'>('editor')
 
   const [isRunning, setIsRunning] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [testResults, setTestResults] = useState<TestCase[]>(problem.testCases)
+  const [testResults, setTestResults] = useState<TestCase[]>(problem?.testCases || [])
   const [submissionFeedback, setSubmissionFeedback] = useState<string>()
   const [runtimeMs, setRuntimeMs] = useState<number>()
   const [showHintIndex, setShowHintIndex] = useState<number>(-1)
@@ -47,13 +55,15 @@ export const PracticeWorkspacePage: React.FC = () => {
   } | null>(null)
 
   useEffect(() => {
-    setCode(problem.starterCode)
-    setTestResults(problem.testCases)
-    setSubmissionFeedback(undefined)
-    setShowHintIndex(-1)
-    setIsResultModalOpen(false)
-    setIsSubmitModalOpen(false)
-    setToastMessage(null)
+    if (problem) {
+      setCode(problem.starterCode)
+      setTestResults(problem.testCases || [])
+      setSubmissionFeedback(undefined)
+      setShowHintIndex(-1)
+      setIsResultModalOpen(false)
+      setIsSubmitModalOpen(false)
+      setToastMessage(null)
+    }
   }, [problem])
 
   // Toast Auto-dismiss
@@ -66,6 +76,7 @@ export const PracticeWorkspacePage: React.FC = () => {
   }, [toastMessage])
 
   const handleRun = async () => {
+    if (!problem) return
     setIsRunning(true)
     const res = await practiceService.submitSolution(problem.id, code)
     setTestResults(res.testResults)
@@ -77,6 +88,7 @@ export const PracticeWorkspacePage: React.FC = () => {
   }
 
   const handleSubmit = async () => {
+    if (!problem) return
     setIsSubmitting(true)
     const res = await practiceService.submitSolution(problem.id, code)
     setTestResults(res.testResults)
@@ -89,6 +101,7 @@ export const PracticeWorkspacePage: React.FC = () => {
   }
 
   const handleReset = () => {
+    if (!problem) return
     setCode(problem.starterCode)
     setSubmissionFeedback(undefined)
     setToastMessage({
@@ -104,6 +117,19 @@ export const PracticeWorkspacePage: React.FC = () => {
     setTimeout(() => setCopiedInput(false), 2000)
   }
 
+  if (!problem) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-950">
+        <div className="text-center space-y-3">
+          <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No practice problem available.</p>
+          <Link to="/practice">
+            <Button size="sm" variant="primary">Return to Practice List</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const difficultyVariant =
     problem.difficulty === 'beginner'
       ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/80'
@@ -111,13 +137,13 @@ export const PracticeWorkspacePage: React.FC = () => {
       ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
       : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
 
-  const problemOptions = MOCK_PRACTICE_QUESTIONS.map((q) => ({
+  const problemOptions = allProblems.map((q) => ({
     value: q.id,
     label: `${q.language.toUpperCase()} • ${q.title}`,
   }))
 
-  const currentIndex = MOCK_PRACTICE_QUESTIONS.findIndex((q) => q.id === problem.id)
-  const nextProblem = MOCK_PRACTICE_QUESTIONS[(currentIndex + 1) % MOCK_PRACTICE_QUESTIONS.length]
+  const currentIndex = allProblems.findIndex((q) => q.id === problem.id)
+  const nextProblem = allProblems.length > 0 ? allProblems[(currentIndex + 1) % allProblems.length] : problem
   const isPassedAll = testResults.every((t) => t.passed)
   const passedCount = testResults.filter((t) => t.passed).length
 
@@ -347,11 +373,22 @@ export const PracticeWorkspacePage: React.FC = () => {
             {activeTab === 'problem' ? (
               <>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {problem.courseTitle && (
+                      <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 flex items-center gap-1">
+                        <BookOpen className="w-2.5 h-2.5" />
+                        <span>{problem.courseTitle}</span>
+                      </span>
+                    )}
+                    {problem.moduleTitle && (
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        {problem.moduleTitle}
+                      </span>
+                    )}
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
                       {problem.category}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                       {problem.language}
                     </span>
                   </div>

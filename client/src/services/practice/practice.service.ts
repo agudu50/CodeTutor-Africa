@@ -1,5 +1,5 @@
 import { PracticeQuestion, CodeSubmission } from '@/types'
-import { MOCK_PRACTICE_QUESTIONS } from '@/features/practice/data/mockPracticeData'
+import { practiceStoreService } from './practice-store.service'
 
 export interface IPracticeService {
   getQuestions(): Promise<PracticeQuestion[]>
@@ -9,21 +9,21 @@ export interface IPracticeService {
 
 export class MockPracticeService implements IPracticeService {
   async getQuestions(): Promise<PracticeQuestion[]> {
-    await new Promise((resolve) => setTimeout(resolve, 150))
-    return MOCK_PRACTICE_QUESTIONS
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    return practiceStoreService.getAllQuestions()
   }
 
   async getQuestionById(id: string): Promise<PracticeQuestion | undefined> {
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    return MOCK_PRACTICE_QUESTIONS.find((q: PracticeQuestion) => q.id === id || q.slug === id)
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    return practiceStoreService.getQuestionById(id)
   }
 
   async submitSolution(questionId: string, code: string): Promise<CodeSubmission> {
-    await new Promise((resolve) => setTimeout(resolve, 600))
-    const question = MOCK_PRACTICE_QUESTIONS.find((q: PracticeQuestion) => q.id === questionId)
+    await new Promise((resolve) => setTimeout(resolve, 400))
+    const question = practiceStoreService.getQuestionById(questionId)
     
     // Simulate test evaluation
-    const results = (question?.testCases || []).map((tc: PracticeQuestion['testCases'][number]) => ({
+    const results = (question?.testCases || []).map((tc) => ({
       ...tc,
       actualOutput: tc.expectedOutput,
       passed: true,
@@ -35,9 +35,9 @@ export class MockPracticeService implements IPracticeService {
       code,
       language: question?.language || 'python',
       status: 'passed',
-      runtimeMs: 42,
+      runtimeMs: 38,
       testResults: results,
-      feedback: 'All test cases passed! Time complexity O(N), Space complexity O(1). Great job!',
+      feedback: 'All test cases passed! Clean, optimal solution. Great job!',
       createdAt: new Date().toISOString(),
     }
   }

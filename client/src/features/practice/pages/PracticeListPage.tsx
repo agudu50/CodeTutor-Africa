@@ -1,23 +1,47 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { Card, Button, Input, Dropdown } from '@/components/ui'
-import { MOCK_PRACTICE_QUESTIONS } from '../data/mockPracticeData'
-import { ArrowRight, Search, Code2, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { practiceStoreService } from '@/services/practice/practice-store.service'
+import { courseStoreService } from '@/services/learning/course-store.service'
+import { PracticeQuestion, Course } from '@/types'
+import { ArrowRight, Search, Code2, ShieldCheck, CheckCircle2, BookOpen } from 'lucide-react'
 
 export const PracticeListPage: React.FC = () => {
+  const [questions, setQuestions] = useState<PracticeQuestion[]>(() => practiceStoreService.getAllQuestions())
+  const [courses, setCourses] = useState<Course[]>(() => courseStoreService.getAllCourses())
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('all')
   const [selectedLang, setSelectedLang] = useState<string>('all')
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all')
 
-  const filteredQuestions = MOCK_PRACTICE_QUESTIONS.filter((q) => {
+  useEffect(() => {
+    const handlePracticeUpdate = () => setQuestions(practiceStoreService.getAllQuestions())
+    const handleCoursesUpdate = () => setCourses(courseStoreService.getAllCourses())
+
+    window.addEventListener('practice_updated', handlePracticeUpdate)
+    window.addEventListener('courses_updated', handleCoursesUpdate)
+
+    return () => {
+      window.removeEventListener('practice_updated', handlePracticeUpdate)
+      window.removeEventListener('courses_updated', handleCoursesUpdate)
+    }
+  }, [])
+
+  const filteredQuestions = questions.filter((q) => {
     const matchesSearch =
       q.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      q.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       q.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (q.courseTitle && q.courseTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (q.moduleTitle && q.moduleTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
       q.tags.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const matchesCourse = selectedCourseId === 'all' || q.courseId === selectedCourseId
     const matchesLang = selectedLang === 'all' || q.language === selectedLang
     const matchesDifficulty = selectedDifficulty === 'all' || q.difficulty === selectedDifficulty
-    return matchesSearch && matchesLang && matchesDifficulty
+
+    return matchesSearch && matchesCourse && matchesLang && matchesDifficulty
   })
 
   const difficulties = [
@@ -25,6 +49,14 @@ export const PracticeListPage: React.FC = () => {
     { id: 'beginner', label: 'Beginner' },
     { id: 'intermediate', label: 'Intermediate' },
     { id: 'advanced', label: 'Advanced' },
+  ]
+
+  const courseOptions = [
+    { value: 'all', label: 'All Courses & Tracks' },
+    ...courses.map((c) => ({
+      value: c.id,
+      label: c.title,
+    })),
   ]
 
   return (
@@ -55,17 +87,25 @@ export const PracticeListPage: React.FC = () => {
 
       {/* Filters & Search Toolbar */}
       <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1">
+        {/* Search, Course Selector & Language Filter */}
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div className="sm:col-span-6">
             <Input
-              placeholder="Search problems by title, topic, or tags..."
+              placeholder="Search problems by module, title, topic, or tags..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               leftIcon={<Search className="w-4 h-4 text-slate-400" />}
               className="bg-white dark:bg-slate-900 rounded-xl"
             />
           </div>
-          <div className="w-full sm:w-56">
+          <div className="sm:col-span-3">
+            <Dropdown
+              options={courseOptions}
+              value={selectedCourseId}
+              onChange={setSelectedCourseId}
+            />
+          </div>
+          <div className="sm:col-span-3">
             <Dropdown
               options={[
                 { value: 'all', label: 'All Languages' },
@@ -111,13 +151,14 @@ export const PracticeListPage: React.FC = () => {
           <Code2 className="w-8 h-8 text-slate-400 mx-auto" />
           <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">No practice problems found</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Try adjusting your search query or language filter to discover available drills.
+            Try adjusting your search query, course selection, or language filter to discover available drills.
           </p>
           <Button
             size="sm"
             variant="outline"
             onClick={() => {
               setSearchTerm('')
+              setSelectedCourseId('all')
               setSelectedLang('all')
               setSelectedDifficulty('all')
             }}
@@ -143,14 +184,35 @@ export const PracticeListPage: React.FC = () => {
                 className="flex flex-col justify-between p-4 sm:p-5 space-y-3.5 border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl h-full group"
               >
                 <div className="space-y-2.5">
+                  {/* Badges: Difficulty & Language & Course */}
                   <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
-                    <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyBadge}`}>
-                      {question.difficulty}
-                    </span>
-                    <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                      {question.language}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyBadge}`}>
+                        {question.difficulty}
+                      </span>
+                      <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        {question.language}
+                      </span>
+                    </div>
+
+                    {question.courseTitle && (
+                      <span
+                        title={`Aligned with course: ${question.courseTitle}`}
+                        className="text-[9px] font-sans font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 truncate max-w-[130px] flex items-center gap-1"
+                      >
+                        <BookOpen className="w-2.5 h-2.5 shrink-0" />
+                        <span className="truncate">{question.courseTitle}</span>
+                      </span>
+                    )}
                   </div>
+
+                  {/* Module Tag */}
+                  {question.moduleTitle && (
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-2 py-1 rounded-lg border border-slate-100 dark:border-slate-700/60">
+                      <BookOpen className="w-3 h-3 text-brand-600 dark:text-brand-400 shrink-0" />
+                      <span className="truncate">{question.moduleTitle}</span>
+                    </div>
+                  )}
 
                   <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors leading-snug">
                     {question.title}

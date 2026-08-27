@@ -4,28 +4,29 @@ import { Course } from '@/types'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { issueSupportService, IssueReport } from '@/services/support/issue-support.service'
 import { gameStoreService } from '@/services/games/game-store.service'
+import { practiceStoreService } from '@/services/practice/practice-store.service'
 import { CourseListTable } from '../components/CourseListTable'
 import { CourseEditorModal } from '../components/CourseEditorModal'
 import { IssueDeskView } from '../components/IssueDeskView'
 import { GameStudioView } from '../components/GameStudioView'
+import { PracticeStudioView } from '../components/PracticeStudioView'
 import { Button } from '@/components/ui'
 import {
   ShieldCheck,
   Plus,
   BookOpen,
   HelpCircle,
-  BarChart3,
-  Database,
   CheckCircle2,
   RotateCcw,
   Gamepad2,
-  Zap,
+  Code2,
 } from 'lucide-react'
 
 export const AdminDashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'issues' | 'games'>('courses')
+  const [activeTab, setActiveTab] = useState<'courses' | 'practice' | 'games' | 'issues'>('courses')
   const [courses, setCourses] = useState<Course[]>([])
   const [issues, setIssues] = useState<IssueReport[]>([])
+  const [practiceCount, setPracticeCount] = useState<number>(() => practiceStoreService.getAllQuestions().length)
   const [isEditorModalOpen, setIsEditorModalOpen] = useState(false)
   const [courseToEdit, setCourseToEdit] = useState<Course | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -33,6 +34,7 @@ export const AdminDashboardPage: React.FC = () => {
   const reloadData = () => {
     setCourses(courseStoreService.getAllCourses())
     setIssues(issueSupportService.getAllIssues())
+    setPracticeCount(practiceStoreService.getAllQuestions().length)
   }
 
   useEffect(() => {
@@ -40,13 +42,16 @@ export const AdminDashboardPage: React.FC = () => {
 
     const handleCoursesUpdated = () => setCourses(courseStoreService.getAllCourses())
     const handleIssuesUpdated = () => setIssues(issueSupportService.getAllIssues())
+    const handlePracticeUpdated = () => setPracticeCount(practiceStoreService.getAllQuestions().length)
 
     window.addEventListener('courses_updated', handleCoursesUpdated)
     window.addEventListener('issues_updated', handleIssuesUpdated)
+    window.addEventListener('practice_updated', handlePracticeUpdated)
 
     return () => {
       window.removeEventListener('courses_updated', handleCoursesUpdated)
       window.removeEventListener('issues_updated', handleIssuesUpdated)
+      window.removeEventListener('practice_updated', handlePracticeUpdated)
     }
   }, [])
 
@@ -97,7 +102,7 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════
+      {/* ═══════════════════════════════════════════════════════════════
           ADMIN PORTAL HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
@@ -111,7 +116,7 @@ export const AdminDashboardPage: React.FC = () => {
                 Admin Operations & Curriculum Portal
               </h1>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Manage offline courses, configure arcade games & drills, and review student feedback tickets.
+                Manage offline courses, configure practice test suites & arcade games, and review student feedback tickets.
               </p>
             </div>
           </div>
@@ -124,8 +129,9 @@ export const AdminDashboardPage: React.FC = () => {
             onClick={() => {
               courseStoreService.resetToDefaults()
               gameStoreService.resetToDefaults()
+              practiceStoreService.resetToDefaults()
               reloadData()
-              setToastMessage('Platform reset to default courses and challenges.')
+              setToastMessage('Platform reset to default courses, practice drills, and challenges.')
             }}
             className="h-9 text-xs font-semibold justify-center"
             leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
@@ -150,7 +156,7 @@ export const AdminDashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           HIGH-LEVEL SUMMARY METRICS
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 font-mono">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 font-mono">
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
             Active Courses
@@ -162,7 +168,22 @@ export const AdminDashboardPage: React.FC = () => {
             <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-            Python, JS & Java
+            {totalLessons} total lessons
+          </span>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+            Practice Challenges
+          </span>
+          <div className="flex items-baseline justify-between">
+            <span className="text-xl sm:text-2xl font-bold text-[#005F02] dark:text-emerald-400">
+              {practiceCount}
+            </span>
+            <Code2 className="w-4 h-4 text-emerald-500" />
+          </div>
+          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+            Automated test suites
           </span>
         </div>
 
@@ -171,10 +192,10 @@ export const AdminDashboardPage: React.FC = () => {
             Arcade Game Drills
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+            <span className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
               {gameCounts.total}
             </span>
-            <Gamepad2 className="w-4 h-4 text-emerald-500" />
+            <Gamepad2 className="w-4 h-4 text-amber-500" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
             4 interactive modes
@@ -183,28 +204,13 @@ export const AdminDashboardPage: React.FC = () => {
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
-            Total Lessons
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-              {totalLessons}
-            </span>
-            <Database className="w-4 h-4 text-sky-500" />
-          </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-            100% offline
-          </span>
-        </div>
-
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
             Support Tickets
           </span>
           <div className="flex items-baseline justify-between">
-            <span className={`text-xl sm:text-2xl font-bold ${openIssuesCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-white'}`}>
+            <span className={`text-xl sm:text-2xl font-bold ${openIssuesCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
               {openIssuesCount}
             </span>
-            <HelpCircle className="w-4 h-4 text-amber-500" />
+            <HelpCircle className="w-4 h-4 text-rose-500" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
             {issues.length} total tickets
@@ -213,10 +219,10 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          PORTAL TABS: COURSES vs GAME STUDIO vs ISSUE DESK
+          PORTAL TABS: COURSES vs PRACTICE vs GAME STUDIO vs ISSUE DESK
           ═══════════════════════════════════════════════════════════════ */}
       <div className="space-y-4">
-        <div className="grid grid-cols-3 sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit">
+        <div className="grid grid-cols-2 sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit">
           <button
             type="button"
             onClick={() => setActiveTab('courses')}
@@ -235,16 +241,32 @@ export const AdminDashboardPage: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => setActiveTab('games')}
+            onClick={() => setActiveTab('practice')}
             className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'games'
+              activeTab === 'practice'
                 ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs font-extrabold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Gamepad2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-            <span className="truncate">Game Studio</span>
+            <Code2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+            <span className="truncate">Practice Studio</span>
             <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold shrink-0">
+              {practiceCount}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('games')}
+            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'games'
+                ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-2xs font-extrabold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Gamepad2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="truncate">Game Studio</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold shrink-0">
               {gameCounts.total}
             </span>
           </button>
@@ -258,10 +280,10 @@ export const AdminDashboardPage: React.FC = () => {
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <HelpCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <HelpCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" />
             <span className="truncate">Support Desk</span>
             {openIssuesCount > 0 && (
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold shrink-0">
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 font-bold shrink-0">
                 {openIssuesCount}
               </span>
             )}
@@ -275,6 +297,8 @@ export const AdminDashboardPage: React.FC = () => {
             onEditCourse={handleEditCourse}
             onDeleteCourse={handleDeleteCourse}
           />
+        ) : activeTab === 'practice' ? (
+          <PracticeStudioView onUpdated={reloadData} />
         ) : activeTab === 'games' ? (
           <GameStudioView onUpdated={reloadData} />
         ) : (

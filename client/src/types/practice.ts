@@ -21,6 +21,11 @@ export interface PracticeQuestion extends BaseEntity {
   testCases: TestCase[]
   hints: string[]
   tags: string[]
+  courseId?: string
+  courseTitle?: string
+  moduleId?: string
+  moduleTitle?: string
+  moduleOrder?: number
 }
 
 export interface CodeSubmission extends BaseEntity {
