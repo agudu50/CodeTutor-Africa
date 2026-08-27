@@ -9,7 +9,7 @@ import {
   Bot,
   ArrowRight,
   CheckCircle2,
-  Zap,
+  ShieldCheck,
 } from 'lucide-react'
 
 interface ContinueLearningProps {
@@ -46,18 +46,15 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
   nextExerciseId,
 }) => {
   return (
-    <Card className="h-full flex flex-col justify-between border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden relative group">
-      {/* Subtle decorative top accent line */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#005F02] via-emerald-500 to-teal-400 opacity-80" />
-
+    <Card className="h-full flex flex-col justify-between border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden relative">
       <CardContent className="p-4 sm:p-6 lg:p-7 flex flex-col justify-between h-full space-y-4 sm:space-y-5">
-        {/* Top Header: Progress Status + Language + Estimated Time */}
+        {/* Section 1: Orientation & Status Header */}
         <div className="space-y-3.5">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-3">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-tight text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                Continue Learning
+                Current Lesson
               </span>
 
               <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-mono font-bold uppercase bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
@@ -65,16 +62,16 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
               </span>
             </div>
 
-            <div className="flex items-center shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <span className="text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shadow-3xs">
                 <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                <span>~{estimatedRemainingMinutes} mins left</span>
+                <span>~{estimatedRemainingMinutes} mins to complete</span>
               </span>
             </div>
           </div>
 
-          {/* Module & Course Context Breadcrumb */}
-          <div className="space-y-1.5">
+          {/* Section 2: Course & Module Roadmap Context */}
+          <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
               <Link
                 to={`/learning/courses/${courseId}`}
@@ -89,24 +86,27 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
               </span>
             </div>
 
-            <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+            <div className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5 font-medium pt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 shrink-0" />
               <span>{moduleTitle}</span>
             </div>
           </div>
 
-          {/* Main Lesson Title */}
-          <div>
+          {/* Section 3: Human Learning Goal & Lesson Title */}
+          <div className="pt-1">
             <h3 className="text-lg sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug">
               {lessonTitle}
             </h3>
           </div>
 
-          {/* Key Concept Chips */}
+          {/* Section 4: Cognitive Chunking - Core Focus Concepts */}
           <div className="space-y-1.5 pt-0.5">
-            <span className="text-[10px] sm:text-[11px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
-              Core Focus Concepts:
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                Skills you are building:
+              </span>
+            </div>
+
             <div className="flex flex-wrap items-center gap-1.5">
               {concepts.map((concept) => (
                 <span
@@ -120,7 +120,7 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
           </div>
         </div>
 
-        {/* Progress Bar and Action Buttons Toolbar */}
+        {/* Section 5: Transparent Progress & Action Affordances */}
         <div className="space-y-3 sm:space-y-4 pt-2">
           {/* Progress Container */}
           <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/90 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1.5 sm:space-y-2 shadow-2xs">
@@ -130,20 +130,21 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
                 <span>{completedLessons} of {totalLessons} Lessons Completed</span>
               </span>
               <span className="font-mono text-[#005F02] dark:text-emerald-400 text-xs sm:text-sm font-bold">
-                {progressPercent}%
+                {progressPercent}% Complete
               </span>
             </div>
             <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-[#005F02] via-emerald-600 to-teal-500 h-full rounded-full transition-all duration-500 shadow-xs"
+                className="bg-[#005F02] dark:bg-emerald-500 h-full rounded-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
 
-          {/* Action Buttons Toolbar */}
+          {/* Action Buttons Toolbar with Clear Visual Hierarchy */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1">
             <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2">
+              {/* Primary Call To Action */}
               <Link to={`/learning/lessons/${courseId}/${lessonId}`} className="w-full sm:w-auto">
                 <Button
                   variant="primary"
@@ -156,6 +157,7 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
                 </Button>
               </Link>
 
+              {/* Secondary Contextual Practice Drill */}
               <Link to={`/practice/${nextExerciseId}`} className="w-full sm:w-auto">
                 <Button
                   variant="secondary"
@@ -167,6 +169,7 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
                 </Button>
               </Link>
 
+              {/* Tertiary Help On-Demand */}
               <Link to="/tutor" className="w-full sm:w-auto">
                 <Button
                   variant="outline"
@@ -179,8 +182,9 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
               </Link>
             </div>
 
+            {/* Offline Reassurance Footer */}
             <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 self-center sm:self-auto sm:ml-auto">
-              <Zap className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>100% Offline Ready</span>
             </span>
           </div>
