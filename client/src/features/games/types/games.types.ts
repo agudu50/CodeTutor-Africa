@@ -10,6 +10,7 @@ export interface GameMetadata {
   category: string
   estimatedMins: number
   iconName: string
+  image?: string
   color: {
     bg: string
     text: string

@@ -322,54 +322,84 @@ export const GamesHubPage: React.FC = () => {
           {/* ═══════════════════════════════════════════════════════════════
               GAMES GRID
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4.5 sm:gap-6 items-stretch">
             {GAMES_METADATA.map((game) => {
               const Icon = ICON_MAP[game.iconName as keyof typeof ICON_MAP] || Gamepad2
               const highScore = stats.highScores[game.id] || 0
+
+              const difficultyBadge =
+                game.difficulty === 'Beginner'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/80'
+                  : game.difficulty === 'Intermediate'
+                  ? 'bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/80'
+                  : 'bg-rose-50 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border-rose-200/80 dark:border-rose-800/80'
 
               return (
                 <div
                   key={game.id}
                   onClick={() => handleSelectGame(game.id)}
-                  className="group relative flex flex-col justify-between p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/70 hover:shadow-lg transition-all cursor-pointer space-y-4"
+                  className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 hover:border-emerald-500/70 hover:shadow-xl transition-all cursor-pointer space-y-4 shadow-xs"
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className={`p-2.5 rounded-2xl ${game.color.bg} ${game.color.text} border ${game.color.border}`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
+                  {/* Card Illustration Banner */}
+                  {game.image && (
+                    <div className="relative h-44 sm:h-48 w-full overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-inner">
+                      <img
+                        src={game.image}
+                        alt={game.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        loading="lazy"
+                      />
+                      {/* Gradient Vignette for Text Contrast */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/30 pointer-events-none" />
 
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      {/* Top Overlay Badges */}
+                      <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                        <span className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-lg border backdrop-blur-md ${difficultyBadge}`}>
                           {game.difficulty}
                         </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-slate-400" />
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900/80 text-white border border-white/20 backdrop-blur-md flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-emerald-400" />
                           <span>~{game.estimatedMins}m</span>
                         </span>
                       </div>
+
+                      {/* Bottom Category Pill */}
+                      <div className="absolute bottom-2.5 left-2.5 pointer-events-none">
+                        <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-slate-900/85 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
+                          {game.category}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2.5 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`p-2 rounded-xl ${game.color.bg} ${game.color.text} border ${game.color.border} shrink-0`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors leading-snug truncate">
+                          {game.title}
+                        </h3>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate">
+                          {game.subtitle}
+                        </p>
+                      </div>
                     </div>
 
-                    <div>
-                      <h3 className="font-bold text-base text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                        {game.title}
-                      </h3>
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
-                        {game.subtitle}
-                      </p>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                        {game.description}
-                      </p>
-                    </div>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
+                      {game.description}
+                    </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
-                    <div className="flex items-center gap-1 text-slate-500 font-mono">
+                  {/* Card Action Footer */}
+                  <div className="flex items-center justify-between pt-3.5 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-mono">
                       <Trophy className="w-3.5 h-3.5 text-amber-500" />
                       <span>Best: <strong className="text-slate-900 dark:text-white font-bold">{highScore} pts</strong></span>
                     </div>
 
-                    <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span className="font-bold text-[#005F02] dark:text-emerald-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                       Play Now →
                     </span>
                   </div>

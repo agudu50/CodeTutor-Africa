@@ -32,6 +32,7 @@ export const GAMES_METADATA: GameMetadata[] = [
     category: 'Speed & Accuracy',
     estimatedMins: 2,
     iconName: 'Zap',
+    image: '/images/games/syntax_speedrun.jpg',
     color: {
       bg: 'bg-amber-500/10 dark:bg-amber-950/40',
       text: 'text-amber-600 dark:text-amber-400',
@@ -48,6 +49,7 @@ export const GAMES_METADATA: GameMetadata[] = [
     category: 'Debugging Skills',
     estimatedMins: 3,
     iconName: 'Bug',
+    image: '/images/games/bug_hunt.jpg',
     color: {
       bg: 'bg-rose-500/10 dark:bg-rose-950/40',
       text: 'text-rose-600 dark:text-rose-400',
@@ -64,6 +66,7 @@ export const GAMES_METADATA: GameMetadata[] = [
     category: 'Mental Execution',
     estimatedMins: 3,
     iconName: 'HelpCircle',
+    image: '/images/games/output_predictor.jpg',
     color: {
       bg: 'bg-indigo-500/10 dark:bg-indigo-950/40',
       text: 'text-indigo-600 dark:text-indigo-400',
@@ -80,6 +83,7 @@ export const GAMES_METADATA: GameMetadata[] = [
     category: 'Logic & Algorithms',
     estimatedMins: 4,
     iconName: 'Shuffle',
+    image: '/images/games/code_shuffle.jpg',
     color: {
       bg: 'bg-emerald-500/10 dark:bg-emerald-950/40',
       text: 'text-emerald-600 dark:text-emerald-400',
