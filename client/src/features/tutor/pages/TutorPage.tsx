@@ -30,6 +30,7 @@ export const TutorPage: React.FC = () => {
     sendMessage,
     switchSession,
     createNewSession,
+    deleteSession,
   } = useTutorSession(sessionId || 'session-1')
 
   const { effectiveNetwork } = useSystemStatus()
@@ -172,14 +173,21 @@ export const TutorPage: React.FC = () => {
           {sessions.map((sess) => {
             const isActive = sess.id === activeSessionId
             return (
-              <button
+              <div
                 key={sess.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => {
                   switchSession(sess.id)
                   setMobileDrawerOpen(false)
                 }}
-                className={`w-full text-left p-3 sm:p-3.5 rounded-2xl text-xs transition-all duration-150 border cursor-pointer ${
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    switchSession(sess.id)
+                    setMobileDrawerOpen(false)
+                  }
+                }}
+                className={`group/session relative w-full text-left p-3 sm:p-3.5 rounded-2xl text-xs transition-all duration-150 border cursor-pointer select-none ${
                   isActive
                     ? 'bg-emerald-50/90 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700/80 text-slate-900 dark:text-white font-semibold shadow-3xs'
                     : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700'
@@ -189,14 +197,30 @@ export const TutorPage: React.FC = () => {
                   <span className={`truncate font-bold ${isActive ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-900 dark:text-white'}`}>
                     {sess.title}
                   </span>
-                  <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0 border border-slate-300/60 dark:border-slate-700/60">
-                    {sess.language}
-                  </span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/60 dark:border-slate-700/60">
+                      {sess.language}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteSession(sess.id)
+                      }}
+                      className="p-1 rounded-md text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors opacity-80 sm:opacity-0 sm:group-hover/session:opacity-100 focus:opacity-100 cursor-pointer"
+                      title="Delete this discussion"
+                      aria-label={`Delete ${sess.title}`}
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <p className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                   {sess.lastMessagePreview}
                 </p>
-              </button>
+              </div>
             )
           })}
         </div>

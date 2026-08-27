@@ -100,6 +100,40 @@ export function useTutorSession(initialSessionId: string = 'session-1') {
     [activeSessionId, isLoading, messages, selectedLanguage, tutorMode]
   )
 
+  const deleteSession = useCallback(
+    (sessionIdToDelete: string) => {
+      setSessions((prev) => {
+        const remaining = prev.filter((s) => s.id !== sessionIdToDelete)
+        if (remaining.length === 0) {
+          const freshId = `session-${Date.now()}`
+          const freshSession: TutorSession = {
+            id: freshId,
+            title: 'New Discussion',
+            language: selectedLanguage,
+            mode: tutorMode,
+            messageCount: 0,
+            lastMessagePreview: 'Ask a question to start learning...',
+            createdAt: new Date().toISOString(),
+          }
+          setActiveSessionId(freshId)
+          setMessages([])
+          return [freshSession]
+        }
+
+        // If deleting active session, switch to the first remaining
+        if (sessionIdToDelete === activeSessionId) {
+          const nextSess = remaining[0]
+          setActiveSessionId(nextSess.id)
+          setMessages(MOCK_INITIAL_MESSAGES[nextSess.id] || [])
+          setSelectedLanguage(nextSess.language)
+          setTutorMode(nextSess.mode)
+        }
+        return remaining
+      })
+    },
+    [activeSessionId, selectedLanguage, tutorMode]
+  )
+
   return {
     sessions,
     activeSessionId,
@@ -113,5 +147,6 @@ export function useTutorSession(initialSessionId: string = 'session-1') {
     sendMessage,
     switchSession,
     createNewSession,
+    deleteSession,
   }
 }
