@@ -17,7 +17,6 @@ import {
   Bot,
   Clock,
   Flame,
-  Sparkles,
   Sun,
   Moon,
   BarChart3,
@@ -163,10 +162,13 @@ export const DashboardPage: React.FC = () => {
                   <span>{data.user.streakDays}d Streak</span>
                 </Link>
 
-                {/* Offline AI Model Status Pill */}
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-xs font-semibold text-emerald-800 dark:text-emerald-300 shadow-3xs">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>Local LLM Ready</span>
+                {/* Offline AI Tutor Status Pill */}
+                <span
+                  className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-xs font-semibold text-emerald-800 dark:text-emerald-300 shadow-3xs"
+                  title="Your AI Tutor works 100% offline without internet"
+                >
+                  <Bot className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>AI Tutor Ready (Offline)</span>
                 </span>
               </div>
             </div>
