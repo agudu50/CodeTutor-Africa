@@ -22,7 +22,6 @@ import {
   X,
   Wifi,
   WifiOff,
-  Sparkles,
   Bot,
   BookOpen,
   Code2,
@@ -81,81 +80,81 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
   const getPageInfo = (path: string) => {
     if (path.startsWith('/admin')) {
       return {
-        title: 'Admin Operations',
-        subtitle: 'System Telemetry & Platform Governance',
-        icon: <ShieldCheck className="w-4 h-4 text-brand-600 dark:text-brand-400" />,
+        title: 'Admin Dashboard',
+        subtitle: 'System health, feedback reports & platform controls',
+        icon: <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
         badge: 'Admin',
       }
     }
     if (path.startsWith('/dashboard')) {
       return {
-        title: 'Dashboard',
-        subtitle: 'Offline Programming Workspace • All Skill Levels',
-        icon: <LayoutDashboard className="w-4 h-4 text-brand-600 dark:text-brand-400" />,
-        badge: 'Workspace',
+        title: 'Learning Dashboard',
+        subtitle: 'Daily study goals, streaks & active coding lessons',
+        icon: <LayoutDashboard className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+        badge: 'Dashboard',
       }
     }
     if (path.startsWith('/tutor')) {
       return {
-        title: 'Socratic AI Tutor',
-        subtitle: '6-Mode Pedagogical Engine • 100% Offline LLM',
+        title: 'AI Coding Tutor',
+        subtitle: 'Step-by-step guidance, hints & code reviews • 100% Offline',
         icon: <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
-        badge: 'Qwen 1.5B',
+        badge: 'Offline AI',
       }
     }
     if (path.startsWith('/practice')) {
       return {
-        title: 'Code Practice & Arcade',
-        subtitle: 'Interactive Drills, Bug Hunts & Algorithmic Challenges',
+        title: 'Practice & Arcade',
+        subtitle: 'Hands-on coding challenges, bug hunts & typing games',
         icon: <Code2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />,
-        badge: 'Sandboxed',
+        badge: 'Practice',
       }
     }
     if (path.startsWith('/debugger')) {
       return {
-        title: 'Compiler Diagnostics',
-        subtitle: 'AST Traceback Analyzer & Guiding Error Fixes',
+        title: 'Code Error Helper',
+        subtitle: 'Find mistakes & get step-by-step fixes in plain English',
         icon: <Bug className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
-        badge: 'Diagnostics',
+        badge: 'Debugger',
       }
     }
     if (path.startsWith('/learning/lessons')) {
       return {
         title: 'Interactive Lesson',
-        subtitle: 'Embedded VS Code Sandbox & Automated Concept Checks',
+        subtitle: 'Step-by-step interactive coding lesson and exercises',
         icon: <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />,
         badge: 'Active Lesson',
       }
     }
     if (path.startsWith('/learning')) {
       return {
-        title: 'Curriculum & Courses',
-        subtitle: 'Dynamic 3-Module 9-Lesson AI Synthesis',
+        title: 'Courses & Tracks',
+        subtitle: 'Structured coding courses for every skill level',
         icon: <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />,
-        badge: 'Roadmaps',
+        badge: 'Courses',
       }
     }
     if (path.startsWith('/progress')) {
       return {
-        title: 'Analytics & Mastery',
-        subtitle: 'Study Streaks, Topic Competence & Telemetry',
+        title: 'My Progress',
+        subtitle: 'Track your study hours, streaks & completed challenges',
         icon: <BarChart3 className="w-4 h-4 text-teal-600 dark:text-teal-400" />,
-        badge: 'Telemetry',
+        badge: 'Progress',
       }
     }
     if (path.startsWith('/settings')) {
       return {
-        title: 'Settings & Runtime',
-        subtitle: 'LLM Quantization, Memory Capping & Preferences',
+        title: 'Settings & Profile',
+        subtitle: 'Customize your theme, study goals & offline preferences',
         icon: <Settings className="w-4 h-4 text-slate-600 dark:text-slate-400" />,
-        badge: 'Config',
+        badge: 'Settings',
       }
     }
     return {
       title: 'CodeTutor Africa',
-      subtitle: 'Offline-First AI Tutor for African Students',
-      icon: <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400" />,
-      badge: 'ADTC 2026',
+      subtitle: '100% Offline AI Coding Tutor for African Students',
+      icon: <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      badge: 'Offline AI',
     }
   }
 
