@@ -8,7 +8,6 @@ import {
   Plus,
   Bot,
   MessageSquare,
-  Cpu,
   CornerDownLeft,
   ShieldCheck,
   X,
@@ -225,23 +224,19 @@ export const TutorPage: React.FC = () => {
           })}
         </div>
 
-        {/* Local Hardware Status Footer */}
+        {/* Local AI Status Footer */}
         <div className="p-3.5 border-t border-slate-200/90 dark:border-slate-800/90 bg-slate-50 dark:bg-slate-950/80 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-mono">
-          <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-            <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
-            {isOffline ? 'Qwen 1.5B (Local)' : 'Cloud AI Engine'}
+          <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
+            <Bot className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+            {isOffline ? 'Offline AI Tutor' : 'Online AI Tutor'}
           </span>
           <span
-            className={`inline-flex items-center gap-1 font-bold ${
-              isOffline
-                ? 'text-emerald-700 dark:text-emerald-400'
-                : 'text-emerald-600 dark:text-emerald-400'
-            }`}
+            className="inline-flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400"
           >
             <span
               className="w-1.5 h-1.5 rounded-full inline-block bg-emerald-500 animate-pulse"
             />
-            {isOffline ? '100% Offline' : 'Cloud Synced'}
+            {isOffline ? 'No Internet Needed' : 'Online Synced'}
           </span>
         </div>
       </div>
