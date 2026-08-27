@@ -37,7 +37,7 @@ export const GameLanguageSelector: React.FC<GameLanguageSelectorProps> = ({
             onClick={() => onSelectLanguage(lang.id)}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs ${
               isSelected
-                ? 'bg-brand-600 text-white shadow-xs ring-2 ring-brand-500/20'
+                ? 'bg-[#005F02] text-white shadow-xs ring-2 ring-emerald-500/20'
                 : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >

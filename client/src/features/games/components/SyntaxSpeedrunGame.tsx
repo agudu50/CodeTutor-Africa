@@ -213,46 +213,51 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   }
 
   return (
-    <div className="space-y-4 max-w-4xl mx-auto">
+    <div className="w-full space-y-4 sm:space-y-5">
       {/* Game Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+      <div className="relative flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onBack}
-            className="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+            className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors shadow-3xs"
           >
             ← Back to Games
           </button>
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
           <div className="flex items-center gap-2">
-            <span className="p-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <span className="p-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
               <Zap className="w-4 h-4" />
             </span>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">
+            <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
               Syntax Speedrun
             </span>
             {isOffline && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-                <WifiOff className="w-2.5 h-2.5" /> Offline
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-3xs">
+                <WifiOff className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Offline
               </span>
             )}
           </div>
         </div>
 
-        {/* Live Metrics */}
-        <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono font-bold">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-            <Timer className="w-3.5 h-3.5 text-amber-500" />
-            <span>{timeLeft}s</span>
+        {/* Live Metrics (Sticky Timer & Scores) */}
+        <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono font-bold">
+          {/* Prominent Live Timer */}
+          <div className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border shadow-3xs transition-all ${
+            timeLeft <= 5 && isPlaying
+              ? 'bg-rose-500 text-white border-rose-600 animate-pulse ring-2 ring-rose-500/40'
+              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800/80'
+          }`}>
+            <Timer className={`w-4 h-4 ${timeLeft <= 5 && isPlaying ? 'text-white' : 'text-amber-600 dark:text-amber-400'}`} />
+            <span className="text-sm font-extrabold">{timeLeft}s</span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/60">
-            <Flame className="w-3.5 h-3.5 fill-current" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shadow-3xs">
+            <Flame className="w-3.5 h-3.5 text-amber-500 fill-current" />
             <span>{streak}x Streak</span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-400 border border-brand-200/60 dark:border-brand-800/60">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shadow-3xs">
             <Trophy className="w-3.5 h-3.5" />
             <span>{score} pts</span>
           </div>
@@ -260,7 +265,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
           <button
             type="button"
             onClick={handleToggleSound}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 cursor-pointer"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 cursor-pointer shadow-3xs"
             title={soundEnabled ? 'Mute sound' : 'Unmute sound'}
           >
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
@@ -268,76 +273,78 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         </div>
       </div>
 
-      {/* Language Selector */}
-      <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <GameLanguageSelector
-          selectedLanguage={selectedLanguage}
-          onSelectLanguage={handleLanguageChange}
-        />
-      </div>
+      {/* Language Selector (Visible only before round starts so it doesn't push down the game during play) */}
+      {!isPlaying && (
+        <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-3xs">
+          <GameLanguageSelector
+            selectedLanguage={selectedLanguage}
+            onSelectLanguage={handleLanguageChange}
+          />
+        </div>
+      )}
 
       {/* Main Game Surface */}
       {!isPlaying && !isGameOver ? (
-        <div className="p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
+        <div className="p-8 sm:p-14 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto border border-amber-500/20 shadow-inner">
             <Zap className="w-8 h-8" />
           </div>
-          <div className="max-w-md mx-auto space-y-1">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Ready for the Speedrun?</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Type the exact code snippets as fast and accurately as you can before time expires.
+          <div className="max-w-md mx-auto space-y-1.5">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Ready for the Speedrun?</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              Type the exact course code snippets as fast and accurately as you can before time expires.
             </p>
           </div>
           <div className="pt-2">
-            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8">
+            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs">
               Start Speedrun Blitz
             </Button>
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="p-6 sm:p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
+        <div className="p-6 sm:p-10 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs space-y-5 animate-in zoom-in-95">
           <VictoryBurst3D />
           <div className="space-y-1">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Run Complete!</h2>
-            <p className="text-xs text-slate-500">Here is your speedrun performance summary:</p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Run Complete!</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Here is your speedrun performance summary:</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto font-mono text-center">
-            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans">Final Score</span>
-              <span className="text-xl font-extrabold text-brand-600 dark:text-brand-400">{score}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto font-mono text-center">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
+              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Final Score</span>
+              <span className="text-xl font-extrabold text-[#005F02] dark:text-emerald-400">{score}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans">Max Streak</span>
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
+              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Max Streak</span>
               <span className="text-xl font-extrabold text-amber-600 dark:text-amber-400">{streak}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans">Speed</span>
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
+              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Speed</span>
               <span className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">{wpm} WPM</span>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans">Accuracy</span>
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
+              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Accuracy</span>
               <span className="text-xl font-extrabold text-sky-600 dark:text-sky-400">{accuracy}%</span>
             </div>
           </div>
 
           <div className="flex items-center justify-center gap-3 pt-2">
-            <Button variant="outline" size="sm" onClick={onBack}>
+            <Button variant="outline" size="sm" onClick={onBack} className="font-semibold text-xs px-4">
               Exit to Hub
             </Button>
-            <Button variant="primary" size="sm" onClick={restartGame} leftIcon={<RotateCcw className="w-3.5 h-3.5" />}>
+            <Button variant="primary" size="sm" onClick={restartGame} leftIcon={<RotateCcw className="w-3.5 h-3.5" />} className="font-bold text-xs px-4 bg-[#005F02] hover:bg-[#004e02] text-white">
               Play Again
             </Button>
           </div>
         </div>
       ) : (
-        /* ═══ PLAYING STATE — side-by-side layout so nothing is off-screen ═══ */
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        /* ═══ PLAYING STATE — full-width spacious side-by-side layout ═══ */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
 
           {/* ── LEFT PANEL: 3D world + code reference ── */}
-          <div className="flex flex-col gap-3">
-            {/* Compact 3D canvas with HUD overlay */}
-            <div className="relative rounded-2xl overflow-hidden shadow-xl ring-1 ring-slate-800">
+          <div className="lg:col-span-5 flex flex-col gap-4">
+            {/* Expanded 3D canvas with HUD overlay */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-64 sm:h-72 bg-slate-950">
               <CyberRacer3D
                 progressPercent={completionPercent}
                 wpm={wpm}
@@ -345,130 +352,186 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 isCompleted={isCodeComplete}
               />
               {/* HUD overlay */}
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between px-3 pb-2.5 pointer-events-none">
-                <div className="w-full max-w-[220px]">
-                  <div className="flex items-center justify-between text-[9px] font-mono font-bold mb-1">
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between px-4 pb-3.5 pointer-events-none">
+                <div className="w-full max-w-[240px]">
+                  <div className="flex items-center justify-between text-[10px] font-mono font-bold mb-1.5">
                     <span className="text-emerald-400">PROGRESS</span>
                     <span className="text-white">{completionPercent}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-slate-800/80 overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-800/90 overflow-hidden shadow-inner">
                     <div
                       className="h-full rounded-full transition-all duration-300"
                       style={{
                         width: `${completionPercent}%`,
                         background: isCodeComplete
-                          ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
+                          ? '#005F02'
                           : accuracy < 90 && userInput.length > 0
-                          ? 'linear-gradient(90deg,#f43f5e,#fb7185)'
-                          : 'linear-gradient(90deg,#00ffcc,#06b6d4)',
+                          ? '#f43f5e'
+                          : '#005F02',
                       }}
                     />
                   </div>
                 </div>
-                <div className="ml-2 shrink-0">
+                <div className="ml-2 flex items-center gap-2 shrink-0">
+                  {/* In-HUD Countdown Badge */}
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-mono text-[10px] font-extrabold ${
+                    timeLeft <= 5 ? 'bg-rose-500 text-white animate-pulse' : 'bg-slate-900/80 text-amber-300 border border-amber-400/40'
+                  }`}>
+                    <Timer className="w-2.5 h-2.5" />
+                    <span>{timeLeft}s</span>
+                  </span>
+
                   {isCodeComplete ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/90 text-black text-[9px] font-extrabold font-mono">
-                      <CheckCircle2 className="w-2.5 h-2.5" /> DONE
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold font-mono shadow-xs">
+                      <CheckCircle2 className="w-3 h-3" /> DONE
                     </span>
                   ) : accuracy < 90 && userInput.length > 0 ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/90 text-white text-[9px] font-extrabold font-mono">
-                      <AlertTriangle className="w-2.5 h-2.5" /> ERR
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-rose-500 text-white text-[10px] font-extrabold font-mono shadow-xs">
+                      <AlertTriangle className="w-3 h-3" /> ERR
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[9px] font-extrabold font-mono border border-emerald-500/40">
-                      <Zap className="w-2.5 h-2.5" /> {wpm} WPM
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold font-mono border border-emerald-500/40">
+                      <Zap className="w-3 h-3" /> {wpm} WPM
                     </span>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Code reference card — scrollable so it doesn't push textarea off screen */}
-            <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
-              {/* Card header */}
-              <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex-wrap">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800">
-                    {currentSnippet.language} · {snippetIndex + 1}/{activeSnippets.length}
-                  </span>
-                  {currentSnippet.courseTitle && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                      <BookOpen className="w-3 h-3 text-brand-500" />
-                      {currentSnippet.courseTitle}
+            {/* Target Code reference card */}
+            <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs overflow-hidden flex-1 flex flex-col justify-between">
+              <div>
+                {/* Card header */}
+                <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex-wrap bg-slate-50/70 dark:bg-slate-950/60">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold uppercase px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                      {currentSnippet.language} · Snippet {snippetIndex + 1}/{activeSnippets.length}
                     </span>
-                  )}
+                    {currentSnippet.courseTitle && (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        <BookOpen className="w-3.5 h-3.5 text-[#005F02]" />
+                        {currentSnippet.courseTitle}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono font-bold">{currentSnippet.title}</span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-mono italic">{currentSnippet.title}</span>
+
+                {/* Step 1 Instructions callout */}
+                <div className="px-4 py-2 bg-emerald-50/60 dark:bg-emerald-950/30 border-b border-emerald-200/50 dark:border-emerald-900/50 flex items-center gap-2 text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+                  <span className="font-bold text-xs bg-[#005F02] text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0 text-[10px]">1</span>
+                  <span><strong>Target Code to Type:</strong> Type this exact snippet into the arena on the right →</span>
+                </div>
+
+                {/* Code block */}
+                <div className="p-4 sm:p-5 bg-slate-950 font-mono text-sm sm:text-base leading-relaxed overflow-auto select-none border-b border-slate-800/80">
+                  <pre className="whitespace-pre text-emerald-300 font-semibold">{currentSnippet.code}</pre>
+                </div>
               </div>
 
-              {/* Code block — max-height + scroll so long snippets don't overflow */}
-              <div className="p-3 sm:p-4 bg-slate-950 font-mono text-xs leading-relaxed overflow-auto max-h-[220px] select-none border-b border-slate-800">
-                <pre className="whitespace-pre text-slate-100">{currentSnippet.code}</pre>
-              </div>
-
-              {/* Description */}
+              {/* Description & Concept Context */}
               {currentSnippet.description && (
-                <p className="px-4 py-2 text-[10px] text-slate-500 dark:text-slate-400 italic">
-                  {currentSnippet.description}
-                </p>
+                <div className="px-4 sm:px-5 py-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-950/40 space-y-0.5">
+                  <p className="font-bold text-slate-700 dark:text-slate-200">Concept Explanation:</p>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{currentSnippet.description}</p>
+                </div>
               )}
             </div>
           </div>
 
-          {/* ── RIGHT PANEL: typing area + submit (always visible) ── */}
-          <div className="flex flex-col gap-2">
-            {/* Accuracy / WPM bar */}
-            <div className="flex items-center justify-between text-xs font-mono text-slate-500 px-0.5">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">Your Code</span>
-              <span className={accuracy < 90 && userInput.length > 0 ? 'text-rose-500 font-bold' : 'text-emerald-500 font-bold'}>
-                {accuracy}% acc · {wpm} WPM
-              </span>
+          {/* ── RIGHT PANEL: typing area + submit (Sleek & balanced) ── */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-4">
+            <div className="space-y-2.5">
+              {/* Accuracy / WPM bar & Step 2 Guide + INLINE TIMER */}
+              <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-slate-500 px-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-xs bg-[#005F02] text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0 text-[10px]">2</span>
+                  <span className="font-extrabold text-slate-900 dark:text-white">Your Typing Arena</span>
+                </div>
+
+                {/* Direct Eye-Level Countdown Timer in Typing Arena */}
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border font-bold text-xs transition-all ${
+                    timeLeft <= 5
+                      ? 'bg-rose-500 text-white border-rose-600 animate-pulse'
+                      : 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border-amber-300/80 dark:border-amber-800/80'
+                  }`}>
+                    <Timer className="w-3.5 h-3.5" />
+                    <span>{timeLeft}s left</span>
+                  </div>
+
+                  <span className={accuracy < 90 && userInput.length > 0 ? 'text-rose-500 font-bold' : 'text-emerald-600 dark:text-emerald-400 font-bold'}>
+                    {accuracy}% acc · {wpm} WPM
+                  </span>
+                </div>
+              </div>
+
+              {/* Textarea wrapper */}
+              <div className="relative">
+                <textarea
+                  ref={inputRef}
+                  value={userInput}
+                  onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSubmitCode()
+                    }
+                  }}
+                  rows={8}
+                  placeholder={`Type the target code here (e.g. ${currentSnippet.code.split('\n')[0]})...\nPress Enter ↵ or click Submit Code when done!`}
+                  className={`w-full p-4 sm:p-5 pb-16 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border-2 font-mono text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none resize-none shadow-xs transition-colors leading-relaxed ${
+                    isCodeComplete
+                      ? 'border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
+                      : accuracy < 90 && userInput.length > 0
+                      ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30'
+                      : 'border-emerald-600/40 focus:border-[#005F02] focus:ring-2 focus:ring-emerald-500/30'
+                  }`}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                />
+
+                {/* Submit button — fixed inside textarea bottom */}
+                <div className="absolute bottom-3.5 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
+                  <div className="flex items-center gap-1.5">
+                    {isCodeComplete ? (
+                      <span className="text-xs sm:text-sm font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Perfect match! (Auto-submitting...)
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
+                        Press <strong className="text-slate-600 dark:text-slate-300">Enter ↵</strong> to submit
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSubmitCode}
+                    disabled={userInput.trim().length === 0}
+                    className={`pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed ${
+                      isCodeComplete
+                        ? 'bg-[#005F02] hover:bg-[#004e02] text-white ring-2 ring-emerald-400/40 scale-105'
+                        : 'bg-[#005F02] hover:bg-[#004e02] text-white'
+                    }`}
+                  >
+                    <Zap className="w-4 h-4" />
+                    <span>Submit Code</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Textarea wrapper */}
-            <div className="relative flex-1">
-              <textarea
-                ref={inputRef}
-                value={userInput}
-                onChange={handleInputChange}
-                rows={14}
-                placeholder="Start typing the code here..."
-                className={`w-full h-full p-3 sm:p-4 pb-16 rounded-2xl bg-white dark:bg-slate-900 border-2 font-mono text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 resize-none shadow-sm transition-colors ${
-                  isCodeComplete
-                    ? 'border-emerald-500 focus:ring-emerald-500/30'
-                    : accuracy < 90 && userInput.length > 0
-                    ? 'border-rose-500 focus:ring-rose-500/30'
-                    : 'border-brand-500 focus:ring-brand-500/30'
-                }`}
-                autoCapitalize="none"
-                autoComplete="off"
-                autoCorrect="off"
-                spellCheck="false"
-              />
-
-              {/* Submit button — fixed inside textarea bottom */}
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  {isCodeComplete && (
-                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Perfect match!
-                    </span>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={handleSubmitCode}
-                  disabled={userInput.trim().length === 0}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed ${
-                    isCodeComplete
-                      ? 'bg-emerald-500 hover:bg-emerald-400 text-white ring-2 ring-emerald-400/40 scale-105'
-                      : 'bg-brand-600 hover:bg-brand-500 text-white'
-                  }`}
-                >
-                  <Zap className="w-3.5 h-3.5" />
-                  Submit Code
-                </button>
+            {/* How to Submit instructions callout */}
+            <div className="p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-slate-900/80 border border-emerald-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-3xs">
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded-lg bg-[#005F02] text-white font-bold text-[10px]">
+                  ✓
+                </span>
+                <span><strong>How to Submit:</strong> Match the target snippet above. Press <strong>Enter ↵</strong> or click <strong>Submit Code</strong> to accelerate your racer!</span>
               </div>
+              <span className="font-mono text-[11px] uppercase font-bold text-[#005F02] dark:text-emerald-400 shrink-0">Auto-Check Active</span>
             </div>
           </div>
         </div>

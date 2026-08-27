@@ -187,7 +187,7 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
   }
 
   return (
-    <div className="space-y-4 max-w-4xl mx-auto">
+    <div className="w-full space-y-4 sm:space-y-5">
       {/* Game Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="flex items-center gap-3">
