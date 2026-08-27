@@ -272,17 +272,6 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
             <SystemStatusIndicator onOpen={() => setIsStatusModalOpen(true)} />
           </div>
 
-          {/* Enhanced Learning Streak Counter Badge */}
-          <Link
-            to="/progress"
-            className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/80 dark:to-orange-950/80 border border-amber-200/90 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 text-xs font-bold font-mono shadow-2xs shrink-0 hover:border-amber-400 dark:hover:border-amber-600 transition-all cursor-pointer group"
-            title="Study Streak: 7 Consecutive Days Active (Click for analytics)"
-          >
-            <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0 group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:inline">7 Days</span>
-            <span className="sm:hidden text-[11px]">7d</span>
-          </Link>
-
           {/* Theme Toggle Button with Smooth Icon Transition */}
           <button
             type="button"
@@ -298,23 +287,35 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
             )}
           </button>
 
-          {/* Interactive User Profile Dropdown Button */}
+          {/* Interactive User Profile Dropdown Button with Integrated Streak Halo */}
           <div className="relative shrink-0" ref={profileMenuRef}>
             <button
               type="button"
               onClick={() => setIsProfileOpen((prev) => !prev)}
-              className="relative flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-brand-500/40 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer group"
-              aria-label="User profile menu"
+              className="relative flex items-center p-0.5 rounded-full ring-2 ring-amber-400/80 dark:ring-amber-500/60 bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 shadow-sm hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer group"
+              aria-label="User profile and streak menu"
               aria-expanded={isProfileOpen}
+              title="7-Day Learning Streak • Click for profile menu"
             >
               <Avatar
                 src={profile.avatarUrl || undefined}
                 fallbackName={profile.fullName || 'User'}
                 size="sm"
-                className="bg-[#005F02] text-white font-bold shadow-xs transition-colors w-7 h-7 sm:w-8 sm:h-8 text-xs"
+                className="bg-[#005F02] text-white font-bold w-7 h-7 sm:w-8 sm:h-8 text-xs ring-1 ring-white dark:ring-slate-900"
               />
-              {/* Online status indicator dot */}
-              <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-slate-900 ${isOffline ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+
+              {/* Flame Streak Mini Pill pinned to the bottom of the avatar */}
+              <span className="absolute -bottom-1 inset-x-0 mx-auto w-fit flex items-center gap-0.5 px-1 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-mono font-black text-[9px] shadow-3xs ring-1.5 ring-white dark:ring-slate-900 z-10">
+                <Flame className="w-2 h-2 fill-white text-white shrink-0 animate-bounce" />
+                <span>7d</span>
+              </span>
+
+              {/* Online/Offline status indicator dot on top-right */}
+              <span
+                className={`absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-slate-900 z-10 ${
+                  isOffline ? 'bg-amber-500' : 'bg-emerald-500'
+                }`}
+              />
             </button>
 
             {/* Backdrop overlay for reliable outside click / tap dismissal */}
