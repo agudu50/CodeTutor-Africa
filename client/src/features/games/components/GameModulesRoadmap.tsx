@@ -8,11 +8,9 @@ import {
   HelpCircle,
   Shuffle,
   ChevronDown,
-  ChevronUp,
   Play,
   CheckCircle2,
-  Sparkles,
-  Layers,
+  BookOpen,
 } from 'lucide-react'
 
 interface GameModulesRoadmapProps {
@@ -47,31 +45,27 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
   }
 
   const getProgressColor = (percent: number) => {
-    if (percent >= 65) {
+    if (percent === 100) {
       return {
-        text: 'text-emerald-400',
-        ring: 'border-emerald-500 bg-emerald-950/40',
-        stroke: '#10B981',
+        text: 'text-emerald-700 dark:text-emerald-400',
+        ring: 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40',
       }
     }
     if (percent >= 40) {
       return {
-        text: 'text-amber-400',
-        ring: 'border-amber-500 bg-amber-950/40',
-        stroke: '#F59E0B',
+        text: 'text-amber-700 dark:text-amber-400',
+        ring: 'border-amber-500 bg-amber-50 dark:bg-amber-950/40',
       }
     }
     if (percent > 0) {
       return {
-        text: 'text-sky-400',
-        ring: 'border-sky-500 bg-sky-950/40',
-        stroke: '#38BDF8',
+        text: 'text-sky-700 dark:text-sky-400',
+        ring: 'border-sky-500 bg-sky-50 dark:bg-sky-950/40',
       }
     }
     return {
-      text: 'text-slate-500 dark:text-slate-500',
-      ring: 'border-slate-700 bg-slate-900/60',
-      stroke: '#475569',
+      text: 'text-slate-600 dark:text-slate-400',
+      ring: 'border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/80',
     }
   }
 
@@ -90,10 +84,10 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
 
   return (
     <div className="w-full space-y-4">
-      {/* Header matching screenshot */}
+      {/* Header */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <Layers className="w-5 h-5 text-emerald-500" />
+          <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Modules in this course
           </h2>
@@ -110,7 +104,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
 
         {/* Modules Stack */}
         <div className="space-y-3 relative z-10">
-          {modules.map((mod, idx) => {
+          {modules.map((mod) => {
             const isExpanded = expandedModuleId === mod.id
             const progress = gameStoreService.getModuleProgress(mod.id, mod.defaultProgress)
             const color = getProgressColor(progress)
@@ -123,7 +117,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                   className={`flex flex-col rounded-2xl border transition-all cursor-pointer overflow-hidden ${
                     isExpanded
                       ? 'bg-white dark:bg-[#12161A] border-emerald-500/80 ring-2 ring-emerald-500/20 shadow-md'
-                      : 'bg-white dark:bg-[#12161A] border-slate-200 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
+                      : 'bg-white dark:bg-[#12161A] border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/40 dark:hover:border-slate-700 shadow-2xs hover:shadow-xs'
                   }`}
                 >
                   {/* Top Header Row with Circle Badge & Module Title */}
@@ -132,7 +126,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                       {/* Circular Progress Badge */}
                       <div className="relative shrink-0 flex items-center justify-center">
                         <div
-                          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-sm transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
+                          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-2xs transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
                         >
                           {progress}%
                         </div>
@@ -163,19 +157,19 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
 
                       <button
                         type="button"
-                        className="p-1 rounded-lg text-slate-400 group-hover:text-slate-200 transition-colors"
+                        className="p-1 rounded-lg text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-colors"
                       >
-                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
                       </button>
                     </div>
                   </div>
 
                   {/* Expanded Drills Drawer */}
                   {isExpanded && (
-                    <div className="px-3.5 sm:px-5 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/60 space-y-3 animate-in fade-in duration-150">
-                      <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
+                    <div className="px-3.5 sm:px-5 pb-4 pt-2 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/90 dark:bg-slate-950/60 space-y-3 animate-in fade-in duration-150">
+                      <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                         <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                          <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                           Interactive Coding Drills for this Module:
                         </span>
                         <span className="text-[11px] font-mono text-slate-400">
@@ -202,7 +196,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                                   <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
                                     {drill.title}
                                   </span>
-                                  <span className="text-[10px] text-slate-400 font-mono block truncate">
+                                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block truncate">
                                     {gameName} • {drill.difficulty}
                                   </span>
                                 </div>

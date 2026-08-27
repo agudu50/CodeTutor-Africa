@@ -25,7 +25,11 @@ class CourseStoreService {
           c.modules?.[0]?.lessons?.[0]?.contentMarkdown?.includes('Welcome to Coding')
         )
 
-        if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent) {
+        const isClean0Percent = parsed.every((c: Course) =>
+          c.modules?.every((m: Module) => (m.progressPercentage ?? 0) === 0)
+        )
+
+        if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent && isClean0Percent) {
           this.courses = parsed
         } else {
           this.courses = [...MOCK_COURSES]

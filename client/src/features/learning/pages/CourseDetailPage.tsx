@@ -45,27 +45,27 @@ export const CourseDetailPage: React.FC = () => {
   }
 
   const getProgressColor = (percent: number) => {
-    if (percent >= 65) {
+    if (percent === 100) {
       return {
-        text: 'text-emerald-400',
-        ring: 'border-emerald-500 bg-emerald-950/40',
+        text: 'text-emerald-700 dark:text-emerald-400',
+        ring: 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40',
       }
     }
     if (percent >= 40) {
       return {
-        text: 'text-amber-400',
-        ring: 'border-amber-500 bg-amber-950/40',
+        text: 'text-amber-700 dark:text-amber-400',
+        ring: 'border-amber-500 bg-amber-50 dark:bg-amber-950/40',
       }
     }
     if (percent > 0) {
       return {
-        text: 'text-sky-400',
-        ring: 'border-sky-500 bg-sky-950/40',
+        text: 'text-sky-700 dark:text-sky-400',
+        ring: 'border-sky-500 bg-sky-50 dark:bg-sky-950/40',
       }
     }
     return {
-      text: 'text-slate-500 dark:text-slate-500',
-      ring: 'border-slate-700 bg-slate-900/60',
+      text: 'text-slate-600 dark:text-slate-400',
+      ring: 'border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/80',
     }
   }
 
@@ -101,9 +101,9 @@ export const CourseDetailPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          COURSE HERO CARD (Matching user screenshot)
+          COURSE HERO CARD (Crisp light & dark mode)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800/90 bg-white dark:bg-[#12161A] shadow-lg p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+      <div className="rounded-3xl border border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-[#12161A] shadow-xs sm:shadow-sm p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
         {/* Title and Remove Button Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
@@ -118,7 +118,7 @@ export const CourseDetailPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsDeleteModalOpen(true)}
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer shrink-0"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer shrink-0 shadow-2xs"
           >
             <span>Remove</span>
             <X className="w-3.5 h-3.5" />
@@ -132,16 +132,16 @@ export const CourseDetailPage: React.FC = () => {
 
         {/* Badges Row */}
         <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
             {course.difficulty}
           </span>
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700">
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
             {course.language}
           </span>
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700">
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
             WEB
           </span>
-          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700">
+          <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
             FRONTEND
           </span>
         </div>
@@ -166,7 +166,7 @@ export const CourseDetailPage: React.FC = () => {
       <div className="space-y-4 pt-2">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-emerald-500" />
+            <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               Modules in this course
             </h2>
@@ -195,7 +195,7 @@ export const CourseDetailPage: React.FC = () => {
                     className={`flex flex-col rounded-2xl border transition-all cursor-pointer overflow-hidden ${
                       isExpanded
                         ? 'bg-white dark:bg-[#12161A] border-emerald-500/80 ring-2 ring-emerald-500/20 shadow-md'
-                        : 'bg-white dark:bg-[#12161A] border-slate-200 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
+                        : 'bg-white dark:bg-[#12161A] border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/40 dark:hover:border-slate-700 shadow-2xs hover:shadow-xs'
                     }`}
                   >
                     {/* Module Item Header Row */}
@@ -204,7 +204,7 @@ export const CourseDetailPage: React.FC = () => {
                         {/* Circular Progress Badge */}
                         <div className="relative shrink-0 flex items-center justify-center">
                           <div
-                            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-sm transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
+                            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-2xs transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
                           >
                             {progress}%
                           </div>
@@ -235,7 +235,7 @@ export const CourseDetailPage: React.FC = () => {
 
                         <button
                           type="button"
-                          className="p-1 rounded-lg text-slate-400 group-hover:text-slate-200 transition-colors"
+                          className="p-1 rounded-lg text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-colors"
                         >
                           <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
                         </button>
@@ -244,10 +244,10 @@ export const CourseDetailPage: React.FC = () => {
 
                     {/* Expanded Lessons Drawer */}
                     {isExpanded && (
-                      <div className="px-4 sm:px-6 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/60 space-y-2.5 animate-in fade-in duration-150">
-                        <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
+                      <div className="px-4 sm:px-6 pb-4 pt-2 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/90 dark:bg-slate-950/60 space-y-2.5 animate-in fade-in duration-150">
+                        <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                           <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                            <BookOpen className="w-3.5 h-3.5 text-emerald-500" />
+                            <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                             Lessons in this module:
                           </span>
                         </div>
@@ -259,20 +259,20 @@ export const CourseDetailPage: React.FC = () => {
                               className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shadow-2xs hover:border-emerald-500/60 transition-colors"
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono text-[11px] font-bold shrink-0">
+                                <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px] font-bold shrink-0">
                                   {lIdx + 1}
                                 </div>
                                 <div className="min-w-0">
                                   <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
                                     {lesson.title}
                                   </span>
-                                  <span className="text-[10px] text-slate-400 font-mono flex items-center gap-2 mt-0.5">
+                                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-2 mt-0.5">
                                     <span className="flex items-center gap-1">
                                       <Clock className="w-3 h-3 text-amber-500" />
                                       {lesson.durationMinutes}m
                                     </span>
                                     {lesson.isCompleted && (
-                                      <span className="text-emerald-500 font-bold flex items-center gap-0.5">
+                                      <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-0.5">
                                         <CheckCircle2 className="w-3 h-3" /> Completed
                                       </span>
                                     )}

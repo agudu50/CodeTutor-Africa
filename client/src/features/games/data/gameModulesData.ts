@@ -20,7 +20,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-1',
       title: 'Your First Lines of Code',
       language: 'python',
-      defaultProgress: 50,
+      defaultProgress: 0,
       description: 'Master basic print outputs, python syntax conventions, and code structure.',
       drills: [
         { gameId: 'speedrun', title: 'Hello World & Print Formatting', difficulty: 'Beginner', estimatedMins: 2 },
@@ -32,7 +32,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-2',
       title: 'Storing Data with Variables',
       language: 'python',
-      defaultProgress: 67,
+      defaultProgress: 0,
       description: 'Variable declaration, memory assignment references, and snake_case conventions.',
       drills: [
         { gameId: 'speedrun', title: 'Variable Assignment & Reassignment', difficulty: 'Beginner', estimatedMins: 2 },
@@ -44,7 +44,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-3',
       title: 'Data Types: Strings, Numbers, and Booleans',
       language: 'python',
-      defaultProgress: 71,
+      defaultProgress: 0,
       description: 'Explore str, int, float, bool types and explicit type conversion.',
       drills: [
         { gameId: 'predictor', title: 'Type Casting & Arithmetic Evaluation', difficulty: 'Intermediate', estimatedMins: 2 },
@@ -56,7 +56,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-4',
       title: 'Arithmetic Operations',
       language: 'python',
-      defaultProgress: 50,
+      defaultProgress: 0,
       description: 'Addition, subtraction, floor division (//), modulo (%), and exponentiation (**).',
       drills: [
         { gameId: 'predictor', title: 'Operator Precedence & Modulo', difficulty: 'Intermediate', estimatedMins: 2 },
@@ -67,7 +67,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-5',
       title: 'Working with Strings',
       language: 'python',
-      defaultProgress: 57,
+      defaultProgress: 0,
       description: 'String slicing [start:end:step], f-strings, concatenation, and case manipulation.',
       drills: [
         { gameId: 'speedrun', title: 'F-string Template Formatting', difficulty: 'Beginner', estimatedMins: 2 },
@@ -101,7 +101,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-8',
       title: 'Logical Operators',
       language: 'python',
-      defaultProgress: 62,
+      defaultProgress: 0,
       description: 'Combining booleans with and, or, not and short-circuit evaluation.',
       drills: [
         { gameId: 'predictor', title: 'Short-Circuit Logic Predictions', difficulty: 'Intermediate', estimatedMins: 2 },
@@ -112,7 +112,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-9',
       title: 'Repeating with while Loops',
       language: 'python',
-      defaultProgress: 70,
+      defaultProgress: 0,
       description: 'Loop conditions, accumulator counters, break, and continue statements.',
       drills: [
         { gameId: 'bughunt', title: 'Infinite While Loop Trap', difficulty: 'Intermediate', estimatedMins: 3 },
@@ -124,7 +124,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-10',
       title: 'Introduction to Functions',
       language: 'python',
-      defaultProgress: 60,
+      defaultProgress: 0,
       description: 'Function definition (def), calling conventions, docstrings, and namespaces.',
       drills: [
         { gameId: 'speedrun', title: 'Function Signatures & Invocation', difficulty: 'Beginner', estimatedMins: 2 },
@@ -135,11 +135,11 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'py-mod-11',
       title: 'Function Parameters and Arguments',
       language: 'python',
-      defaultProgress: 50,
+      defaultProgress: 0,
       description: 'Positional arguments, keyword arguments, and mutable default arguments.',
       drills: [
-        { gameId: 'bughunt', title: 'Shared Mutable Default Argument', difficulty: 'Advanced', estimatedMins: 3 },
-        { gameId: 'speedrun', title: 'Keyword Arguments Call', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: 'predictor', title: 'Positional vs Keyword Precedence', difficulty: 'Intermediate', estimatedMins: 2 },
+        { gameId: 'bughunt', title: 'Mutable Default Argument Trap', difficulty: 'Intermediate', estimatedMins: 3 },
       ],
     },
     {
@@ -147,10 +147,10 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       title: 'Return Values from Functions',
       language: 'python',
       defaultProgress: 0,
-      description: 'Returning values, returning tuples, implicit None return values, and recursion.',
+      description: 'The return statement, implicit None return, and multiple tuple returns.',
       drills: [
-        { gameId: 'predictor', title: 'Missing Return Output Tracing', difficulty: 'Intermediate', estimatedMins: 2 },
-        { gameId: 'shuffle', title: 'Recursive Factorial Assembly', difficulty: 'Advanced', estimatedMins: 4 },
+        { gameId: 'speedrun', title: 'Tuple Return Unpacking', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: 'predictor', title: 'Implicit None Return Value', difficulty: 'Intermediate', estimatedMins: 2 },
       ],
     },
     {
@@ -158,21 +158,21 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       title: 'Creating Arrays & Lists',
       language: 'python',
       defaultProgress: 0,
-      description: 'List creation, zero-based indexing, list multiplying, and list comprehensions.',
+      description: 'List initialization, zero-based indexing, negative indexing, and nested lists.',
       drills: [
-        { gameId: 'speedrun', title: 'List Slicing & Cloning', difficulty: 'Beginner', estimatedMins: 2 },
-        { gameId: 'predictor', title: 'List Reference Mutation Prediction', difficulty: 'Intermediate', estimatedMins: 2 },
+        { gameId: 'speedrun', title: 'Negative Indexing Speedrun', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: 'bughunt', title: 'IndexError Out-Of-Range Trap', difficulty: 'Beginner', estimatedMins: 2 },
       ],
     },
     {
       id: 'py-mod-14',
-      title: 'Array Length and Basic Methods',
+      title: 'Array Length & Basic Methods',
       language: 'python',
       defaultProgress: 0,
-      description: 'len(), append(), pop(), insert(), remove(), and index lookups.',
+      description: 'len(), append(), pop(), insert(), remove(), and sort() list methods.',
       drills: [
-        { gameId: 'speedrun', title: 'List Methods Fast Typing', difficulty: 'Beginner', estimatedMins: 2 },
-        { gameId: 'bughunt', title: 'IndexError Off-By-One', difficulty: 'Intermediate', estimatedMins: 2 },
+        { gameId: 'speedrun', title: 'Append & Pop Stack Speedrun', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: 'predictor', title: 'In-Place vs Returning Sort', difficulty: 'Intermediate', estimatedMins: 2 },
       ],
     },
     {
@@ -180,21 +180,21 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       title: 'Looping Over Arrays',
       language: 'python',
       defaultProgress: 0,
-      description: 'For-in iteration, enumerate(), zip(), and filtering elements in list.',
+      description: 'For in loops, enumerate(), zip(), and list comprehensions.',
       drills: [
-        { gameId: 'shuffle', title: 'Filter & Sum List Elements', difficulty: 'Intermediate', estimatedMins: 3 },
-        { gameId: 'speedrun', title: 'Enumerate Item Index Loop', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: 'speedrun', title: 'Enumerate Index & Item Loop', difficulty: 'Intermediate', estimatedMins: 2 },
+        { gameId: 'shuffle', title: 'List Comprehension Filter Assembly', difficulty: 'Intermediate', estimatedMins: 3 },
       ],
     },
     {
       id: 'py-mod-16',
-      title: 'Creating Objects & Dictionaries',
+      title: 'Creating Dictionaries (Objects)',
       language: 'python',
       defaultProgress: 0,
-      description: 'Dictionary key-value mappings, access by key, and dict comprehension.',
+      description: 'Key-value pairs, get() default fallback, keys(), and values() methods.',
       drills: [
-        { gameId: 'predictor', title: 'Dictionary Key Lookup & Mutation', difficulty: 'Intermediate', estimatedMins: 2 },
-        { gameId: 'speedrun', title: 'Student Record Dictionary', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: 'predictor', title: 'KeyError vs .get() Fallback', difficulty: 'Intermediate', estimatedMins: 2 },
+        { gameId: 'speedrun', title: 'Dictionary Lookup & Mutation', difficulty: 'Beginner', estimatedMins: 2 },
       ],
     },
     {
@@ -216,7 +216,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'js-mod-1',
       title: 'Your First Lines of Code',
       language: 'javascript',
-      defaultProgress: 60,
+      defaultProgress: 0,
       description: 'console.log(), syntax semicolon rules, and browser devtools console.',
       drills: [
         { gameId: 'speedrun', title: 'Console Output & Interpolation', difficulty: 'Beginner', estimatedMins: 2 },
@@ -227,7 +227,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'js-mod-2',
       title: 'Storing Data with Variables',
       language: 'javascript',
-      defaultProgress: 50,
+      defaultProgress: 0,
       description: 'let vs const vs var, temporal dead zone, and block scoping.',
       drills: [
         { gameId: 'bughunt', title: 'Const Reassignment Error', difficulty: 'Beginner', estimatedMins: 2 },
@@ -349,7 +349,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       id: 'java-mod-1',
       title: 'Your First Lines of Code',
       language: 'java',
-      defaultProgress: 15,
+      defaultProgress: 0,
       description: 'Main method signature: public static void main(String[] args), System.out.println().',
       drills: [
         { gameId: 'speedrun', title: 'Main Method Boilerplate', difficulty: 'Beginner', estimatedMins: 3 },

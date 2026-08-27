@@ -26,7 +26,7 @@ const COMMON_18_MODULES: CourseModuleBlueprint[] = [
   {
     title: 'Your First Lines of Code',
     description: 'Write basic JavaScript statements and display results using console.log.',
-    progress: 50,
+    progress: 0,
     learningObjectives: [
       'Understand how computers follow instructions step-by-step',
       'Display messages and calculations on the screen using console.log()',
@@ -63,7 +63,7 @@ const COMMON_18_MODULES: CourseModuleBlueprint[] = [
         title: 'Printing to the Console and Syntax Basics',
         description: 'Write basic statements and display results using console output.',
         durationMinutes: 20,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=W6NZfCO5SIk',
         learningObjectives: [
           'Print your first message on the screen',
@@ -256,7 +256,7 @@ console.log("This line prints too!");
   {
     title: 'Storing Data with Variables',
     description: 'Understand memory allocations, variable assignments, naming conventions, and scopes.',
-    progress: 67,
+    progress: 0,
     learningObjectives: [
       'Learn why programs need to store information in memory',
       'Create labeled storage boxes using `let` and `const`',
@@ -288,7 +288,7 @@ console.log("This line prints too!");
         title: 'Declaring Variables and Memory Concepts',
         description: 'How variables reference values in RAM memory.',
         durationMinutes: 25,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Create your first variable',
@@ -384,7 +384,7 @@ const birthYear = 2004;
   {
     title: 'Data Types: Strings, Numbers, and Booleans',
     description: 'Primitive types, type checking, numerical limits, and truth values.',
-    progress: 71,
+    progress: 0,
     learningObjectives: [
       'Understand the 3 main types of data: Text (String), Numbers, and True/False (Boolean)',
       'Learn how the computer knows which type a value is',
@@ -415,7 +415,7 @@ const birthYear = 2004;
         title: 'Primitive Types (Numbers, Strings, Booleans)',
         description: 'Integer vs Float, text encoding, and Boolean true/false.',
         durationMinutes: 30,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Identify strings, numbers, and booleans',
@@ -479,7 +479,7 @@ const hasGraduated = false;
   {
     title: 'Arithmetic Operations',
     description: 'Addition, subtraction, multiplication, division, modulo (%), and precedence rules.',
-    progress: 50,
+    progress: 0,
     learningObjectives: [
       'Do basic math in code: +, -, *, /',
       'Learn the Modulo operator (%) to find remainders',
@@ -501,7 +501,7 @@ const hasGraduated = false;
         title: 'Basic Arithmetic and Modulo',
         description: 'Using mathematical operators and operator precedence (PEMDAS).',
         durationMinutes: 20,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Perform math operations in code',
@@ -555,7 +555,7 @@ The **Modulo** operator (\`%\`) gives you the **remainder** after dividing:
   {
     title: 'Working with Strings',
     description: 'String concatenation, template literals, indexing, slicing, and string utility methods.',
-    progress: 57,
+    progress: 0,
     learningObjectives: [
       'Combine text and variables smoothly using Template Literals',
       'Transform text to UPPERCASE or lowercase',
@@ -577,7 +577,7 @@ The **Modulo** operator (\`%\`) gives you the **remainder** after dividing:
         title: 'String Interpolation and Templates',
         description: 'Embedding variables directly into formatted text.',
         durationMinutes: 25,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Use backtick strings to build dynamic sentences',
@@ -790,7 +790,7 @@ if (score >= 90) {
   {
     title: 'Logical Operators',
     description: 'Combining conditional expressions with AND (&&), OR (||), and NOT (!).',
-    progress: 62,
+    progress: 0,
     learningObjectives: [
       'Combine multiple rules using AND (`&&`)',
       'Allow alternative options using OR (`||`)',
@@ -817,7 +817,7 @@ if (score >= 90) {
         title: 'Logical AND, OR, and NOT',
         description: 'Building multi-condition validation rules.',
         durationMinutes: 25,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Combine conditions for security rules and access gates',
@@ -872,7 +872,7 @@ if (isStudent || hasCoupon) {
   {
     title: 'Repeating with while Loops',
     description: 'Condition-controlled loops, loop termination, accumulator variables, and infinite loop safeguards.',
-    progress: 70,
+    progress: 0,
     learningObjectives: [
       'Automate repetitive tasks without typing code over and over',
       'Understand how `while` loops run until a condition stops them',
@@ -897,7 +897,7 @@ if (isStudent || hasCoupon) {
         title: 'While Loop Mechanics and Sentinel Values',
         description: 'Iterating while a condition holds true.',
         durationMinutes: 30,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Create your first repeating loop',
@@ -955,7 +955,7 @@ console.log("Race finished!");
   {
     title: 'Repeating with for Loops',
     description: 'Count-controlled loops, index iteration, ranges, and nested loop patterns.',
-    progress: 75,
+    progress: 0,
     learningObjectives: [
       'Write compact counting loops using `for (let i = 0; i < n; i++)`',
       'Count upwards, downwards, or skip numbers by 2s or 5s',
@@ -976,7 +976,7 @@ console.log("Race finished!");
         title: 'Standard For Loops and Ranges',
         description: 'Deterministic counting loops and sequence traversal.',
         durationMinutes: 30,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=edlFjlzxkSI',
         learningObjectives: [
           'Read and write standard 3-part for loops',
@@ -1022,7 +1022,7 @@ Everything is organized in one place! You cannot accidentally forget to incremen
   {
     title: 'Introduction to Functions',
     description: 'Defining reusable procedures, execution contexts, call stacks, and pure vs impure functions.',
-    progress: 60,
+    progress: 0,
     learningObjectives: [
       'Bundle reusable steps into a named function',
       'Call functions whenever you need that job done',
@@ -1044,7 +1044,7 @@ Everything is organized in one place! You cannot accidentally forget to incremen
         title: 'Defining and Calling Functions',
         description: 'Encapsulating repetitive tasks into named modular blocks.',
         durationMinutes: 30,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=N8ap4k_1QEQ',
         learningObjectives: [
           'Create and trigger reusable functions',
@@ -1096,7 +1096,7 @@ sendWelcomeEmail(); // You can reuse it 1,000 times!
   {
     title: 'Function Parameters and Arguments',
     description: 'Passing data into functions, positional vs keyword arguments, and default parameters.',
-    progress: 50,
+    progress: 0,
     learningObjectives: [
       'Pass custom inputs into functions so they can personalize their work',
       'Learn the difference between parameters (slots) and arguments (actual values)',
@@ -1118,7 +1118,7 @@ sendWelcomeEmail(); // You can reuse it 1,000 times!
         title: 'Parameters, Arguments, and Default Values',
         description: 'Configuring dynamic inputs and default fallbacks.',
         durationMinutes: 30,
-        isCompleted: true,
+        isCompleted: false,
         videoUrl: 'https://www.youtube.com/watch?v=N8ap4k_1QEQ',
         learningObjectives: [
           'Pass custom data into functions',
@@ -1635,7 +1635,7 @@ function generateCourseModules(courseId: string, language: string): Module[] {
           : les.description,
         durationMinutes: les.durationMinutes,
         order: lIdx + 1,
-        isCompleted: les.isCompleted,
+        isCompleted: false,
         videoUrl,
         quizQuestions: les.quizQuestions,
         learningObjectives: les.learningObjectives || objectives,
@@ -1651,7 +1651,7 @@ function generateCourseModules(courseId: string, language: string): Module[] {
       title: blueprint.title,
       description: moduleDesc,
       order: idx + 1,
-      progressPercentage: blueprint.progress,
+      progressPercentage: 0,
       learningObjectives: objectives,
       technicalTerms: terms,
       lessons,
@@ -1672,7 +1672,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 20,
-    progressPercentage: 42,
+    progressPercentage: 0,
     thumbnailUrl: '/images/courses/javascript_foundations.jpg',
     createdAt: '2026-01-15T00:00:00Z',
     modules: generateCourseModules('course-js-201', 'javascript'),
@@ -1689,7 +1689,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 22,
-    progressPercentage: 68,
+    progressPercentage: 0,
     thumbnailUrl: '/images/courses/python_basics.jpg',
     createdAt: '2026-01-10T00:00:00Z',
     modules: generateCourseModules('course-py-101', 'python'),
@@ -1706,7 +1706,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 26,
-    progressPercentage: 15,
+    progressPercentage: 0,
     thumbnailUrl: '/images/courses/java_oop.jpg',
     createdAt: '2026-01-20T00:00:00Z',
     modules: generateCourseModules('course-java-301', 'java'),
