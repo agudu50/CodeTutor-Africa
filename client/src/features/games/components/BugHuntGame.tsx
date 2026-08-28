@@ -19,7 +19,6 @@ import {
   Volume2,
   VolumeX,
   WifiOff,
-  BookOpen,
   ArrowLeft,
 } from 'lucide-react'
 
@@ -212,8 +211,8 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
 
   return (
     <div className="w-full space-y-4 sm:space-y-5">
-      {/* Game Header Bar (Fully Responsive on Mobile, Tablet & Desktop) */}
-      <div className="relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-sm space-y-2.5 sm:space-y-3">
+      {/* Game Header Bar (Sticky HUD: Time, Streak & Score always visible) */}
+      <div className="sticky top-2 z-30 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-md space-y-2.5 sm:space-y-3">
         {/* Top Control Bar */}
         <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
           {/* Back Button & Module Info */}
@@ -409,12 +408,12 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
           </div>
         </div>
       ) : (
-        /* ═══ PLAYING STATE — 2-Column Responsive Layout ═══ */
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* ── LEFT COLUMN: 3D Stage + Challenge Context ── */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
+        /* ═══ PLAYING STATE — 2-Column Responsive Layout (Tablet & Desktop) ═══ */
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5 items-start">
+          {/* ── LEFT COLUMN: 3D Stage + Challenge Context (Sticky on Tablet & Desktop) ── */}
+          <div className="md:col-span-5 lg:col-span-5 flex flex-col gap-3 md:sticky md:top-24 self-start">
             {/* 3D Interactive Animation Stage with HUD */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-44 sm:h-48 md:h-52 bg-slate-950">
               <GameAnimation3DRenderer
                 animationType={currentChallenge.animationType}
                 defaultForGame="bughunt"
@@ -427,7 +426,7 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
               />
 
               {/* 3D HUD Status Overlay */}
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3.5 pb-3 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3 pb-2.5 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
                 <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold">
                   <span className={`w-2 h-2 rounded-full animate-pulse ${
                     feedback?.isSuccess
@@ -454,37 +453,55 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
             </div>
 
             {/* Challenge Description & Context Card */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2.5 flex-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                    {currentChallenge.language} • Bug {challengeIndex + 1} of {activeChallenges.length}
-                  </span>
-                  <span className="text-[11px] font-extrabold text-rose-600 dark:text-rose-400">
-                    {!isLineConfirmed ? 'Step 1: Tap the buggy line' : 'Step 2: Pick the correct fix'}
-                  </span>
-                </div>
-
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                  {currentChallenge.title}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  {currentChallenge.description}
-                </p>
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2.5">
+              <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                  {currentChallenge.language} • Bug {challengeIndex + 1} of {activeChallenges.length}
+                </span>
+                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                  isLineConfirmed
+                    ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300'
+                    : 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300'
+                }`}>
+                  {!isLineConfirmed ? 'Step 1: Tap Buggy Line' : 'Step 2: Choose Fix'}
+                </span>
               </div>
 
-              {currentChallenge.courseTitle && (
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1 text-[10px] font-semibold text-slate-500">
-                  <BookOpen className="w-3 h-3 text-rose-500 shrink-0" />
-                  <span className="truncate">{currentChallenge.courseTitle}</span>
-                  {currentChallenge.lessonTitle && <span className="truncate">• {currentChallenge.lessonTitle}</span>}
-                </div>
-              )}
+              <div>
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white tracking-tight leading-snug">
+                  {currentChallenge.title}
+                </h3>
+                {currentChallenge.lessonTitle && (
+                  <p className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                    {currentChallenge.lessonTitle}
+                  </p>
+                )}
+              </div>
+
+              {/* Objective & Clue */}
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 space-y-1.5 text-xs">
+                <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                  <span className="font-bold text-slate-800 dark:text-slate-200">🎯 Objective: </span>
+                  {currentChallenge.description && !currentChallenge.description.startsWith('Spot and squash the bug in')
+                    ? currentChallenge.description
+                    : `Inspect the code on the right. Find the exact broken line and select the fix.`}
+                </p>
+                <p className="text-slate-500 dark:text-slate-400 text-[10.5px] leading-relaxed pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                  <span className="font-bold text-amber-600 dark:text-amber-400">💡 Hint: </span>
+                  {currentChallenge.title.toLowerCase().includes('quotation') || currentChallenge.title.toLowerCase().includes('parenthes')
+                    ? 'Check for unclosed string quotes ("..."), mismatched parenthesis (), or missing punctuation.'
+                    : currentChallenge.title.toLowerCase().includes('variable') || currentChallenge.title.toLowerCase().includes('name')
+                    ? 'Check for misspelled variable names, missing assignments, or referencing undefined identifiers.'
+                    : currentChallenge.title.toLowerCase().includes('type')
+                    ? 'Look for illegal operations between incompatible data types (e.g. adding strings to integers directly).'
+                    : 'Compare line syntax with standard language rules to spot broken statements.'}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* ── RIGHT COLUMN: Interactive Code Lines & Fix Selector ── */}
-          <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+          <div className="md:col-span-7 lg:col-span-7 flex flex-col justify-between gap-3">
             <div className="space-y-3">
               {/* VS Code Style Code Inspector Window */}
               <div className="rounded-2xl border-2 border-slate-700/80 overflow-hidden shadow-2xl bg-[#1e1e1e] flex flex-col text-slate-200">

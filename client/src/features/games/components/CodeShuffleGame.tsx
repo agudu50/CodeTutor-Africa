@@ -153,8 +153,8 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
 
   return (
     <div className="w-full space-y-4 sm:space-y-5">
-      {/* Game Header Bar (Fully Responsive on Mobile, Tablet & Desktop) */}
-      <div className="relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-sm space-y-2.5 sm:space-y-3">
+      {/* Game Header Bar (Sticky HUD: Time, Streak & Score always visible) */}
+      <div className="sticky top-2 z-30 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-md space-y-2.5 sm:space-y-3">
         {/* Top Control Bar */}
         <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
           {/* Back Button & Module Info */}
@@ -325,12 +325,12 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
           </div>
         </div>
       ) : (
-        /* ═══ PLAYING STATE — 2-Column Responsive Layout ═══ */
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* ── LEFT COLUMN: 3D Stage + Goal Context ── */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
+        /* ═══ PLAYING STATE — 2-Column Responsive Layout (Tablet & Desktop) ═══ */
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5 items-start">
+          {/* ── LEFT COLUMN: 3D Stage + Goal Context (Sticky on Tablet & Desktop) ── */}
+          <div className="md:col-span-5 lg:col-span-5 flex flex-col gap-3 md:sticky md:top-24 self-start">
             {/* 3D Algorithm Blocks Visualizer with HUD */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-44 sm:h-48 md:h-52 bg-slate-950">
               <GameAnimation3DRenderer
                 animationType={currentChallenge.animationType}
                 defaultForGame="shuffle"
@@ -339,7 +339,7 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
               />
 
               {/* HUD Overlay */}
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3.5 pb-3 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3 pb-2.5 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
                 <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold">
                   <span className={`w-2 h-2 rounded-full animate-pulse ${
                     feedback?.isSuccess
@@ -364,27 +364,27 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
             </div>
 
             {/* Goal & Target Output Card */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2.5 flex-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                    {currentChallenge.language} • Puzzle {challengeIndex + 1} of {activeChallenges.length}
-                  </span>
-                  <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                    Target: {currentChallenge.expectedOutput}
-                  </span>
-                </div>
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2">
+              <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                  {currentChallenge.language} • Puzzle {challengeIndex + 1} of {activeChallenges.length}
+                </span>
+                <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                  Target: {currentChallenge.expectedOutput}
+                </span>
+              </div>
 
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+              <div>
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white tracking-tight leading-snug">
                   {currentChallenge.title}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mt-0.5">
                   {currentChallenge.goalDescription}
                 </p>
               </div>
 
               {currentChallenge.courseTitle && (
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1 text-[10px] font-semibold text-slate-500">
+                <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1 text-[10px] font-semibold text-slate-500">
                   <BookOpen className="w-3 h-3 text-emerald-500 shrink-0" />
                   <span className="truncate">{currentChallenge.courseTitle}</span>
                   {currentChallenge.lessonTitle && <span className="truncate">• {currentChallenge.lessonTitle}</span>}
@@ -394,7 +394,7 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
           </div>
 
           {/* ── RIGHT COLUMN: Reorderable Code Blocks ── */}
-          <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+          <div className="md:col-span-7 lg:col-span-7 flex flex-col justify-between gap-3">
             <div className="space-y-3">
               {/* VS Code Style Reorderable Blocks Arena */}
               <div className="rounded-2xl border-2 border-slate-700/80 overflow-hidden shadow-2xl bg-[#1e1e1e] flex flex-col text-slate-200">

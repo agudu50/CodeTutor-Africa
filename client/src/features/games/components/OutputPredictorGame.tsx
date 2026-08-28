@@ -187,8 +187,8 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
 
   return (
     <div className="w-full space-y-4 sm:space-y-5">
-      {/* Game Header Bar (Fully Responsive on Mobile, Tablet & Desktop) */}
-      <div className="relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-sm space-y-2.5 sm:space-y-3">
+      {/* Game Header Bar (Sticky HUD: Time, Streak & Score always visible) */}
+      <div className="sticky top-2 z-30 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-md space-y-2.5 sm:space-y-3">
         {/* Top Control Bar */}
         <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
           {/* Back Button & Module Info */}
@@ -389,12 +389,12 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
           </div>
         </div>
       ) : (
-        /* ═══ PLAYING STATE — 2-Column Responsive Layout ═══ */
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* ── LEFT COLUMN: 3D Stage + Target Code ── */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
+        /* ═══ PLAYING STATE — 2-Column Responsive Layout (Tablet & Desktop) ═══ */
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5 items-start">
+          {/* ── LEFT COLUMN: 3D Stage + Target Code (Sticky on Tablet & Desktop) ── */}
+          <div className="md:col-span-5 lg:col-span-5 flex flex-col gap-3 md:sticky md:top-24 self-start">
             {/* 3D Data Flow Visualizer with HUD */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-44 sm:h-48 md:h-52 bg-slate-950">
               <GameAnimation3DRenderer
                 animationType={currentChallenge.animationType}
                 defaultForGame="predictor"
@@ -405,7 +405,7 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
               />
 
               {/* HUD Overlay */}
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3.5 pb-3 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3 pb-2.5 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
                 <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold">
                   <span className={`w-2 h-2 rounded-full animate-pulse ${
                     feedback?.isSuccess
@@ -452,7 +452,7 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
           </div>
 
           {/* ── RIGHT COLUMN: Prediction Options & Verification ── */}
-          <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+          <div className="md:col-span-7 lg:col-span-7 flex flex-col justify-between gap-3">
             <div className="space-y-3">
               {/* Question Header */}
               <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1.5">

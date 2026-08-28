@@ -698,7 +698,7 @@ export const CURRICULUM_BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     "lessonTitle": "Module 1: Your First Lines of Code",
     "language": "python",
     "title": "Quotation & Parentheses Bugs",
-    "description": "Spot and squash the bug in Module 1: Your First Lines of Code.",
+    "description": "Inspect the print statements below. A string literal is missing its closing double quotation mark before the parenthesis, causing a SyntaxError. Identify the broken line and select the fix.",
     "lines": [
       "# Print message with quotation",
       "print(\"Welcome to CodeTutor Africa!)",
@@ -729,7 +729,7 @@ export const CURRICULUM_BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     "lessonTitle": "Module 2: Storing Data with Variables",
     "language": "python",
     "title": "Undefined Variable Reference Hunt",
-    "description": "Spot and squash the bug in Module 2: Storing Data with Variables.",
+    "description": "A variable contains a spelling typo during arithmetic addition, causing Python to raise a NameError. Find the line with the undefined identifier.",
     "lines": [
       "total_score = 100",
       "bonus = 15",
@@ -761,7 +761,7 @@ export const CURRICULUM_BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     "lessonTitle": "Module 3: Data Types: Strings, Numbers, and Booleans",
     "language": "python",
     "title": "String Concatenation with Numbers",
-    "description": "Spot and squash the bug in Module 3: Data Types: Strings, Numbers, and Booleans.",
+    "description": "Attempting to concatenate an integer directly with a string using '+' raises a TypeError in Python. Identify the broken type conversion statement.",
     "lines": [
       "age = 20",
       "message = \"User is \" + age + \" years old\"",

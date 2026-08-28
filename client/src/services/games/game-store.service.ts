@@ -62,9 +62,17 @@ class GameStoreService {
 
       if (bh) {
         const parsed = JSON.parse(bh)
-        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const canonicalMap = new Map(BUG_HUNT_CHALLENGES.map((b) => [b.title?.toLowerCase(), b]))
+        const refreshed = parsed.map((p: any) => {
+          const canonical = canonicalMap.get(p.title?.toLowerCase())
+          if (canonical && (!p.description || p.description.startsWith('Spot and squash the bug in'))) {
+            return { ...p, description: canonical.description, bugExplanation: canonical.bugExplanation || p.bugExplanation }
+          }
+          return p
+        })
+        const existingTitles = new Set(refreshed.map((p: any) => p.title?.toLowerCase()))
         const missing = BUG_HUNT_CHALLENGES.filter((b) => !existingTitles.has(b.title?.toLowerCase()))
-        this.bughunt = [...parsed, ...missing]
+        this.bughunt = [...refreshed, ...missing]
       } else {
         this.bughunt = [...BUG_HUNT_CHALLENGES]
       }
