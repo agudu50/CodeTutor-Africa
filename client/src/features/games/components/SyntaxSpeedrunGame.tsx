@@ -6,6 +6,7 @@ import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
 import { CyberRacer3D } from './3d/CyberRacer3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
+import { WarpSpeed3D } from './3d/WarpSpeed3D'
 import { Button } from '@/components/ui'
 import {
   Timer,
@@ -19,8 +20,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Code2,
-  Copy,
-  Check,
   ChevronRight,
   ArrowLeft,
 } from 'lucide-react'
@@ -76,7 +75,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   const [accuracy, setAccuracy] = useState(100)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
   const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 })
-  const [copiedTarget, setCopiedTarget] = useState(false)
+  const [pasteWarning, setPasteWarning] = useState(false)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const gutterRef = useRef<HTMLDivElement>(null)
@@ -90,6 +90,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     setIsPlaying(false)
     setIsGameOver(false)
     setStreak(0)
+    setValidationError(null)
+    setPasteWarning(false)
   }
 
   const handleToggleSound = () => {
@@ -101,6 +103,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     setIsPlaying(true)
     setIsGameOver(false)
     setUserInput('')
+    setValidationError(null)
+    setPasteWarning(false)
     setTimeLeft(currentSnippet.timeLimitSecs)
     startTimeRef.current = Date.now()
     gameSound.playSuccess()
@@ -118,24 +122,21 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
   // Timer loop
   useEffect(() => {
-    if (isPlaying && !isGameOver) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            handleTimeUp()
-            return 0
-          }
-          if (prev <= 6) {
-            gameSound.playTick()
-          }
-          return prev - 1
-        })
-      }, 1000)
-    }
+    if (!isPlaying || isGameOver) return
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev: number) => {
+        if (prev <= 1) {
+          handleTimeUp()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [isPlaying, isGameOver])
+  }, [isPlaying, isGameOver, snippetIndex])
 
   const handleTimeUp = () => {
     if (timerRef.current) clearInterval(timerRef.current)
@@ -166,6 +167,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     if (!isPlaying || isGameOver) return
     const value = e.target.value
     setUserInput(value)
+    if (validationError) setValidationError(null)
     gameSound.playKeyStroke()
 
     // Calculate real-time accuracy and WPM
@@ -182,11 +184,12 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     if (elapsedMins > 0) {
       setWpm(Math.round(wordsTyped / elapsedMins))
     }
+  }
 
-    // Check completion if exact match
-    if (value === targetCode) {
-      handleSnippetComplete()
-    }
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    e.preventDefault()
+    setPasteWarning(true)
+    setTimeout(() => setPasteWarning(false), 3500)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -204,7 +207,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         }
       }, 0)
     } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-      // Ctrl+Enter or Cmd+Enter submits
+      // Ctrl+Enter or Cmd+Enter submits and validates
       e.preventDefault()
       handleSubmitCode()
     }
@@ -226,16 +229,18 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
       gameSound.playSuccess()
     }
 
-    if (snippetIndex + 1 < activeSnippets.length) {
+    // If played from a specific drill, complete the drill and show summary!
+    if (initialChallengeTitle || snippetIndex + 1 >= activeSnippets.length) {
+      setIsGameOver(true)
+      setIsPlaying(false)
+    } else {
       setSnippetIndex((prev: number) => prev + 1)
       const nextSnippet = activeSnippets[snippetIndex + 1]
       setUserInput('')
+      setValidationError(null)
       setTimeLeft(nextSnippet.timeLimitSecs)
       startTimeRef.current = Date.now()
       setTimeout(() => inputRef.current?.focus(), 80)
-    } else {
-      setIsGameOver(true)
-      setIsPlaying(false)
     }
   }
 
@@ -243,35 +248,13 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     if (!isPlaying || isGameOver) return
     const targetCode = currentSnippet.code.trim()
     const submittedCode = userInput.trim()
+
     if (submittedCode === targetCode) {
       handleSnippetComplete()
     } else {
-      // Partial submit - penalise but move on with reduced score
-      if (timerRef.current) clearInterval(timerRef.current)
-      const partialBonus = Math.round(accuracy * 0.5)
-      const newScore = score + partialBonus
-      setScore(newScore)
-      onScoreUpdate(newScore)
-      gameSound.playGameOver()
-      if (snippetIndex + 1 < activeSnippets.length) {
-        setSnippetIndex((prev: number) => prev + 1)
-        const nextSnippet = activeSnippets[snippetIndex + 1]
-        setUserInput('')
-        setTimeLeft(nextSnippet.timeLimitSecs)
-        startTimeRef.current = Date.now()
-        setIsPlaying(true)
-        setTimeout(() => inputRef.current?.focus(), 80)
-      } else {
-        setIsGameOver(true)
-        setIsPlaying(false)
-      }
+      setValidationError("Code does not match target syntax. Review line spacing, quotes, or keywords and try again!")
+      gameSound.playError()
     }
-  }
-
-  const handleCopyTarget = () => {
-    navigator.clipboard?.writeText(currentSnippet.code)
-    setCopiedTarget(true)
-    setTimeout(() => setCopiedTarget(false), 2000)
   }
 
   const isCodeComplete = userInput.trim() === currentSnippet?.code.trim()
@@ -403,18 +386,22 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
       {/* Main Game Surface */}
       {!isPlaying && !isGameOver ? (
-        <div className="p-8 sm:p-14 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto border border-amber-500/20 shadow-inner">
-            <Zap className="w-8 h-8" />
+        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-slate-950 border border-slate-800 shadow-xl space-y-4">
+          <div className="relative h-44 sm:h-52 rounded-2xl overflow-hidden shadow-inner ring-1 ring-slate-800">
+            <WarpSpeed3D />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/40 shadow-lg backdrop-blur-sm mb-2">
+                <Zap className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Ready for the Speedrun?</h2>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed mt-1">
+                Type the exact code snippets in the VS Code editor as fast and accurately as you can before time expires.
+              </p>
+            </div>
           </div>
-          <div className="max-w-md mx-auto space-y-1.5">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Ready for the Speedrun?</h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Type the exact code snippets in the VS Code editor as fast and accurately as you can before time expires.
-            </p>
-          </div>
-          <div className="pt-2">
-            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs">
+          <div className="pt-1">
+            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-[#005F02] hover:bg-[#004e02] text-white shadow-lg scale-105 transition-transform">
               Start Speedrun Blitz
             </Button>
           </div>
@@ -599,19 +586,13 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
                   <div className="flex items-center gap-2 truncate">
                     <span className="text-[11px] font-mono text-slate-300 font-semibold truncate">
-                      target.{fileExtension} (Snippet {snippetIndex + 1}/{activeSnippets.length})
+                      target.{fileExtension} {initialChallengeTitle ? '(Target Reference)' : `(Snippet ${snippetIndex + 1}/${activeSnippets.length})`}
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleCopyTarget}
-                    className="h-6 px-2 text-[10px] font-mono text-slate-400 hover:text-slate-200 hover:bg-[#333333] rounded transition-colors flex items-center gap-1 cursor-pointer"
-                    title="Copy target snippet"
-                  >
-                    {copiedTarget ? <Check className="w-3 h-3 text-[#005F02]" /> : <Copy className="w-3 h-3" />}
-                    <span className="hidden sm:inline">{copiedTarget ? 'Copied' : 'Copy'}</span>
-                  </button>
+                  <div className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono text-slate-400 flex items-center gap-1 select-none">
+                    <span>Manual Typing</span>
+                  </div>
                 </div>
 
                 {/* File Tab Bar */}
@@ -645,7 +626,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                     ))}
                   </div>
                   {/* Syntax Highlighted Target Code */}
-                  <div className="p-3 flex-1 font-mono text-xs sm:text-[13px] leading-6 overflow-x-auto select-all">
+                  <div className="p-3 flex-1 font-mono text-xs sm:text-[13px] leading-6 overflow-x-auto select-none">
                     {renderVSCodeSyntax(currentSnippet.code)}
                   </div>
                 </div>
@@ -723,6 +704,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                       e.stopPropagation()
                       setUserInput('')
                       setAccuracy(100)
+                      setValidationError(null)
                       setTimeout(() => inputRef.current?.focus(), 50)
                     }}
                     className="h-6 px-2 text-[10px] font-mono text-slate-400 hover:text-slate-200 hover:bg-[#333333] rounded transition-colors flex items-center gap-1 cursor-pointer"
@@ -732,6 +714,22 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                     <span className="hidden sm:inline">Clear</span>
                   </button>
                 </div>
+
+                {/* Paste warning banner */}
+                {pasteWarning && (
+                  <div className="m-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
+                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span><strong>Pasting is disabled in Speedrun!</strong> Type the snippet manually to build muscle memory.</span>
+                  </div>
+                )}
+
+                {/* Validation error banner */}
+                {validationError && (
+                  <div className="m-2.5 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
+                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                    <span>{validationError}</span>
+                  </div>
+                )}
 
                 {/* File Tab Bar & Breadcrumbs */}
                 <div className="h-8 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0 select-none">
@@ -767,12 +765,13 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                     ))}
                   </div>
 
-                  {/* Direct Native VS Code Styled Textarea */}
+                  {/* Direct Native VS Code Styled Textarea with Paste Protection */}
                   <div className="flex-1 min-w-0 h-full relative">
                     <textarea
                       ref={inputRef}
                       value={userInput}
                       onChange={handleInputChange}
+                      onPaste={handlePaste}
                       onKeyDown={handleKeyDown}
                       onKeyUp={updateCursorPosition}
                       onClick={updateCursorPosition}
@@ -781,7 +780,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                       autoCapitalize="off"
                       autoComplete="off"
                       autoCorrect="off"
-                      placeholder={`// Type the target code here (e.g. ${currentSnippet.code.split('\n')[0]})...\n// Press Enter for new lines, click Submit Code when done!`}
+                      placeholder={`// Type the target code here (e.g. ${currentSnippet.code.split('\n')[0]})...\n// Press Enter for new lines, click Submit & Validate Code when finished!`}
                       className="w-full h-full min-h-[220px] sm:min-h-[260px] p-3 bg-transparent text-emerald-300 caret-white font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 placeholder:italic whitespace-pre selection:bg-emerald-800/50"
                       style={{ tabSize: 4 }}
                     />
@@ -808,7 +807,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                   <div className="flex items-center gap-2">
                     {isCodeComplete ? (
                       <span className="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Ready to submit
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> 100% Match
                       </span>
                     ) : null}
 
@@ -826,7 +825,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                       }`}
                     >
                       <Zap className="w-3.5 h-3.5" />
-                      <span>Submit Code</span>
+                      <span>Validate & Submit</span>
                     </button>
                   </div>
                 </div>

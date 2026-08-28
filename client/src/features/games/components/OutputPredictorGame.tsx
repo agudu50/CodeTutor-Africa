@@ -168,13 +168,13 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
     setFeedback(null)
     setSelectedOption(null)
 
-    if (challengeIndex + 1 < activeChallenges.length) {
+    if (initialChallengeTitle || challengeIndex + 1 >= activeChallenges.length) {
+      setIsGameOver(true)
+      setIsPlaying(false)
+    } else {
       setChallengeIndex((prev: number) => prev + 1)
       const nextChallenge = activeChallenges[challengeIndex + 1]
       setTimeLeft(nextChallenge.timeLimitSecs)
-    } else {
-      setIsGameOver(true)
-      setIsPlaying(false)
     }
   }
 
@@ -292,18 +292,27 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
 
       {/* Main Game State */}
       {!isPlaying && !isGameOver ? (
-        <div className="p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mx-auto">
-            <HelpCircle className="w-8 h-8" />
+        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-slate-950 border border-slate-800 shadow-xl space-y-4">
+          <div className="relative h-44 sm:h-52 rounded-2xl overflow-hidden shadow-inner ring-1 ring-slate-800">
+            <MemoryStackFlow3D
+              selectedOptionIndex={null}
+              correctIndex={0}
+              isAnswered={false}
+              isCorrect={false}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/40 shadow-lg backdrop-blur-sm mb-2">
+                <HelpCircle className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Predict the Output!</h2>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed mt-1">
+                Read each tricky snippet and choose what will be printed to the console before time runs out.
+              </p>
+            </div>
           </div>
-          <div className="max-w-md mx-auto space-y-1">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Predict the Output!</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Read each tricky snippet and choose what will be printed to the console before time runs out.
-            </p>
-          </div>
-          <div className="pt-2">
-            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-indigo-600 hover:bg-indigo-700">
+          <div className="pt-1">
+            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg scale-105 transition-transform">
               Start Challenge
             </Button>
           </div>

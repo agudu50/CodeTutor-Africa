@@ -5,6 +5,7 @@ import { gameSound } from '../services/gameSound.service'
 import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
 import { CircuitBugScanner3D } from './3d/CircuitBugScanner3D'
+import { HologramBug3D } from './3d/HologramBug3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
 import {
@@ -192,13 +193,13 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
     setSelectedLineIndex(null)
     setIsLineConfirmed(false)
 
-    if (challengeIndex + 1 < activeChallenges.length) {
+    if (initialChallengeTitle || challengeIndex + 1 >= activeChallenges.length) {
+      setIsGameOver(true)
+      setIsPlaying(false)
+    } else {
       setChallengeIndex((prev: number) => prev + 1)
       const nextChallenge = activeChallenges[challengeIndex + 1]
       setTimeLeft(nextChallenge.timeLimitSecs)
-    } else {
-      setIsGameOver(true)
-      setIsPlaying(false)
     }
   }
 
@@ -316,18 +317,22 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
 
       {/* Main Game Surface */}
       {!isPlaying && !isGameOver ? (
-        <div className="p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto">
-            <Bug className="w-8 h-8" />
+        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-slate-950 border border-slate-800 shadow-xl space-y-4">
+          <div className="relative h-44 sm:h-52 rounded-2xl overflow-hidden shadow-inner ring-1 ring-slate-800">
+            <HologramBug3D />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center border border-rose-500/40 shadow-lg backdrop-blur-sm mb-2">
+                <Bug className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Ready to Hunt Bugs?</h2>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed mt-1">
+                Inspect the code, tap the line with the bug, and select the correct fix before time expires!
+              </p>
+            </div>
           </div>
-          <div className="max-w-md mx-auto space-y-1">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Ready to Hunt Bugs?</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Inspect the code, tap the line with the bug, and select the correct fix before time expires!
-            </p>
-          </div>
-          <div className="pt-2">
-            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-rose-600 hover:bg-rose-700">
+          <div className="pt-1">
+            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-rose-600 hover:bg-rose-700 text-white shadow-lg scale-105 transition-transform">
               Start Bug Hunt
             </Button>
           </div>
