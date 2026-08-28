@@ -18,14 +18,23 @@ import {
   Gamepad2,
   ChevronRight,
   Cpu,
+  Edit3,
+  Eye,
+  Trash2,
+  Copy,
+  Check,
 } from 'lucide-react'
 import { ProgrammingLanguage, DebugResult } from '@/types'
+import { renderVSCodeSyntax, renderTerminalStackTrace } from '@/utils/syntaxHighlight'
 
 export const DebuggerPage: React.FC = () => {
   const [language, setLanguage] = useState<ProgrammingLanguage>('javascript')
   const [code, setCode] = useState(SAMPLE_BUGGY_SNIPPETS.javascript)
   const [errorMessage, setErrorMessage] = useState(SAMPLE_ERROR_MESSAGES.javascript)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [activeEditorTab, setActiveEditorTab] = useState<'editor' | 'preview'>('editor')
+  const [activeTerminalTab, setActiveTerminalTab] = useState<'terminal' | 'edit'>('terminal')
+  const [terminalCopied, setTerminalCopied] = useState(false)
   const [debugResult, setDebugResult] = useState<DebugResult | null>(
     MOCK_DEBUG_RESULTS_BY_LANGUAGE.javascript
   )
@@ -42,6 +51,16 @@ export const DebuggerPage: React.FC = () => {
 
   const handleSelectPreset = (presetLang: ProgrammingLanguage) => {
     handleLanguageChange(presetLang)
+  }
+
+  const handleCopyTerminal = async () => {
+    try {
+      await navigator.clipboard.writeText(errorMessage)
+      setTerminalCopied(true)
+      setTimeout(() => setTerminalCopied(false), 2000)
+    } catch {
+      // ignore
+    }
   }
 
   const handleAnalyze = async () => {
@@ -84,6 +103,7 @@ export const DebuggerPage: React.FC = () => {
 
   const lineCount = code.split('\n').length
   const fileExt = language === 'python' ? 'py' : language === 'javascript' ? 'js' : 'java'
+  const commandPrompt = language === 'python' ? '$ python3 bug_sample.py' : language === 'javascript' ? '$ node bug_sample.js' : '$ javac Main.java && java Main'
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
@@ -201,7 +221,7 @@ export const DebuggerPage: React.FC = () => {
         </div>
 
         {/* IDE Split Body (Activity Bar + Code Editor + Integrated Terminal) */}
-        <div className="flex flex-1 min-h-[360px] overflow-hidden">
+        <div className="flex flex-1 min-h-[380px] overflow-hidden">
           {/* Left: Activity Bar */}
           <div className="w-10 bg-[#181818] border-r border-[#2D2D2D] flex flex-col items-center justify-between py-2 shrink-0 text-slate-400">
             <div className="flex flex-col items-center gap-3 w-full">
@@ -236,8 +256,35 @@ export const DebuggerPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="text-[10px] font-mono text-slate-500 pr-2">
-                <span>{lineCount} lines</span>
+              {/* Editor View Modes (Editable vs Syntax Highlighted) */}
+              <div className="flex items-center gap-2 pr-2">
+                <div className="flex items-center rounded-lg bg-[#252526] p-0.5 border border-[#333333]">
+                  <button
+                    type="button"
+                    onClick={() => setActiveEditorTab('editor')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                      activeEditorTab === 'editor'
+                        ? 'bg-[#005F02] text-white shadow-xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Edit3 className="w-3 h-3" />
+                    <span>Editor</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveEditorTab('preview')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                      activeEditorTab === 'preview'
+                        ? 'bg-[#005F02] text-white shadow-xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>Syntax View</span>
+                  </button>
+                </div>
+                <span className="text-[10px] font-mono text-slate-500">{lineCount} lines</span>
               </div>
             </div>
 
@@ -250,8 +297,8 @@ export const DebuggerPage: React.FC = () => {
               <span className="text-slate-300 font-semibold">bug_sample.{fileExt}</span>
             </div>
 
-            {/* Editor Canvas (Gutter + Textarea) */}
-            <div className="flex-1 min-h-[160px] flex overflow-hidden relative bg-[#1E1E1E]">
+            {/* Editor Canvas (Gutter + Code) */}
+            <div className="flex-1 min-h-[180px] flex overflow-hidden relative bg-[#1E1E1E]">
               {/* Line Numbers Gutter */}
               <div className="w-9 sm:w-11 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 sm:pr-2.5 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
                 {Array.from({ length: Math.max(lineCount, 8) }).map((_, i) => (
@@ -259,43 +306,104 @@ export const DebuggerPage: React.FC = () => {
                 ))}
               </div>
 
-              <textarea
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                spellCheck={false}
-                className="flex-1 p-3 bg-transparent text-[#D4D4D4] font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre overflow-y-auto selection:bg-[#005F02]/40"
-                placeholder="// Paste your buggy code snippet here..."
-              />
+              {activeEditorTab === 'editor' ? (
+                <textarea
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  spellCheck={false}
+                  className="flex-1 p-3 bg-transparent text-[#D4D4D4] font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre overflow-y-auto selection:bg-[#005F02]/40"
+                  placeholder="// Paste your buggy code snippet here..."
+                />
+              ) : (
+                <div className="flex-1 p-3 font-mono text-xs sm:text-[13px] leading-6 overflow-auto select-none bg-[#1E1E1E]">
+                  {renderVSCodeSyntax(code || '// No code')}
+                </div>
+              )}
             </div>
 
             {/* ═══════════════════════════════════════════════════════════
-                INTEGRATED VS CODE TERMINAL (FOR RUNTIME STACK TRACES)
+                INTEGRATED VS CODE COLORIZED TERMINAL & STACK TRACE
                 ═══════════════════════════════════════════════════════════ */}
-            <div className="border-t border-[#2D2D2D] bg-[#181818] flex flex-col shrink-0">
-              <div className="h-7 px-3 bg-[#1F1F1F] border-b border-[#282828] flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <div className="border-t border-[#2D2D2D] bg-[#141414] flex flex-col shrink-0">
+              <div className="h-8 px-3 bg-[#1F1F1F] border-b border-[#282828] flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <div className="flex items-center gap-3">
                   <span className="text-white font-bold flex items-center gap-1.5 border-b-2 border-[#005F02] pb-0.5">
-                    <Terminal className="w-3 h-3 text-[#005F02]" />
+                    <Terminal className="w-3.5 h-3.5 text-emerald-400" />
                     <span>TERMINAL / STACK TRACE</span>
                   </span>
-                  <span className="text-slate-500 text-[10px]">DEBUG CONSOLE</span>
-                  <span className="text-slate-500 text-[10px]">OUTPUT</span>
+                  <span className="text-slate-500 text-[10px] hidden sm:inline">DEBUG CONSOLE</span>
+                  <span className="text-slate-500 text-[10px] hidden sm:inline">OUTPUT</span>
                 </div>
 
-                <span className="text-[10px] font-mono text-slate-400">
-                  Optional Crash Log
-                </span>
+                {/* Terminal Mode & Action Controls */}
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center rounded-lg bg-[#252526] p-0.5 border border-[#333333]">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTerminalTab('terminal')}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                        activeTerminalTab === 'terminal'
+                          ? 'bg-[#005F02] text-white shadow-xs'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <span>Colorized</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTerminalTab('edit')}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                        activeTerminalTab === 'edit'
+                          ? 'bg-[#005F02] text-white shadow-xs'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Edit3 className="w-3 h-3" />
+                      <span>Edit Raw</span>
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleCopyTerminal}
+                    className="p-1 rounded text-slate-400 hover:text-white hover:bg-[#333333] transition-colors cursor-pointer"
+                    title="Copy terminal error log"
+                  >
+                    {terminalCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setErrorMessage('')}
+                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-[#333333] transition-colors cursor-pointer"
+                    title="Clear terminal"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="p-3 bg-[#181818]">
-                <textarea
-                  value={errorMessage}
-                  onChange={(e) => setErrorMessage(e.target.value)}
-                  rows={3}
-                  spellCheck={false}
-                  className="w-full bg-transparent font-mono text-xs text-rose-400 placeholder:text-slate-600 focus:outline-none leading-relaxed resize-none selection:bg-rose-900/50"
-                  placeholder="Paste terminal error message or stack trace (e.g., TypeError, NullPointerException, IndexError)..."
-                />
+              {/* Colorized Terminal Output Canvas */}
+              <div className="p-3.5 bg-[#121212] font-mono text-xs max-h-48 overflow-y-auto leading-relaxed border-b border-[#202020]">
+                {/* Simulated Terminal Command Invocation */}
+                <div className="flex items-center gap-2 text-slate-400 font-bold mb-2 pb-1.5 border-b border-[#252526] text-[11.5px]">
+                  <span className="text-emerald-400 font-bold">{commandPrompt}</span>
+                  <span className="w-2 h-3 bg-emerald-400/80 animate-pulse inline-block" />
+                </div>
+
+                {activeTerminalTab === 'terminal' ? (
+                  <div className="text-xs overflow-x-auto space-y-0.5 select-text">
+                    {renderTerminalStackTrace(errorMessage)}
+                  </div>
+                ) : (
+                  <textarea
+                    value={errorMessage}
+                    onChange={(e) => setErrorMessage(e.target.value)}
+                    rows={4}
+                    spellCheck={false}
+                    className="w-full bg-transparent font-mono text-xs text-rose-300 placeholder:text-slate-600 focus:outline-none leading-relaxed resize-none selection:bg-rose-900/50"
+                    placeholder="Paste terminal error message or stack trace (e.g., TypeError, NullPointerException, IndexError)..."
+                  />
+                )}
               </div>
             </div>
           </div>

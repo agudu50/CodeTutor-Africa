@@ -142,3 +142,87 @@ export function renderVSCodeSyntax(code: string): React.ReactNode {
     )
   })
 }
+
+/**
+ * Colorizes terminal error messages and stack traces with ANSI-like colors:
+ * - Error Names & Exceptions: Bold Rose/Red
+ * - Function Calls / Frames: Amber/Gold
+ * - File Paths & Lines: Cyan/Teal
+ * - Command Prompts: Emerald
+ */
+export function renderTerminalStackTrace(text: string): React.ReactNode {
+  if (!text) return <span className="text-slate-500 italic">// No crash log or stack trace provided</span>
+  const lines = text.split('\n')
+
+  return lines.map((line, idx) => {
+    // 1. Traceback header / file line (e.g., File "main.py", line 4, in <module>)
+    const fileLineMatch = line.match(/^(\s*)(File\s+"[^"]+",\s+line\s+\d+)(.*)$/)
+    if (fileLineMatch) {
+      return (
+        <div key={idx} className="leading-5 whitespace-pre">
+          <span>{fileLineMatch[1]}</span>
+          <span className="text-[#4ec9b0] font-semibold">{fileLineMatch[2]}</span>
+          <span className="text-[#ffd700]">{fileLineMatch[3]}</span>
+        </div>
+      )
+    }
+
+    // 2. JS / Java Stack frame: at fetchUserData (app.js:6:14) or at com.codetutor.Main.main(Main.java:12)
+    const atMatch = line.match(/^(\s*at\s+)([\w.$<>]+\s*)(?:\(([^)]+)\)|(.*))$/)
+    if (atMatch) {
+      return (
+        <div key={idx} className="leading-5 whitespace-pre text-slate-300">
+          <span className="text-rose-400 font-bold">{atMatch[1]}</span>
+          <span className="text-[#dcdcaa] font-semibold">{atMatch[2]}</span>
+          {atMatch[3] ? (
+            <span className="text-[#4ec9b0]">({atMatch[3]})</span>
+          ) : atMatch[4] ? (
+            <span className="text-slate-400">{atMatch[4]}</span>
+          ) : null}
+        </div>
+      )
+    }
+
+    // 3. Exception / Error Name at start of line (TypeError, SyntaxError, NullPointerException, etc.)
+    const errorMatch = line.match(/^(\s*)([A-Za-z0-9_.]*(?:Error|Exception|Throwable|Failure|Fault|Warning)(?::)?)(.*)$/)
+    if (errorMatch) {
+      return (
+        <div key={idx} className="leading-5 whitespace-pre">
+          <span>{errorMatch[1]}</span>
+          <span className="text-[#ff5370] font-black tracking-tight">{errorMatch[2]}</span>
+          <span className="text-[#fca5a5] font-medium">{errorMatch[3]}</span>
+        </div>
+      )
+    }
+
+    // 4. Command line prompts (e.g. $ node app.js or > python test.py)
+    if (line.startsWith('$') || line.startsWith('>') || line.startsWith('>>>')) {
+      const splitIdx = line.indexOf(' ')
+      const prefix = splitIdx !== -1 ? line.slice(0, splitIdx + 1) : line
+      const rest = splitIdx !== -1 ? line.slice(splitIdx + 1) : ''
+      return (
+        <div key={idx} className="leading-5 whitespace-pre text-emerald-400 font-bold">
+          <span className="text-[#22c55e] mr-1.5">{prefix}</span>
+          <span className="text-slate-200">{rest}</span>
+        </div>
+      )
+    }
+
+    // 5. Caret pointers (e.g. ^ or ~~~)
+    if (/^\s*[\^~]+\s*$/.test(line)) {
+      return (
+        <div key={idx} className="leading-5 whitespace-pre text-[#ffd700] font-bold">
+          {line}
+        </div>
+      )
+    }
+
+    // 6. Generic terminal line with fallback error tinting
+    return (
+      <div key={idx} className="leading-5 whitespace-pre text-[#fca5a5]/90">
+        {line}
+      </div>
+    )
+  })
+}
+
