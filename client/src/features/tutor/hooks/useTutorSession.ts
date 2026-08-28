@@ -63,44 +63,90 @@ function generateSmartTitle(prompt: string): string {
   return firstSentence.slice(0, 37).trim() + '...'
 }
 
+function createFreshTutorSession(
+  lang: ProgrammingLanguage = 'python',
+  mode: TutorMode = 'socratic'
+): TutorSession {
+  return {
+    id: `session-${Date.now()}`,
+    title: 'New Discussion',
+    language: lang,
+    mode: mode,
+    messageCount: 0,
+    lastMessagePreview: 'Ask a question to start learning...',
+    createdAt: new Date().toISOString(),
+  }
+}
+
+function getInitialTutorState(explicitSessionId?: string) {
+  const storedSessions = loadStoredSessions()
+  const storedMessages = loadStoredMessages()
+
+  // 1. If explicitSessionId was requested and exists, use it
+  if (explicitSessionId) {
+    const matched = storedSessions.find((s) => s.id === explicitSessionId)
+    if (matched) {
+      return {
+        initialSessions: storedSessions,
+        initialActiveId: explicitSessionId,
+        initialMessages: storedMessages[explicitSessionId] || [],
+        initialLanguage: matched.language,
+        initialMode: matched.mode,
+      }
+    }
+  }
+
+  // 2. If first stored session is already a fresh empty session (0 messages), use it
+  const first = storedSessions[0]
+  if (first && (storedMessages[first.id] || []).length === 0) {
+    return {
+      initialSessions: storedSessions,
+      initialActiveId: first.id,
+      initialMessages: [],
+      initialLanguage: first.language || 'python',
+      initialMode: first.mode || 'socratic',
+    }
+  }
+
+  // 3. Otherwise, create a brand new fresh session at the top
+  const fresh = createFreshTutorSession('python', 'socratic')
+  const combinedSessions = [fresh, ...storedSessions]
+  const updatedMessagesMap = { ...storedMessages, [fresh.id]: [] }
+  saveStoredSessions(combinedSessions)
+  saveStoredMessages(updatedMessagesMap)
+  try {
+    localStorage.setItem(TUTOR_ACTIVE_SESSION_KEY, fresh.id)
+  } catch {
+    // ignore
+  }
+
+  return {
+    initialSessions: combinedSessions,
+    initialActiveId: fresh.id,
+    initialMessages: [],
+    initialLanguage: 'python' as ProgrammingLanguage,
+    initialMode: 'socratic' as TutorMode,
+  }
+}
+
 export function useTutorSession(initialSessionId?: string) {
+  const [initialState] = useState(() => getInitialTutorState(initialSessionId))
+
   // Initialize sessions from localStorage or mock
-  const [sessions, setSessions] = useState<TutorSession[]>(() => loadStoredSessions())
+  const [sessions, setSessions] = useState<TutorSession[]>(initialState.initialSessions)
 
   // Initialize messages map setter from localStorage or mock
   const [, setAllMessages] = useState<Record<string, ChatMessage[]>>(() => loadStoredMessages())
 
   // Determine active session ID
-  const [activeSessionId, setActiveSessionId] = useState<string>(() => {
-    if (initialSessionId) return initialSessionId
-    try {
-      const savedActive = localStorage.getItem(TUTOR_ACTIVE_SESSION_KEY)
-      if (savedActive) return savedActive
-    } catch {
-      // ignore
-    }
-    const initialSessions = loadStoredSessions()
-    return initialSessions[0]?.id || 'session-1'
-  })
+  const [activeSessionId, setActiveSessionId] = useState<string>(initialState.initialActiveId)
 
   // Messages for currently active session
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    const msgsMap = loadStoredMessages()
-    const currentId = initialSessionId || loadStoredSessions()[0]?.id || 'session-1'
-    return msgsMap[currentId] || []
-  })
+  const [messages, setMessages] = useState<ChatMessage[]>(initialState.initialMessages)
 
-  const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage>(() => {
-    const initialSessions = loadStoredSessions()
-    const active = initialSessions.find((s) => s.id === (initialSessionId || initialSessions[0]?.id))
-    return active?.language || 'python'
-  })
+  const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage>(initialState.initialLanguage)
 
-  const [tutorMode, setTutorMode] = useState<TutorMode>(() => {
-    const initialSessions = loadStoredSessions()
-    const active = initialSessions.find((s) => s.id === (initialSessionId || initialSessions[0]?.id))
-    return active?.mode || 'socratic'
-  })
+  const [tutorMode, setTutorMode] = useState<TutorMode>(initialState.initialMode)
 
   const [isLoading, setIsLoading] = useState(false)
 
