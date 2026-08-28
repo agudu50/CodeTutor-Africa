@@ -14,11 +14,11 @@ export interface LanguageOption {
 }
 
 export const GAME_LANGUAGES: LanguageOption[] = [
-  { id: 'all', label: 'All Courses & Languages', iconBadge: 'All' },
-  { id: 'python', label: 'Python (Course 101)', iconBadge: 'PY' },
-  { id: 'javascript', label: 'JavaScript (Course 201)', iconBadge: 'JS' },
+  { id: 'all', label: 'All Languages', iconBadge: 'All' },
+  { id: 'python', label: 'Python', iconBadge: 'PY' },
+  { id: 'javascript', label: 'JavaScript', iconBadge: 'JS' },
   { id: 'typescript', label: 'TypeScript', iconBadge: 'TS' },
-  { id: 'java', label: 'Java (Course 301)', iconBadge: 'JV' },
+  { id: 'java', label: 'Java', iconBadge: 'JV' },
   { id: 'sql', label: 'SQL Database', iconBadge: 'DB' },
 ]
 
@@ -26,8 +26,8 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'speedrun',
     title: 'Syntax Speedrun',
-    subtitle: 'Course Lesson Typing Challenge',
-    description: 'Type real code snippets directly from your enrolled course lessons to build muscle memory and speed.',
+    subtitle: 'Fast-Paced Typing Challenge',
+    description: 'Race against the clock to type real code snippets cleanly, building typing speed and syntax muscle memory.',
     difficulty: 'Beginner',
     category: 'Speed & Accuracy',
     estimatedMins: 2,
@@ -43,8 +43,8 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'bughunt',
     title: 'Bug Hunt Blitz',
-    subtitle: 'Curriculum Debugging Practice',
-    description: 'Spot broken syntax and logical errors derived from your course problem sets before the timer runs out.',
+    subtitle: 'Code Error Spotter & Debugger',
+    description: 'Spot broken syntax, syntax mistakes, and runtime logic errors in code blocks before the timer runs out.',
     difficulty: 'Intermediate',
     category: 'Debugging Skills',
     estimatedMins: 3,
@@ -60,8 +60,8 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'predictor',
     title: 'Output Predictor',
-    subtitle: 'Lesson Quiz Mental Execution',
-    description: 'Predict exact runtime console outputs from your course lessons and tricky language edge-cases.',
+    subtitle: 'Mental Code Execution Quiz',
+    description: 'Analyze code snippets and predict the exact console output and return values without running the code.',
     difficulty: 'Intermediate',
     category: 'Mental Execution',
     estimatedMins: 3,
@@ -78,7 +78,7 @@ export const GAMES_METADATA: GameMetadata[] = [
     id: 'shuffle',
     title: 'Code Shuffle',
     subtitle: 'Algorithm Block Assembly',
-    description: 'Reconstruct scrambled algorithm implementations from your course curriculum into working code.',
+    description: 'Reconstruct scrambled algorithm code lines and logical blocks into clean, working program order.',
     difficulty: 'Advanced',
     category: 'Logic & Algorithms',
     estimatedMins: 4,

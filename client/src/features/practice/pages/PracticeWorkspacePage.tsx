@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { practiceStoreService } from '@/services/practice/practice-store.service'
 import { practiceService } from '@/services/practice/practice.service'
 import { CodeEditorPlaceholder } from '../components/CodeEditorPlaceholder'
 import { TestResultModal } from '../components/TestResultModal'
-import { Button, Dropdown } from '@/components/ui'
+import { Button } from '@/components/ui'
 import {
   ChevronLeft,
+  ChevronRight,
   Bot,
   Lightbulb,
   BookOpen,
@@ -20,6 +21,9 @@ import {
   Clock,
   Shield,
   RotateCcw,
+  Play,
+  ChevronDown,
+  Search,
 } from 'lucide-react'
 import { TestCase } from '@/types'
 
@@ -47,6 +51,17 @@ export const PracticeWorkspacePage: React.FC = () => {
   const [runtimeMs, setRuntimeMs] = useState<number>()
   const [showHintIndex, setShowHintIndex] = useState<number>(-1)
   const [copiedInput, setCopiedInput] = useState(false)
+  const [hasRunTests, setHasRunTests] = useState(false)
+
+  // Problem Switcher Popover State
+  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false)
+  const [switcherSearch, setSwitcherSearch] = useState('')
+  const [switcherLang, setSwitcherLang] = useState<string>('all')
+  const switcherRef = useRef<HTMLDivElement>(null)
+
+  // Bottom Console / Quick Test Drawer State
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false)
+  const [activeConsoleCaseIdx, setActiveConsoleCaseIdx] = useState(0)
 
   // Clock & Attempt State
   const defaultMinutes = problem?.timeLimitMinutes || 15
@@ -55,13 +70,24 @@ export const PracticeWorkspacePage: React.FC = () => {
   const [attemptsUsed, setAttemptsUsed] = useState<number>(0)
   const maxAttempts = problem?.maxAttempts ?? 3
 
-  // Interactive Modals
-  const [isResultModalOpen, setIsResultModalOpen] = useState(false)
+  // Interactive Submit Modal
+  const [isSubmitResultModalOpen, setIsSubmitResultModalOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState<{
     type: 'success' | 'error' | 'info'
     title: string
     detail: string
   } | null>(null)
+
+  // Close Switcher on Outside Click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (switcherRef.current && !switcherRef.current.contains(e.target as Node)) {
+        setIsSwitcherOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   // Reset when problem changes
   useEffect(() => {
@@ -70,7 +96,10 @@ export const PracticeWorkspacePage: React.FC = () => {
       setTestResults(problem.testCases || [])
       setSubmissionFeedback(undefined)
       setShowHintIndex(-1)
-      setIsResultModalOpen(false)
+      setIsSubmitResultModalOpen(false)
+      setIsConsoleOpen(false)
+      setHasRunTests(false)
+      setIsSwitcherOpen(false)
       setToastMessage(null)
       setTimeLeftSecs((problem.timeLimitMinutes || 15) * 60)
       setIsTimerRunning(true)
@@ -115,18 +144,51 @@ export const PracticeWorkspacePage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${rem.toString().padStart(2, '0')}`
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // 1. RUN TEST CASES (Developer Local Sandbox - 0 Attempts Deducted)
+  // ═══════════════════════════════════════════════════════════════
   const handleRun = async () => {
     if (!problem) return
+
+    if (!code || !code.trim()) {
+      setToastMessage({
+        type: 'error',
+        title: 'Empty Code Editor',
+        detail: 'Please write your solution implementation before running test cases.',
+      })
+    }
+
     setIsRunning(true)
-    const res = await practiceService.submitSolution(problem.id, code)
+    const res = await practiceService.runSampleTests(problem.id, code)
     setTestResults(res.testResults)
+    setSubmissionFeedback(res.feedback)
     setRuntimeMs(res.runtimeMs)
     setIsRunning(false)
+    setHasRunTests(true)
 
-    // Open the Execution Results Modal
-    setIsResultModalOpen(true)
+    // Open inline Console / Test Results Drawer directly below the editor
+    setIsConsoleOpen(true)
+    const passedCount = res.testResults.filter((t) => t.passed).length
+    const total = res.testResults.length
+
+    if (passedCount === total) {
+      setToastMessage({
+        type: 'success',
+        title: 'Sample Tests Passed',
+        detail: `All ${total} sample test cases passed in ${res.runtimeMs}ms! You are ready to Submit.`,
+      })
+    } else {
+      setToastMessage({
+        type: 'error',
+        title: 'Tests Failed',
+        detail: `${passedCount}/${total} sample tests passed. Inspect the bottom console below.`,
+      })
+    }
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // 2. SUBMIT SOLUTION (Official Graded Assessment - Deducts 1 Attempt)
+  // ═══════════════════════════════════════════════════════════════
   const handleSubmit = async () => {
     if (!problem) return
 
@@ -136,6 +198,25 @@ export const PracticeWorkspacePage: React.FC = () => {
         title: 'Attempt Limit Reached',
         detail: `You have used all ${maxAttempts} submission attempts allowed for this challenge. Review the hints or reset your workspace.`,
       })
+      return
+    }
+
+    if (!code || !code.trim()) {
+      setToastMessage({
+        type: 'error',
+        title: 'Empty Code Editor',
+        detail: 'Cannot submit an empty solution. Please write your code first.',
+      })
+      return
+    }
+
+    if (!hasRunTests) {
+      setToastMessage({
+        type: 'error',
+        title: 'Run Tests First',
+        detail: 'Please test your code with "Run Test Cases" before submitting your final solution.',
+      })
+      setIsConsoleOpen(true)
       return
     }
 
@@ -149,13 +230,15 @@ export const PracticeWorkspacePage: React.FC = () => {
     setRuntimeMs(res.runtimeMs)
     setIsSubmitting(false)
 
-    // Open Completion Modal
-    setIsResultModalOpen(true)
+    // Open Official Result Modal (Evaluation complete)
+    setIsSubmitResultModalOpen(true)
   }
 
   const handleReset = () => {
     if (!problem) return
     setCode(problem.starterCode)
+    setHasRunTests(false)
+    setIsConsoleOpen(false)
     setSubmissionFeedback(undefined)
     setToastMessage({
       type: 'info',
@@ -190,16 +273,24 @@ export const PracticeWorkspacePage: React.FC = () => {
       ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
       : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
 
-  const problemOptions = allProblems.map((q) => ({
-    value: q.id,
-    label: `${q.language.toUpperCase()} • ${q.title}`,
-  }))
-
   const currentIndex = allProblems.findIndex((q) => q.id === problem.id)
-  const nextProblem = allProblems.length > 0 ? allProblems[(currentIndex + 1) % allProblems.length] : problem
+  const prevProblem = currentIndex > 0 ? allProblems[currentIndex - 1] : null
+  const nextProblem = currentIndex < allProblems.length - 1 ? allProblems[currentIndex + 1] : null
+  
   const isPassedAll = testResults.every((t) => t.passed)
   const passedCount = testResults.filter((t) => t.passed).length
   const attemptsLeft = maxAttempts > 0 ? Math.max(0, maxAttempts - attemptsUsed) : null
+  const activeConsoleCase = testResults[activeConsoleCaseIdx] || testResults[0]
+
+  // Filter problems in switcher
+  const filteredSwitcherProblems = allProblems.filter((p) => {
+    const matchesSearch =
+      p.title.toLowerCase().includes(switcherSearch.toLowerCase()) ||
+      (p.moduleTitle && p.moduleTitle.toLowerCase().includes(switcherSearch.toLowerCase())) ||
+      p.tags.some((t) => t.toLowerCase().includes(switcherSearch.toLowerCase()))
+    const matchesLang = switcherLang === 'all' || p.language === switcherLang
+    return matchesSearch && matchesLang
+  })
 
   return (
     <div className="flex-1 flex flex-col min-h-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-slate-50 dark:bg-slate-950 w-full relative">
@@ -251,24 +342,143 @@ export const PracticeWorkspacePage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       {/* Desktop Bar (sm:flex) */}
       <div className="hidden sm:flex h-14 px-4 sm:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 items-center justify-between shrink-0 shadow-2xs w-full gap-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <Link
             to="/practice"
             className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold transition-colors px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span>All Problems</span>
+            <span>Catalog</span>
           </Link>
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 shrink-0" />
 
-          {/* Interactive Problem / Language Switcher */}
-          <div className="w-72 max-w-sm">
-            <Dropdown
-              options={problemOptions}
-              value={problem.id}
-              onChange={(newId) => navigate(`/practice/${newId}`)}
-              className="text-xs font-bold"
-            />
+          {/* ═══════════════════════════════════════════════════════════
+              ENHANCED PROBLEM SELECTOR & STEPPER
+              ═══════════════════════════════════════════════════════════ */}
+          <div className="relative flex items-center gap-1" ref={switcherRef}>
+            {/* Prev Problem Arrow */}
+            <button
+              type="button"
+              disabled={!prevProblem}
+              onClick={() => prevProblem && navigate(`/practice/${prevProblem.id}`)}
+              title={prevProblem ? `Previous: ${prevProblem.title}` : 'First Problem'}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Custom Interactive Switcher Trigger */}
+            <button
+              type="button"
+              onClick={() => setIsSwitcherOpen(!isSwitcherOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 hover:border-emerald-500/80 hover:bg-white dark:hover:bg-slate-900 transition-all text-left shadow-3xs cursor-pointer max-w-sm"
+            >
+              <span className="font-mono text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 shrink-0">
+                {problem.language}
+              </span>
+              <span className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                {problem.title}
+              </span>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isSwitcherOpen ? 'rotate-180 text-emerald-600' : ''}`} />
+            </button>
+
+            {/* Next Problem Arrow */}
+            <button
+              type="button"
+              disabled={!nextProblem}
+              onClick={() => nextProblem && navigate(`/practice/${nextProblem.id}`)}
+              title={nextProblem ? `Next: ${nextProblem.title}` : 'Last Problem'}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* ═══════════════════════════════════════════════════════════
+                ENHANCED PROBLEM SELECTOR POPOVER
+                ═══════════════════════════════════════════════════════════ */}
+            {isSwitcherOpen && (
+              <div className="absolute top-12 left-0 z-50 w-96 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 p-2.5 space-y-2">
+                {/* Search Bar */}
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                  <input
+                    type="text"
+                    placeholder="Search practice challenges..."
+                    value={switcherSearch}
+                    onChange={(e) => setSwitcherSearch(e.target.value)}
+                    className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                {/* Language Filter Pills */}
+                <div className="flex items-center gap-1 overflow-x-auto pb-1 text-[11px] font-mono select-none">
+                  {['all', 'python', 'javascript', 'java', 'typescript'].map((lang) => (
+                    <button
+                      key={lang}
+                      type="button"
+                      onClick={() => setSwitcherLang(lang)}
+                      className={`px-2 py-0.5 rounded-lg font-bold uppercase transition-all shrink-0 cursor-pointer ${
+                        switcherLang === lang
+                          ? 'bg-[#005F02] text-white shadow-3xs'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {lang === 'all' ? 'All' : lang}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Challenges List */}
+                <div className="max-h-72 overflow-y-auto space-y-1 pr-1">
+                  {filteredSwitcherProblems.map((p) => {
+                    const isSelected = p.id === problem.id
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => {
+                          navigate(`/practice/${p.id}`)
+                          setIsSwitcherOpen(false)
+                        }}
+                        className={`w-full flex items-start justify-between gap-2 p-2.5 rounded-xl text-left transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-emerald-50/90 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs'
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-transparent'
+                        }`}
+                      >
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 shrink-0">
+                              {p.language}
+                            </span>
+                            {p.moduleTitle && (
+                              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">
+                                {p.moduleTitle}
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-xs font-bold truncate ${isSelected ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                            {p.title}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                            p.difficulty === 'beginner'
+                              ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60'
+                              : p.difficulty === 'intermediate'
+                              ? 'text-amber-600 bg-amber-50 dark:bg-amber-950/60'
+                              : 'text-rose-600 bg-rose-50 dark:bg-rose-950/60'
+                          }`}
+                        >
+                          {p.difficulty}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-lg border shrink-0 ${difficultyVariant}`}>
@@ -303,20 +513,22 @@ export const PracticeWorkspacePage: React.FC = () => {
             >
               <Shield className="w-3.5 h-3.5" />
               <span>
-                {attemptsLeft !== null ? `${attemptsLeft}/${maxAttempts} Attempts` : 'Unlimited'}
+                {attemptsLeft !== null ? `${attemptsLeft}/${maxAttempts} Attempts Left` : 'Unlimited'}
               </span>
             </span>
           )}
 
-          {/* View Results Button */}
+          {/* Toggle Console Output */}
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setIsResultModalOpen(true)}
-            className="h-8 text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-3xs px-3 cursor-pointer"
+            onClick={() => setIsConsoleOpen(!isConsoleOpen)}
+            className={`h-8 text-xs font-bold border-slate-200 dark:border-slate-700 shadow-3xs px-3 cursor-pointer ${
+              isConsoleOpen ? 'bg-emerald-50 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-emerald-300' : 'text-slate-700 dark:text-slate-300'
+            }`}
             leftIcon={<Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
           >
-            <span>Results ({passedCount}/{testResults.length})</span>
+            <span>Console ({passedCount}/{testResults.length})</span>
           </Button>
 
           <Link to="/tutor">
@@ -340,7 +552,7 @@ export const PracticeWorkspacePage: React.FC = () => {
             className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors py-0.5"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Problems</span>
+            <span>Catalog</span>
           </Link>
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
@@ -382,7 +594,7 @@ export const PracticeWorkspacePage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           WORKSPACE LAYOUT
           - Left: Problem Description & Interactive Hints
-          - Right: VS Code Code Editor (100% Full Height)
+          - Right: VS Code Code Editor + Inline Test Console
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 lg:overflow-hidden p-3 sm:p-4 gap-4 w-full max-w-7xl mx-auto pb-6 lg:pb-4">
         {/* Left Column: Problem Description & Progressive Hints */}
@@ -559,40 +771,20 @@ export const PracticeWorkspacePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Interactive Code Editor & Actions */}
+        {/* Right Column: Code Editor + Inline Test Console */}
         <div
           className={`lg:col-span-7 flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full overflow-hidden ${
             mobileTab !== 'editor' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          {/* Editor Header Bar */}
-          <div className="p-2.5 border-b border-slate-200 dark:border-slate-800 bg-[#1e1e1e] flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span className="text-xs font-mono font-bold text-slate-300 ml-2">
-                solution.{problem.language === 'python' ? 'py' : problem.language === 'java' ? 'java' : problem.language === 'typescript' ? 'ts' : 'js'}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleReset}
-                title="Reset code to starter template"
-                className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
           {/* Editor Area */}
-          <div className="flex-1 min-h-[300px] lg:min-h-0 bg-[#1e1e1e] p-2 flex flex-col">
+          <div className="flex-1 min-h-[280px] lg:min-h-0 bg-[#1e1e1e] flex flex-col overflow-hidden">
             <CodeEditorPlaceholder
               code={code}
-              onChange={setCode}
+              onChange={(newCode) => {
+                setCode(newCode)
+                setHasRunTests(false)
+              }}
               language={problem.language}
               onRun={handleRun}
               onSubmit={handleSubmit}
@@ -602,8 +794,85 @@ export const PracticeWorkspacePage: React.FC = () => {
             />
           </div>
 
-          {/* Editor Bottom Actions Bar */}
+          {/* ═══════════════════════════════════════════════════════════
+              INLINE TEST RESULTS CONSOLE (Opens on "Run Code")
+              ═══════════════════════════════════════════════════════════ */}
+          {isConsoleOpen && (
+            <div className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 space-y-2.5 max-h-48 overflow-y-auto shrink-0 animate-in slide-in-from-bottom-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-bold text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                    <Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                    <span>Sample Test Results</span>
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                      isPassedAll
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                        : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                    }`}
+                  >
+                    {passedCount}/{testResults.length} Passed ({runtimeMs || 12}ms)
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsConsoleOpen(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                  title="Collapse console"
+                >
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Case Tabs */}
+              <div className="flex items-center gap-1.5">
+                {testResults.map((tc, idx) => {
+                  const isActive = activeConsoleCaseIdx === idx
+                  return (
+                    <button
+                      key={tc.id}
+                      type="button"
+                      onClick={() => setActiveConsoleCaseIdx(idx)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                        isActive
+                          ? 'bg-[#005F02] text-white border-[#005F02]'
+                          : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'
+                      }`}
+                    >
+                      <span>Case {idx + 1}</span>
+                      <span>{tc.passed ? '✓' : '✕'}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Active Case Details */}
+              {activeConsoleCase && (
+                <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono space-y-1">
+                  <p className="text-slate-500">
+                    <span className="text-slate-400">Input: </span>
+                    <span className="text-slate-800 dark:text-slate-200 font-bold">{activeConsoleCase.input}</span>
+                  </p>
+                  <p className="text-slate-500">
+                    <span className="text-slate-400">Expected: </span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">{activeConsoleCase.expectedOutput}</span>
+                  </p>
+                  <p className="text-slate-500">
+                    <span className="text-slate-400">Your Output: </span>
+                    <span className={`font-bold ${activeConsoleCase.passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                      {activeConsoleCase.actualOutput || '(No return value)'}
+                    </span>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Editor Bottom Actions Bar (Run vs Submit) */}
           <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 flex items-center justify-between gap-3 shrink-0">
+            {/* Left: Run Button (Sandbox Test - 0 Attempts) */}
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -611,26 +880,30 @@ export const PracticeWorkspacePage: React.FC = () => {
                 onClick={handleRun}
                 disabled={isRunning || isSubmitting}
                 className="text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-3xs cursor-pointer h-9 px-4"
-                leftIcon={<Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
+                leftIcon={<Play className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 fill-current" />}
               >
-                {isRunning ? 'Running Tests...' : 'Run Test Cases'}
+                {isRunning ? 'Testing...' : 'Run Test Cases'}
               </Button>
             </div>
 
+            {/* Right: Submit Button (Graded - Deducts 1 Attempt) */}
             <div className="flex items-center gap-2">
               <Button
                 variant="primary"
                 size="sm"
                 onClick={handleSubmit}
                 disabled={isRunning || isSubmitting || (maxAttempts > 0 && attemptsUsed >= maxAttempts)}
-                className={`text-xs font-bold text-white shadow-xs cursor-pointer h-9 px-5 ${
+                title={!hasRunTests ? 'Click "Run Test Cases" first to verify your code before submitting' : 'Submit your solution for grading'}
+                className={`text-xs font-bold text-white shadow-xs cursor-pointer h-9 px-5 transition-all ${
                   maxAttempts > 0 && attemptsUsed >= maxAttempts
                     ? 'bg-slate-400 cursor-not-allowed'
+                    : !hasRunTests
+                    ? 'bg-slate-500/80 hover:bg-slate-600 dark:bg-slate-700'
                     : 'bg-[#005F02] hover:bg-[#004e02]'
                 }`}
                 rightIcon={<ArrowRight className="w-3.5 h-3.5 ml-1" />}
               >
-                {isSubmitting ? 'Evaluating...' : 'Submit Solution'}
+                {isSubmitting ? 'Evaluating...' : !hasRunTests ? 'Run Tests to Submit' : 'Submit Solution'}
               </Button>
             </div>
           </div>
@@ -638,18 +911,18 @@ export const PracticeWorkspacePage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          INTERACTIVE TEST RESULT MODAL
+          OFFICIAL SUBMISSION RESULT MODAL (Opens only on Submit)
           ═══════════════════════════════════════════════════════════════ */}
       <TestResultModal
-        isOpen={isResultModalOpen}
-        onClose={() => setIsResultModalOpen(false)}
+        isOpen={isSubmitResultModalOpen}
+        onClose={() => setIsSubmitResultModalOpen(false)}
         testCases={testResults}
         feedback={submissionFeedback}
         runtimeMs={runtimeMs}
         isPassedAll={isPassedAll}
         onNextProblem={() => {
-          setIsResultModalOpen(false)
-          navigate(`/practice/${nextProblem.id}`)
+          setIsSubmitResultModalOpen(false)
+          if (nextProblem) navigate(`/practice/${nextProblem.id}`)
         }}
       />
     </div>
