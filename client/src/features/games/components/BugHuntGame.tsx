@@ -26,6 +26,8 @@ interface BugHuntGameProps {
   onScoreUpdate: (score: number) => void
   initialLanguage?: GameLanguage
   initialCourseId?: string
+  initialChallengeTitle?: string
+  initialModuleId?: string
 }
 
 export const BugHuntGame: React.FC<BugHuntGameProps> = ({
@@ -33,6 +35,8 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
   onScoreUpdate,
   initialLanguage = 'all',
   initialCourseId = 'all',
+  initialChallengeTitle,
+  initialModuleId,
 }) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
@@ -44,7 +48,18 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
     : courseChallenges.filter((c) => c.language === selectedLanguage)
   const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : courseChallenges
 
-  const [challengeIndex, setChallengeIndex] = useState(0)
+  const getStartingIndex = () => {
+    if (!initialChallengeTitle && !initialModuleId) return 0
+    const idx = activeChallenges.findIndex(
+      (c) =>
+        (initialChallengeTitle && c.title.toLowerCase() === initialChallengeTitle.toLowerCase()) ||
+        (initialChallengeTitle && c.lessonTitle?.toLowerCase().includes(initialChallengeTitle.toLowerCase())) ||
+        (initialModuleId && c.lessonTitle?.toLowerCase().includes(initialModuleId.toLowerCase()))
+    )
+    return idx >= 0 ? idx : 0
+  }
+
+  const [challengeIndex, setChallengeIndex] = useState(getStartingIndex)
   const [selectedLineIndex, setSelectedLineIndex] = useState<number | null>(null)
   const [isLineConfirmed, setIsLineConfirmed] = useState(false)
   const [feedback, setFeedback] = useState<{ isSuccess: boolean; message: string } | null>(null)
@@ -83,6 +98,13 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
     setTimeLeft(currentChallenge.timeLimitSecs)
     gameSound.playSuccess()
   }
+
+  // Auto-start if launched from a specific drill
+  useEffect(() => {
+    if (initialChallengeTitle) {
+      startGame()
+    }
+  }, [initialChallengeTitle])
 
   useEffect(() => {
     if (isPlaying && !isGameOver && !feedback) {
@@ -203,8 +225,11 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
             <span className="p-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <Bug className="w-4 h-4" />
             </span>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">
-              Bug Hunt Blitz
+            <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+              {currentChallenge?.title || 'Bug Hunt Blitz'}
+            </span>
+            <span className="hidden sm:inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+              Bug Hunt
             </span>
             {isOffline && (
               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">

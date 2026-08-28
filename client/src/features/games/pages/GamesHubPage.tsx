@@ -44,6 +44,9 @@ export const GamesHubPage: React.FC = () => {
   const isOffline = effectiveNetwork === 'offline'
 
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
+  const [activeDrillTitle, setActiveDrillTitle] = useState<string | null>(null)
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(null)
+  const [activeLanguage, setActiveLanguage] = useState<GameLanguage | null>(null)
   const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
   const [, setTick] = useState(0)
@@ -102,43 +105,68 @@ export const GamesHubPage: React.FC = () => {
     })
   }
 
-  const handleLaunchModuleGame = (gameId: GameId, _moduleId: string, _moduleTitle: string) => {
+  const handleLaunchModuleGame = (
+    gameId: GameId,
+    moduleId: string,
+    _moduleTitle: string,
+    drillTitle?: string,
+    language?: GameLanguage
+  ) => {
     gameSound.playSuccess()
+    setActiveDrillTitle(drillTitle || null)
+    setActiveModuleId(moduleId || null)
+    setActiveLanguage(language || selectedLanguage || 'python')
     setActiveGame(gameId)
   }
 
   const handleLaunchGameDirect = (gameId: GameId) => {
     gameSound.playSuccess()
+    setActiveDrillTitle(null)
+    setActiveModuleId(null)
+    setActiveLanguage(selectedLanguage || 'all')
     setActiveGame(gameId)
   }
 
-
+  const handleBackToHub = () => {
+    setActiveGame(null)
+    setActiveDrillTitle(null)
+    setActiveModuleId(null)
+    setActiveLanguage(null)
+  }
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
       {activeGame === 'speedrun' ? (
         <SyntaxSpeedrunGame
-          onBack={() => setActiveGame(null)}
+          onBack={handleBackToHub}
           onScoreUpdate={(score) => handleScoreUpdate('speedrun', score)}
-          initialLanguage={selectedLanguage || 'python'}
+          initialLanguage={activeLanguage || selectedLanguage || 'python'}
+          initialChallengeTitle={activeDrillTitle || undefined}
+          initialModuleId={activeModuleId || undefined}
         />
       ) : activeGame === 'bughunt' ? (
         <BugHuntGame
-          onBack={() => setActiveGame(null)}
+          onBack={handleBackToHub}
           onScoreUpdate={(score) => handleScoreUpdate('bughunt', score)}
-          initialLanguage={selectedLanguage || 'python'}
+          initialLanguage={activeLanguage || selectedLanguage || 'python'}
+          initialChallengeTitle={activeDrillTitle || undefined}
+          initialModuleId={activeModuleId || undefined}
         />
       ) : activeGame === 'predictor' ? (
         <OutputPredictorGame
-          onBack={() => setActiveGame(null)}
+          onBack={handleBackToHub}
           onScoreUpdate={(score) => handleScoreUpdate('predictor', score)}
-          initialLanguage={selectedLanguage || 'python'}
+          initialLanguage={activeLanguage || selectedLanguage || 'python'}
+          initialChallengeTitle={activeDrillTitle || undefined}
+          initialModuleId={activeModuleId || undefined}
         />
       ) : activeGame === 'shuffle' ? (
         <CodeShuffleGame
-          onBack={() => setActiveGame(null)}
+          onBack={handleBackToHub}
           onScoreUpdate={(score) => handleScoreUpdate('shuffle', score)}
-          initialLanguage={selectedLanguage || 'python'}
+          initialLanguage={activeLanguage || selectedLanguage || 'python'}
+          initialChallengeTitle={activeDrillTitle || undefined}
+          initialModuleId={activeModuleId || undefined}
         />
       ) : (
         <>

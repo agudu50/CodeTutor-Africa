@@ -7,6 +7,13 @@ import {
   GameLanguage,
 } from '../types/games.types'
 
+import {
+  CURRICULUM_SPEEDRUN_SNIPPETS,
+  CURRICULUM_BUG_HUNT_CHALLENGES,
+  CURRICULUM_OUTPUT_PREDICTOR_CHALLENGES,
+  CURRICULUM_CODE_SHUFFLE_CHALLENGES,
+} from './curriculumChallengesData'
+
 export interface LanguageOption {
   id: GameLanguage
   label: string
@@ -98,6 +105,7 @@ export const GAMES_METADATA: GameMetadata[] = [
 // 1. SPEEDRUN SNIPPETS (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
+  ...CURRICULUM_SPEEDRUN_SNIPPETS,
   // ── Python ──
   {
     id: 'sr-py-1',
@@ -276,6 +284,7 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
 // 2. BUG HUNT CHALLENGES (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
+  ...CURRICULUM_BUG_HUNT_CHALLENGES,
   // ── Python ──
   {
     id: 'bh-py-1',
@@ -454,6 +463,7 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
 // 3. OUTPUT PREDICTOR CHALLENGES (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
+  ...CURRICULUM_OUTPUT_PREDICTOR_CHALLENGES,
   // ── Python ──
   {
     id: 'op-py-1',
@@ -564,6 +574,7 @@ export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
 // 4. CODE SHUFFLE CHALLENGES (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
+  ...CURRICULUM_CODE_SHUFFLE_CHALLENGES,
   // ── Python ──
   {
     id: 'cs-py-1',

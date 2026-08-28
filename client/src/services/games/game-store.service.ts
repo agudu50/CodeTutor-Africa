@@ -47,16 +47,45 @@ class GameStoreService {
   private init() {
     try {
       const sr = localStorage.getItem(SPEEDRUN_STORAGE_KEY)
-      this.speedrun = sr ? JSON.parse(sr) : [...SPEEDRUN_SNIPPETS]
-
       const bh = localStorage.getItem(BUGHUNT_STORAGE_KEY)
-      this.bughunt = bh ? JSON.parse(bh) : [...BUG_HUNT_CHALLENGES]
-
       const op = localStorage.getItem(PREDICTOR_STORAGE_KEY)
-      this.predictor = op ? JSON.parse(op) : [...OUTPUT_PREDICTOR_CHALLENGES]
-
       const cs = localStorage.getItem(SHUFFLE_STORAGE_KEY)
-      this.shuffle = cs ? JSON.parse(cs) : [...CODE_SHUFFLE_CHALLENGES]
+
+      if (sr) {
+        const parsed = JSON.parse(sr)
+        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const missing = SPEEDRUN_SNIPPETS.filter((s) => !existingTitles.has(s.title?.toLowerCase()))
+        this.speedrun = [...parsed, ...missing]
+      } else {
+        this.speedrun = [...SPEEDRUN_SNIPPETS]
+      }
+
+      if (bh) {
+        const parsed = JSON.parse(bh)
+        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const missing = BUG_HUNT_CHALLENGES.filter((b) => !existingTitles.has(b.title?.toLowerCase()))
+        this.bughunt = [...parsed, ...missing]
+      } else {
+        this.bughunt = [...BUG_HUNT_CHALLENGES]
+      }
+
+      if (op) {
+        const parsed = JSON.parse(op)
+        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const missing = OUTPUT_PREDICTOR_CHALLENGES.filter((o) => !existingTitles.has(o.title?.toLowerCase()))
+        this.predictor = [...parsed, ...missing]
+      } else {
+        this.predictor = [...OUTPUT_PREDICTOR_CHALLENGES]
+      }
+
+      if (cs) {
+        const parsed = JSON.parse(cs)
+        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const missing = CODE_SHUFFLE_CHALLENGES.filter((c) => !existingTitles.has(c.title?.toLowerCase()))
+        this.shuffle = [...parsed, ...missing]
+      } else {
+        this.shuffle = [...CODE_SHUFFLE_CHALLENGES]
+      }
 
       const mp = localStorage.getItem(MODULE_PROGRESS_STORAGE_KEY)
       this.moduleProgress = mp ? JSON.parse(mp) : {}

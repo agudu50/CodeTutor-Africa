@@ -30,6 +30,8 @@ interface SyntaxSpeedrunGameProps {
   onScoreUpdate: (score: number) => void
   initialLanguage?: GameLanguage
   initialCourseId?: string
+  initialChallengeTitle?: string
+  initialModuleId?: string
 }
 
 export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
@@ -37,6 +39,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   onScoreUpdate,
   initialLanguage = 'all',
   initialCourseId = 'all',
+  initialChallengeTitle,
+  initialModuleId,
 }) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
@@ -48,7 +52,18 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     : courseSnippets.filter((s) => s.language === selectedLanguage)
   const activeSnippets = filteredSnippets.length > 0 ? filteredSnippets : courseSnippets
 
-  const [snippetIndex, setSnippetIndex] = useState(0)
+  const getStartingIndex = () => {
+    if (!initialChallengeTitle && !initialModuleId) return 0
+    const idx = activeSnippets.findIndex(
+      (s) =>
+        (initialChallengeTitle && s.title.toLowerCase() === initialChallengeTitle.toLowerCase()) ||
+        (initialChallengeTitle && s.lessonTitle?.toLowerCase().includes(initialChallengeTitle.toLowerCase())) ||
+        (initialModuleId && s.lessonTitle?.toLowerCase().includes(initialModuleId.toLowerCase()))
+    )
+    return idx >= 0 ? idx : 0
+  }
+
+  const [snippetIndex, setSnippetIndex] = useState(getStartingIndex)
   const [userInput, setUserInput] = useState('')
   const currentSnippet: SpeedrunSnippet = activeSnippets[snippetIndex] || activeSnippets[0]
   const [timeLeft, setTimeLeft] = useState(currentSnippet.timeLimitSecs)
@@ -92,6 +107,13 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
       inputRef.current?.focus()
     }, 100)
   }
+
+  // Auto-start if launched from a specific drill
+  useEffect(() => {
+    if (initialChallengeTitle) {
+      startGame()
+    }
+  }, [initialChallengeTitle])
 
   // Timer loop
   useEffect(() => {
@@ -291,7 +313,10 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
               <Zap className="w-4 h-4" />
             </span>
             <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-              Syntax Speedrun
+              {currentSnippet?.title || 'Syntax Speedrun'}
+            </span>
+            <span className="hidden sm:inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+              Speedrun
             </span>
             {isOffline && (
               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-3xs">

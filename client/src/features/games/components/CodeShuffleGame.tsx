@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { CodeShuffleChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
@@ -26,6 +26,8 @@ interface CodeShuffleGameProps {
   onScoreUpdate: (score: number) => void
   initialLanguage?: GameLanguage
   initialCourseId?: string
+  initialChallengeTitle?: string
+  initialModuleId?: string
 }
 
 export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
@@ -33,6 +35,8 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
   onScoreUpdate,
   initialLanguage = 'all',
   initialCourseId = 'all',
+  initialChallengeTitle,
+  initialModuleId,
 }) => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
@@ -44,7 +48,18 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
     : courseChallenges.filter((c) => c.language === selectedLanguage)
   const activeChallenges = filteredChallenges.length > 0 ? filteredChallenges : courseChallenges
 
-  const [challengeIndex, setChallengeIndex] = useState(0)
+  const getStartingIndex = () => {
+    if (!initialChallengeTitle && !initialModuleId) return 0
+    const idx = activeChallenges.findIndex(
+      (c) =>
+        (initialChallengeTitle && c.title.toLowerCase() === initialChallengeTitle.toLowerCase()) ||
+        (initialChallengeTitle && c.lessonTitle?.toLowerCase().includes(initialChallengeTitle.toLowerCase())) ||
+        (initialModuleId && c.lessonTitle?.toLowerCase().includes(initialModuleId.toLowerCase()))
+    )
+    return idx >= 0 ? idx : 0
+  }
+
+  const [challengeIndex, setChallengeIndex] = useState(getStartingIndex)
   const currentChallenge: CodeShuffleChallenge = activeChallenges[challengeIndex] || activeChallenges[0]
 
   const [blocks, setBlocks] = useState(currentChallenge.scrambledBlocks)
@@ -77,6 +92,13 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
     setBlocks(currentChallenge.scrambledBlocks)
     gameSound.playSuccess()
   }
+
+  // Auto-start if launched from a specific drill
+  useEffect(() => {
+    if (initialChallengeTitle) {
+      startGame()
+    }
+  }, [initialChallengeTitle])
 
   const moveBlock = (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= blocks.length || feedback) return
@@ -144,8 +166,11 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
             <span className="p-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <Shuffle className="w-4 h-4" />
             </span>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">
-              Code Shuffle
+            <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+              {currentChallenge?.title || 'Code Shuffle'}
+            </span>
+            <span className="hidden sm:inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
+              Shuffle
             </span>
             {isOffline && (
               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">

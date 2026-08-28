@@ -18,7 +18,7 @@ import {
 interface GameModulesRoadmapProps {
   modules: GameModuleItem[]
   selectedLanguage: GameLanguage
-  onLaunchGame: (gameId: GameId, moduleId: string, moduleTitle: string) => void
+  onLaunchGame: (gameId: GameId, moduleId: string, moduleTitle: string, drillTitle?: string, language?: GameLanguage) => void
 }
 
 const GAME_ICON_MAP: Record<GameId, React.FC<{ className?: string }>> = {
@@ -248,7 +248,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  onLaunchGame(drill.gameId, mod.id, mod.title)
+                                  onLaunchGame(drill.gameId, mod.id, mod.title, drill.title, mod.language || selectedLanguage)
                                 }}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white transition-all cursor-pointer shrink-0 shadow-xs"
                               >
