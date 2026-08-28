@@ -17,6 +17,7 @@ import LessonViewPage from '@/features/learning/pages/LessonViewPage'
 import ProgressPage from '@/features/progress/pages/ProgressPage'
 import SettingsPage from '@/features/settings/pages/SettingsPage'
 import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage'
+import QuizzesPage from '@/features/learning/pages/QuizzesPage'
 
 export const routes: RouteObject[] = [
   // Public standalone routes
@@ -79,6 +80,10 @@ export const routes: RouteObject[] = [
       {
         path: 'debugger',
         element: <DebuggerPage />,
+      },
+      {
+        path: 'quizzes',
+        element: <QuizzesPage />,
       },
       {
         path: 'learning',

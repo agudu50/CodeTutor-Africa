@@ -2,7 +2,17 @@ export interface NavItem {
   id: string
   label: string
   path: string
-  iconName: 'LayoutDashboard' | 'Bot' | 'Code2' | 'Bug' | 'GraduationCap' | 'BarChart3' | 'Settings' | 'ShieldCheck' | 'Gamepad2'
+  iconName:
+    | 'LayoutDashboard'
+    | 'GraduationCap'
+    | 'Bot'
+    | 'Code2'
+    | 'Bug'
+    | 'HelpCircle'
+    | 'Gamepad2'
+    | 'BarChart3'
+    | 'ShieldCheck'
+    | 'Settings'
   badge?: string
 }
 
@@ -12,6 +22,12 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: 'Dashboard',
     path: '/dashboard',
     iconName: 'LayoutDashboard',
+  },
+  {
+    id: 'learning',
+    label: 'Courses',
+    path: '/learning',
+    iconName: 'GraduationCap',
   },
   {
     id: 'tutor',
@@ -27,23 +43,23 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     iconName: 'Code2',
   },
   {
-    id: 'games',
-    label: 'Games',
-    path: '/games',
-    iconName: 'Gamepad2',
-    badge: 'New',
-  },
-  {
     id: 'debugger',
     label: 'Debugger',
     path: '/debugger',
     iconName: 'Bug',
   },
   {
-    id: 'learning',
-    label: 'Courses',
-    path: '/learning',
-    iconName: 'GraduationCap',
+    id: 'quizzes',
+    label: 'Quizzes',
+    path: '/quizzes',
+    iconName: 'HelpCircle',
+  },
+  {
+    id: 'games',
+    label: 'Games',
+    path: '/games',
+    iconName: 'Gamepad2',
+    badge: 'New',
   },
   {
     id: 'progress',
@@ -53,7 +69,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   },
   {
     id: 'admin',
-    label: 'Admin Portal',
+    label: 'Admin',
     path: '/admin',
     iconName: 'ShieldCheck',
     badge: 'Staff',
@@ -65,3 +81,4 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     iconName: 'Settings',
   },
 ]
+
