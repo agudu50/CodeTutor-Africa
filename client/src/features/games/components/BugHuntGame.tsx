@@ -211,80 +211,96 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
 
   return (
     <div className="w-full space-y-4 sm:space-y-5">
-      {/* Game Header Bar */}
-      <div className="relative flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-sm">
-        {/* Left: Navigation & Drill Context */}
-        <div className="flex items-center gap-3 min-w-0">
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/80 cursor-pointer transition-all shadow-xs shrink-0"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Back to Games</span>
-            <span className="sm:hidden">Back</span>
-          </button>
+      {/* Game Header Bar (Fully Responsive on Mobile, Tablet & Desktop) */}
+      <div className="relative p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-sm space-y-2.5 sm:space-y-3">
+        {/* Top Control Bar */}
+        <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
+          {/* Back Button & Module Info */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/80 cursor-pointer transition-all shadow-xs shrink-0"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Games</span>
+            </button>
 
-          <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 shrink-0" />
+            <div className="hidden sm:block h-5 w-px bg-slate-200 dark:bg-slate-800 shrink-0" />
 
-          {/* Drill Identity */}
+            <div className="hidden sm:flex items-center gap-1.5 min-w-0">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400 truncate max-w-[200px] lg:max-w-xs">
+                {currentChallenge?.lessonTitle || 'Module 1: Your First Lines of Code'}
+              </span>
+              <span className="inline-flex items-center text-[10px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 shrink-0">
+                Bug Hunt
+              </span>
+              {isOffline && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shadow-xs shrink-0">
+                  <WifiOff className="w-3 h-3 text-amber-600 dark:text-amber-400" /> Offline
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Live Metrics HUD */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-mono font-bold ml-auto shrink-0">
+            {/* Prominent Live Timer */}
+            <div className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl border shadow-xs transition-all ${
+              timeLeft <= 5 && isPlaying
+                ? 'bg-rose-500 text-white border-rose-600 animate-pulse ring-2 ring-rose-500/40'
+                : 'bg-rose-50 dark:bg-rose-950/70 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-700/80'
+            }`}>
+              <Timer className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${timeLeft <= 5 && isPlaying ? 'text-white' : 'text-rose-600 dark:text-rose-400'}`} />
+              <span className="text-xs sm:text-sm font-black tracking-tight">{timeLeft}s</span>
+            </div>
+
+            <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700/80 shadow-xs">
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-current" />
+              <span>{streak}x<span className="hidden sm:inline"> Streak</span></span>
+            </div>
+
+            <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 shadow-xs">
+              <Trophy className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="font-black">{score}<span className="text-[10px] sm:text-xs font-bold ml-0.5">pts</span></span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              className="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 cursor-pointer shadow-xs transition-colors"
+              title={soundEnabled ? 'Mute sound' : 'Unmute sound'}
+            >
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Drill Title Banner */}
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shadow-xs shrink-0">
               <Bug className="w-4 h-4" />
             </div>
-
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                  {currentChallenge?.lessonTitle || 'Interactive Drill'}
+              <div className="flex sm:hidden items-center gap-1.5 flex-wrap mb-0.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate max-w-[150px]">
+                  {currentChallenge?.lessonTitle || 'Module 1'}
                 </span>
-                <span className="inline-flex items-center text-[10px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+                <span className="inline-flex items-center text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
                   Bug Hunt
                 </span>
+                {isOffline && (
+                  <span className="inline-flex items-center gap-0.5 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                    <WifiOff className="w-2.5 h-2.5" /> Offline
+                  </span>
+                )}
               </div>
-              <h1 className="font-black text-sm sm:text-base text-slate-900 dark:text-white truncate tracking-tight">
+              <h1 className="font-black text-sm sm:text-lg text-slate-900 dark:text-white tracking-tight leading-snug break-words">
                 {currentChallenge?.title || 'Bug Hunt Blitz'}
               </h1>
             </div>
-
-            {isOffline && (
-              <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shadow-xs shrink-0">
-                <WifiOff className="w-3 h-3 text-amber-600 dark:text-amber-400" /> Offline
-              </span>
-            )}
           </div>
-        </div>
-
-        {/* Right: Live Metrics HUD */}
-        <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono font-bold shrink-0">
-          {/* Prominent Live Timer */}
-          <div className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border shadow-xs transition-all ${
-            timeLeft <= 5 && isPlaying
-              ? 'bg-rose-500 text-white border-rose-600 animate-pulse ring-2 ring-rose-500/40'
-              : 'bg-rose-50 dark:bg-rose-950/70 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-700/80'
-          }`}>
-            <Timer className={`w-4 h-4 ${timeLeft <= 5 && isPlaying ? 'text-white' : 'text-rose-600 dark:text-rose-400'}`} />
-            <span className="text-sm font-black tracking-tight">{timeLeft}s</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700/80 shadow-xs">
-            <Flame className="w-3.5 h-3.5 text-amber-500 fill-current" />
-            <span>{streak}x Streak</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 shadow-xs">
-            <Trophy className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-black">{score} pts</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleToggleSound}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 cursor-pointer shadow-xs transition-colors"
-            title={soundEnabled ? 'Mute sound' : 'Unmute sound'}
-          >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
-          </button>
         </div>
       </div>
 
