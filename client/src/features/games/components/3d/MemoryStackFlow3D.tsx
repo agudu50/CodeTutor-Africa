@@ -185,7 +185,7 @@ export const MemoryStackFlow3D: React.FC<MemoryStackFlow3DProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner ${className}`}
+      className={`relative w-full h-full min-h-[220px] sm:min-h-[260px] overflow-hidden rounded-2xl bg-slate-950 border border-slate-800 shadow-inner ${className}`}
       aria-hidden="true"
     />
   )

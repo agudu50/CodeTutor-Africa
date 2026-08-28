@@ -6,6 +6,7 @@ import {
   CodeShuffleChallenge,
   GameLanguage,
   GameId,
+  GameAnimationType,
 } from '@/features/games/types/games.types'
 import { gameStoreService } from '@/services/games/game-store.service'
 import { courseStoreService } from '@/services/learning/course-store.service'
@@ -18,9 +19,68 @@ import {
   Shuffle,
   Plus,
   Code2,
+  Sparkles,
 } from 'lucide-react'
 
 type ChallengeLanguage = Exclude<GameLanguage, 'all'>
+
+const ANIMATION_OPTIONS: {
+  id: GameAnimationType
+  title: string
+  icon: string
+  badge: string
+  desc: string
+}[] = [
+  {
+    id: 'default',
+    title: 'Game Default',
+    icon: '🎯',
+    badge: 'Recommended',
+    desc: 'Uses the primary signature 3D environment for this game mode.',
+  },
+  {
+    id: 'cyber-racer',
+    title: 'Cyber Racer 3D',
+    icon: '🏎️',
+    badge: 'High Speed',
+    desc: 'Neon Cyber vehicle racing on digital grid highway with WPM speedometer.',
+  },
+  {
+    id: 'circuit-scanner',
+    title: 'Circuit Bug Scanner 3D',
+    icon: '🐛',
+    badge: 'Motherboard',
+    desc: '3D Motherboard circuit board with real-time laser reticle & spark pulses.',
+  },
+  {
+    id: 'memory-flow',
+    title: 'Quantum Memory Flow 3D',
+    icon: '💾',
+    badge: 'CPU Core',
+    desc: '3D CPU core with orbiting data packets traveling down execution channels.',
+  },
+  {
+    id: 'algorithm-blocks',
+    title: 'Magnetic Logic Blocks 3D',
+    icon: '🔀',
+    badge: 'Isometric',
+    desc: '3D physical algorithm cubes floating with dynamic energy linkage beams.',
+  },
+  {
+    id: 'warp-speed',
+    title: 'Warp Speed Starfield 3D',
+    icon: '⚡',
+    badge: 'Hyperdrive',
+    desc: 'Hyperspace particle tunnel accelerating towards light speed.',
+  },
+  {
+    id: 'hologram-bug',
+    title: 'Holographic Bug Crystal 3D',
+    icon: '🔮',
+    badge: 'Radar Hologram',
+    desc: 'Pulsing 3D wireframe hologram with rotating targeting rings.',
+  },
+]
 
 export type EditableChallengeType =
   | { type: 'speedrun'; data: Partial<SpeedrunSnippet> }
@@ -55,6 +115,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [timeLimitSecs, setTimeLimitSecs] = useState<number>(25)
+  const [animationType, setAnimationType] = useState<GameAnimationType>('default')
 
   // Speedrun fields
   const [speedrunCode, setSpeedrunCode] = useState<string>('def example():\n    return True')
@@ -97,6 +158,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
       setLessonTitle(data.lessonTitle || '')
       setTitle(data.title || '')
       setDescription((data as any).description || (data as any).goalDescription || '')
+      setAnimationType(data.animationType || 'default')
 
       if (editingChallenge.type === 'speedrun') {
         const d = data as Partial<SpeedrunSnippet>
@@ -155,6 +217,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           lessonTitle,
           code: speedrunCode,
           timeLimitSecs,
+          animationType,
         })
         onSaved(`Updated Speedrun snippet "${title}"`)
       } else {
@@ -167,6 +230,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           lessonTitle,
           code: speedrunCode,
           timeLimitSecs,
+          animationType,
         })
         onSaved(`Created new Speedrun snippet "${title}"`)
       }
@@ -185,6 +249,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           bugExplanation,
           correctOptions: bugOptions,
           timeLimitSecs,
+          animationType,
         })
         onSaved(`Updated Bug Hunt challenge "${title}"`)
       } else {
@@ -200,6 +265,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           bugExplanation,
           correctOptions: bugOptions,
           timeLimitSecs,
+          animationType,
         })
         onSaved(`Created new Bug Hunt challenge "${title}"`)
       }
@@ -216,6 +282,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           correctIndex: predictorCorrectIndex,
           explanation: predictorExplanation,
           timeLimitSecs,
+          animationType,
         })
         onSaved(`Updated Output Predictor challenge "${title}"`)
       } else {
@@ -230,6 +297,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           correctIndex: predictorCorrectIndex,
           explanation: predictorExplanation,
           timeLimitSecs,
+          animationType,
         })
         onSaved(`Created new Output Predictor challenge "${title}"`)
       }
@@ -247,6 +315,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           lessonTitle,
           scrambledBlocks: shuffleBlocks,
           correctOrder,
+          animationType,
         })
         onSaved(`Updated Code Shuffle challenge "${title}"`)
       } else {
@@ -261,6 +330,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           lessonTitle,
           scrambledBlocks: shuffleBlocks,
           correctOrder,
+          animationType,
         })
         onSaved(`Created new Code Shuffle challenge "${title}"`)
       }
@@ -453,6 +523,59 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
               placeholder="Provide context explaining the computer science concept behind this challenge."
               className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white resize-none"
             />
+          </div>
+
+          {/* 3D Game Animation Selection */}
+          <div className="space-y-2 p-4 rounded-2xl bg-gradient-to-br from-indigo-50/70 via-slate-50 to-emerald-50/70 dark:from-slate-950 dark:via-slate-900/90 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>3D Interactive Game Animation Environment</span>
+              </div>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                Customizable
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Select any live 3D animation environment to display in the background and interactive viewport for learners.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-1.5">
+              {ANIMATION_OPTIONS.map((opt) => {
+                const isSelected = animationType === opt.id
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setAnimationType(opt.id)}
+                    className={`p-3 rounded-xl border text-left flex flex-col justify-between gap-1.5 transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-white dark:bg-slate-900 border-[#005F02] dark:border-emerald-500 ring-2 ring-[#005F02]/20 dark:ring-emerald-500/20 shadow-sm scale-[1.02]'
+                        : 'bg-white/70 dark:bg-slate-900/70 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-lg">{opt.icon}</span>
+                      <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-md ${
+                        isSelected
+                          ? 'bg-[#005F02] text-white'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      }`}>
+                        {opt.badge}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-xs text-slate-900 dark:text-white leading-tight">
+                        {opt.title}
+                      </h4>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mt-0.5">
+                        {opt.desc}
+                      </p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════

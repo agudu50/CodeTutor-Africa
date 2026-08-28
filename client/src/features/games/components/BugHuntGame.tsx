@@ -4,7 +4,7 @@ import { BugHuntChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
 import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
-import { CircuitBugScanner3D } from './3d/CircuitBugScanner3D'
+import { GameAnimation3DRenderer } from './3d/GameAnimation3DRenderer'
 import { HologramBug3D } from './3d/HologramBug3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
@@ -409,138 +409,208 @@ export const BugHuntGame: React.FC<BugHuntGameProps> = ({
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          {/* 3D Circuit Bug Scanner responding to line selection & squash state */}
-          <CircuitBugScanner3D
-            totalLines={currentChallenge.lines.length}
-            selectedLineIndex={selectedLineIndex}
-            buggyLineIndex={currentChallenge.buggyLineIndex}
-            isLocked={isLineConfirmed}
-            isSquashed={feedback?.isSuccess ?? false}
-            hasError={feedback !== null && !feedback.isSuccess}
-          />
+        /* ═══ PLAYING STATE — 2-Column Responsive Layout ═══ */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* ── LEFT COLUMN: 3D Stage + Challenge Context ── */}
+          <div className="lg:col-span-5 flex flex-col gap-4">
+            {/* 3D Interactive Animation Stage with HUD */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
+              <GameAnimation3DRenderer
+                animationType={currentChallenge.animationType}
+                defaultForGame="bughunt"
+                totalLines={currentChallenge.lines.length}
+                selectedLineIndex={selectedLineIndex}
+                buggyLineIndex={currentChallenge.buggyLineIndex}
+                isLocked={isLineConfirmed}
+                isSquashed={feedback?.isSuccess ?? false}
+                hasError={feedback !== null && !feedback.isSuccess}
+              />
 
-          {/* Challenge Description */}
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                  {currentChallenge.language} • Bug {challengeIndex + 1} of {activeChallenges.length}
-                </span>
-                {currentChallenge.courseTitle && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    <BookOpen className="w-3 h-3 text-rose-500" />
-                    <span>{currentChallenge.courseTitle}</span>
-                    {currentChallenge.lessonTitle && <span className="text-slate-400">• {currentChallenge.lessonTitle}</span>}
+              {/* 3D HUD Status Overlay */}
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3.5 pb-3 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+                <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold">
+                  <span className={`w-2 h-2 rounded-full animate-pulse ${
+                    feedback?.isSuccess
+                      ? 'bg-emerald-400'
+                      : isLineConfirmed
+                      ? 'bg-amber-400'
+                      : 'bg-rose-500'
+                  }`} />
+                  <span className="text-slate-300">
+                    {feedback?.isSuccess
+                      ? 'BUG SQUASHED'
+                      : isLineConfirmed
+                      ? `LOCKED: LINE ${selectedLineIndex! + 1}`
+                      : selectedLineIndex !== null
+                      ? `TARGETING: LINE ${selectedLineIndex + 1}`
+                      : 'RADAR SCANNING'}
                   </span>
-                )}
+                </div>
+
+                <span className="text-[10px] font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
+                  {currentChallenge.lines.length} Lines
+                </span>
               </div>
-              <span className="text-xs font-semibold text-slate-500">
-                {!isLineConfirmed ? 'Step 1: Tap the buggy line' : 'Step 2: Pick the correct fix'}
-              </span>
             </div>
-            <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-              {currentChallenge.title}
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {currentChallenge.description}
-            </p>
+
+            {/* Challenge Description & Context Card */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2.5 flex-1 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                    {currentChallenge.language} • Bug {challengeIndex + 1} of {activeChallenges.length}
+                  </span>
+                  <span className="text-[11px] font-extrabold text-rose-600 dark:text-rose-400">
+                    {!isLineConfirmed ? 'Step 1: Tap the buggy line' : 'Step 2: Pick the correct fix'}
+                  </span>
+                </div>
+
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                  {currentChallenge.title}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  {currentChallenge.description}
+                </p>
+              </div>
+
+              {currentChallenge.courseTitle && (
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1 text-[10px] font-semibold text-slate-500">
+                  <BookOpen className="w-3 h-3 text-rose-500 shrink-0" />
+                  <span className="truncate">{currentChallenge.courseTitle}</span>
+                  {currentChallenge.lessonTitle && <span className="truncate">• {currentChallenge.lessonTitle}</span>}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Interactive Code Lines */}
-          <div className="p-2 sm:p-3 rounded-2xl bg-slate-950 border border-slate-800 font-mono text-xs sm:text-sm space-y-1">
-            {currentChallenge.lines.map((line, idx) => {
-              const isSelected = selectedLineIndex === idx
-              const isBugLine = isLineConfirmed && idx === currentChallenge.buggyLineIndex
+          {/* ── RIGHT COLUMN: Interactive Code Lines & Fix Selector ── */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+            <div className="space-y-3">
+              {/* VS Code Style Code Inspector Window */}
+              <div className="rounded-2xl border-2 border-slate-700/80 overflow-hidden shadow-2xl bg-[#1e1e1e] flex flex-col text-slate-200">
+                {/* Window Titlebar */}
+                <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0 select-none">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block" />
+                  </div>
 
-              return (
+                  <div className="flex items-center gap-2 truncate text-[11px] font-mono text-slate-300 font-semibold">
+                    <span>bughunt.{currentChallenge.language === 'python' ? 'py' : currentChallenge.language === 'javascript' ? 'js' : 'ts'}</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold">INSPECTOR</span>
+                  </div>
+
+                  <span className="text-[10px] font-mono text-slate-400">
+                    Click line to inspect
+                  </span>
+                </div>
+
+                {/* Interactive Code Lines Body */}
+                <div className="p-3 font-mono text-xs sm:text-sm space-y-1.5 bg-[#1E1E1E]">
+                  {currentChallenge.lines.map((line, idx) => {
+                    const isSelected = selectedLineIndex === idx
+                    const isBugLine = isLineConfirmed && idx === currentChallenge.buggyLineIndex
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelectLine(idx)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all ${
+                          isBugLine
+                            ? 'bg-rose-500/20 text-rose-300 border-2 border-rose-500 shadow-md scale-[1.01]'
+                            : isSelected
+                            ? 'bg-rose-500/10 text-white border-2 border-rose-400/80 shadow-sm scale-[1.01]'
+                            : 'text-slate-300 hover:bg-[#2A2A2A] border border-transparent'
+                        }`}
+                      >
+                        <span className="text-slate-500 select-none text-xs w-6 shrink-0 font-bold">{idx + 1}</span>
+                        <pre className="whitespace-pre flex-1 truncate font-mono text-xs sm:text-[13px]">{line}</pre>
+                        {isSelected && !isLineConfirmed && (
+                          <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white shrink-0 animate-pulse">
+                            Selected
+                          </span>
+                        )}
+                        {isBugLine && (
+                          <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-full bg-rose-500 text-white shrink-0">
+                            Buggy Line
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Step 1: Confirm Line Button */}
+              {!isLineConfirmed && !feedback && (
+                <div className="flex justify-end pt-1">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={handleConfirmLine}
+                    disabled={selectedLineIndex === null}
+                    className="font-bold px-6 bg-rose-600 hover:bg-rose-700 text-white shadow-md disabled:opacity-40"
+                  >
+                    Confirm Buggy Line ({selectedLineIndex !== null ? `Line ${selectedLineIndex + 1}` : 'Select Line'})
+                  </Button>
+                </div>
+              )}
+
+              {/* Step 2: Fix Options Selector */}
+              {isLineConfirmed && !feedback && (
+                <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3 animate-in fade-in">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200">
+                      Select the correct replacement fix for Line {selectedLineIndex! + 1}:
+                    </h4>
+                    <span className="text-[10px] font-mono text-rose-500 font-bold">1 Choice</span>
+                  </div>
+                  <div className="space-y-2">
+                    {currentChallenge.correctOptions.map((opt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handlePickFix(i)}
+                        className="w-full text-left p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-rose-500 dark:hover:border-rose-500 font-mono text-xs text-slate-900 dark:text-white transition-all cursor-pointer shadow-2xs hover:scale-[1.01]"
+                      >
+                        {opt.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Post-Round Feedback */}
+              {feedback && (
                 <div
-                  key={idx}
-                  onClick={() => handleSelectLine(idx)}
-                  className={`flex items-center gap-3 px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                    isBugLine
-                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/50'
-                      : isSelected
-                      ? 'bg-brand-500/20 text-white border border-brand-500/50'
-                      : 'text-slate-300 hover:bg-slate-900'
+                  className={`p-4 rounded-2xl border space-y-3 animate-in zoom-in-95 ${
+                    feedback.isSuccess
+                      ? 'bg-emerald-500/10 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
+                      : 'bg-rose-500/10 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300'
                   }`}
                 >
-                  <span className="text-slate-600 select-none text-[11px] w-6 shrink-0">{idx + 1}</span>
-                  <pre className="whitespace-pre flex-1 truncate">{line}</pre>
-                  {isSelected && !isLineConfirmed && (
-                    <span className="text-[10px] font-sans font-bold px-1.5 py-0.5 rounded bg-brand-600 text-white shrink-0">
-                      Selected
-                    </span>
-                  )}
+                  <div className="flex items-start gap-2">
+                    {feedback.isSuccess ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                    )}
+                    <div>
+                      <h4 className="font-bold text-sm">{feedback.isSuccess ? 'Bug Squashed!' : 'Missed Bug'}</h4>
+                      <p className="text-xs mt-0.5 leading-relaxed">{feedback.message}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-1">
+                    <Button variant="primary" size="sm" onClick={handleNextChallenge} className="font-bold px-5 bg-rose-600 hover:bg-rose-700 text-white">
+                      Next Challenge →
+                    </Button>
+                  </div>
                 </div>
-              )
-            })}
+              )}
+            </div>
           </div>
-
-          {/* Confirm Line Button (Step 1) */}
-          {!isLineConfirmed && !feedback && (
-            <div className="flex justify-end">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleConfirmLine}
-                disabled={selectedLineIndex === null}
-                className="font-bold"
-              >
-                Confirm Buggy Line
-              </Button>
-            </div>
-          )}
-
-          {/* Fix Options (Step 2) */}
-          {isLineConfirmed && !feedback && (
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3 animate-in fade-in">
-              <h4 className="font-bold text-xs text-slate-700 dark:text-slate-300">
-                Choose the correct replacement for Line {selectedLineIndex! + 1}:
-              </h4>
-              <div className="space-y-2">
-                {currentChallenge.correctOptions.map((opt, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => handlePickFix(i)}
-                    className="w-full text-left p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 font-mono text-xs text-slate-900 dark:text-white transition-all cursor-pointer shadow-2xs"
-                  >
-                    {opt.text}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Post-Round Feedback */}
-          {feedback && (
-            <div
-              className={`p-4 rounded-2xl border space-y-3 animate-in zoom-in-95 ${
-                feedback.isSuccess
-                  ? 'bg-emerald-500/10 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
-                  : 'bg-rose-500/10 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300'
-              }`}
-            >
-              <div className="flex items-start gap-2">
-                {feedback.isSuccess ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                ) : (
-                  <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-                )}
-                <div>
-                  <h4 className="font-bold text-sm">{feedback.isSuccess ? 'Spot On!' : 'Missed Bug'}</h4>
-                  <p className="text-xs mt-0.5 leading-relaxed">{feedback.message}</p>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-1">
-                <Button variant="primary" size="sm" onClick={handleNextChallenge} className="font-bold">
-                  Next Challenge →
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

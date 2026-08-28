@@ -19,6 +19,16 @@ export interface GameMetadata {
   }
 }
 
+export type GameAnimationType =
+  | 'default'
+  | 'cyber-racer'
+  | 'circuit-scanner'
+  | 'memory-flow'
+  | 'algorithm-blocks'
+  | 'warp-speed'
+  | 'hologram-bug'
+  | 'arcade-hero'
+
 // 1. Syntax Speedrun Types
 export interface SpeedrunSnippet {
   id: string
@@ -30,6 +40,7 @@ export interface SpeedrunSnippet {
   description: string
   code: string
   timeLimitSecs: number
+  animationType?: GameAnimationType
 }
 
 // 2. Bug Hunt Types
@@ -50,6 +61,7 @@ export interface BugHuntChallenge {
     explanation?: string
   }[]
   timeLimitSecs: number
+  animationType?: GameAnimationType
 }
 
 // 3. Output Predictor Types
@@ -65,6 +77,7 @@ export interface OutputPredictorChallenge {
   correctIndex: number
   explanation: string
   timeLimitSecs: number
+  animationType?: GameAnimationType
 }
 
 // 4. Code Shuffle Types
@@ -84,6 +97,7 @@ export interface CodeShuffleChallenge {
   }[]
   correctOrder: string[] // Array of block IDs in correct order
   explanation: string
+  animationType?: GameAnimationType
 }
 
 // Player Statistics & Storage

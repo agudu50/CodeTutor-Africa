@@ -4,6 +4,7 @@ import { OutputPredictorChallenge, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
 import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
+import { GameAnimation3DRenderer } from './3d/GameAnimation3DRenderer'
 import { MemoryStackFlow3D } from './3d/MemoryStackFlow3D'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { Button } from '@/components/ui'
@@ -18,7 +19,6 @@ import {
   Volume2,
   VolumeX,
   WifiOff,
-  BookOpen,
   ArrowLeft,
 } from 'lucide-react'
 
@@ -389,100 +389,151 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          {/* 3D Memory Stack and Data Flow visualizer */}
-          <MemoryStackFlow3D
-            selectedOptionIndex={selectedOption}
-            correctIndex={currentChallenge.correctIndex}
-            isAnswered={feedback !== null}
-            isCorrect={feedback?.isSuccess ?? false}
-          />
+        /* ═══ PLAYING STATE — 2-Column Responsive Layout ═══ */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* ── LEFT COLUMN: 3D Stage + Target Code ── */}
+          <div className="lg:col-span-5 flex flex-col gap-4">
+            {/* 3D Data Flow Visualizer with HUD */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
+              <GameAnimation3DRenderer
+                animationType={currentChallenge.animationType}
+                defaultForGame="predictor"
+                selectedOptionIndex={selectedOption}
+                correctIndex={currentChallenge.correctIndex}
+                isAnswered={feedback !== null}
+                isCorrect={feedback?.isSuccess ?? false}
+              />
 
-          {/* Question Snippet */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                  {currentChallenge.language} • Question {challengeIndex + 1} of {activeChallenges.length}
-                </span>
-                {currentChallenge.courseTitle && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    <BookOpen className="w-3 h-3 text-indigo-500" />
-                    <span>{currentChallenge.courseTitle}</span>
-                    {currentChallenge.lessonTitle && <span className="text-slate-400">• {currentChallenge.lessonTitle}</span>}
+              {/* HUD Overlay */}
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3.5 pb-3 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+                <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold">
+                  <span className={`w-2 h-2 rounded-full animate-pulse ${
+                    feedback?.isSuccess
+                      ? 'bg-emerald-400'
+                      : feedback !== null
+                      ? 'bg-rose-500'
+                      : selectedOption !== null
+                      ? 'bg-indigo-400'
+                      : 'bg-slate-400'
+                  }`} />
+                  <span className="text-slate-300">
+                    {feedback?.isSuccess
+                      ? 'CPU EXECUTION VERIFIED'
+                      : feedback !== null
+                      ? 'LOGIC MISMATCH'
+                      : selectedOption !== null
+                      ? `CHANNEL ${String.fromCharCode(65 + selectedOption)} SELECTED`
+                      : 'AWAITING PREDICTION'}
                   </span>
-                )}
-              </div>
-              <h3 className="font-bold text-sm text-slate-700 dark:text-slate-300 truncate">
-                {currentChallenge.title}
-              </h3>
-            </div>
-
-            <div className="p-3 sm:p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto select-none border border-slate-800">
-              <pre className="whitespace-pre">{currentChallenge.code}</pre>
-            </div>
-          </div>
-
-          {/* Multiple Choice Options */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {currentChallenge.options.map((option, idx) => {
-              const isSelected = selectedOption === idx
-              const isCorrect = idx === currentChallenge.correctIndex
-
-              let btnStyle = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500'
-              if (feedback) {
-                if (isCorrect) {
-                  btnStyle = 'bg-emerald-50 dark:bg-emerald-950 border-emerald-400 text-emerald-800 dark:text-emerald-300 font-bold'
-                } else if (isSelected) {
-                  btnStyle = 'bg-rose-50 dark:bg-rose-950 border-rose-400 text-rose-800 dark:text-rose-300 font-bold'
-                } else {
-                  btnStyle = 'opacity-50'
-                }
-              }
-
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handlePickOption(idx)}
-                  disabled={feedback !== null}
-                  className={`p-3.5 rounded-xl border text-left font-mono text-xs sm:text-sm transition-all cursor-pointer shadow-2xs ${btnStyle}`}
-                >
-                  <span className="text-slate-400 font-sans font-bold mr-2">{String.fromCharCode(65 + idx)}.</span>
-                  <span>{option}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Feedback & Explanation */}
-          {feedback && (
-            <div
-              className={`p-4 rounded-2xl border space-y-3 animate-in zoom-in-95 ${
-                feedback.isSuccess
-                  ? 'bg-emerald-500/10 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
-                  : 'bg-rose-500/10 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300'
-              }`}
-            >
-              <div className="flex items-start gap-2">
-                {feedback.isSuccess ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                ) : (
-                  <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-                )}
-                <div>
-                  <h4 className="font-bold text-sm">{feedback.isSuccess ? 'Correct Answer!' : 'Not quite!'}</h4>
-                  <p className="text-xs mt-0.5 leading-relaxed">{feedback.message}</p>
                 </div>
-              </div>
 
-              <div className="flex justify-end pt-1">
-                <Button variant="primary" size="sm" onClick={handleNext} className="font-bold">
-                  Next Question →
-                </Button>
+                <span className="text-[10px] font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
+                  {currentChallenge.options.length} Channels
+                </span>
               </div>
             </div>
-          )}
+
+            {/* Target Code Snippet Card */}
+            <div className="rounded-2xl border-2 border-slate-700/80 overflow-hidden shadow-2xl bg-[#1e1e1e] flex-1 flex flex-col text-slate-200">
+              <div className="h-8 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between text-[11px] font-mono text-slate-300 font-semibold select-none">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                  <span className="ml-1 text-slate-400">code.{currentChallenge.language === 'python' ? 'py' : currentChallenge.language === 'javascript' ? 'js' : 'ts'}</span>
+                </div>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-bold">SOURCE</span>
+              </div>
+
+              <div className="p-3.5 font-mono text-xs sm:text-[13px] leading-relaxed overflow-x-auto select-none bg-[#1E1E1E] text-emerald-300 flex-1">
+                <pre className="whitespace-pre">{currentChallenge.code}</pre>
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT COLUMN: Prediction Options & Verification ── */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+            <div className="space-y-3">
+              {/* Question Header */}
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1.5">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                    {currentChallenge.language} • Question {challengeIndex + 1} of {activeChallenges.length}
+                  </span>
+                  <span className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400">
+                    Choose what prints to console
+                  </span>
+                </div>
+
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                  {currentChallenge.title}
+                </h3>
+              </div>
+
+              {/* Multiple Choice Terminal Options */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {currentChallenge.options.map((option, idx) => {
+                  const isSelected = selectedOption === idx
+                  const isCorrect = idx === currentChallenge.correctIndex
+
+                  let btnStyle = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500 hover:scale-[1.01]'
+                  if (feedback) {
+                    if (isCorrect) {
+                      btnStyle = 'bg-emerald-50 dark:bg-emerald-950 border-2 border-emerald-500 text-emerald-800 dark:text-emerald-300 font-bold scale-[1.01]'
+                    } else if (isSelected) {
+                      btnStyle = 'bg-rose-50 dark:bg-rose-950 border-2 border-rose-500 text-rose-800 dark:text-rose-300 font-bold'
+                    } else {
+                      btnStyle = 'opacity-40 border-slate-200 dark:border-slate-800'
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handlePickOption(idx)}
+                      disabled={feedback !== null}
+                      className={`p-3.5 rounded-xl border text-left font-mono text-xs sm:text-sm transition-all cursor-pointer shadow-2xs flex items-center gap-2.5 ${btnStyle}`}
+                    >
+                      <span className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center font-sans font-bold text-xs shrink-0">
+                        {String.fromCharCode(65 + idx)}
+                      </span>
+                      <span className="truncate">{option}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Feedback & Explanation */}
+              {feedback && (
+                <div
+                  className={`p-4 rounded-2xl border space-y-3 animate-in zoom-in-95 ${
+                    feedback.isSuccess
+                      ? 'bg-emerald-500/10 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
+                      : 'bg-rose-500/10 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300'
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    {feedback.isSuccess ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                    )}
+                    <div>
+                      <h4 className="font-bold text-sm">{feedback.isSuccess ? 'Correct Prediction!' : 'Not quite!'}</h4>
+                      <p className="text-xs mt-0.5 leading-relaxed">{feedback.message}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-1">
+                    <Button variant="primary" size="sm" onClick={handleNext} className="font-bold px-5 bg-indigo-600 hover:bg-indigo-700 text-white">
+                      Next Challenge →
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

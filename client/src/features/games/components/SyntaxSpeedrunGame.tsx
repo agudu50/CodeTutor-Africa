@@ -4,7 +4,7 @@ import { SpeedrunSnippet, GameLanguage } from '../types/games.types'
 import { gameSound } from '../services/gameSound.service'
 import { courseGameAdapter } from '../services/courseGameAdapter.service'
 import { GameLanguageSelector } from './GameLanguageSelector'
-import { CyberRacer3D } from './3d/CyberRacer3D'
+import { GameAnimation3DRenderer } from './3d/GameAnimation3DRenderer'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { WarpSpeed3D } from './3d/WarpSpeed3D'
 import { Button } from '@/components/ui'
@@ -520,11 +520,13 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
           <div className="lg:col-span-5 flex flex-col gap-4">
             {/* Expanded 3D canvas with HUD overlay */}
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-60 sm:h-64 bg-slate-950">
-              <CyberRacer3D
-                progressPercent={completionPercent}
+              <GameAnimation3DRenderer
+                animationType={currentSnippet?.animationType}
+                defaultForGame="speedrun"
+                completionPercent={completionPercent}
                 wpm={wpm}
-                hasError={accuracy < 90 && userInput.length > 0}
-                isCompleted={isCodeComplete}
+                accuracy={accuracy}
+                isErrorState={accuracy < 90 && userInput.length > 0}
               />
               {/* HUD overlay */}
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between px-4 pb-3.5 pointer-events-none">
