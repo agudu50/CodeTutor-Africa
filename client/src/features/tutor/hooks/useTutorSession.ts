@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { ChatMessage, ProgrammingLanguage, TutorMode, TutorSession } from '@/types'
 import { aiService } from '@/services/ai/ai.service'
 import { MOCK_TUTOR_SESSIONS, MOCK_INITIAL_MESSAGES } from '../data/mockTutorData'
@@ -67,8 +67,8 @@ export function useTutorSession(initialSessionId?: string) {
   // Initialize sessions from localStorage or mock
   const [sessions, setSessions] = useState<TutorSession[]>(() => loadStoredSessions())
 
-  // Initialize messages map from localStorage or mock
-  const [allMessages, setAllMessages] = useState<Record<string, ChatMessage[]>>(() => loadStoredMessages())
+  // Initialize messages map setter from localStorage or mock
+  const [, setAllMessages] = useState<Record<string, ChatMessage[]>>(() => loadStoredMessages())
 
   // Determine active session ID
   const [activeSessionId, setActiveSessionId] = useState<string>(() => {

@@ -331,17 +331,16 @@ export const TutorPage: React.FC = () => {
               ))
             )}
 
-            {/* Thinking / Loading State */}
+            {/* Thinking / Loading Animated Dots */}
             {isLoading && (
-              <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs animate-pulse w-full">
-                <div className="w-8 h-8 rounded-xl bg-[#005F02] text-white flex items-center justify-center border border-emerald-500 shrink-0">
-                  <Bot className="w-4 h-4" />
+              <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs max-w-fit animate-in fade-in">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#005F02] text-white flex items-center justify-center border border-emerald-600 shrink-0 shadow-3xs">
+                  <Bot className="w-4 h-4 text-white" />
                 </div>
-                <div className="space-y-2 flex-1 min-w-0">
-                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <span className="truncate">CodeTutor AI is formulating step-by-step Socratic guidance...</span>
-                  </div>
-                  <div className="h-2 w-36 sm:w-48 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                <div className="flex items-center gap-1.5 py-1 px-1.5 self-center">
+                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce [animation-delay:-0.3s]" />
+                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce [animation-delay:-0.15s]" />
+                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce" />
                 </div>
               </div>
             )}
