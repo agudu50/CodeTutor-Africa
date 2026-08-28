@@ -30,7 +30,7 @@ export const TutorPage: React.FC = () => {
     switchSession,
     createNewSession,
     deleteSession,
-  } = useTutorSession(sessionId || 'session-1')
+  } = useTutorSession(sessionId)
 
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
