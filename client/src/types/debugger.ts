@@ -19,3 +19,14 @@ export interface DebugResult extends BaseEntity {
   fixedCode: string
   conceptsInvolved: string[]
 }
+
+export interface DebugSession extends BaseEntity {
+  title: string
+  language: ProgrammingLanguage
+  code: string
+  errorMessage?: string
+  result?: DebugResult | null
+  createdAt: string
+  updatedAt?: string
+}
+

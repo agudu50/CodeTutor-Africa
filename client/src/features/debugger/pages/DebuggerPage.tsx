@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import {
   SAMPLE_BUGGY_SNIPPETS,
@@ -11,7 +11,6 @@ import { Button, Dropdown } from '@/components/ui'
 import {
   Bug,
   Zap,
-  Shield,
   Terminal,
   Code2,
   BookOpen,
@@ -23,34 +22,269 @@ import {
   Trash2,
   Copy,
   Check,
+  Plus,
+  Clock,
 } from 'lucide-react'
-import { ProgrammingLanguage, DebugResult } from '@/types'
+import { ProgrammingLanguage, DebugResult, DebugSession } from '@/types'
 import { renderVSCodeSyntax, renderTerminalStackTrace } from '@/utils/syntaxHighlight'
 
+const DEBUG_SESSIONS_STORAGE_KEY = 'codetutor_debug_sessions_v1'
+const DEBUG_ACTIVE_SESSION_KEY = 'codetutor_debug_active_session_v1'
+
+const DEFAULT_INITIAL_SESSIONS: DebugSession[] = [
+  {
+    id: 'dbg-sess-sample-1',
+    title: 'JS: Async Race Condition',
+    language: 'javascript',
+    code: SAMPLE_BUGGY_SNIPPETS.javascript,
+    errorMessage: SAMPLE_ERROR_MESSAGES.javascript,
+    result: MOCK_DEBUG_RESULTS_BY_LANGUAGE.javascript,
+    createdAt: '2026-02-21T00:00:00Z',
+    updatedAt: '2026-02-21T00:00:00Z',
+  },
+  {
+    id: 'dbg-sess-sample-2',
+    title: 'Java: Array Bounds Exceeded',
+    language: 'java',
+    code: SAMPLE_BUGGY_SNIPPETS.java,
+    errorMessage: SAMPLE_ERROR_MESSAGES.java,
+    result: MOCK_DEBUG_RESULTS_BY_LANGUAGE.java,
+    createdAt: '2026-02-20T12:00:00Z',
+    updatedAt: '2026-02-20T12:00:00Z',
+  },
+  {
+    id: 'dbg-sess-sample-3',
+    title: 'Python: Off-by-One Loop Error',
+    language: 'python',
+    code: SAMPLE_BUGGY_SNIPPETS.python,
+    errorMessage: SAMPLE_ERROR_MESSAGES.python,
+    result: MOCK_DEBUG_RESULTS_BY_LANGUAGE.python,
+    createdAt: '2026-02-19T09:00:00Z',
+    updatedAt: '2026-02-19T09:00:00Z',
+  },
+]
+
+function createFreshDebugSession(lang: ProgrammingLanguage = 'javascript'): DebugSession {
+  return {
+    id: `dbg-sess-${Date.now()}`,
+    title: 'New Debug Investigation',
+    language: lang,
+    code: '',
+    errorMessage: '',
+    result: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }
+}
+
+function saveStoredDebugSessions(sessions: DebugSession[]) {
+  try {
+    localStorage.setItem(DEBUG_SESSIONS_STORAGE_KEY, JSON.stringify(sessions))
+  } catch (e) {
+    console.warn('Failed to save debug sessions to localStorage', e)
+  }
+}
+
+function getInitialSessionsAndActiveId(): { initialSessions: DebugSession[]; initialActiveId: string } {
+  let stored: DebugSession[] = []
+  try {
+    const raw = localStorage.getItem(DEBUG_SESSIONS_STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        stored = parsed
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to parse debug sessions from localStorage', e)
+  }
+
+  // If the first session is already an empty draft, use it
+  const firstSession = stored[0]
+  if (
+    firstSession &&
+    firstSession.code === '' &&
+    (!firstSession.errorMessage || firstSession.errorMessage === '') &&
+    !firstSession.result
+  ) {
+    return {
+      initialSessions: stored,
+      initialActiveId: firstSession.id,
+    }
+  }
+
+  // Otherwise, create a fresh new debug session and prepend it
+  const fresh = createFreshDebugSession('javascript')
+  const combined = [fresh, ...(stored.length > 0 ? stored : DEFAULT_INITIAL_SESSIONS)]
+  saveStoredDebugSessions(combined)
+  try {
+    localStorage.setItem(DEBUG_ACTIVE_SESSION_KEY, fresh.id)
+  } catch {
+    // ignore
+  }
+
+  return {
+    initialSessions: combined,
+    initialActiveId: fresh.id,
+  }
+}
+
 export const DebuggerPage: React.FC = () => {
-  const [language, setLanguage] = useState<ProgrammingLanguage>('javascript')
-  const [code, setCode] = useState(SAMPLE_BUGGY_SNIPPETS.javascript)
-  const [errorMessage, setErrorMessage] = useState(SAMPLE_ERROR_MESSAGES.javascript)
+  const [{ initialSessions, initialActiveId }] = useState(() => getInitialSessionsAndActiveId())
+  const [sessions, setSessions] = useState<DebugSession[]>(initialSessions)
+  const [activeSessionId, setActiveSessionId] = useState<string>(initialActiveId)
+
+  // Active session data
+  const currentSession =
+    sessions.find((s) => s.id === activeSessionId) || sessions[0] || createFreshDebugSession('javascript')
+
+  const [language, setLanguage] = useState<ProgrammingLanguage>(currentSession.language || 'javascript')
+  const [code, setCode] = useState(currentSession.code || '')
+  const [errorMessage, setErrorMessage] = useState(currentSession.errorMessage || '')
+  const [debugResult, setDebugResult] = useState<DebugResult | null>(currentSession.result || null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [activeEditorTab, setActiveEditorTab] = useState<'editor' | 'preview'>('editor')
   const [activeTerminalTab, setActiveTerminalTab] = useState<'terminal' | 'edit'>('terminal')
   const [terminalCopied, setTerminalCopied] = useState(false)
-  const [debugResult, setDebugResult] = useState<DebugResult | null>(
-    MOCK_DEBUG_RESULTS_BY_LANGUAGE.javascript
+  const [showSessionMenu, setShowSessionMenu] = useState(false)
+
+  // Sync state whenever activeSession changes
+  useEffect(() => {
+    if (currentSession) {
+      setLanguage(currentSession.language)
+      setCode(currentSession.code)
+      setErrorMessage(currentSession.errorMessage || '')
+      setDebugResult(currentSession.result || null)
+    }
+  }, [activeSessionId])
+
+  // Save active session changes to sessions state and localStorage
+  const updateCurrentSession = useCallback(
+    (updates: Partial<DebugSession>) => {
+      setSessions((prev) => {
+        const updated = prev.map((s) => {
+          if (s.id === activeSessionId) {
+            return {
+              ...s,
+              ...updates,
+              updatedAt: new Date().toISOString(),
+            }
+          }
+          return s
+        })
+        saveStoredDebugSessions(updated)
+        return updated
+      })
+    },
+    [activeSessionId]
   )
 
   const handleLanguageChange = (newLang: string) => {
     const lang = newLang as ProgrammingLanguage
     setLanguage(lang)
-    const sample = SAMPLE_BUGGY_SNIPPETS[lang as keyof typeof SAMPLE_BUGGY_SNIPPETS] || ''
-    const sampleErr = SAMPLE_ERROR_MESSAGES[lang as keyof typeof SAMPLE_ERROR_MESSAGES] || ''
-    setCode(sample)
-    setErrorMessage(sampleErr)
-    setDebugResult(MOCK_DEBUG_RESULTS_BY_LANGUAGE[lang] || null)
+    updateCurrentSession({ language: lang })
   }
 
+  const handleCodeChange = (newCode: string) => {
+    setCode(newCode)
+    updateCurrentSession({ code: newCode })
+  }
+
+  const handleErrorMessageChange = (newError: string) => {
+    setErrorMessage(newError)
+    updateCurrentSession({ errorMessage: newError })
+  }
+
+  // Create a brand new clean debug session
+  const createNewDebugSession = () => {
+    const newId = `dbg-sess-${Date.now()}`
+    const newSession: DebugSession = {
+      id: newId,
+      title: 'New Debug Investigation',
+      language,
+      code: '',
+      errorMessage: '',
+      result: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    const updated = [newSession, ...sessions]
+    setSessions(updated)
+    saveStoredDebugSessions(updated)
+    setActiveSessionId(newId)
+    try {
+      localStorage.setItem(DEBUG_ACTIVE_SESSION_KEY, newId)
+    } catch {
+      // ignore
+    }
+    setShowSessionMenu(false)
+  }
+
+  // Switch session
+  const switchSession = (sessionId: string) => {
+    setActiveSessionId(sessionId)
+    try {
+      localStorage.setItem(DEBUG_ACTIVE_SESSION_KEY, sessionId)
+    } catch {
+      // ignore
+    }
+    setShowSessionMenu(false)
+  }
+
+  // Delete session
+  const deleteSession = (sessionIdToDelete: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
+    const remaining = sessions.filter((s) => s.id !== sessionIdToDelete)
+    if (remaining.length === 0) {
+      const freshId = `dbg-sess-${Date.now()}`
+      const freshSession: DebugSession = {
+        id: freshId,
+        title: 'New Debug Investigation',
+        language: 'javascript',
+        code: '',
+        errorMessage: '',
+        result: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+      setSessions([freshSession])
+      saveStoredDebugSessions([freshSession])
+      setActiveSessionId(freshId)
+      return
+    }
+
+    setSessions(remaining)
+    saveStoredDebugSessions(remaining)
+    if (sessionIdToDelete === activeSessionId) {
+      setActiveSessionId(remaining[0].id)
+      try {
+        localStorage.setItem(DEBUG_ACTIVE_SESSION_KEY, remaining[0].id)
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  // Load sample preset into current or new session
   const handleSelectPreset = (presetLang: ProgrammingLanguage) => {
-    handleLanguageChange(presetLang)
+    const sampleCode = SAMPLE_BUGGY_SNIPPETS[presetLang as keyof typeof SAMPLE_BUGGY_SNIPPETS] || ''
+    const sampleErr = SAMPLE_ERROR_MESSAGES[presetLang as keyof typeof SAMPLE_ERROR_MESSAGES] || ''
+    const sampleResult = MOCK_DEBUG_RESULTS_BY_LANGUAGE[presetLang] || null
+    const titleName = presetLang === 'javascript' ? 'JS: Async Race Condition' : presetLang === 'java' ? 'Java: Array Bounds Exceeded' : 'Python: Off-by-One Loop Error'
+
+    setLanguage(presetLang)
+    setCode(sampleCode)
+    setErrorMessage(sampleErr)
+    setDebugResult(sampleResult)
+
+    updateCurrentSession({
+      title: titleName,
+      language: presetLang,
+      code: sampleCode,
+      errorMessage: sampleErr,
+      result: sampleResult,
+    })
   }
 
   const handleCopyTerminal = async () => {
@@ -74,7 +308,7 @@ export const DebuggerPage: React.FC = () => {
         runtimeError: errorMessage,
       })
 
-      setDebugResult({
+      const newResult: DebugResult = {
         id: `dbg-${Date.now()}`,
         language,
         originalCode: code,
@@ -93,6 +327,19 @@ export const DebuggerPage: React.FC = () => {
         fixedCode: res.fixedCode,
         conceptsInvolved: res.keyConcepts,
         createdAt: new Date().toISOString(),
+      }
+
+      setDebugResult(newResult)
+
+      // Auto-title session if it was generic
+      const smartTitle =
+        currentSession.title === 'New Debug Investigation' && res.keyConcepts?.[0]
+          ? `${language.toUpperCase()}: ${res.keyConcepts[0]}`
+          : currentSession.title
+
+      updateCurrentSession({
+        title: smartTitle,
+        result: newResult,
       })
     } catch (err) {
       console.error('Debug analysis error:', err)
@@ -103,14 +350,19 @@ export const DebuggerPage: React.FC = () => {
 
   const lineCount = code.split('\n').length
   const fileExt = language === 'python' ? 'py' : language === 'javascript' ? 'js' : 'java'
-  const commandPrompt = language === 'python' ? '$ python3 bug_sample.py' : language === 'javascript' ? '$ node bug_sample.js' : '$ javac Main.java && java Main'
+  const commandPrompt =
+    language === 'python'
+      ? '$ python3 bug_sample.py'
+      : language === 'javascript'
+      ? '$ node bug_sample.js'
+      : '$ javac Main.java && java Main'
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
       {/* ═══════════════════════════════════════════════════════════════
-          HEADER BANNER
+          HEADER BANNER & DEBUG SESSIONS CONTROLS
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
@@ -125,11 +377,84 @@ export const DebuggerPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
-          <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 border border-[#005F02]/30">
-            <Shield className="w-3.5 h-3.5" /> 100% Offline AI
-          </span>
-          <div className="w-full sm:w-48">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
+          {/* Debug Sessions Dropdown / History Selector */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowSessionMenu((v) => !v)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500 transition-colors cursor-pointer shadow-3xs"
+            >
+              <Clock className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+              <span className="max-w-[150px] truncate">{currentSession.title}</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
+                {sessions.length}
+              </span>
+            </button>
+
+            {/* Sessions Dropdown Menu */}
+            {showSessionMenu && (
+              <div className="absolute right-0 mt-1.5 w-72 sm:w-80 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl z-50 p-2 space-y-1 animate-in fade-in zoom-in-95">
+                <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200">
+                  <span>Debug Sessions ({sessions.length})</span>
+                  <button
+                    type="button"
+                    onClick={createNewDebugSession}
+                    className="flex items-center gap-1 text-[11px] font-bold text-[#005F02] dark:text-emerald-400 hover:underline cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" /> New
+                  </button>
+                </div>
+                <div className="max-h-56 overflow-y-auto space-y-1 p-1">
+                  {sessions.map((sess) => {
+                    const isSessActive = sess.id === activeSessionId
+                    return (
+                      <div
+                        key={sess.id}
+                        onClick={() => switchSession(sess.id)}
+                        className={`flex items-center justify-between gap-2 p-2 rounded-xl text-xs cursor-pointer transition-colors ${
+                          isSessActive
+                            ? 'bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/80 text-slate-900 dark:text-white font-semibold'
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate font-bold text-[11.5px]">{sess.title}</div>
+                          <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                            <span className="uppercase">{sess.language}</span>
+                            <span>•</span>
+                            <span>{sess.result ? 'Diagnosed' : 'Draft'}</span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => deleteSession(sess.id, e)}
+                          className="p-1 text-slate-400 hover:text-rose-500 rounded hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors"
+                          title="Delete session"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* New Session Button */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={createNewDebugSession}
+            leftIcon={<Plus className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
+            className="h-9 text-xs font-bold px-3 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-emerald-500 cursor-pointer shadow-3xs"
+          >
+            New Session
+          </Button>
+
+          {/* Language Selector */}
+          <div className="w-36 sm:w-40">
             <Dropdown
               options={[
                 { value: 'javascript', label: 'JavaScript' },
@@ -309,7 +634,7 @@ export const DebuggerPage: React.FC = () => {
               {activeEditorTab === 'editor' ? (
                 <textarea
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
+                  onChange={(e) => handleCodeChange(e.target.value)}
                   spellCheck={false}
                   className="flex-1 p-3 bg-transparent text-[#D4D4D4] font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre overflow-y-auto selection:bg-[#005F02]/40"
                   placeholder="// Paste your buggy code snippet here..."
@@ -373,7 +698,7 @@ export const DebuggerPage: React.FC = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setErrorMessage('')}
+                    onClick={() => handleErrorMessageChange('')}
                     className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-[#333333] transition-colors cursor-pointer"
                     title="Clear terminal"
                   >
@@ -397,7 +722,7 @@ export const DebuggerPage: React.FC = () => {
                 ) : (
                   <textarea
                     value={errorMessage}
-                    onChange={(e) => setErrorMessage(e.target.value)}
+                    onChange={(e) => handleErrorMessageChange(e.target.value)}
                     rows={4}
                     spellCheck={false}
                     className="w-full bg-transparent font-mono text-xs text-rose-300 placeholder:text-slate-600 focus:outline-none leading-relaxed resize-none selection:bg-rose-900/50"
@@ -450,7 +775,7 @@ export const DebuggerPage: React.FC = () => {
         <div className="space-y-4 pt-2">
           <FixSuggestionCard
             result={debugResult}
-            onApplyFix={(fixed) => setCode(fixed)}
+            onApplyFix={(fixed) => handleCodeChange(fixed)}
           />
         </div>
       )}
