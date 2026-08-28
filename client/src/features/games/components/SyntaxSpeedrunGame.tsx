@@ -359,8 +359,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
         </div>
       </div>
 
-      {/* Language Selector (Visible only before round starts) */}
-      {!isPlaying && (
+      {/* Language Selector (Visible only before round starts in global mode) */}
+      {!isPlaying && !isGameOver && !initialChallengeTitle && (
         <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-3xs">
           <GameLanguageSelector
             selectedLanguage={selectedLanguage}
@@ -388,37 +388,107 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="p-6 sm:p-10 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-xs space-y-5 animate-in zoom-in-95">
+        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-gradient-to-b from-white via-slate-50 to-white dark:from-slate-900 dark:via-slate-900/95 dark:to-slate-950 border border-slate-200/90 dark:border-slate-800/90 shadow-xl space-y-6 animate-in zoom-in-95 duration-200">
+          {/* Ambient Glows */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-amber-500/10 dark:bg-emerald-500/10 blur-3xl pointer-events-none rounded-full" />
+
           <VictoryBurst3D />
-          <div className="space-y-1">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Run Complete!</h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Here is your speedrun performance summary:</p>
+
+          {/* Header & Badges */}
+          <div className="relative z-10 space-y-2 max-w-lg mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-extrabold uppercase tracking-wider shadow-xs">
+              <Trophy className="w-3.5 h-3.5 text-amber-500" />
+              <span>Speedrun Run Complete</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {currentSnippet?.title || 'Challenge Finished!'}
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              {score > 0
+                ? 'Great precision and speed! Your coding muscle memory is getting sharper.'
+                : 'Session ended. Review the syntax structure and try again to beat the clock!'}
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto font-mono text-center">
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Final Score</span>
-              <span className="text-xl font-extrabold text-[#005F02] dark:text-emerald-400">{score}</span>
+          {/* XP & Score Highlight Banner (Enhanced for High-Contrast Light & Dark Mode) */}
+          <div className="relative z-10 max-w-lg mx-auto grid grid-cols-2 gap-3 sm:gap-4">
+            {/* Points Card */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-emerald-50 via-emerald-100/60 to-white dark:from-emerald-950/60 dark:via-emerald-900/30 dark:to-slate-950 border-2 border-emerald-300 dark:border-emerald-700/60 shadow-sm flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-900 dark:text-emerald-300 mb-1">
+                <Trophy className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Points Scored</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-emerald-300 tracking-tight">
+                +{score} <span className="text-xs font-bold text-emerald-800/80 dark:text-emerald-400/80">PTS</span>
+              </div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Max Streak</span>
-              <span className="text-xl font-extrabold text-amber-600 dark:text-amber-400">{streak}</span>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Speed</span>
-              <span className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">{wpm} WPM</span>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
-              <span className="text-[10px] uppercase text-slate-400 block font-sans font-bold">Accuracy</span>
-              <span className="text-xl font-extrabold text-sky-600 dark:text-sky-400">{accuracy}%</span>
+
+            {/* Accuracy Rating Card */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100/60 to-white dark:from-sky-950/60 dark:via-sky-900/30 dark:to-slate-950 border-2 border-sky-300 dark:border-sky-700/60 shadow-sm flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-sky-900 dark:text-sky-300 mb-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                <span>Accuracy Rating</span>
+              </div>
+              <div className={`text-2xl sm:text-3xl font-black tracking-tight ${accuracy >= 90 ? 'text-sky-700 dark:text-sky-300' : 'text-amber-700 dark:text-amber-300'}`}>
+                {accuracy}%
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <Button variant="outline" size="sm" onClick={onBack} className="font-semibold text-xs px-4">
-              Exit to Hub
+          {/* 4 Performance Metric Cards */}
+          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto font-mono text-center">
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
+                <Trophy className="w-3 h-3 text-emerald-600 dark:text-emerald-500" />
+                <span>Final Score</span>
+              </div>
+              <span className="text-xl font-black text-slate-900 dark:text-white">{score}</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
+                <Flame className="w-3 h-3 text-amber-500 fill-current" />
+                <span>Max Streak</span>
+              </div>
+              <span className="text-xl font-black text-amber-600 dark:text-amber-400">{streak}x</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
+                <Zap className="w-3 h-3 text-emerald-600 dark:text-emerald-500" />
+                <span>Speed</span>
+              </div>
+              <span className="text-xl font-black text-emerald-700 dark:text-emerald-400">{wpm} WPM</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
+                <CheckCircle2 className="w-3 h-3 text-sky-600 dark:text-sky-500" />
+                <span>Accuracy</span>
+              </div>
+              <span className="text-xl font-black text-sky-700 dark:text-sky-400">{accuracy}%</span>
+            </div>
+          </div>
+
+          {/* Action CTAs */}
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-3">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={onBack}
+              className="font-bold text-xs px-5 rounded-xl border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              ← Back to Roadmap
             </Button>
-            <Button variant="primary" size="sm" onClick={restartGame} leftIcon={<RotateCcw className="w-3.5 h-3.5" />} className="font-bold text-xs px-4 bg-[#005F02] hover:bg-[#004e02] text-white">
+            <Button
+              variant="primary"
+              size="md"
+              onClick={restartGame}
+              leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+              className="font-bold text-xs px-6 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white shadow-md hover:shadow-lg transition-all"
+            >
               Play Again
             </Button>
           </div>

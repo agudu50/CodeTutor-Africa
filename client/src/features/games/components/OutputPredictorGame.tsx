@@ -243,13 +243,15 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
         </div>
       </div>
 
-      {/* Language Selector */}
-      <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <GameLanguageSelector
-          selectedLanguage={selectedLanguage}
-          onSelectLanguage={handleLanguageChange}
-        />
-      </div>
+      {/* Language Selector (Visible only before round starts in global mode) */}
+      {!isPlaying && !isGameOver && !initialChallengeTitle && (
+        <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+          <GameLanguageSelector
+            selectedLanguage={selectedLanguage}
+            onSelectLanguage={handleLanguageChange}
+          />
+        </div>
+      )}
 
       {/* Main Game State */}
       {!isPlaying && !isGameOver ? (
@@ -270,19 +272,72 @@ export const OutputPredictorGame: React.FC<OutputPredictorGameProps> = ({
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="p-6 sm:p-8 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-5 animate-in zoom-in-95">
+        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-gradient-to-b from-white via-slate-50 to-white dark:from-slate-900 dark:via-slate-900/95 dark:to-slate-950 border border-slate-200/90 dark:border-slate-800/90 shadow-xl space-y-6 animate-in zoom-in-95 duration-200">
+          {/* Ambient Glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-indigo-500/10 dark:bg-indigo-500/10 blur-3xl pointer-events-none rounded-full" />
+
           <VictoryBurst3D />
-          <div className="space-y-1">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Quiz Finished!</h2>
-            <p className="text-xs text-slate-500">Your total score:</p>
-            <p className="text-4xl font-extrabold font-mono text-indigo-600 dark:text-indigo-400 pt-1">{score} pts</p>
+
+          {/* Header & Badges */}
+          <div className="relative z-10 space-y-2 max-w-lg mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 text-xs font-extrabold uppercase tracking-wider shadow-xs">
+              <HelpCircle className="w-3.5 h-3.5 text-indigo-500" />
+              <span>Predictor Complete</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {currentChallenge?.title || 'Quiz Complete!'}
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              {score > 0
+                ? 'Mental execution tested! You accurately traced program output logic.'
+                : 'Session ended. Review control flow sequencing and try again!'}
+            </p>
           </div>
 
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <Button variant="outline" size="sm" onClick={onBack}>
-              Exit to Hub
+          {/* Points & Streak Highlight Banner (Enhanced for High-Contrast Light & Dark Mode) */}
+          <div className="relative z-10 max-w-lg mx-auto grid grid-cols-2 gap-3 sm:gap-4">
+            {/* Points Card */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-50 via-indigo-100/60 to-white dark:from-indigo-950/60 dark:via-indigo-900/30 dark:to-slate-950 border-2 border-indigo-300 dark:border-indigo-700/60 shadow-sm flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-indigo-900 dark:text-indigo-300 mb-1">
+                <Trophy className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>Points Scored</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-indigo-700 dark:text-indigo-300 tracking-tight">
+                +{score} <span className="text-xs font-bold text-indigo-800/80 dark:text-indigo-400/80">PTS</span>
+              </div>
+            </div>
+
+            {/* Streak Card */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-amber-50 via-amber-100/60 to-white dark:from-amber-950/60 dark:via-amber-900/30 dark:to-slate-950 border-2 border-amber-300 dark:border-amber-700/60 shadow-sm flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-900 dark:text-amber-300 mb-1">
+                <Flame className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 fill-current" />
+                <span>Prediction Streak</span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-amber-700 dark:text-amber-300 tracking-tight">
+                {streak}x
+              </div>
+            </div>
+          </div>
+
+          {/* Action CTAs */}
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-3">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={onBack}
+              className="font-bold text-xs px-5 rounded-xl border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              ← Back to Roadmap
             </Button>
-            <Button variant="primary" size="sm" onClick={restartGame} leftIcon={<RotateCcw className="w-3.5 h-3.5" />}>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={restartGame}
+              leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+              className="font-bold text-xs px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg transition-all"
+            >
               Play Again
             </Button>
           </div>
