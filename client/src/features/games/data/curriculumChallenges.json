@@ -2731,8 +2731,8 @@
       "courseTitle": "Python Programming",
       "lessonTitle": "Module 9: Repeating with while Loops",
       "language": "python",
-      "title": "Two-Pointer While Loop",
-      "goalDescription": "Reconstruct the algorithm blocks for Two-Pointer While Loop.",
+      "title": "Countdown While Loop",
+      "goalDescription": "Reconstruct the countdown algorithm to decrement from 3 to 1 using a while loop and output 'Go!' on loop completion.",
       "expectedOutput": "3\\n2\\n1\\nGo!",
       "scrambledBlocks": [
         {

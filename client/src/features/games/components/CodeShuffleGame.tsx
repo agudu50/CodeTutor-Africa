@@ -21,6 +21,9 @@ import {
   WifiOff,
   BookOpen,
   ArrowLeft,
+  Terminal,
+  Lightbulb,
+  Target,
 } from 'lucide-react'
 
 interface CodeShuffleGameProps {
@@ -338,14 +341,14 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
               </div>
             </div>
 
-            {/* Goal & Target Output Card */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2">
+            {/* Goal & Target Output Card (Rich Educational Context) */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs space-y-2.5">
               <div className="flex items-center justify-between gap-1.5 flex-wrap">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                   {currentChallenge.language} • Puzzle {challengeIndex + 1} of {activeChallenges.length}
                 </span>
-                <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                  Target: {currentChallenge.expectedOutput}
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                  Algorithm Assembly
                 </span>
               </div>
 
@@ -353,9 +356,45 @@ export const CodeShuffleGame: React.FC<CodeShuffleGameProps> = ({
                 <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white tracking-tight leading-snug">
                   {currentChallenge.title}
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mt-0.5">
-                  {currentChallenge.goalDescription}
-                </p>
+              </div>
+
+              {/* Structured Objective & Hint Box */}
+              <div className="space-y-2 text-[11px] leading-relaxed">
+                <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-800/60 text-slate-700 dark:text-slate-300 space-y-1">
+                  <div className="font-bold flex items-center gap-1 text-emerald-700 dark:text-emerald-400 text-[10.5px]">
+                    <Target className="w-3 h-3" />
+                    <span>Objective:</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-normal">
+                    {currentChallenge.goalDescription && !currentChallenge.goalDescription.startsWith('Reconstruct the algorithm blocks for')
+                      ? currentChallenge.goalDescription
+                      : `Arrange the code blocks on the right into the correct execution sequence so the algorithm runs properly and produces the target output.`}
+                  </p>
+                </div>
+
+                {currentChallenge.explanation && (
+                  <div className="p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/70 dark:border-amber-800/60 text-slate-700 dark:text-slate-300 space-y-1">
+                    <div className="font-bold flex items-center gap-1 text-amber-700 dark:text-amber-400 text-[10.5px]">
+                      <Lightbulb className="w-3 h-3" />
+                      <span>Execution Flow:</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 font-mono leading-normal">
+                      {currentChallenge.explanation}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Expected Console Output Terminal */}
+              <div className="rounded-xl bg-slate-950 p-2.5 border border-slate-800 text-[11px] font-mono">
+                <div className="text-[9.5px] uppercase font-bold text-slate-400 mb-1 flex items-center justify-between">
+                  <span className="flex items-center gap-1 text-emerald-400">
+                    <Terminal className="w-3 h-3" /> Expected Console Output:
+                  </span>
+                </div>
+                <div className="text-emerald-300 whitespace-pre leading-relaxed font-semibold bg-slate-900/90 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
+                  {currentChallenge.expectedOutput ? currentChallenge.expectedOutput.replace(/\\n/g, '\n') : 'Target Output'}
+                </div>
               </div>
 
               {currentChallenge.courseTitle && (

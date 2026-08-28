@@ -2740,8 +2740,8 @@ export const CURRICULUM_CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
     "courseTitle": "Python Programming",
     "lessonTitle": "Module 9: Repeating with while Loops",
     "language": "python",
-    "title": "Two-Pointer While Loop",
-    "goalDescription": "Reconstruct the algorithm blocks for Two-Pointer While Loop.",
+    "title": "Countdown While Loop",
+    "goalDescription": "Reconstruct the countdown algorithm to decrement from 3 to 1 using a while loop and output 'Go!' on loop completion.",
     "expectedOutput": "3\\n2\\n1\\nGo!",
     "scrambledBlocks": [
       {
@@ -2777,7 +2777,7 @@ export const CURRICULUM_CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
       "b4",
       "b5"
     ],
-    "explanation": "Initialize counter -> while condition -> print count -> decrement counter -> print finale."
+    "explanation": "Initialize counter at 3 -> while count > 0 -> print current count -> decrement counter by 1 -> print finale 'Go!'."
   },
   {
     "id": "shuffle-python-m10-mtczc3bz-pssl",

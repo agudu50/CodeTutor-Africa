@@ -214,7 +214,7 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
       drills: [
         { gameId: 'bughunt', title: 'Infinite While Loop Trap', difficulty: 'Intermediate', estimatedMins: 3 },
         { gameId: 'speedrun', title: 'Countdown Accumulator Drill', difficulty: 'Beginner', estimatedMins: 2 },
-        { gameId: 'shuffle', title: 'Two-Pointer While Loop', difficulty: 'Advanced', estimatedMins: 4 },
+        { gameId: 'shuffle', title: 'Countdown While Loop', difficulty: 'Advanced', estimatedMins: 4 },
       ],
     },
     {

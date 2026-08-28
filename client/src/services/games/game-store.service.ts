@@ -53,9 +53,17 @@ class GameStoreService {
 
       if (sr) {
         const parsed = JSON.parse(sr)
-        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const canonicalMap = new Map(SPEEDRUN_SNIPPETS.map((s) => [s.title?.toLowerCase(), s]))
+        const refreshed = parsed.map((p: any) => {
+          const canonical = canonicalMap.get(p.title?.toLowerCase())
+          if (canonical && (!p.description || p.description.startsWith('Curriculum drill for Module'))) {
+            return { ...p, description: canonical.description }
+          }
+          return p
+        })
+        const existingTitles = new Set(refreshed.map((p: any) => p.title?.toLowerCase()))
         const missing = SPEEDRUN_SNIPPETS.filter((s) => !existingTitles.has(s.title?.toLowerCase()))
-        this.speedrun = [...parsed, ...missing]
+        this.speedrun = [...refreshed, ...missing]
       } else {
         this.speedrun = [...SPEEDRUN_SNIPPETS]
       }
@@ -79,18 +87,41 @@ class GameStoreService {
 
       if (op) {
         const parsed = JSON.parse(op)
-        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const canonicalMap = new Map(OUTPUT_PREDICTOR_CHALLENGES.map((o) => [o.title?.toLowerCase(), o]))
+        const refreshed = parsed.map((p: any) => {
+          const canonical = canonicalMap.get(p.title?.toLowerCase())
+          if (canonical && canonical.explanation) {
+            return { ...p, explanation: canonical.explanation }
+          }
+          return p
+        })
+        const existingTitles = new Set(refreshed.map((p: any) => p.title?.toLowerCase()))
         const missing = OUTPUT_PREDICTOR_CHALLENGES.filter((o) => !existingTitles.has(o.title?.toLowerCase()))
-        this.predictor = [...parsed, ...missing]
+        this.predictor = [...refreshed, ...missing]
       } else {
         this.predictor = [...OUTPUT_PREDICTOR_CHALLENGES]
       }
 
       if (cs) {
         const parsed = JSON.parse(cs)
-        const existingTitles = new Set(parsed.map((p: any) => p.title?.toLowerCase()))
+        const canonicalMap = new Map(CODE_SHUFFLE_CHALLENGES.map((c) => [c.id || c.title?.toLowerCase(), c]))
+        const refreshed = parsed.map((p: any) => {
+          // Check by ID or title (handles renamed titles like Two-Pointer -> Countdown)
+          const canonical = canonicalMap.get(p.id) || canonicalMap.get(p.title?.toLowerCase())
+          if (canonical) {
+            return {
+              ...p,
+              title: canonical.title,
+              goalDescription: canonical.goalDescription,
+              explanation: canonical.explanation,
+              expectedOutput: canonical.expectedOutput,
+            }
+          }
+          return p
+        })
+        const existingTitles = new Set(refreshed.map((p: any) => p.title?.toLowerCase()))
         const missing = CODE_SHUFFLE_CHALLENGES.filter((c) => !existingTitles.has(c.title?.toLowerCase()))
-        this.shuffle = [...parsed, ...missing]
+        this.shuffle = [...refreshed, ...missing]
       } else {
         this.shuffle = [...CODE_SHUFFLE_CHALLENGES]
       }
