@@ -8,6 +8,10 @@ import {
   CheckCircle2,
   Shield,
   ChevronRight,
+  Terminal,
+  Code2,
+  Cpu,
+  FileCode2,
 } from 'lucide-react'
 import { ProgrammingLanguage, Lesson } from '@/types'
 
@@ -50,18 +54,82 @@ export const QuizzesPage: React.FC = () => {
   }, [quizModules])
 
   const courseOptions = useMemo(() => {
-    return courses.map((c) => ({
-      value: c.id,
-      label: `${c.title} (${c.language.toUpperCase()})`,
-    }))
+    return courses.map((c) => {
+      const langConfig: Record<string, { label: string; desc: string; icon: React.ReactNode }> = {
+        python: {
+          label: 'Python Programming',
+          desc: 'Core Algorithms & Data Structures',
+          icon: <Terminal className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />,
+        },
+        javascript: {
+          label: 'JavaScript Web Engine',
+          desc: 'DOM, Async & Web Fundamentals',
+          icon: <Code2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />,
+        },
+        java: {
+          label: 'Java Software Architecture',
+          desc: 'OOP, Classes & Design Patterns',
+          icon: <Cpu className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />,
+        },
+        typescript: {
+          label: 'TypeScript Foundations',
+          desc: 'Static Typing & Modern Interfaces',
+          icon: <FileCode2 className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />,
+        },
+      }
+
+      const cfg = langConfig[c.language] || {
+        label: c.title,
+        desc: `${c.modules?.length || 18} Modules`,
+        icon: <Code2 className="w-4 h-4 text-slate-500 shrink-0" />,
+      }
+
+      return {
+        value: c.id,
+        label: cfg.label,
+        description: `${c.modules?.length || 18} Modules • ${cfg.desc}`,
+        icon: cfg.icon,
+      }
+    })
   }, [courses])
+
+  const languageBadges: { lang: ProgrammingLanguage; icon: React.ReactNode; name: string }[] = [
+    {
+      lang: 'python',
+      icon: <Terminal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />,
+      name: 'Python',
+    },
+    {
+      lang: 'javascript',
+      icon: <Code2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />,
+      name: 'JavaScript',
+    },
+    {
+      lang: 'java',
+      icon: <Cpu className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />,
+      name: 'Java',
+    },
+    {
+      lang: 'typescript',
+      icon: <FileCode2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />,
+      name: 'TypeScript',
+    },
+  ]
+
+  const handleSelectLanguage = (lang: ProgrammingLanguage) => {
+    const found = courses.find((c) => c.language === lang)
+    if (found) {
+      setSelectedCourseId(found.id)
+      setActiveQuizLesson(null)
+    }
+  }
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80">
@@ -76,11 +144,11 @@ export const QuizzesPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
           <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 border border-[#005F02]/30">
             <Shield className="w-3.5 h-3.5" /> 100% Offline
           </span>
-          <div className="w-full sm:w-60">
+          <div className="w-full sm:w-80">
             <Dropdown
               options={courseOptions}
               value={activeCourse?.id || ''}
@@ -92,6 +160,40 @@ export const QuizzesPage: React.FC = () => {
             />
           </div>
         </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          LANGUAGE SWITCHER TABS / PILLS
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+        <span className="text-[11px] font-mono font-bold uppercase text-slate-400 dark:text-slate-500 pl-2 pr-1">
+          Select Track:
+        </span>
+        {languageBadges.map(({ lang, icon, name }) => {
+          const isSelected = activeCourse?.language === lang
+          const courseForLang = courses.find((c) => c.language === lang)
+          if (!courseForLang) return null
+          return (
+            <button
+              key={lang}
+              type="button"
+              onClick={() => handleSelectLanguage(lang)}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                isSelected
+                  ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+                  : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-500'
+              }`}
+            >
+              <span className="shrink-0">{icon}</span>
+              <span>{name}</span>
+              {isSelected && (
+                <span className="text-[10px] font-mono px-1.5 py-0.2 bg-white/20 rounded font-normal">
+                  {quizModules.length} Modules
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
