@@ -11,7 +11,7 @@ import {
   Terminal,
   Code2,
   Cpu,
-  FileCode2,
+  Layers,
 } from 'lucide-react'
 import { ProgrammingLanguage, Lesson } from '@/types'
 
@@ -74,7 +74,7 @@ export const QuizzesPage: React.FC = () => {
         typescript: {
           label: 'TypeScript Foundations',
           desc: 'Static Typing & Modern Interfaces',
-          icon: <FileCode2 className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />,
+          icon: <Layers className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />,
         },
       }
 
@@ -111,7 +111,7 @@ export const QuizzesPage: React.FC = () => {
     },
     {
       lang: 'typescript',
-      icon: <FileCode2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />,
+      icon: <Layers className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />,
       name: 'TypeScript',
     },
   ]

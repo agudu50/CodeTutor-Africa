@@ -12,6 +12,7 @@ import {
   Settings,
   ShieldCheck,
   Gamepad2,
+  HelpCircle,
   X,
   Shield,
   Cpu,
@@ -27,6 +28,7 @@ const iconMap = {
   Settings,
   ShieldCheck,
   Gamepad2,
+  HelpCircle,
 }
 
 interface MobileNavigationProps {
