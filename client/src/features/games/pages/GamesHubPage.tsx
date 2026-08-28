@@ -7,10 +7,11 @@ import { BugHuntGame } from '../components/BugHuntGame'
 import { OutputPredictorGame } from '../components/OutputPredictorGame'
 import { CodeShuffleGame } from '../components/CodeShuffleGame'
 import { GameModulesRoadmap } from '../components/GameModulesRoadmap'
-import { getGameModulesForLanguage, LANGUAGE_TRACKS } from '../data/gameModulesData'
+import { LANGUAGE_TRACKS } from '../data/gameModulesData'
 import { GAMES_METADATA } from '../data/gameData'
 import { Arcade3DHero } from '../components/3d/Arcade3DHero'
 import { gameSound } from '../services/gameSound.service'
+import { gameStoreService } from '@/services/games/game-store.service'
 import {
   Gamepad2,
   Trophy,
@@ -43,8 +44,15 @@ export const GamesHubPage: React.FC = () => {
   const isOffline = effectiveNetwork === 'offline'
 
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
-  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage | null>('python')
+  const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
+  const [, setTick] = useState(0)
+
+  useEffect(() => {
+    const handler = () => setTick((t) => t + 1)
+    window.addEventListener('games_updated', handler)
+    return () => window.removeEventListener('games_updated', handler)
+  }, [])
 
   const handleToggleTrack = (trackId: GameLanguage) => {
     setSelectedLanguage((prev) => (prev === trackId ? null : trackId))
@@ -359,7 +367,7 @@ export const GamesHubPage: React.FC = () => {
             <div className="space-y-3">
               {LANGUAGE_TRACKS.filter((t) => t.id !== 'all').map((track) => {
                 const isSelected = selectedLanguage === track.id
-                const trackModules = getGameModulesForLanguage(track.id)
+                const trackModules = gameStoreService.getModulesForLanguage(track.id)
 
                 return (
                   <div key={track.id} className="transition-all duration-200">

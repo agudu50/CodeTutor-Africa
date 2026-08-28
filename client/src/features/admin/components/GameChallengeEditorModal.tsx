@@ -32,6 +32,8 @@ interface GameChallengeEditorModalProps {
   isOpen: boolean
   onClose: () => void
   initialType?: GameId
+  initialLanguage?: ChallengeLanguage
+  initialModuleId?: string
   editingChallenge?: EditableChallengeType | null
   onSaved: (msg: string) => void
 }
@@ -40,11 +42,14 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
   isOpen,
   onClose,
   initialType = 'speedrun',
+  initialLanguage = 'python',
+  initialModuleId,
   editingChallenge,
   onSaved,
 }) => {
   const [gameType, setGameType] = useState<GameId>(initialType)
-  const [language, setLanguage] = useState<ChallengeLanguage>('python')
+  const [language, setLanguage] = useState<ChallengeLanguage>(initialLanguage)
+  const [selectedModuleId, setSelectedModuleId] = useState<string>(initialModuleId || '')
   const [courseId, setCourseId] = useState<string>('course-py-101')
   const [lessonTitle, setLessonTitle] = useState<string>('')
   const [title, setTitle] = useState<string>('')
@@ -359,26 +364,42 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
               <label className="font-bold text-slate-700 dark:text-slate-300">Programming Language</label>
               <select
                 value={language}
-                onChange={(e) => setLanguage(e.target.value as ChallengeLanguage)}
+                onChange={(e) => {
+                  const nextLang = e.target.value as ChallengeLanguage
+                  setLanguage(nextLang)
+                  setSelectedModuleId('')
+                }}
                 className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
               >
-                <option value="javascript">JavaScript</option>
-                <option value="typescript">TypeScript</option>
-                <option value="python">Python</option>
-                <option value="java">Java</option>
+                <option value="python">🐍 Python</option>
+                <option value="javascript">⚡ JavaScript</option>
+                <option value="java">☕ Java</option>
+                <option value="typescript">🔷 TypeScript</option>
+                <option value="sql">🗄️ SQL & Databases</option>
               </select>
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">Associated Course</label>
+              <label className="font-bold text-slate-700 dark:text-slate-300">Target Curriculum Module</label>
               <select
-                value={courseId}
-                onChange={(e) => setCourseId(e.target.value)}
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
+                value={selectedModuleId}
+                onChange={(e) => {
+                  const modId = e.target.value
+                  setSelectedModuleId(modId)
+                  if (modId) {
+                    const mods = gameStoreService.getModulesForLanguage(language)
+                    const matched = mods.find((m) => m.id === modId)
+                    if (matched) {
+                      setLessonTitle(`Module ${matched.moduleNumber}: ${matched.title}`)
+                    }
+                  }
+                }}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold truncate"
               >
-                {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
+                <option value="">-- Standalone / Custom --</option>
+                {gameStoreService.getModulesForLanguage(language).map((m) => (
+                  <option key={m.id} value={m.id}>
+                    Module {m.moduleNumber}: {m.title}
                   </option>
                 ))}
               </select>
@@ -411,7 +432,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">Lesson / Module Topic</label>
+              <label className="font-bold text-slate-700 dark:text-slate-300">Lesson / Module Topic Display</label>
               <input
                 type="text"
                 value={lessonTitle}

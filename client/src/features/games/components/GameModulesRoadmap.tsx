@@ -63,7 +63,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
   selectedLanguage,
   onLaunchGame,
 }) => {
-  const [expandedModuleId, setExpandedModuleId] = useState<string | null>(modules[0]?.id || null)
+  const [expandedModuleId, setExpandedModuleId] = useState<string | null>(null)
 
   const toggleExpand = (id: string) => {
     setExpandedModuleId((prev) => (prev === id ? null : id))
