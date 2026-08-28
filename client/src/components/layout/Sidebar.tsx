@@ -15,10 +15,7 @@ import {
   Gamepad2,
   ChevronLeft,
   ChevronRight,
-  Shield,
   Cpu,
-  Wifi,
-  WifiOff,
   Database,
 } from 'lucide-react'
 
@@ -131,61 +128,80 @@ export const Sidebar: React.FC<SidebarProps> = memo(({ collapsed, onToggleCollap
       {/* Offline / Online Status & Hardware Footer */}
       {!collapsed ? (
         <div
-          className={`p-3 mx-3 mb-3 rounded-2xl border space-y-2 shadow-2xs shrink-0 ${
+          className={cn(
+            'p-3.5 mx-3 mb-3 rounded-2xl border space-y-2.5 shadow-2xs shrink-0 transition-all',
             isOffline
-              ? 'border-amber-200 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20'
-              : 'border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20'
-          }`}
+              ? 'border-emerald-500/30 dark:border-emerald-500/25 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-950/20 dark:to-transparent'
+              : 'border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80'
+          )}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
-              {isOffline ? (
-                <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              ) : (
-                <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              )}
-              <span>{isOffline ? 'Offline Mode' : 'Online'}</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div
+                className={cn(
+                  'w-7 h-7 rounded-xl flex items-center justify-center shrink-0 shadow-3xs',
+                  isOffline
+                    ? 'bg-emerald-100 dark:bg-emerald-900/60 text-[#005F02] dark:text-emerald-400 border border-emerald-300/60 dark:border-emerald-700/60'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                )}
+              >
+                {isOffline ? (
+                  <ShieldCheck className="w-4 h-4" />
+                ) : (
+                  <Database className="w-4 h-4" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-extrabold text-slate-900 dark:text-white block leading-tight truncate">
+                  {isOffline ? 'Offline Engine' : 'Cloud Sync Active'}
+                </span>
+              </div>
             </div>
+
             <span
-              className={`w-2 h-2 rounded-full inline-block ${
-                isOffline ? 'bg-amber-500' : 'bg-emerald-500'
-              }`}
-            />
-          </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
-            {isOffline
-              ? 'All courses, coding challenges, and the AI Tutor work without internet.'
-              : 'Connected to internet. Progress is automatically backed up.'}
-          </p>
-          <div className="pt-1.5 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-slate-400">
-            <span className="flex items-center gap-1">
-              <Cpu className="w-3 h-3 text-brand-500" />
-              {isOffline ? 'Local AI Tutor' : 'Cloud AI'}
-            </span>
-            <span
-              className={`font-bold ${
-                isOffline ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
-              }`}
+              className={cn(
+                'inline-flex items-center gap-1.5 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full shrink-0 border',
+                isOffline
+                  ? 'bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border-emerald-300/80 dark:border-emerald-700/80'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+              )}
             >
-              {isOffline ? 'No Internet Needed' : 'Connected'}
+              <span className="flex h-1.5 w-1.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+              </span>
+              {isOffline ? 'Ready' : 'Online'}
+            </span>
+          </div>
+
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            {isOffline
+              ? '100% offline. Curriculum, Python compiler, and AI Tutor run directly on device.'
+              : 'Connected to internet. Cloud sync and backup enabled.'}
+          </p>
+
+          <div className="pt-2 border-t border-emerald-200/50 dark:border-emerald-800/40 flex items-center justify-between text-[10.5px] font-mono">
+            <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-semibold">
+              <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+              {isOffline ? 'Local AI Tutor' : 'Cloud Hybrid AI'}
+            </span>
+            <span className="font-bold text-[#005F02] dark:text-emerald-400 text-[10px] uppercase tracking-wider">
+              {isOffline ? '0 Data Cost' : 'Synced'}
             </span>
           </div>
         </div>
       ) : (
         <div
-          className={`p-2 mx-2 mb-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-[10px] font-mono shrink-0 ${
+          className={cn(
+            'p-2.5 mx-2 mb-3 rounded-2xl border flex flex-col items-center justify-center gap-1 text-[10px] font-mono shrink-0 shadow-3xs transition-all',
             isOffline
-              ? 'border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/40 text-amber-600'
-              : 'border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/40 text-emerald-600'
-          }`}
-          title={isOffline ? 'Offline Mode' : 'Online'}
+              ? 'border-emerald-300/80 dark:border-emerald-700/80 bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400'
+              : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300'
+          )}
+          title={isOffline ? 'Offline Engine: 100% Ready' : 'Connected to Cloud'}
         >
-          {isOffline ? <WifiOff className="w-4 h-4" /> : <Wifi className="w-4 h-4" />}
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              isOffline ? 'bg-amber-500' : 'bg-emerald-500'
-            }`}
-          />
+          <ShieldCheck className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
         </div>
       )}
     </aside>
