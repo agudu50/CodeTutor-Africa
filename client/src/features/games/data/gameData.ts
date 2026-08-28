@@ -11,15 +11,16 @@ export interface LanguageOption {
   id: GameLanguage
   label: string
   iconBadge: string
+  accentColor: string
 }
 
 export const GAME_LANGUAGES: LanguageOption[] = [
-  { id: 'all', label: 'All Languages', iconBadge: 'All' },
-  { id: 'python', label: 'Python', iconBadge: 'PY' },
-  { id: 'javascript', label: 'JavaScript', iconBadge: 'JS' },
-  { id: 'typescript', label: 'TypeScript', iconBadge: 'TS' },
-  { id: 'java', label: 'Java', iconBadge: 'JV' },
-  { id: 'sql', label: 'SQL Database', iconBadge: 'DB' },
+  { id: 'all', label: 'All Languages', iconBadge: 'All', accentColor: 'emerald' },
+  { id: 'python', label: 'Python', iconBadge: 'PY', accentColor: 'amber' },
+  { id: 'javascript', label: 'JavaScript', iconBadge: 'JS', accentColor: 'yellow' },
+  { id: 'java', label: 'Java', iconBadge: 'JV', accentColor: 'rose' },
+  { id: 'typescript', label: 'TypeScript', iconBadge: 'TS', accentColor: 'blue' },
+  { id: 'sql', label: 'SQL Database', iconBadge: 'DB', accentColor: 'emerald' },
 ]
 
 export const GAMES_METADATA: GameMetadata[] = [
@@ -94,10 +95,10 @@ export const GAMES_METADATA: GameMetadata[] = [
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 1. SPEEDRUN SNIPPETS (Directly linked to Course Lessons)
+// 1. SPEEDRUN SNIPPETS (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
-  // Python Course 101 - Lesson 1: Memory Model & Scope
+  // ── Python ──
   {
     id: 'sr-py-1',
     courseId: 'course-py-101',
@@ -109,7 +110,6 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'def clone_scores(scores):\n    # Slice to prevent reference mutation\n    return scores[:]',
     timeLimitSecs: 25,
   },
-  // Python Course 101 - Lesson 2: List Comprehensions
   {
     id: 'sr-py-2',
     courseId: 'course-py-101',
@@ -121,7 +121,6 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'def count_positives(nums):\n    return sum(1 for x in nums if x > 0)',
     timeLimitSecs: 20,
   },
-  // Python Course 101 - Lesson 3: Recursion
   {
     id: 'sr-py-3',
     courseId: 'course-py-101',
@@ -133,7 +132,19 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'def factorial(n):\n    if n <= 1: return 1\n    return n * factorial(n - 1)',
     timeLimitSecs: 25,
   },
-  // JavaScript Course 201 - Lesson 1: Async JS & Promises
+  {
+    id: 'sr-py-4',
+    courseId: 'course-py-101',
+    courseTitle: 'Python Programming',
+    lessonTitle: 'Lesson 5: OOP Classes',
+    language: 'python',
+    title: 'Class Constructor with Self',
+    description: 'Instantiate student class with __init__',
+    code: 'class Student:\n    def __init__(self, name, grade):\n        self.name = name\n        self.grade = grade',
+    timeLimitSecs: 25,
+  },
+
+  // ── JavaScript ──
   {
     id: 'sr-js-1',
     courseId: 'course-js-201',
@@ -145,7 +156,6 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'async function fetchLearner(id) {\n  const res = await fetch(`/api/students/${id}`);\n  return await res.json();\n}',
     timeLimitSecs: 30,
   },
-  // JavaScript Course 201 - Lesson 1: Event Loop
   {
     id: 'sr-js-2',
     courseId: 'course-js-201',
@@ -157,11 +167,23 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'const deferTask = (fn) => queueMicrotask(() => fn());',
     timeLimitSecs: 25,
   },
-  // Java Course 301 - Lesson 1: Classes & Constructors
+  {
+    id: 'sr-js-3',
+    courseId: 'course-js-201',
+    courseTitle: 'Modern JavaScript',
+    lessonTitle: 'Lesson 4: Array Pipelines',
+    language: 'javascript',
+    title: 'Map and Filter Pipeline',
+    description: 'Transform and filter student records cleanly',
+    code: 'const getPassing = (students) =>\n  students.filter(s => s.score >= 70).map(s => s.name);',
+    timeLimitSecs: 25,
+  },
+
+  // ── Java ──
   {
     id: 'sr-java-1',
     courseId: 'course-java-301',
-    courseTitle: 'Java OOP Patterns',
+    courseTitle: 'Java Engineering',
     lessonTitle: 'Lesson 1: Classes & Constructors',
     language: 'java',
     title: 'Instantiate Student Object',
@@ -169,11 +191,10 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'public Student(String name, int score) {\n    this.name = name;\n    this.score = score;\n}',
     timeLimitSecs: 30,
   },
-  // Java Course 301 - Lesson 2: Polymorphism & Interfaces
   {
     id: 'sr-java-2',
     courseId: 'course-java-301',
-    courseTitle: 'Java OOP Patterns',
+    courseTitle: 'Java Engineering',
     lessonTitle: 'Lesson 2: Polymorphism',
     language: 'java',
     title: 'Implement Interface Method',
@@ -181,17 +202,54 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: '@Override\npublic double calculateGrade() {\n    return this.score * 1.05;\n}',
     timeLimitSecs: 30,
   },
-  // TypeScript & SQL
+  {
+    id: 'sr-java-3',
+    courseId: 'course-java-301',
+    courseTitle: 'Java Engineering',
+    lessonTitle: 'Lesson 6: Collections & Maps',
+    language: 'java',
+    title: 'HashMap Put and Get',
+    description: 'Map frequency tracking with getOrDefault',
+    code: 'Map<String, Integer> counts = new HashMap<>();\ncounts.put(key, counts.getOrDefault(key, 0) + 1);',
+    timeLimitSecs: 28,
+  },
+
+  // ── TypeScript ──
   {
     id: 'sr-ts-1',
+    courseId: 'course-ts-401',
     courseTitle: 'TypeScript Foundations',
-    lessonTitle: 'Type Contracts',
+    lessonTitle: 'Lesson 1: Interfaces & Contracts',
     language: 'typescript',
     title: 'Typed Student Record',
     description: 'TypeScript interface and getter function',
-    code: 'interface Student { id: string; name: string; score: number; }\nconst isHonorRoll = (s: Student): boolean => s.score >= 85;',
+    code: 'interface Student {\n  id: string;\n  name: string;\n  score: number;\n}\nconst isHonorRoll = (s: Student): boolean => s.score >= 85;',
     timeLimitSecs: 30,
   },
+  {
+    id: 'sr-ts-2',
+    courseId: 'course-ts-401',
+    courseTitle: 'TypeScript Foundations',
+    lessonTitle: 'Lesson 3: Generics',
+    language: 'typescript',
+    title: 'Generic API Response Wrapper',
+    description: 'Reusable typed data wrapper interface',
+    code: 'interface ApiResponse<T> {\n  status: number;\n  data: T;\n  error?: string;\n}',
+    timeLimitSecs: 25,
+  },
+  {
+    id: 'sr-ts-3',
+    courseId: 'course-ts-401',
+    courseTitle: 'TypeScript Foundations',
+    lessonTitle: 'Lesson 5: Utility Types',
+    language: 'typescript',
+    title: 'Omit and Pick Utilities',
+    description: 'Create sanitized profile type',
+    code: 'type PublicUser = Omit<User, "passwordHash" | "internalId">;',
+    timeLimitSecs: 25,
+  },
+
+  // ── SQL ──
   {
     id: 'sr-sql-1',
     courseTitle: 'Database & SQL',
@@ -202,13 +260,23 @@ export const SPEEDRUN_SNIPPETS: SpeedrunSnippet[] = [
     code: 'SELECT name, score FROM students WHERE score >= 80 ORDER BY score DESC LIMIT 5;',
     timeLimitSecs: 30,
   },
+  {
+    id: 'sr-sql-2',
+    courseTitle: 'Database & SQL',
+    lessonTitle: 'Multi-table Joins',
+    language: 'sql',
+    title: 'Inner Join Enrollments',
+    description: 'Combine students with course details',
+    code: 'SELECT s.name, c.title FROM students s JOIN enrollments e ON s.id = e.student_id JOIN courses c ON e.course_id = c.id;',
+    timeLimitSecs: 32,
+  },
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 2. BUG HUNT CHALLENGES (Directly linked to Course Lessons)
+// 2. BUG HUNT CHALLENGES (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
-  // Python Course 101 - Lesson 1: Memory Model
+  // ── Python ──
   {
     id: 'bh-py-1',
     courseId: 'course-py-101',
@@ -231,7 +299,6 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  // Python Course 101 - Lesson 2: Loop Accumulators
   {
     id: 'bh-py-2',
     courseId: 'course-py-101',
@@ -256,7 +323,8 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  // JavaScript Course 201 - Lesson 1: Async JS & Promises
+
+  // ── JavaScript ──
   {
     id: 'bh-js-1',
     courseId: 'course-js-201',
@@ -281,7 +349,6 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  // JavaScript Course 201 - Lesson 1: Immutability
   {
     id: 'bh-js-2',
     courseId: 'course-js-201',
@@ -305,11 +372,12 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
-  // Java Course 301 - Lesson 1: Reference vs Value Semantics
+
+  // ── Java ──
   {
     id: 'bh-java-1',
     courseId: 'course-java-301',
-    courseTitle: 'Java OOP Patterns',
+    courseTitle: 'Java Engineering',
     lessonTitle: 'Lesson 1: Reference Semantics',
     language: 'java',
     title: 'String Reference Equality Comparison',
@@ -331,13 +399,62 @@ export const BUG_HUNT_CHALLENGES: BugHuntChallenge[] = [
     ],
     timeLimitSecs: 20,
   },
+
+  // ── TypeScript ──
+  {
+    id: 'bh-ts-1',
+    courseId: 'course-ts-401',
+    courseTitle: 'TypeScript Foundations',
+    lessonTitle: 'Lesson 2: Readonly Properties',
+    language: 'typescript',
+    title: 'Readonly Property Mutation Bug',
+    description: 'Attempting to mutate an immutable readonly property.',
+    lines: [
+      'interface Config { readonly port: number; }',
+      'function updatePort(cfg: Config, newPort: number) {',
+      '    cfg.port = newPort;',
+      '    return cfg;',
+      '}',
+    ],
+    buggyLineIndex: 2,
+    bugExplanation: 'Properties declared readonly cannot be reassigned. Return a new object copy instead.',
+    correctOptions: [
+      { text: 'return { ...cfg, port: newPort };', isCorrect: true },
+      { text: 'cfg.port := newPort;', isCorrect: false },
+      { text: 'cfg.setPort(newPort);', isCorrect: false },
+    ],
+    timeLimitSecs: 20,
+  },
+
+  // ── SQL ──
+  {
+    id: 'bh-sql-1',
+    courseTitle: 'Database & SQL',
+    lessonTitle: 'WHERE Clause Safety',
+    language: 'sql',
+    title: 'Accidental UPDATE Without WHERE Clause',
+    description: 'Updating table without scoping clause overwrites the entire database table.',
+    lines: [
+      'UPDATE students',
+      'SET status = "graduated"',
+      '-- Missing WHERE student_id = 42',
+    ],
+    buggyLineIndex: 1,
+    bugExplanation: 'Running UPDATE without a WHERE filter changes every row in the database table.',
+    correctOptions: [
+      { text: 'SET status = "graduated" WHERE id = 42;', isCorrect: true },
+      { text: 'SET status == "graduated";', isCorrect: false },
+      { text: 'SET status = "graduated" LIMIT 1;', isCorrect: false },
+    ],
+    timeLimitSecs: 20,
+  },
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 3. OUTPUT PREDICTOR CHALLENGES (Directly linked to Course Lessons)
+// 3. OUTPUT PREDICTOR CHALLENGES (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
-  // Python Course 101 - Lesson 1: Memory Model
+  // ── Python ──
   {
     id: 'op-py-1',
     courseId: 'course-py-101',
@@ -351,7 +468,6 @@ export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
     explanation: 'In Python, assignment (b = a) copies the object reference. Mutating b also mutates a because both point to the same list!',
     timeLimitSecs: 15,
   },
-  // Python Course 101 - Lesson 1: Shallow Multiplications
   {
     id: 'op-py-2',
     courseId: 'course-py-101',
@@ -365,7 +481,8 @@ export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
     explanation: 'Multiplying a list containing a mutable inner list copies the pointer reference. Changing row 0 modifies row 1.',
     timeLimitSecs: 18,
   },
-  // JavaScript Course 201 - Lesson 1: Event Loop Microtasks
+
+  // ── JavaScript ──
   {
     id: 'op-js-1',
     courseId: 'course-js-201',
@@ -379,7 +496,6 @@ export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
     explanation: 'Synchronous console.log(1) and (3) run on the main thread stack first; Promise microtasks run immediately after stack clears.',
     timeLimitSecs: 18,
   },
-  // JavaScript Course 201 - Lesson 1: Type Coercion
   {
     id: 'op-js-2',
     courseId: 'course-js-201',
@@ -393,11 +509,12 @@ export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
     explanation: '1 + "2" coerces number 1 to string "12", then "12" + 3 concatenates to produce "123".',
     timeLimitSecs: 15,
   },
-  // Java Course 301 - Lesson 1: Primitive Types & Division
+
+  // ── Java ──
   {
     id: 'op-java-1',
     courseId: 'course-java-301',
-    courseTitle: 'Java OOP Patterns',
+    courseTitle: 'Java Engineering',
     lessonTitle: 'Lesson 1: Primitive Types',
     language: 'java',
     title: 'Integer Division Truncation',
@@ -407,13 +524,47 @@ export const OUTPUT_PREDICTOR_CHALLENGES: OutputPredictorChallenge[] = [
     explanation: 'In Java, dividing two integers performs integer division, discarding the decimal fraction to yield 3.',
     timeLimitSecs: 15,
   },
+
+  // ── TypeScript ──
+  {
+    id: 'op-ts-1',
+    courseId: 'course-ts-401',
+    courseTitle: 'TypeScript Foundations',
+    lessonTitle: 'Lesson 2: Type Guards',
+    language: 'typescript',
+    title: 'Type Narrowing Output',
+    code: 'function format(val: string | number) {\n  if (typeof val === "number") return val.toFixed(1);\n  return val.trim();\n}\nconsole.log(format(12));',
+    options: ['"12.0"', '12', '"12"', 'TypeError'],
+    correctIndex: 0,
+    explanation: 'TypeScript narrows val to number inside the if branch, executing val.toFixed(1) to output "12.0".',
+    timeLimitSecs: 15,
+  },
+
+  // ── SQL ──
+  {
+    id: 'op-sql-1',
+    courseTitle: 'Database & SQL',
+    lessonTitle: 'HAVING Clause',
+    language: 'sql',
+    title: 'COUNT Filter Prediction',
+    code: 'SELECT dept, COUNT(*) FROM staff GROUP BY dept HAVING COUNT(*) >= 2;',
+    options: [
+      'Only departments with 2 or more staff members',
+      'All departments regardless of count',
+      'First 2 staff members in the table',
+      'Syntax error',
+    ],
+    correctIndex: 0,
+    explanation: 'HAVING filters aggregated groups after the GROUP BY calculation.',
+    timeLimitSecs: 15,
+  },
 ]
 
 // ══════════════════════════════════════════════════════════════════════════
-// 4. CODE SHUFFLE CHALLENGES (Directly linked to Course Lessons)
+// 4. CODE SHUFFLE CHALLENGES (Organized by Language Track)
 // ══════════════════════════════════════════════════════════════════════════
 export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
-  // Python Course 101 - Lesson 3: Recursion & Algorithms
+  // ── Python ──
   {
     id: 'cs-py-1',
     courseId: 'course-py-101',
@@ -421,7 +572,7 @@ export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
     lessonTitle: 'Lesson 3: Functions & Recursion',
     language: 'python',
     title: 'Fibonacci Sequence Generator',
-    goalDescription: 'Assemble the Fibonacci sequence generator taught in Lesson 3.',
+    goalDescription: 'Assemble the Fibonacci sequence generator function in Python.',
     expectedOutput: '[0, 1, 1, 2, 3, 5]',
     scrambledBlocks: [
       { id: 'b4', content: 'fib.append(fib[-1] + fib[-2])', indent: 2 },
@@ -433,7 +584,8 @@ export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
     correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
     explanation: 'Function header -> initialize base values [0, 1] -> loop 2 to n -> append sum -> return slice.',
   },
-  // JavaScript Course 201 - Lesson 1: Async Fetch Algorithm
+
+  // ── JavaScript ──
   {
     id: 'cs-js-1',
     courseId: 'course-js-201',
@@ -453,15 +605,16 @@ export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
     correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
     explanation: 'Async function header -> await fetch request -> await JSON parsing -> return data payload -> close brace.',
   },
-  // Java Course 301 - Lesson 2: String & Palindrome Algorithm
+
+  // ── Java ──
   {
     id: 'cs-java-1',
     courseId: 'course-java-301',
-    courseTitle: 'Java OOP Patterns',
+    courseTitle: 'Java Engineering',
     lessonTitle: 'Lesson 2: Algorithm Methods',
     language: 'java',
     title: 'Two-Pointer Palindrome Verifier',
-    goalDescription: 'Assemble the two-pointer palindrome checking method from Lesson 2.',
+    goalDescription: 'Assemble the two-pointer palindrome checking method in Java.',
     expectedOutput: 'true / false',
     scrambledBlocks: [
       { id: 'b3', content: 'while (left < right) {', indent: 1 },
@@ -472,5 +625,26 @@ export const CODE_SHUFFLE_CHALLENGES: CodeShuffleChallenge[] = [
     ],
     correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
     explanation: 'Method header -> two pointers (left/right) -> while loop -> compare characters -> return true.',
+  },
+
+  // ── TypeScript ──
+  {
+    id: 'cs-ts-1',
+    courseId: 'course-ts-401',
+    courseTitle: 'TypeScript Foundations',
+    lessonTitle: 'Lesson 4: Generics',
+    language: 'typescript',
+    title: 'Generic Stack Collection Class',
+    goalDescription: 'Assemble a generic Stack<T> implementation in TypeScript.',
+    expectedOutput: 'Typed Stack Instance',
+    scrambledBlocks: [
+      { id: 'b2', content: 'private items: T[] = [];', indent: 1 },
+      { id: 'b1', content: 'class Stack<T> {', indent: 0 },
+      { id: 'b4', content: 'pop(): T | undefined { return this.items.pop(); }', indent: 1 },
+      { id: 'b3', content: 'push(item: T): void { this.items.push(item); }', indent: 1 },
+      { id: 'b5', content: '}', indent: 0 },
+    ],
+    correctOrder: ['b1', 'b2', 'b3', 'b4', 'b5'],
+    explanation: 'Class header with generic <T> -> private items array -> push method -> pop method -> close class.',
   },
 ]

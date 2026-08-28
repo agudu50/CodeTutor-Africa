@@ -11,6 +11,8 @@ import {
   Play,
   CheckCircle2,
   BookOpen,
+  Clock,
+  Trophy,
 } from 'lucide-react'
 
 interface GameModulesRoadmapProps {
@@ -31,6 +33,29 @@ const GAME_NAME_MAP: Record<GameId, string> = {
   bughunt: 'Bug Hunt Blitz',
   predictor: 'Output Predictor',
   shuffle: 'Code Shuffle',
+}
+
+const GAME_COLOR_MAP: Record<GameId, { bg: string; text: string; border: string }> = {
+  speedrun: {
+    bg: 'bg-amber-50 dark:bg-amber-950/70',
+    text: 'text-amber-600 dark:text-amber-400',
+    border: 'border-amber-200 dark:border-amber-800/80',
+  },
+  bughunt: {
+    bg: 'bg-rose-50 dark:bg-rose-950/70',
+    text: 'text-rose-600 dark:text-rose-400',
+    border: 'border-rose-200 dark:border-rose-800/80',
+  },
+  predictor: {
+    bg: 'bg-indigo-50 dark:bg-indigo-950/70',
+    text: 'text-indigo-600 dark:text-indigo-400',
+    border: 'border-indigo-200 dark:border-indigo-800/80',
+  },
+  shuffle: {
+    bg: 'bg-emerald-50 dark:bg-emerald-950/70',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    border: 'border-emerald-200 dark:border-emerald-800/80',
+  },
 }
 
 export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
@@ -73,13 +98,13 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
     selectedLanguage === 'python'
       ? 'Python Programming'
       : selectedLanguage === 'javascript'
-      ? 'JavaScript & Async'
+      ? 'Modern JavaScript'
       : selectedLanguage === 'java'
-      ? 'Java OOP'
+      ? 'Java Engineering'
       : selectedLanguage === 'typescript'
-      ? 'TypeScript'
+      ? 'TypeScript Foundations'
       : selectedLanguage === 'sql'
-      ? 'SQL Database'
+      ? 'SQL & Databases'
       : 'All Languages'
 
   return (
@@ -88,11 +113,11 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Modules in this course
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Curriculum Game Modules
           </h2>
         </div>
-        <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+        <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
           {langLabel} ({modules.length} Modules)
         </span>
       </div>
@@ -104,10 +129,11 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
 
         {/* Modules Stack */}
         <div className="space-y-3 relative z-10">
-          {modules.map((mod) => {
+          {modules.map((mod, idx) => {
             const isExpanded = expandedModuleId === mod.id
             const progress = gameStoreService.getModuleProgress(mod.id, mod.defaultProgress)
             const color = getProgressColor(progress)
+            const moduleNum = mod.moduleNumber || idx + 1
 
             return (
               <div key={mod.id} className="relative group">
@@ -128,15 +154,20 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                         <div
                           className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-2xs transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
                         >
-                          {progress}%
+                          {progress > 0 ? `${progress}%` : `#${moduleNum}`}
                         </div>
                       </div>
 
-                      {/* Title */}
+                      {/* Title & Description */}
                       <div className="min-w-0">
-                        <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
-                          {mod.title}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                            Module {moduleNum}
+                          </span>
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                            {mod.title}
+                          </h3>
+                        </div>
                         <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
                           {mod.description}
                         </p>
@@ -170,10 +201,11 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                       <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                         <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                           <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                          Interactive Coding Drills for this Module:
+                          Interactive Coding Drills for Module {moduleNum}:
                         </span>
-                        <span className="text-[11px] font-mono text-slate-400">
-                          Earn +100 to +300 pts
+                        <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                          <Trophy className="w-3 h-3 text-amber-500" />
+                          +100 to +300 pts
                         </span>
                       </div>
 
@@ -182,6 +214,7 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                         {mod.drills.map((drill, dIdx) => {
                           const DrillIcon = GAME_ICON_MAP[drill.gameId] || Zap
                           const gameName = GAME_NAME_MAP[drill.gameId]
+                          const colorScheme = GAME_COLOR_MAP[drill.gameId] || GAME_COLOR_MAP.speedrun
 
                           return (
                             <div
@@ -189,16 +222,25 @@ export const GameModulesRoadmap: React.FC<GameModulesRoadmapProps> = ({
                               className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shadow-2xs hover:border-emerald-500/60 transition-colors"
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0">
+                                <div className={`p-2 rounded-lg ${colorScheme.bg} ${colorScheme.text} border ${colorScheme.border} shrink-0`}>
                                   <DrillIcon className="w-4 h-4" />
                                 </div>
                                 <div className="min-w-0">
                                   <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
                                     {drill.title}
                                   </span>
-                                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block truncate">
-                                    {gameName} • {drill.difficulty}
-                                  </span>
+                                  <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                                      {gameName}
+                                    </span>
+                                    <span>•</span>
+                                    <span>{drill.difficulty}</span>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-0.5">
+                                      <Clock className="w-2.5 h-2.5" />
+                                      {drill.estimatedMins}m
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
 

@@ -4,7 +4,6 @@ import {
   OutputPredictorChallenge,
   CodeShuffleChallenge,
   GameLanguage,
-  GameId,
 } from '@/features/games/types/games.types'
 import {
   SPEEDRUN_SNIPPETS,

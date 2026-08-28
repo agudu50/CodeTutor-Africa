@@ -20,7 +20,6 @@ import {
   Terminal,
   Clock,
   Shield,
-  RotateCcw,
   Play,
   ChevronDown,
   Search,
