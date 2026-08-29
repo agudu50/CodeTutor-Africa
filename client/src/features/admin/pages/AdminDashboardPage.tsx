@@ -5,11 +5,14 @@ import { courseStoreService } from '@/services/learning/course-store.service'
 import { issueSupportService, IssueReport } from '@/services/support/issue-support.service'
 import { gameStoreService } from '@/services/games/game-store.service'
 import { practiceStoreService } from '@/services/practice/practice-store.service'
+import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
+import { AdminUserRecord, AuditLogEntry } from '@/types/admin-analytics'
 import { CourseListTable } from '../components/CourseListTable'
 import { CourseEditorModal } from '../components/CourseEditorModal'
 import { IssueDeskView } from '../components/IssueDeskView'
 import { GameStudioView } from '../components/GameStudioView'
 import { PracticeStudioView } from '../components/PracticeStudioView'
+import { UserAnalyticsDeskView } from '../components/UserAnalyticsDeskView'
 import { Button } from '@/components/ui'
 import {
   ShieldCheck,
@@ -20,13 +23,16 @@ import {
   RotateCcw,
   Gamepad2,
   Code2,
+  Users,
 } from 'lucide-react'
 
 export const AdminDashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'practice' | 'games' | 'issues'>('courses')
+  const [activeTab, setActiveTab] = useState<'courses' | 'practice' | 'games' | 'issues' | 'analytics'>('courses')
   const [courses, setCourses] = useState<Course[]>([])
   const [issues, setIssues] = useState<IssueReport[]>([])
   const [practiceCount, setPracticeCount] = useState<number>(() => practiceStoreService.getAllQuestions().length)
+  const [adminUsers, setAdminUsers] = useState<AdminUserRecord[]>(() => adminAnalyticsService.getAllUsers())
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(() => adminAnalyticsService.getAllAuditLogs())
   const [isEditorModalOpen, setIsEditorModalOpen] = useState(false)
   const [courseToEdit, setCourseToEdit] = useState<Course | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -35,6 +41,8 @@ export const AdminDashboardPage: React.FC = () => {
     setCourses(courseStoreService.getAllCourses())
     setIssues(issueSupportService.getAllIssues())
     setPracticeCount(practiceStoreService.getAllQuestions().length)
+    setAdminUsers(adminAnalyticsService.getAllUsers())
+    setAuditLogs(adminAnalyticsService.getAllAuditLogs())
   }
 
   useEffect(() => {
@@ -43,15 +51,21 @@ export const AdminDashboardPage: React.FC = () => {
     const handleCoursesUpdated = () => setCourses(courseStoreService.getAllCourses())
     const handleIssuesUpdated = () => setIssues(issueSupportService.getAllIssues())
     const handlePracticeUpdated = () => setPracticeCount(practiceStoreService.getAllQuestions().length)
+    const handleUsersUpdated = () => setAdminUsers(adminAnalyticsService.getAllUsers())
+    const handleAuditUpdated = () => setAuditLogs(adminAnalyticsService.getAllAuditLogs())
 
     window.addEventListener('courses_updated', handleCoursesUpdated)
     window.addEventListener('issues_updated', handleIssuesUpdated)
     window.addEventListener('practice_updated', handlePracticeUpdated)
+    window.addEventListener('admin_users_updated', handleUsersUpdated)
+    window.addEventListener('admin_audit_logs_updated', handleAuditUpdated)
 
     return () => {
       window.removeEventListener('courses_updated', handleCoursesUpdated)
       window.removeEventListener('issues_updated', handleIssuesUpdated)
       window.removeEventListener('practice_updated', handlePracticeUpdated)
+      window.removeEventListener('admin_users_updated', handleUsersUpdated)
+      window.removeEventListener('admin_audit_logs_updated', handleAuditUpdated)
     }
   }, [])
 
@@ -72,14 +86,37 @@ export const AdminDashboardPage: React.FC = () => {
   }
 
   const handleDeleteCourse = (courseId: string) => {
+    const course = courses.find((c) => c.id === courseId)
     const deleted = courseStoreService.deleteCourse(courseId)
     if (deleted) {
+      adminAnalyticsService.logAction({
+        actorName: 'Lead Curriculum Director (Admin)',
+        actorRole: 'admin',
+        action: 'COURSE_DELETED',
+        category: 'curriculum',
+        target: `${courseId} (${course?.title || 'Course'})`,
+        details: 'Course deleted from curriculum repository by administrator.',
+        status: 'warning',
+        ipAddress: '127.0.0.1',
+        userAgent: 'CodeTutor Admin Console',
+      })
       reloadData()
       setToastMessage('Course removed from platform.')
     }
   }
 
   const handleCourseSaved = (savedCourse: Course) => {
+    adminAnalyticsService.logAction({
+      actorName: 'Lead Curriculum Director (Admin)',
+      actorRole: 'admin',
+      action: 'COURSE_SAVED',
+      category: 'curriculum',
+      target: `${savedCourse.id} (${savedCourse.title})`,
+      details: `Saved course with ${savedCourse.modules?.length || 0} modules and ${savedCourse.totalLessons || 0} lessons.`,
+      status: 'success',
+      ipAddress: '127.0.0.1',
+      userAgent: 'CodeTutor Admin Console',
+    })
     reloadData()
     setToastMessage(`Course "${savedCourse.title}" saved successfully.`)
   }
@@ -130,6 +167,7 @@ export const AdminDashboardPage: React.FC = () => {
               courseStoreService.resetToDefaults()
               gameStoreService.resetToDefaults()
               practiceStoreService.resetToDefaults()
+              adminAnalyticsService.resetToDefaults()
               reloadData()
               setToastMessage('Platform reset to default courses, practice drills, and challenges.')
             }}
@@ -154,9 +192,9 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          HIGH-LEVEL SUMMARY METRICS
+          HIGH-LEVEL SUMMARY METRICS (5 Equal KPI Cards)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 font-mono">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 font-mono">
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
             Active Courses
@@ -168,13 +206,13 @@ export const AdminDashboardPage: React.FC = () => {
             <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-            {totalLessons} total lessons
+            {totalLessons} lessons
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
-            Practice Challenges
+            Practice Drills
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-xl sm:text-2xl font-bold text-[#005F02] dark:text-emerald-400">
@@ -189,7 +227,7 @@ export const AdminDashboardPage: React.FC = () => {
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
-            Arcade Game Drills
+            Arcade Games
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
@@ -203,6 +241,21 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+            Platform Learners
+          </span>
+          <div className="flex items-baseline justify-between">
+            <span className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
+              {adminUsers.length}
+            </span>
+            <Users className="w-4 h-4 text-purple-500" />
+          </div>
+          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+            {adminUsers.filter((u) => u.status === 'active_now' || u.status === 'active_today').length} active today
+          </span>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1 col-span-2 sm:col-span-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
             Support Tickets
           </span>
@@ -219,7 +272,7 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          PORTAL TABS: COURSES vs PRACTICE vs GAME STUDIO vs ISSUE DESK
+          PORTAL TABS: COURSES vs PRACTICE vs GAMES vs USERS & AUDIT vs ISSUES
           ═══════════════════════════════════════════════════════════════ */}
       <div className="space-y-4">
         <div className="grid grid-cols-2 sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit">
@@ -273,6 +326,22 @@ export const AdminDashboardPage: React.FC = () => {
 
           <button
             type="button"
+            onClick={() => setActiveTab('analytics')}
+            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'analytics'
+                ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-2xs font-extrabold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+            <span className="truncate">Learners & Audit</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 font-bold shrink-0">
+              {adminUsers.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('issues')}
             className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'issues'
@@ -301,6 +370,12 @@ export const AdminDashboardPage: React.FC = () => {
           <PracticeStudioView onUpdated={reloadData} />
         ) : activeTab === 'games' ? (
           <GameStudioView onUpdated={reloadData} />
+        ) : activeTab === 'analytics' ? (
+          <UserAnalyticsDeskView
+            users={adminUsers}
+            auditLogs={auditLogs}
+            onDataChanged={reloadData}
+          />
         ) : (
           <IssueDeskView issues={issues} onUpdated={reloadData} />
         )}
