@@ -19,6 +19,7 @@ import {
   Flame,
   Sun,
   Moon,
+  Zap,
 } from 'lucide-react'
 
 export const DashboardPage: React.FC = () => {
@@ -150,6 +151,18 @@ export const DashboardPage: React.FC = () => {
                   <Clock className="w-3 h-3 text-slate-400 shrink-0" />
                   <span>{formattedDate}</span>
                 </span>
+
+                <Link
+                  to="/leaderboard"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 font-mono font-bold text-[11px] border border-amber-300/80 dark:border-amber-700/80 hover:border-amber-400 shadow-3xs transition-all"
+                  title="View Pan-African Leaderboard"
+                >
+                  <Zap className="w-3 h-3 fill-amber-500 text-amber-500 shrink-0" />
+                  <span>2,450 XP</span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-200/80 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-black">
+                    #4
+                  </span>
+                </Link>
               </div>
 
               {/* Desktop/Tablet Heading */}

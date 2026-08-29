@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Card } from '@/components/ui'
-import { Trophy, Code2, Clock, Flame, ArrowRight } from 'lucide-react'
+import { Zap, Code2, Gamepad2, Flame, ArrowRight } from 'lucide-react'
 
 interface ProgressOverviewProps {
   streakDays: number
@@ -12,24 +12,36 @@ interface ProgressOverviewProps {
 
 export const ProgressOverview: React.FC<ProgressOverviewProps> = memo(({
   streakDays,
-  totalHours,
   problemsSolved,
-  coursesCount,
 }) => {
   const stats = [
+    {
+      label: 'Experience (XP)',
+      value: '2,450',
+      unit: 'XP',
+      subtext: 'Pan-African rank',
+      tag: 'Rank #4 • Diamond',
+      tagColor: 'bg-amber-100/80 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/80',
+      icon: Zap,
+      iconColor: 'text-amber-600 dark:text-amber-400',
+      iconBg: 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/80 dark:border-amber-800/80',
+      hoverBorder: 'hover:border-amber-400 dark:hover:border-amber-600',
+      glowBg: 'group-hover:bg-amber-500/5',
+      href: '/leaderboard',
+    },
     {
       label: 'Day Streak',
       value: `${streakDays}`,
       unit: 'Days',
       subtext: 'Personal best streak',
       tag: '+2d this week',
-      tagColor: 'bg-amber-100/80 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/80',
+      tagColor: 'bg-orange-100/80 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800/80',
       icon: Flame,
-      iconColor: 'text-amber-600 dark:text-amber-400',
-      iconBg: 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/80 dark:border-amber-800/80',
-      hoverBorder: 'hover:border-amber-400 dark:hover:border-amber-600',
-      glowBg: 'group-hover:bg-amber-500/5',
-      href: '/progress',
+      iconColor: 'text-orange-600 dark:text-orange-400',
+      iconBg: 'bg-orange-50 dark:bg-orange-950/60 border-orange-200/80 dark:border-orange-800/80',
+      hoverBorder: 'hover:border-orange-400 dark:hover:border-orange-600',
+      glowBg: 'group-hover:bg-orange-500/5',
+      href: '/leaderboard',
     },
     {
       label: 'Problems Solved',
@@ -46,32 +58,18 @@ export const ProgressOverview: React.FC<ProgressOverviewProps> = memo(({
       href: '/practice',
     },
     {
-      label: 'Study Time',
-      value: `${totalHours}`,
-      unit: 'hrs',
-      subtext: '100% Offline learning',
-      tag: 'Goal: 20h',
-      tagColor: 'bg-sky-100/80 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/80',
-      icon: Clock,
-      iconColor: 'text-sky-600 dark:text-sky-400',
-      iconBg: 'bg-sky-50 dark:bg-sky-950/60 border-sky-200/80 dark:border-sky-800/80',
-      hoverBorder: 'hover:border-sky-400 dark:hover:border-sky-600',
-      glowBg: 'group-hover:bg-sky-500/5',
-      href: '/progress',
-    },
-    {
-      label: 'Enrolled Courses',
-      value: `${coursesCount}`,
-      unit: 'tracks',
-      subtext: 'Core coding curricula',
-      tag: '1 completed',
+      label: 'Arcade Game XP',
+      value: '1,280',
+      unit: 'pts',
+      subtext: '4 Minigames mastered',
+      tag: 'Top 5% speed',
       tagColor: 'bg-brand-100/80 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 border-brand-200/80 dark:border-brand-800/80',
-      icon: Trophy,
+      icon: Gamepad2,
       iconColor: 'text-brand-600 dark:text-brand-400',
       iconBg: 'bg-brand-50 dark:bg-brand-950/60 border-brand-200/80 dark:border-brand-800/80',
       hoverBorder: 'hover:border-brand-400 dark:hover:border-brand-600',
       glowBg: 'group-hover:bg-brand-500/5',
-      href: '/learning',
+      href: '/games',
     },
   ]
 

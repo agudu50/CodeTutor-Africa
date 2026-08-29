@@ -9,13 +9,14 @@ import {
   BarChart3,
   CheckCircle2,
   Flame,
-  Clock,
   Target,
   AlertTriangle,
   Shield,
   Check,
   Trophy,
   ChevronRight,
+  Zap,
+  Gamepad2,
 } from 'lucide-react'
 
 export const ProgressPage: React.FC = () => {
@@ -37,7 +38,7 @@ export const ProgressPage: React.FC = () => {
             </h1>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Detailed metrics on curriculum coverage, coding consistency, strengths, and targeted focus areas.
+            Detailed metrics on curriculum coverage, points accumulated, coding consistency, strengths, and targeted focus areas.
           </p>
         </div>
 
@@ -47,97 +48,127 @@ export const ProgressPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          PRIMARY KPI ROW (4 EQUAL HEIGHT METRIC CARDS)
+          PRIMARY KPI ROW (5 EQUAL METRIC CARDS)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-        {/* Metric 1: Total Completion */}
-        <Card className="p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between h-full">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Total Completion
-              </span>
-              <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800">
-                24/38 Done
-              </span>
-            </div>
-            <div className="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">
-              {data.overallCompletionPercentage}%
-            </div>
-          </div>
-          <div className="space-y-1 pt-3">
-            <Progress value={data.overallCompletionPercentage} variant="brand" size="sm" />
-            <span className="text-[11px] text-slate-400 font-medium block">All tracks combined</span>
-          </div>
-        </Card>
-
-        {/* Metric 2: Active Daily Streak */}
-        <Card className="p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between h-full">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Daily Streak
-              </span>
-              <div className="p-1 rounded-md bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80">
-                <Flame className="w-3.5 h-3.5 fill-amber-500" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-stretch">
+        {/* Metric 1: Total Experience (XP Points) */}
+        <Link to="/leaderboard" className="block focus:outline-none focus:ring-2 focus:ring-amber-500/40 rounded-2xl">
+          <Card className="p-4 sm:p-5 border border-amber-200/90 dark:border-amber-900/60 bg-linear-to-b from-amber-50/50 via-white to-white dark:from-amber-950/20 dark:via-slate-900 dark:to-slate-900 shadow-xs hover:border-amber-400 dark:hover:border-amber-600 transition-all flex flex-col justify-between h-full">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                  Total XP
+                </span>
+                <div className="p-1 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-800">
+                  <Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 dark:text-white">
+                2,450
               </div>
             </div>
-            <div className="text-3xl font-extrabold font-mono text-slate-900 dark:text-white flex items-baseline gap-1.5">
-              <span>{data.streakDays}</span>
-              <span className="text-sm font-bold text-slate-400 font-sans">Days</span>
-            </div>
-          </div>
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Personal best streak
-            </span>
-          </div>
-        </Card>
-
-        {/* Metric 3: Problems Solved */}
-        <Card className="p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between h-full">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Problems Solved
+            <div className="pt-2.5 border-t border-amber-100 dark:border-amber-900/40">
+              <span className="text-[11px] font-mono font-bold text-amber-700 dark:text-amber-400 block truncate">
+                Rank #4 • Diamond Tier
               </span>
-              <div className="p-1 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80">
-                <CheckCircle2 className="w-3.5 h-3.5" />
+            </div>
+          </Card>
+        </Link>
+
+        {/* Metric 2: Arcade & Game Points */}
+        <Link to="/games" className="block focus:outline-none focus:ring-2 focus:ring-brand-500/40 rounded-2xl">
+          <Card className="p-4 sm:p-5 border border-brand-200/90 dark:border-brand-900/60 bg-linear-to-b from-brand-50/50 via-white to-white dark:from-brand-950/20 dark:via-slate-900 dark:to-slate-900 shadow-xs hover:border-brand-400 dark:hover:border-brand-600 transition-all flex flex-col justify-between h-full">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">
+                  Game XP
+                </span>
+                <div className="p-1 rounded-md bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 border border-brand-300 dark:border-brand-800">
+                  <Gamepad2 className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 dark:text-white">
+                1,280
               </div>
             </div>
-            <div className="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">
-              {data.problemsSolvedCount}
-            </div>
-          </div>
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-              <Check className="w-3.5 h-3.5 text-emerald-500" /> 100% test pass rate
-            </span>
-          </div>
-        </Card>
-
-        {/* Metric 4: Offline Study Hours */}
-        <Card className="p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex flex-col justify-between h-full">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Study Hours
+            <div className="pt-2.5 border-t border-brand-100 dark:border-brand-900/40">
+              <span className="text-[11px] font-mono font-bold text-brand-700 dark:text-brand-400 block truncate">
+                4 Games Mastered
               </span>
-              <div className="p-1 rounded-md bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800/80">
-                <Clock className="w-3.5 h-3.5" />
+            </div>
+          </Card>
+        </Link>
+
+        {/* Metric 3: Active Daily Streak */}
+        <Link to="/leaderboard" className="block focus:outline-none focus:ring-2 focus:ring-orange-500/40 rounded-2xl">
+          <Card className="p-4 sm:p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-orange-400 dark:hover:border-orange-600 transition-all flex flex-col justify-between h-full">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Daily Streak
+                </span>
+                <div className="p-1 rounded-md bg-orange-50 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/80">
+                  <Flame className="w-3.5 h-3.5 fill-orange-500 text-orange-500" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 dark:text-white flex items-baseline gap-1">
+                <span>{data.streakDays}</span>
+                <span className="text-xs font-bold text-slate-400 font-sans">Days</span>
               </div>
             </div>
-            <div className="text-3xl font-extrabold font-mono text-slate-900 dark:text-white flex items-baseline gap-1.5">
-              <span>{data.totalStudyHours}</span>
-              <span className="text-sm font-bold text-slate-400 font-sans">hrs</span>
+            <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-[11px] text-orange-600 dark:text-orange-400 font-semibold block truncate">
+                Personal best streak 🔥
+              </span>
             </div>
-          </div>
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[11px] text-sky-600 dark:text-sky-400 font-semibold flex items-center gap-1">
-              <Shield className="w-3.5 h-3.5 text-sky-500" /> Zero internet required
-            </span>
-          </div>
-        </Card>
+          </Card>
+        </Link>
+
+        {/* Metric 4: Problems Solved */}
+        <Link to="/practice" className="block focus:outline-none focus:ring-2 focus:ring-emerald-500/40 rounded-2xl">
+          <Card className="p-4 sm:p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-emerald-400 dark:hover:border-emerald-600 transition-all flex flex-col justify-between h-full">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Solved
+                </span>
+                <div className="p-1 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 dark:text-white">
+                {data.problemsSolvedCount}
+              </div>
+            </div>
+            <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold block truncate">
+                98 Quizzes Passed
+              </span>
+            </div>
+          </Card>
+        </Link>
+
+        {/* Metric 5: Total Completion */}
+        <Link to="/learning" className="block focus:outline-none focus:ring-2 focus:ring-brand-500/40 rounded-2xl sm:col-span-2 lg:col-span-1">
+          <Card className="p-4 sm:p-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-brand-400 dark:hover:border-brand-600 transition-all flex flex-col justify-between h-full">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Courses
+                </span>
+                <span className="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800">
+                  24/38 Done
+                </span>
+              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 dark:text-white">
+                {data.overallCompletionPercentage}%
+              </div>
+            </div>
+            <div className="space-y-1 pt-2">
+              <Progress value={data.overallCompletionPercentage} variant="brand" size="sm" />
+            </div>
+          </Card>
+        </Link>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
