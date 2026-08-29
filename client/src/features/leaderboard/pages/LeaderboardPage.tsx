@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { MOCK_LEADERBOARD_USERS } from '../data/mockLeaderboardData'
+import { MOCK_LEADERBOARD_USERS, WEST_AFRICAN_COUNTRIES } from '../data/mockLeaderboardData'
 import { LeaderboardPodium } from '../components/LeaderboardPodium'
 import { LeaderboardTable } from '../components/LeaderboardTable'
 import { UserRankCard } from '../components/UserRankCard'
@@ -13,6 +13,7 @@ import {
   Search,
   Shield,
   Clock,
+  Globe,
 } from 'lucide-react'
 
 export const LeaderboardPage: React.FC = () => {
@@ -66,12 +67,6 @@ export const LeaderboardPage: React.FC = () => {
 
   const topThree = useMemo(() => {
     return sortedUsers.slice(0, 3)
-  }, [sortedUsers])
-
-  const uniqueCountries = useMemo(() => {
-    const set = new Set<string>()
-    sortedUsers.forEach((u) => set.add(u.countryCode))
-    return Array.from(set)
   }, [sortedUsers])
 
   const timeframeTabs: { id: LeaderboardTimeframe; label: string }[] = [
@@ -168,19 +163,23 @@ export const LeaderboardPage: React.FC = () => {
 
           {/* Search & Country Filter */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <select
-              value={countryFilter}
-              onChange={(e) => setCountryFilter(e.target.value)}
-              className="px-2.5 py-1.5 text-xs font-mono font-bold rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
-            >
-              <option value="ALL">All Africa</option>
-              {uniqueCountries.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            {/* Enhanced Country Dropdown */}
+            <div className="relative">
+              <Globe className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <select
+                value={countryFilter}
+                onChange={(e) => setCountryFilter(e.target.value)}
+                className="pl-7 pr-3 py-1.5 text-xs font-mono font-bold rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-3xs hover:border-slate-400 transition-colors"
+              >
+                {WEST_AFRICAN_COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code === 'ALL' ? 'All Africa' : `${c.name} (${c.code})`}
+                  </option>
+                ))}
+              </select>
+            </div>
 
+            {/* Learner Search Input */}
             <div className="relative w-full sm:w-44">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
