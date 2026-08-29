@@ -517,13 +517,15 @@ class AdminAnalyticsService {
     this.saveLogs()
   }
 
-  exportAuditLogsAsJson(): string {
-    return JSON.stringify(this.auditLogs, null, 2)
+  exportAuditLogsAsJson(customLogs?: AuditLogEntry[]): string {
+    const list = customLogs || this.auditLogs
+    return JSON.stringify(list, null, 2)
   }
 
-  exportAuditLogsAsCsv(): string {
-    const headers = ['Timestamp', 'Actor', 'Role', 'Action', 'Category', 'Target', 'Status', 'IP Address', 'Details']
-    const rows = this.auditLogs.map((log) => [
+  exportAuditLogsAsCsv(customLogs?: AuditLogEntry[]): string {
+    const list = customLogs || this.auditLogs
+    const headers = ['Timestamp', 'Actor', 'Role', 'Action', 'Category', 'Target', 'Status', 'IP Address', 'User Agent', 'Details']
+    const rows = list.map((log) => [
       `"${log.timestamp}"`,
       `"${log.actorName}"`,
       `"${log.actorRole}"`,
@@ -532,6 +534,7 @@ class AdminAnalyticsService {
       `"${log.target.replace(/"/g, '""')}"`,
       `"${log.status}"`,
       `"${log.ipAddress}"`,
+      `"${log.userAgent.replace(/"/g, '""')}"`,
       `"${log.details.replace(/"/g, '""')}"`,
     ])
     return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
