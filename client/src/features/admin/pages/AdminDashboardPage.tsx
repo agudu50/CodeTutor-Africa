@@ -13,6 +13,7 @@ import { IssueDeskView } from '../components/IssueDeskView'
 import { GameStudioView } from '../components/GameStudioView'
 import { PracticeStudioView } from '../components/PracticeStudioView'
 import { UserAnalyticsDeskView } from '../components/UserAnalyticsDeskView'
+import { SystemPerformanceDeskView } from '../components/SystemPerformanceDeskView'
 import { Button } from '@/components/ui'
 import {
   ShieldCheck,
@@ -24,10 +25,11 @@ import {
   Gamepad2,
   Code2,
   Users,
+  Zap,
 } from 'lucide-react'
 
 export const AdminDashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'practice' | 'games' | 'issues' | 'analytics'>('courses')
+  const [activeTab, setActiveTab] = useState<'courses' | 'practice' | 'games' | 'issues' | 'analytics' | 'performance'>('courses')
   const [courses, setCourses] = useState<Course[]>([])
   const [issues, setIssues] = useState<IssueReport[]>([])
   const [practiceCount, setPracticeCount] = useState<number>(() => practiceStoreService.getAllQuestions().length)
@@ -342,6 +344,22 @@ export const AdminDashboardPage: React.FC = () => {
 
           <button
             type="button"
+            onClick={() => setActiveTab('performance')}
+            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'performance'
+                ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-2xs font-extrabold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
+            <span className="truncate">AI Ops & Health</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 font-bold shrink-0">
+              98%
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('issues')}
             className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'issues'
@@ -376,6 +394,8 @@ export const AdminDashboardPage: React.FC = () => {
             auditLogs={auditLogs}
             onDataChanged={reloadData}
           />
+        ) : activeTab === 'performance' ? (
+          <SystemPerformanceDeskView />
         ) : (
           <IssueDeskView issues={issues} onUpdated={reloadData} />
         )}
