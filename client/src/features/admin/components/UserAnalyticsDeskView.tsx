@@ -3,8 +3,6 @@ import {
   AdminUserRecord,
   AuditLogEntry,
   UserStatsSummary,
-  AuditLogCategory,
-  AuditLogStatus,
 } from '@/types/admin-analytics'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { WEST_AFRICAN_COUNTRIES } from '@/features/leaderboard/data/mockLeaderboardData'
@@ -18,15 +16,68 @@ import {
   Globe,
   Zap,
   CheckCircle2,
-  AlertTriangle,
-  HelpCircle,
   Laptop,
   Cpu,
   HardDrive,
   Database,
   Code2,
   UserCheck,
+  Terminal,
+  Bot,
+  BookOpen,
+  Gamepad2,
+  ShieldCheck,
+  Clock,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
+
+function getHumanRelativeTime(isoString: string): string {
+  try {
+    const date = new Date(isoString)
+    const now = new Date()
+    const diffSec = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+    if (diffSec < 45) return 'Just now'
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)} mins ago`
+    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`
+    if (diffSec < 172800) return 'Yesterday'
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return 'Recently'
+  }
+}
+
+function getHumanActionTitle(log: AuditLogEntry): { verb: string; highlightTarget: string; categoryLabel: string } {
+  switch (log.action) {
+    case 'COURSE_UPDATED':
+      return { verb: 'updated course curriculum', highlightTarget: log.target, categoryLabel: 'Course Curriculum' }
+    case 'COURSE_SAVED':
+      return { verb: 'saved and published course', highlightTarget: log.target, categoryLabel: 'Course Curriculum' }
+    case 'COURSE_DELETED':
+      return { verb: 'removed course', highlightTarget: log.target, categoryLabel: 'Curriculum Management' }
+    case 'PRACTICE_SUBMITTED':
+      return { verb: 'solved practice challenge', highlightTarget: log.target, categoryLabel: 'Practice Drill' }
+    case 'PRACTICE_CHALLENGE_CREATED':
+      return { verb: 'created new challenge', highlightTarget: log.target, categoryLabel: 'Practice Studio' }
+    case 'TUTOR_SESSION_CREATED':
+      return { verb: 'started AI Tutor dialogue on', highlightTarget: log.target, categoryLabel: 'AI Tutor Workspace' }
+    case 'GAME_ROUND_PLAYED':
+      return { verb: 'completed game round on', highlightTarget: log.target, categoryLabel: 'Coding Arcade' }
+    case 'LESSON_COMPLETED':
+      return { verb: 'completed lesson in', highlightTarget: log.target, categoryLabel: 'Offline Learning Track' }
+    case 'OFFLINE_CACHE_VERIFIED':
+      return { verb: 'verified offline cache for', highlightTarget: log.target, categoryLabel: 'Offline Sync System' }
+    case 'SECURITY_AUDIT_PASSED':
+      return { verb: 'verified security sandbox for', highlightTarget: log.target, categoryLabel: 'Sandbox Security' }
+    case 'USER_RE_ENGAGED':
+      return { verb: 'reactivated learner status for', highlightTarget: log.target, categoryLabel: 'User Management' }
+    case 'USER_FLAGGED_IDLE':
+      return { verb: 'flagged learner as idle', highlightTarget: log.target, categoryLabel: 'User Management' }
+    default:
+      return { verb: 'performed activity on', highlightTarget: log.target, categoryLabel: log.category }
+  }
+}
 
 interface UserAnalyticsDeskViewProps {
   users: AdminUserRecord[]
@@ -45,6 +96,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [selectedLogStatus, setSelectedLogStatus] = useState<string>('ALL')
+  const [expandedLogId, setExpandedLogId] = useState<string | null>(null)
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null)
 
   const stats: UserStatsSummary = useMemo(() => {
@@ -157,37 +209,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     }
   }
 
-  const getLogStatusIcon = (status: AuditLogStatus) => {
-    switch (status) {
-      case 'success':
-        return <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-      case 'warning':
-        return <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-      case 'error':
-        return <AlertCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-      case 'info':
-      default:
-        return <HelpCircle className="w-3.5 h-3.5 text-sky-500 shrink-0" />
-    }
-  }
 
-  const getCategoryBadge = (category: AuditLogCategory) => {
-    const map: Record<AuditLogCategory, { label: string; cls: string }> = {
-      curriculum: { label: 'Curriculum', cls: 'bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border-brand-200' },
-      learning: { label: 'Lesson', cls: 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border-emerald-200' },
-      practice: { label: 'Practice', cls: 'bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border-cyan-200' },
-      arcade: { label: 'Arcade', cls: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200' },
-      tutor: { label: 'AI Tutor', cls: 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200' },
-      system: { label: 'System Sync', cls: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200' },
-      security: { label: 'Security', cls: 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200' },
-    }
-    const item = map[category] || map.system
-    return (
-      <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase border ${item.cls}`}>
-        {item.label}
-      </span>
-    )
-  }
 
   const getDeviceIcon = (mode: string) => {
     switch (mode) {
@@ -594,52 +616,151 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           )}
 
           {/* ═══════════════════════════════════════════════════════════════
-              SUBVIEW 2: AUDIT LOGS & SECURITY TRAILS
+              SUBVIEW 2: HUMAN-CENTERED ACTIVITY & AUDIT LOGS
               ═══════════════════════════════════════════════════════════════ */}
           {subView === 'audit' && (
             <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
               {filteredLogs.length === 0 ? (
-                <div className="p-8 text-center text-slate-500 dark:text-slate-400 text-xs">
-                  No audit logs matched your query.
+                <div className="p-12 text-center space-y-2">
+                  <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    No activity logs matched your filter.
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Try adjusting the category or search keywords above.
+                  </p>
                 </div>
               ) : (
-                filteredLogs.map((log) => (
-                  <div
-                    key={log.id}
-                    className="p-3.5 sm:p-4 hover:bg-slate-50/70 dark:hover:bg-slate-950/50 transition-colors space-y-1.5"
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        {getLogStatusIcon(log.status)}
-                        <span className="font-mono text-xs font-bold text-slate-900 dark:text-white">
-                          {log.action}
-                        </span>
-                        {getCategoryBadge(log.category)}
+                filteredLogs.map((log) => {
+                  const isExpanded = expandedLogId === log.id
+                  const relativeTime = getHumanRelativeTime(log.timestamp)
+                  const fullTime = `${new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • ${new Date(log.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`
+                  const humanAction = getHumanActionTitle(log)
+
+                  const getAvatarBg = () => {
+                    if (log.category === 'curriculum') return 'bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800'
+                    if (log.category === 'practice') return 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                    if (log.category === 'tutor') return 'bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
+                    if (log.category === 'arcade') return 'bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                    if (log.category === 'security') return 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                    return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  }
+
+                  const getCategoryIcon = () => {
+                    if (log.category === 'curriculum') return <BookOpen className="w-4 h-4" />
+                    if (log.category === 'practice') return <Code2 className="w-4 h-4" />
+                    if (log.category === 'tutor') return <Bot className="w-4 h-4" />
+                    if (log.category === 'arcade') return <Gamepad2 className="w-4 h-4" />
+                    if (log.category === 'security') return <ShieldCheck className="w-4 h-4" />
+                    return <HardDrive className="w-4 h-4" />
+                  }
+
+                  return (
+                    <div
+                      key={log.id}
+                      className="p-3.5 sm:p-4.5 hover:bg-slate-50/80 dark:hover:bg-slate-950/50 transition-colors space-y-2.5"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        {/* Left Column: Human Avatar / Action Icon + Activity Story */}
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className={`p-2.5 rounded-2xl border ${getAvatarBg()} shrink-0 shadow-3xs mt-0.5`}>
+                            {getCategoryIcon()}
+                          </div>
+
+                          <div className="space-y-1 min-w-0">
+                            {/* Human Story Headline */}
+                            <div className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-snug">
+                              <span className="font-bold text-slate-900 dark:text-white">
+                                {log.actorName}
+                              </span>{' '}
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {humanAction.verb}
+                              </span>{' '}
+                              <span className="font-semibold text-brand-700 dark:text-brand-300 bg-brand-50/80 dark:bg-brand-950/60 px-2 py-0.5 rounded-md border border-brand-200/80 dark:border-brand-800/80 inline-block font-sans text-xs">
+                                {humanAction.highlightTarget}
+                              </span>
+                            </div>
+
+                            {/* Human Explanation / Result Details */}
+                            <p className="text-xs text-slate-600 dark:text-slate-400">
+                              {log.details}
+                            </p>
+
+                            {/* Human Meta Badges */}
+                            <div className="flex flex-wrap items-center gap-2 pt-1">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
+                                <Globe className="w-2.5 h-2.5 text-slate-400" />
+                                <span>{log.ipAddress}</span>
+                              </span>
+
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
+                                <span>Role:</span>
+                                <span className="font-bold uppercase text-slate-800 dark:text-slate-200">{log.actorRole}</span>
+                              </span>
+
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/80 dark:border-emerald-800/80">
+                                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-500" />
+                                <span>Success</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column: Friendly Relative Time & Technical Details Toggle */}
+                        <div className="flex flex-col items-end gap-1.5 shrink-0">
+                          <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400" title={fullTime}>
+                            <Clock className="w-3 h-3 text-slate-400" />
+                            <span>{relativeTime}</span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
+                            className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-0.5 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                          >
+                            <span>{isExpanded ? 'Hide Info' : 'Technical Details'}</span>
+                            {isExpanded ? (
+                              <ChevronUp className="w-3 h-3" />
+                            ) : (
+                              <ChevronDown className="w-3 h-3" />
+                            )}
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2 font-mono text-[11px] text-slate-400">
-                        <span>{log.ipAddress}</span>
-                        <span>•</span>
-                        <span>{new Date(log.timestamp).toLocaleTimeString()} ({new Date(log.timestamp).toLocaleDateString()})</span>
-                      </div>
+                      {/* Expandable Technical Details Dropdown */}
+                      {isExpanded && (
+                        <div className="p-3 rounded-2xl bg-slate-900 text-slate-100 border border-slate-800 text-[11px] font-mono space-y-2 mt-2 animate-in fade-in duration-150">
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 text-slate-400 text-[10px]">
+                            <span className="flex items-center gap-1 font-bold text-emerald-400">
+                              <Terminal className="w-3 h-3" />
+                              Technical Audit Record
+                            </span>
+                            <span>Event Code: {log.action} • Log ID: {log.id}</span>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300 text-[10px]">
+                            <div>
+                              <span className="text-slate-500 block">Exact Timestamp:</span>
+                              <span className="text-slate-200">{fullTime} ({log.timestamp})</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-500 block">Client Runtime:</span>
+                              <span className="text-slate-200 break-all">{log.userAgent}</span>
+                            </div>
+                          </div>
+
+                          <div className="pt-1">
+                            <span className="text-slate-500 block pb-1 text-[10px]">Raw Event Metadata:</span>
+                            <pre className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-emerald-300 text-[10px] overflow-x-auto max-h-32">
+                              {JSON.stringify(log, null, 2)}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
                     </div>
-
-                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 text-xs">
-                      <div>
-                        <span className="font-semibold text-brand-700 dark:text-brand-300">
-                          {log.actorName}
-                        </span>
-                        <span className="text-slate-500 dark:text-slate-400 ml-1.5">
-                          on <span className="font-mono font-medium text-slate-800 dark:text-slate-200">{log.target}</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-200/60 dark:border-slate-800/60 font-mono">
-                      {log.details}
-                    </p>
-                  </div>
-                ))
+                  )
+                })
               )}
             </div>
           )}
