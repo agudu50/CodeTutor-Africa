@@ -7,6 +7,7 @@ import { MOCK_COURSES } from '@/features/learning/data/mockCourseData'
 import { useUserProfile } from '@/app/providers/UserProfileProvider'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { activeLearningService, ActiveLessonState } from '@/services/learning/active-learning.service'
+import { getStoredTutorSessions, TutorSessionPreview } from '@/features/tutor/services/tutor-storage.service'
 import { ContinueLearningCard } from '../components/ContinueLearningCard'
 import { ProgressOverview } from '../components/ProgressOverview'
 import { WeakAreasCard } from '../components/WeakAreasCard'
@@ -35,6 +36,11 @@ export const DashboardPage: React.FC = () => {
     activeLearningService.getActiveLesson()
   )
 
+  // Dynamic recent AI tutor sessions state (real-time chat updates)
+  const [tutorSessions, setTutorSessions] = useState<TutorSessionPreview[]>(() =>
+    getStoredTutorSessions()
+  )
+
   useEffect(() => {
     const handleActiveLessonUpdated = (e: Event) => {
       const customEvent = e as CustomEvent<ActiveLessonState>
@@ -45,11 +51,19 @@ export const DashboardPage: React.FC = () => {
       }
     }
 
+    const handleTutorSessionsUpdated = () => {
+      setTutorSessions(getStoredTutorSessions())
+    }
+
     window.addEventListener('active_lesson_updated', handleActiveLessonUpdated)
+    window.addEventListener('tutor_sessions_updated', handleTutorSessionsUpdated)
     window.addEventListener('storage', handleActiveLessonUpdated)
+    window.addEventListener('storage', handleTutorSessionsUpdated)
     return () => {
       window.removeEventListener('active_lesson_updated', handleActiveLessonUpdated)
+      window.removeEventListener('tutor_sessions_updated', handleTutorSessionsUpdated)
       window.removeEventListener('storage', handleActiveLessonUpdated)
+      window.removeEventListener('storage', handleTutorSessionsUpdated)
     }
   }, [])
 
@@ -273,7 +287,7 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="lg:col-span-5 flex flex-col">
-          <RecentTutorCard sessions={data.recentTutorSessions} />
+          <RecentTutorCard sessions={tutorSessions} />
         </div>
       </div>
 

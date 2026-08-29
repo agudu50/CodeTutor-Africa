@@ -40,6 +40,7 @@ function loadStoredMessages(): Record<string, ChatMessage[]> {
 function saveStoredSessions(sessions: TutorSession[]) {
   try {
     localStorage.setItem(TUTOR_SESSIONS_STORAGE_KEY, JSON.stringify(sessions))
+    window.dispatchEvent(new CustomEvent('tutor_sessions_updated', { detail: sessions }))
   } catch (e) {
     console.warn('Failed to save tutor sessions to localStorage', e)
   }
