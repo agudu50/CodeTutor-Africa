@@ -11,6 +11,7 @@ export interface NavItem {
     | 'HelpCircle'
     | 'Gamepad2'
     | 'BarChart3'
+    | 'Trophy'
     | 'ShieldCheck'
     | 'Settings'
   badge?: string
@@ -66,6 +67,12 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: 'My Progress',
     path: '/progress',
     iconName: 'BarChart3',
+  },
+  {
+    id: 'leaderboard',
+    label: 'Leaderboard',
+    path: '/leaderboard',
+    iconName: 'Trophy',
   },
   {
     id: 'admin',

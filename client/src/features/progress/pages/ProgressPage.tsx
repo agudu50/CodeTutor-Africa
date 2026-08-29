@@ -1,10 +1,22 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { MOCK_PROGRESS_DATA } from '../data/mockProgressData'
 import { TopicProgressGrid } from '../components/TopicProgressGrid'
 import { ActivityFeed } from '../components/ActivityFeed'
 import { Card, CardHeader, CardTitle, CardContent, Progress } from '@/components/ui'
-import { BarChart3, CheckCircle2, Flame, Clock, Target, AlertTriangle, Shield, Check } from 'lucide-react'
+import {
+  BarChart3,
+  CheckCircle2,
+  Flame,
+  Clock,
+  Target,
+  AlertTriangle,
+  Shield,
+  Check,
+  Trophy,
+  ChevronRight,
+} from 'lucide-react'
 
 export const ProgressPage: React.FC = () => {
   const data = MOCK_PROGRESS_DATA
@@ -206,6 +218,38 @@ export const ProgressPage: React.FC = () => {
             ))}
           </CardContent>
         </Card>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          LEADERBOARD TEASER BANNER
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="p-5 sm:p-6 rounded-3xl border border-amber-200 dark:border-amber-900/60 bg-linear-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-amber-950/30 dark:via-amber-950/10 dark:to-transparent flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shrink-0">
+            <Trophy className="w-6 h-6 fill-white" />
+          </div>
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-black text-slate-900 dark:text-white">
+                Pan-African Leaderboard
+              </h3>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold border border-amber-300 dark:border-amber-800">
+                You are Rank #4
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Track daily streaks, weekly sprints, and points accumulated across all African hubs.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/leaderboard"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#005F02] text-white text-xs font-bold hover:bg-[#004e02] transition-colors shadow-xs shrink-0 self-start sm:self-center"
+        >
+          <span>View Full Leaderboard</span>
+          <ChevronRight className="w-4 h-4" />
+        </Link>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════

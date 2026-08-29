@@ -18,6 +18,7 @@ import ProgressPage from '@/features/progress/pages/ProgressPage'
 import SettingsPage from '@/features/settings/pages/SettingsPage'
 import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage'
 import QuizzesPage from '@/features/learning/pages/QuizzesPage'
+import LeaderboardPage from '@/features/leaderboard/pages/LeaderboardPage'
 
 export const routes: RouteObject[] = [
   // Public standalone routes
@@ -109,6 +110,10 @@ export const routes: RouteObject[] = [
       {
         path: 'progress',
         element: <ProgressPage />,
+      },
+      {
+        path: 'leaderboard',
+        element: <LeaderboardPage />,
       },
       {
         path: 'settings',

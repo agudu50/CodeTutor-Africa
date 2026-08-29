@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Gamepad2,
   HelpCircle,
+  Trophy,
   ChevronLeft,
   ChevronRight,
   Cpu,
@@ -31,6 +32,7 @@ const iconMap = {
   ShieldCheck,
   Gamepad2,
   HelpCircle,
+  Trophy,
 }
 
 interface SidebarProps {
