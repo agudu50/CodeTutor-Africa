@@ -74,25 +74,25 @@ export const LeaderboardPage: React.FC = () => {
     return Array.from(set)
   }, [sortedUsers])
 
-  const timeframeTabs: { id: LeaderboardTimeframe; label: string; subtitle: string }[] = [
-    { id: 'daily', label: 'Daily', subtitle: 'Today\'s Sprint' },
-    { id: 'weekly', label: 'Weekly', subtitle: 'Current Week' },
-    { id: 'monthly', label: 'Monthly', subtitle: 'August Masters' },
-    { id: 'yearly', label: 'Yearly', subtitle: 'Hall of Fame' },
+  const timeframeTabs: { id: LeaderboardTimeframe; label: string }[] = [
+    { id: 'daily', label: 'Daily' },
+    { id: 'weekly', label: 'Weekly' },
+    { id: 'monthly', label: 'Monthly' },
+    { id: 'yearly', label: 'Yearly' },
   ]
 
   const metricTabs: { id: LeaderboardMetric; label: string; icon: React.ReactNode }[] = [
     { id: 'points', label: 'XP Points', icon: <Zap className="w-3.5 h-3.5 text-amber-500" /> },
-    { id: 'streak', label: 'Active Streaks', icon: <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> },
-    { id: 'problems', label: 'Challenges Solved', icon: <Target className="w-3.5 h-3.5 text-emerald-500" /> },
+    { id: 'streak', label: 'Streaks', icon: <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> },
+    { id: 'problems', label: 'Solved', icon: <Target className="w-3.5 h-3.5 text-emerald-500" /> },
   ]
 
   return (
-    <PageContainer maxWidth="2xl" className="space-y-6">
+    <PageContainer maxWidth="2xl" className="space-y-5">
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80">
@@ -112,39 +112,87 @@ export const LeaderboardPage: React.FC = () => {
             <Shield className="w-3.5 h-3.5" /> 100% Offline Synced
           </span>
           <span className="inline-flex items-center gap-1 text-[11px] font-mono text-slate-400">
-            <Clock className="w-3 h-3" /> Live Rankings
+            <Clock className="w-3 h-3" /> Live
           </span>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          TIMEFRAME SELECTOR (DAILY, WEEKLY, MONTHLY, YEARLY)
+          CONTROLS TOOLBAR: COMPACT TIMEFRAME + METRIC PILLS + SEARCH
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        {timeframeTabs.map((tab) => {
-          const isActive = timeframe === tab.id
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setTimeframe(tab.id)}
-              className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all cursor-pointer border ${
-                isActive
-                  ? 'bg-[#005F02] text-white border-[#005F02] shadow-sm font-bold'
-                  : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-500/60'
-              }`}
-            >
-              <span className="text-xs sm:text-sm font-extrabold">{tab.label}</span>
-              <span
-                className={`text-[10px] font-mono mt-0.5 ${
-                  isActive ? 'text-white/80' : 'text-slate-400'
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+        {/* Compact Timeframe Segmented Control */}
+        <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 shrink-0 self-start lg:self-auto">
+          {timeframeTabs.map((tab) => {
+            const isActive = timeframe === tab.id
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setTimeframe(tab.id)}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#005F02] text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                {tab.subtitle}
-              </span>
-            </button>
-          )
-        })}
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Right side: Metric Selector & Search */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Metric Selector Pills */}
+          <div className="flex items-center gap-1">
+            {metricTabs.map((m) => {
+              const isSelected = metric === m.id
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setMetric(m.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                    isSelected
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
+                      : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-400'
+                  }`}
+                >
+                  {m.icon}
+                  <span>{m.label}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Search & Country Filter */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <select
+              value={countryFilter}
+              onChange={(e) => setCountryFilter(e.target.value)}
+              className="px-2.5 py-1.5 text-xs font-mono font-bold rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+            >
+              <option value="ALL">All Africa</option>
+              {uniqueCountries.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+
+            <div className="relative w-full sm:w-44">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter learner..."
+                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -169,65 +217,6 @@ export const LeaderboardPage: React.FC = () => {
           metric={metric}
         />
       )}
-
-      {/* ═══════════════════════════════════════════════════════════════
-          CONTROLS & SEARCH BAR
-          ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        {/* Metric Selector Pills */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-mono uppercase font-bold text-slate-400 px-1 hidden md:inline">
-            Rank By:
-          </span>
-          {metricTabs.map((m) => {
-            const isSelected = metric === m.id
-            return (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => setMetric(m.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                  isSelected
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
-                    : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-400'
-                }`}
-              >
-                {m.icon}
-                <span>{m.label}</span>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Search & Country Filter */}
-        <div className="flex items-center gap-2">
-          {/* Country Dropdown */}
-          <select
-            value={countryFilter}
-            onChange={(e) => setCountryFilter(e.target.value)}
-            className="px-2.5 py-1.5 text-xs font-mono font-bold rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
-          >
-            <option value="ALL">All Hubs (Africa)</option>
-            {uniqueCountries.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-
-          {/* Search Input */}
-          <div className="relative w-full sm:w-48">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search learner..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
-          </div>
-        </div>
-      </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           FULL LEADERBOARD RANKINGS TABLE
