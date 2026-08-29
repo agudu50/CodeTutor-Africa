@@ -54,56 +54,56 @@ export const QuickActions: React.FC = memo(() => {
   return (
     <Card className="h-full flex flex-col justify-between border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
       <div>
-        <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800/80">
+        <CardHeader className="p-3.5 sm:p-4 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0 shadow-3xs">
-                <Zap className="w-4 h-4" />
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0 shadow-3xs">
+                <Zap className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0">
-                <CardTitle className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white truncate">
+                <CardTitle className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white truncate">
                   Quick Access Workspaces
                 </CardTitle>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
                   Launch interactive learning tools & drills
                 </p>
               </div>
             </div>
 
-            <span className="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hidden sm:inline shrink-0 shadow-3xs">
+            <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 hidden sm:inline shrink-0 shadow-3xs">
               Instant Launch
             </span>
           </div>
         </CardHeader>
 
-        <CardContent className="p-4 sm:p-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <CardContent className="p-3 sm:p-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {actions.map((action) => {
               const Icon = action.icon
               return (
                 <Link
                   key={action.title}
                   to={action.path}
-                  className={`p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 ${action.hoverBorder} bg-slate-50/70 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 transition-all duration-150 group flex flex-col justify-between space-y-3 shadow-3xs hover:shadow-xs`}
+                  className={`p-3 rounded-xl border border-slate-200/90 dark:border-slate-800/90 ${action.hoverBorder} bg-slate-50/70 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 transition-all duration-150 group flex flex-col justify-between space-y-2 shadow-3xs hover:shadow-xs`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className={`p-2 rounded-xl border ${action.iconBg} ${action.iconColor} group-hover:scale-105 transition-transform shrink-0 shadow-3xs`}>
-                      <Icon className="w-4 h-4" />
+                    <div className={`p-1.5 rounded-lg border ${action.iconBg} ${action.iconColor} group-hover:scale-105 transition-transform shrink-0 shadow-3xs`}>
+                      <Icon className="w-3.5 h-3.5" />
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border ${action.tagColor}`}>
+                    <div className="flex items-center gap-1">
+                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${action.tagColor}`}>
                         {action.tag}
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all hidden xs:block" />
+                      <ArrowRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all hidden xs:block" />
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                  <div className="space-y-0.5">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors truncate">
                       {action.title}
                     </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
                       {action.description}
                     </p>
                   </div>
