@@ -20,6 +20,7 @@ import {
   Plus,
   Code2,
   Sparkles,
+  ChevronDown,
 } from 'lucide-react'
 
 type ChallengeLanguage = Exclude<GameLanguage, 'all'>
@@ -432,47 +433,53 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300">Programming Language</label>
-              <select
-                value={language}
-                onChange={(e) => {
-                  const nextLang = e.target.value as ChallengeLanguage
-                  setLanguage(nextLang)
-                  setSelectedModuleId('')
-                }}
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
-              >
-                <option value="python">🐍 Python</option>
-                <option value="javascript">⚡ JavaScript</option>
-                <option value="java">☕ Java</option>
-                <option value="typescript">🔷 TypeScript</option>
-                <option value="sql">🗄️ SQL & Databases</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={language}
+                  onChange={(e) => {
+                    const nextLang = e.target.value as ChallengeLanguage
+                    setLanguage(nextLang)
+                    setSelectedModuleId('')
+                  }}
+                  className="w-full py-2.5 pl-3.5 pr-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                >
+                  <option value="python">Python</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="java">Java</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="sql">SQL & Databases</option>
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
 
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300">Target Curriculum Module</label>
-              <select
-                value={selectedModuleId}
-                onChange={(e) => {
-                  const modId = e.target.value
-                  setSelectedModuleId(modId)
-                  if (modId) {
-                    const mods = gameStoreService.getModulesForLanguage(language)
-                    const matched = mods.find((m) => m.id === modId)
-                    if (matched) {
-                      setLessonTitle(`Module ${matched.moduleNumber}: ${matched.title}`)
+              <div className="relative">
+                <select
+                  value={selectedModuleId}
+                  onChange={(e) => {
+                    const modId = e.target.value
+                    setSelectedModuleId(modId)
+                    if (modId) {
+                      const mods = gameStoreService.getModulesForLanguage(language)
+                      const matched = mods.find((m) => m.id === modId)
+                      if (matched) {
+                        setLessonTitle(`Module ${matched.moduleNumber}: ${matched.title}`)
+                      }
                     }
-                  }
-                }}
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold truncate"
-              >
-                <option value="">-- Standalone / Custom --</option>
-                {gameStoreService.getModulesForLanguage(language).map((m) => (
-                  <option key={m.id} value={m.id}>
-                    Module {m.moduleNumber}: {m.title}
-                  </option>
-                ))}
-              </select>
+                  }}
+                  className="w-full py-2.5 pl-3.5 pr-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer truncate"
+                >
+                  <option value="">-- Standalone / Custom --</option>
+                  {gameStoreService.getModulesForLanguage(language).map((m) => (
+                    <option key={m.id} value={m.id}>
+                      Module {m.moduleNumber}: {m.title}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
 
             <div className="space-y-1">

@@ -15,6 +15,7 @@ import {
   Shuffle,
   Clock,
   Layers,
+  ChevronDown,
 } from 'lucide-react'
 
 interface GameModuleEditorModalProps {
@@ -152,17 +153,20 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300">Language Track</label>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as GameLanguage)}
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
-              >
-                {LANGUAGE_TRACKS.filter((t) => t.id !== 'all').map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.badge} - {t.title}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as GameLanguage)}
+                  className="w-full py-2.5 pl-3.5 pr-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                >
+                  {LANGUAGE_TRACKS.filter((t) => t.id !== 'all').map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.badge} - {t.title}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -254,11 +258,11 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
                       />
                     </div>
 
-                    <div>
+                    <div className="relative">
                       <select
                         value={drill.gameId}
                         onChange={(e) => handleUpdateDrill(idx, { gameId: e.target.value as GameId })}
-                        className="w-full p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs"
+                        className="w-full py-2 pl-3 pr-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                       >
                         {DRILL_TYPE_OPTIONS.map((opt) => (
                           <option key={opt.id} value={opt.id}>
@@ -266,25 +270,29 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
                           </option>
                         ))}
                       </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5 flex-1">
-                      <label className="text-[10px] text-slate-500">Difficulty:</label>
-                      <select
-                        value={drill.difficulty}
-                        onChange={(e) =>
-                          handleUpdateDrill(idx, {
-                            difficulty: e.target.value as 'Beginner' | 'Intermediate' | 'Advanced',
-                          })
-                        }
-                        className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-900 dark:text-white"
-                      >
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                      </select>
+                      <label className="text-[10px] text-slate-500 font-bold">Difficulty:</label>
+                      <div className="relative">
+                        <select
+                          value={drill.difficulty}
+                          onChange={(e) =>
+                            handleUpdateDrill(idx, {
+                              difficulty: e.target.value as 'Beginner' | 'Intermediate' | 'Advanced',
+                            })
+                          }
+                          className="py-1 pl-2.5 pr-7 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-900 dark:text-white shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                        >
+                          <option value="Beginner">Beginner</option>
+                          <option value="Intermediate">Intermediate</option>
+                          <option value="Advanced">Advanced</option>
+                        </select>
+                        <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-1.5">

@@ -553,11 +553,11 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   />
                 </div>
 
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-3 relative">
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     {WEST_AFRICAN_COUNTRIES.map((c) => (
                       <option key={c.code} value={c.code}>
@@ -565,13 +565,14 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-3 relative">
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     <option value="ALL">All Activity Statuses</option>
                     <option value="active">All Active Learners</option>
@@ -580,6 +581,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <option value="active_this_week">Active This Week</option>
                     <option value="inactive">Idle & Inactive Only</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </>
             )}
@@ -593,15 +595,15 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     placeholder="Search by actor, action, target..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
                   />
                 </div>
 
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-3 relative">
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     <option value="ALL">All Activities ({auditLogs.length})</option>
                     <option value="auth">Account & Auth (Login, Logout, Signup)</option>
@@ -613,26 +615,28 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <option value="security">Security Sandboxes</option>
                     <option value="system">System & Offline Sync</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-3 relative">
                   <select
                     value={logSortBy}
                     onChange={(e) => setLogSortBy(e.target.value as any)}
-                    className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     <option value="newest">Sort: Newest First</option>
                     <option value="oldest">Sort: Oldest First</option>
                     <option value="actor">Sort: Actor Name (A-Z)</option>
                     <option value="category">Sort: By Category</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 relative">
                   <select
                     value={selectedLogStatus}
                     onChange={(e) => setSelectedLogStatus(e.target.value)}
-                    className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     <option value="ALL">All Outcomes</option>
                     <option value="success">Success Only</option>
@@ -640,6 +644,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <option value="warning">Warnings</option>
                     <option value="error">Errors</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
                 {/* Date & Time Range Secondary Filter Toolbar */}
@@ -1174,24 +1179,27 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
           {/* Category Scope */}
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-xs font-bold text-slate-800 dark:text-slate-200">
               Activity Category Scope:
             </label>
-            <select
-              value={exportModalCategory}
-              onChange={(e) => setExportModalCategory(e.target.value)}
-              className="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none"
-            >
-              <option value="ALL">All Categories & Life-cycle Events</option>
-              <option value="auth">Account & Authentication (Login, Logout, Signup)</option>
-              <option value="learning">Lesson Activity</option>
-              <option value="practice">Practice Submissions</option>
-              <option value="tutor">AI Tutor Dialogues</option>
-              <option value="arcade">Coding Arcade</option>
-              <option value="curriculum">Curriculum Changes</option>
-              <option value="security">Security Sandboxes</option>
-              <option value="system">System & Offline Sync</option>
-            </select>
+            <div className="relative">
+              <select
+                value={exportModalCategory}
+                onChange={(e) => setExportModalCategory(e.target.value)}
+                className="w-full py-2.5 pl-3.5 pr-9 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+              >
+                <option value="ALL">All Categories & Life-cycle Events</option>
+                <option value="auth">Account & Authentication (Login, Logout, Signup)</option>
+                <option value="learning">Lesson Activity</option>
+                <option value="practice">Practice Submissions</option>
+                <option value="tutor">AI Tutor Dialogues</option>
+                <option value="arcade">Coding Arcade</option>
+                <option value="curriculum">Curriculum Changes</option>
+                <option value="security">Security Sandboxes</option>
+                <option value="system">System & Offline Sync</option>
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
 
           {/* Matching preview banner */}

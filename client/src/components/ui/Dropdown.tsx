@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { cn } from '@/utils/cn'
+import { ChevronDown, Check } from 'lucide-react'
 
 export interface DropdownOption<T extends string = string> {
   value: T
@@ -46,7 +47,7 @@ export function Dropdown<T extends string = string>({
   return (
     <div ref={dropdownRef} className={cn('relative w-full space-y-1.5', className)}>
       {label && (
-        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
           {label}
         </label>
       )}
@@ -55,52 +56,54 @@ export function Dropdown<T extends string = string>({
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'w-full flex items-center justify-between px-3.5 py-2 text-sm rounded-lg border bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-xs transition-colors',
+          'w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold rounded-xl border bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-2xs transition-all cursor-pointer',
+          isOpen && 'border-brand-500 ring-2 ring-brand-500/20',
           disabled && 'opacity-50 pointer-events-none'
         )}
       >
         <div className="flex items-center gap-2 truncate">
           {selectedOption?.icon}
-          <span>{selectedOption ? selectedOption.label : placeholder}</span>
+          <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
         </div>
-        <svg
-          className={cn('w-4 h-4 text-slate-400 transition-transform duration-200', isOpen && 'rotate-180')}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <ChevronDown
+          className={cn('w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2', isOpen && 'rotate-180 text-brand-500')}
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1 shadow-lg ring-1 ring-black/5 animate-in fade-in">
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              disabled={option.disabled}
-              onClick={() => {
-                onChange(option.value)
-                setIsOpen(false)
-              }}
-              className={cn(
-                'w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm rounded-lg transition-colors',
-                option.value === value
-                  ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400 font-medium'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
-                option.disabled && 'opacity-40 pointer-events-none'
-              )}
-            >
-              {option.icon}
-              <div className="flex flex-col">
-                <span>{option.label}</span>
-                {option.description && (
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400">{option.description}</span>
+        <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-64 overflow-y-auto rounded-2xl border border-slate-200/90 dark:border-slate-800/90 bg-white/98 dark:bg-slate-900/98 backdrop-blur-md p-1.5 shadow-xl ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-150">
+          {options.map((option) => {
+            const isSelected = option.value === value
+            return (
+              <button
+                key={option.value}
+                type="button"
+                disabled={option.disabled}
+                onClick={() => {
+                  onChange(option.value)
+                  setIsOpen(false)
+                }}
+                className={cn(
+                  'w-full flex items-center justify-between gap-2.5 px-3 py-2 text-left text-xs rounded-xl transition-all cursor-pointer',
+                  isSelected
+                    ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80',
+                  option.disabled && 'opacity-40 pointer-events-none'
                 )}
-              </div>
-            </button>
-          ))}
+              >
+                <div className="flex items-center gap-2 truncate">
+                  {option.icon}
+                  <div className="flex flex-col truncate">
+                    <span className="truncate">{option.label}</span>
+                    {option.description && (
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{option.description}</span>
+                    )}
+                  </div>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
