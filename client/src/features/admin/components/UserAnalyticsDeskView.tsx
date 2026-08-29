@@ -50,6 +50,16 @@ function getHumanRelativeTime(isoString: string): string {
 
 function getHumanActionTitle(log: AuditLogEntry): { verb: string; highlightTarget: string; categoryLabel: string } {
   switch (log.action) {
+    case 'ACCOUNT_CREATED':
+      return { verb: 'registered new learner account', highlightTarget: log.target, categoryLabel: 'Account Registration' }
+    case 'USER_LOGIN':
+      return { verb: 'logged in to platform', highlightTarget: log.target, categoryLabel: 'User Authentication' }
+    case 'USER_LOGOUT':
+      return { verb: 'signed out securely', highlightTarget: log.target, categoryLabel: 'Session End' }
+    case 'PASSWORD_RESET':
+      return { verb: 'requested password recovery', highlightTarget: log.target, categoryLabel: 'Security Recovery' }
+    case 'SESSION_EXPIRED':
+      return { verb: 'session timed out (cached local)', highlightTarget: log.target, categoryLabel: 'Session Management' }
     case 'COURSE_UPDATED':
       return { verb: 'updated course curriculum', highlightTarget: log.target, categoryLabel: 'Course Curriculum' }
     case 'COURSE_SAVED':
@@ -96,6 +106,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [selectedLogStatus, setSelectedLogStatus] = useState<string>('ALL')
+  const [logSortBy, setLogSortBy] = useState<'newest' | 'oldest' | 'actor' | 'category'>('newest')
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null)
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null)
 
@@ -124,7 +135,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   }, [users, searchQuery, selectedCountry, selectedStatus])
 
   const filteredLogs = useMemo(() => {
-    return auditLogs.filter((log) => {
+    const list = auditLogs.filter((log) => {
       const matchesSearch =
         log.actorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -136,7 +147,15 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
       return matchesSearch && matchesCategory && matchesStatus
     })
-  }, [auditLogs, searchQuery, selectedCategory, selectedLogStatus])
+
+    return list.sort((a, b) => {
+      if (logSortBy === 'newest') return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      if (logSortBy === 'oldest') return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      if (logSortBy === 'actor') return a.actorName.localeCompare(b.actorName)
+      if (logSortBy === 'category') return a.category.localeCompare(b.category)
+      return 0
+    })
+  }, [auditLogs, searchQuery, selectedCategory, selectedLogStatus, logSortBy])
 
   const handleToggleStatus = (userId: string, userName: string) => {
     const updated = adminAnalyticsService.toggleUserStatus(userId)
@@ -399,23 +418,19 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
           {/* Search and Filters Bar */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-3">
-            <div className="sm:col-span-6 relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder={
-                  subView === 'users'
-                    ? 'Search learners by name, email, username...'
-                    : 'Search audit logs by actor, action, target, details...'
-                }
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
-              />
-            </div>
-
             {subView === 'users' && (
               <>
+                <div className="sm:col-span-6 relative">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search learners by name, email, username..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+
                 <div className="sm:col-span-3">
                   <select
                     value={selectedCountry}
@@ -449,32 +464,57 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
             {subView === 'audit' && (
               <>
+                <div className="sm:col-span-4 relative">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search by actor, action, target..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+
                 <div className="sm:col-span-3">
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
                   >
-                    <option value="ALL">All Categories</option>
-                    <option value="curriculum">Curriculum Changes</option>
-                    <option value="practice">Practice Submissions</option>
+                    <option value="ALL">All Activities ({auditLogs.length})</option>
+                    <option value="auth">Account & Auth (Login, Logout, Signup)</option>
                     <option value="learning">Lesson Activity</option>
+                    <option value="practice">Practice Submissions</option>
                     <option value="tutor">AI Tutor Dialogues</option>
                     <option value="arcade">Arcade Games</option>
-                    <option value="security">Security & Auth</option>
-                    <option value="system">System Sync</option>
+                    <option value="curriculum">Curriculum Changes</option>
+                    <option value="security">Security Sandboxes</option>
+                    <option value="system">System & Offline Sync</option>
                   </select>
                 </div>
 
                 <div className="sm:col-span-3">
                   <select
+                    value={logSortBy}
+                    onChange={(e) => setLogSortBy(e.target.value as any)}
+                    className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                  >
+                    <option value="newest">Sort: Newest First</option>
+                    <option value="oldest">Sort: Oldest First</option>
+                    <option value="actor">Sort: Actor Name (A-Z)</option>
+                    <option value="category">Sort: By Category</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <select
                     value={selectedLogStatus}
                     onChange={(e) => setSelectedLogStatus(e.target.value)}
                     className="w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
                   >
-                    <option value="ALL">All Event Outcomes</option>
+                    <option value="ALL">All Outcomes</option>
                     <option value="success">Success Only</option>
-                    <option value="info">Info / Normal</option>
+                    <option value="info">Info / Notice</option>
                     <option value="warning">Warnings</option>
                     <option value="error">Errors</option>
                   </select>
@@ -638,6 +678,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   const humanAction = getHumanActionTitle(log)
 
                   const getAvatarBg = () => {
+                    if (log.category === 'auth') return 'bg-sky-50 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
                     if (log.category === 'curriculum') return 'bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800'
                     if (log.category === 'practice') return 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                     if (log.category === 'tutor') return 'bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
@@ -647,6 +688,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   }
 
                   const getCategoryIcon = () => {
+                    if (log.category === 'auth') return <UserCheck className="w-4 h-4" />
                     if (log.category === 'curriculum') return <BookOpen className="w-4 h-4" />
                     if (log.category === 'practice') return <Code2 className="w-4 h-4" />
                     if (log.category === 'tutor') return <Bot className="w-4 h-4" />

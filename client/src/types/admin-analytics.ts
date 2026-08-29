@@ -1,6 +1,6 @@
 export type UserActivityStatus = 'active_now' | 'active_today' | 'active_this_week' | 'idle' | 'inactive'
 export type UserRole = 'learner' | 'instructor' | 'admin'
-export type AuditLogCategory = 'learning' | 'practice' | 'arcade' | 'tutor' | 'curriculum' | 'system' | 'security'
+export type AuditLogCategory = 'learning' | 'practice' | 'arcade' | 'tutor' | 'curriculum' | 'system' | 'security' | 'auth'
 export type AuditLogStatus = 'success' | 'warning' | 'info' | 'error'
 
 export interface AdminUserRecord {
