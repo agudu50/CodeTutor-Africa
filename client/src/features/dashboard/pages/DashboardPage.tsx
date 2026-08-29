@@ -6,6 +6,7 @@ import { MOCK_DASHBOARD_DATA } from '../data/mockDashboardData'
 import { MOCK_COURSES } from '@/features/learning/data/mockCourseData'
 import { useUserProfile } from '@/app/providers/UserProfileProvider'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
+import { activeLearningService, ActiveLessonState } from '@/services/learning/active-learning.service'
 import { ContinueLearningCard } from '../components/ContinueLearningCard'
 import { ProgressOverview } from '../components/ProgressOverview'
 import { WeakAreasCard } from '../components/WeakAreasCard'
@@ -28,6 +29,29 @@ export const DashboardPage: React.FC = () => {
   const { effectiveNetwork } = useSystemStatus()
   const isOffline = effectiveNetwork === 'offline'
   const firstName = profile.fullName ? profile.fullName.trim().split(' ')[0] : 'Learner'
+
+  // Dynamic active lesson state (persisted across sessions)
+  const [activeLesson, setActiveLesson] = useState<ActiveLessonState>(() =>
+    activeLearningService.getActiveLesson()
+  )
+
+  useEffect(() => {
+    const handleActiveLessonUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<ActiveLessonState>
+      if (customEvent.detail) {
+        setActiveLesson(customEvent.detail)
+      } else {
+        setActiveLesson(activeLearningService.getActiveLesson())
+      }
+    }
+
+    window.addEventListener('active_lesson_updated', handleActiveLessonUpdated)
+    window.addEventListener('storage', handleActiveLessonUpdated)
+    return () => {
+      window.removeEventListener('active_lesson_updated', handleActiveLessonUpdated)
+      window.removeEventListener('storage', handleActiveLessonUpdated)
+    }
+  }, [])
 
   // Real-time Clock & Greeting state
   const [currentTime, setCurrentTime] = useState<Date>(new Date())
@@ -245,7 +269,7 @@ export const DashboardPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
         <div className="lg:col-span-7 flex flex-col">
-          <ContinueLearningCard {...data.continueLearning} />
+          <ContinueLearningCard {...activeLesson} />
         </div>
 
         <div className="lg:col-span-5 flex flex-col">

@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
+import { activeLearningService } from '@/services/learning/active-learning.service'
 import { Card, Button, Badge, MarkdownRenderer } from '@/components/ui'
 import { VideoLessonPlayer } from '../components/VideoLessonPlayer'
 import { LessonQuizSection } from '../components/LessonQuizSection'
@@ -31,11 +32,14 @@ export const LessonViewPage: React.FC = () => {
   let courseId = courses[0]?.id || 'course-py-101'
   let courseLanguage = courses[0]?.language || 'python'
 
+  let foundModule = courses[0]?.modules[0]
+
   for (const c of courses) {
     for (const m of c.modules) {
       const l = m.lessons.find((les) => les.id === lessonId || les.slug === lessonId)
       if (l) {
         foundLesson = l
+        foundModule = m
         courseTitle = c.title
         courseId = c.id
         courseLanguage = c.language
@@ -43,6 +47,18 @@ export const LessonViewPage: React.FC = () => {
       }
     }
   }
+
+  // Persist current in-progress lesson so Dashboard always shows the last attempted course
+  useEffect(() => {
+    if (lessonId) {
+      const foundCourse = courses.find((c) => c.id === courseId)
+      if (foundCourse && foundModule && foundLesson) {
+        activeLearningService.recordLessonAccess(foundCourse, foundModule, foundLesson)
+      } else {
+        activeLearningService.recordByLessonId(lessonId)
+      }
+    }
+  }, [lessonId, courseId, foundModule, foundLesson])
 
   // Interactive Live Playground State
   const defaultPlaygroundCode =
