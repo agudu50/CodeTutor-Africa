@@ -62,8 +62,8 @@ export const ContinueLearningCard: React.FC<ContinueLearningProps> = memo(({
   }
 
   return (
-    <Card className="border border-slate-200/90 dark:border-slate-800/90 bg-linear-to-br from-white via-white to-emerald-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/10 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden relative">
-      <CardContent className="p-4 sm:p-5 flex flex-col justify-between h-full space-y-3.5">
+    <Card className="h-full border border-slate-200/90 dark:border-slate-800/90 bg-linear-to-br from-white via-white to-emerald-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/10 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden relative">
+      <CardContent className="p-3.5 sm:p-4 flex flex-col justify-between h-full space-y-3">
         {/* Top Header Row: Status Pills & Time Estimation */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
           <div className="flex items-center gap-1.5">

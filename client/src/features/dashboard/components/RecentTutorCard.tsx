@@ -12,8 +12,8 @@ interface TutorSessionPreview {
 }
 
 export const RecentTutorCard: React.FC<{ sessions: TutorSessionPreview[] }> = memo(({ sessions }) => {
-  // Show top 2-3 most recent sessions with clean spacing
-  const displaySessions = sessions.slice(0, 3)
+  // Show top 2 most recent sessions to perfectly align height with ContinueLearningCard
+  const displaySessions = sessions.slice(0, 2)
 
   return (
     <Card className="h-full flex flex-col justify-between border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
