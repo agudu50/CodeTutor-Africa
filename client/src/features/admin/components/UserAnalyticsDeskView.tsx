@@ -1447,10 +1447,10 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       {/* Bottom Footer: Links & Action Buttons */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
                         {/* Links */}
-                        <div className="flex items-center gap-3 text-xs font-mono">
+                        <div className="flex items-center gap-3 text-xs font-mono flex-wrap">
                           {app.githubUrl && (
                             <a
-                              href={app.githubUrl}
+                              href={app.githubUrl.startsWith('http') ? app.githubUrl : `https://${app.githubUrl}`}
                               target="_blank"
                               rel="noreferrer"
                               className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
@@ -1460,12 +1460,22 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                           )}
                           {app.linkedinUrl && (
                             <a
-                              href={app.linkedinUrl}
+                              href={app.linkedinUrl.startsWith('http') ? app.linkedinUrl : `https://${app.linkedinUrl}`}
                               target="_blank"
                               rel="noreferrer"
                               className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
                             >
                               <span>LinkedIn Profile ↗</span>
+                            </a>
+                          )}
+                          {app.portfolioUrl && (
+                            <a
+                              href={app.portfolioUrl.startsWith('http') ? app.portfolioUrl : `https://${app.portfolioUrl}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                            >
+                              <span>Portfolio Website ↗</span>
                             </a>
                           )}
                         </div>

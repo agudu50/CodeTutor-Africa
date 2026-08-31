@@ -52,6 +52,7 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
   const [bio, setBio] = useState('')
   const [githubUrl, setGithubUrl] = useState('')
   const [linkedinUrl, setLinkedinUrl] = useState('')
+  const [portfolioUrl, setPortfolioUrl] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -104,6 +105,7 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
       bio: bio.trim() || 'Experienced engineer and educator passionate about mentoring African developers.',
       githubUrl: githubUrl.trim() || undefined,
       linkedinUrl: linkedinUrl.trim() || undefined,
+      portfolioUrl: portfolioUrl.trim() || undefined,
     })
 
     setIsSubmitting(false)
@@ -121,6 +123,7 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
     setBio('')
     setGithubUrl('')
     setLinkedinUrl('')
+    setPortfolioUrl('')
     onClose()
   }
 
@@ -456,6 +459,19 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
                       className="text-xs font-mono py-2"
                     />
                   </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Portfolio Website</span>
+                  </label>
+                  <Input
+                    value={portfolioUrl}
+                    onChange={(e) => setPortfolioUrl(e.target.value)}
+                    placeholder="https://yourportfolio.dev"
+                    className="text-xs font-mono py-2"
+                  />
                 </div>
               </div>
 

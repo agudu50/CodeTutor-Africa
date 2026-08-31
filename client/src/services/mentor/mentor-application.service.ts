@@ -15,6 +15,7 @@ export interface MentorApplication {
   bio: string
   githubUrl?: string
   linkedinUrl?: string
+  portfolioUrl?: string
   status: MentorApplicationStatus
   appliedAt: string
   reviewedAt?: string
@@ -37,6 +38,7 @@ const INITIAL_APPLICATIONS: MentorApplication[] = [
     bio: 'Senior lecturer in Computer Science specializing in enterprise Java and algorithmic foundations. Passionate about empowering West African university students through hands-on offline coding curricula.',
     githubUrl: 'https://github.com/emmanuel-quaye',
     linkedinUrl: 'https://linkedin.com/in/emmanuel-quaye-knust',
+    portfolioUrl: 'https://equaye-cs.knust.edu.gh',
     status: 'pending',
     appliedAt: '2026-02-28T14:30:00Z',
   },
