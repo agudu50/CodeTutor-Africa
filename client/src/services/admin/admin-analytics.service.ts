@@ -568,6 +568,38 @@ class AdminAnalyticsService {
     return user
   }
 
+  addUser(user: AdminUserRecord): AdminUserRecord {
+    this.users.unshift(user)
+    this.saveUsers()
+    return user
+  }
+
+  setUserRole(userId: string, newRole: 'learner' | 'instructor' | 'admin', actorName = 'Lead Curriculum Director (Admin)'): AdminUserRecord | null {
+    const idx = this.users.findIndex((u) => u.id === userId)
+    if (idx === -1) return null
+
+    const oldRole = this.users[idx].role
+    this.users[idx] = {
+      ...this.users[idx],
+      role: newRole,
+    }
+    this.saveUsers()
+
+    this.logAction({
+      actorName,
+      actorRole: 'admin',
+      action: newRole === 'instructor' ? 'USER_PROMOTED_TO_MENTOR' : newRole === 'admin' ? 'USER_PROMOTED_TO_ADMIN' : 'USER_ROLE_UPDATED',
+      category: 'curriculum',
+      target: `${this.users[idx].name} (${this.users[idx].email})`,
+      details: `Admin changed user role from [${oldRole.toUpperCase()}] to [${newRole.toUpperCase()}]. ${newRole === 'instructor' ? 'Granted Mentor Hub course authoring & inquiry desk access.' : ''}`,
+      status: 'success',
+      ipAddress: '127.0.0.1',
+      userAgent: 'CodeTutor Admin Console',
+    })
+
+    return this.users[idx]
+  }
+
   resetToDefaults() {
     this.users = [...INITIAL_ADMIN_USERS]
     this.auditLogs = [...INITIAL_AUDIT_LOGS]

@@ -6,6 +6,7 @@ import {
 } from '@/types/admin-analytics'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { courseStoreService } from '@/services/learning/course-store.service'
+import { mentorApplicationService, MentorApplication } from '@/services/mentor/mentor-application.service'
 import { WEST_AFRICAN_COUNTRIES } from '@/features/leaderboard/data/mockLeaderboardData'
 import { Card, CardHeader, CardContent, Button, Modal } from '@/components/ui'
 import {
@@ -31,6 +32,8 @@ import {
   Clock,
   ChevronDown,
   ChevronUp,
+  GraduationCap,
+  Mail,
   X,
 } from 'lucide-react'
 
@@ -102,7 +105,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   auditLogs,
   onDataChanged,
 }) => {
-  const [subView, setSubView] = useState<'users' | 'audit' | 'regional'>('users')
+  const [subView, setSubView] = useState<'users' | 'audit' | 'regional' | 'mentors'>('users')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('ALL')
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
@@ -111,6 +114,22 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [selectedLogStatus, setSelectedLogStatus] = useState<string>('ALL')
   const [logSortBy, setLogSortBy] = useState<'newest' | 'oldest' | 'actor' | 'category'>('newest')
+
+  // Mentor Applications State
+  const [mentorApps, setMentorApps] = useState<MentorApplication[]>(() => mentorApplicationService.getAllApplications())
+  const [selectedAppStatus, setSelectedAppStatus] = useState<'ALL' | 'pending' | 'approved' | 'rejected'>('ALL')
+
+  React.useEffect(() => {
+    const handleUpdate = () => {
+      setMentorApps(mentorApplicationService.getAllApplications())
+    }
+    window.addEventListener('mentor_applications_updated', handleUpdate)
+    return () => window.removeEventListener('mentor_applications_updated', handleUpdate)
+  }, [])
+
+  const pendingMentorCount = useMemo(() => {
+    return mentorApps.filter((a) => a.status === 'pending').length
+  }, [mentorApps])
 
   const courses = useMemo(() => {
     return courseStoreService.getAllCourses()
@@ -299,12 +318,62 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     })
   }, [auditLogs, exportModalStartDate, exportModalEndDate, exportModalCategory])
 
+  const filteredMentorApps = useMemo(() => {
+    return mentorApps.filter((app) => {
+      const matchesSearch =
+        app.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        app.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        app.institutionOrCompany.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        app.programmingTracks.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+
+      const matchesStatus = selectedAppStatus === 'ALL' || app.status === selectedAppStatus
+      return matchesSearch && matchesStatus
+    })
+  }, [mentorApps, searchQuery, selectedAppStatus])
+
   const handleToggleStatus = (userId: string, userName: string) => {
     const updated = adminAnalyticsService.toggleUserStatus(userId)
     if (updated) {
       onDataChanged()
       setActionSuccessMsg(`Status updated for ${userName}. Audit trail recorded.`)
       setTimeout(() => setActionSuccessMsg(null), 3000)
+    }
+  }
+
+  const handlePromoteToMentor = (userId: string, userName: string) => {
+    const updated = adminAnalyticsService.setUserRole(userId, 'instructor')
+    if (updated) {
+      onDataChanged()
+      setActionSuccessMsg(`Promoted ${userName} to Verified Mentor. Full Mentor Hub access enabled.`)
+      setTimeout(() => setActionSuccessMsg(null), 3500)
+    }
+  }
+
+  const handleDemoteToLearner = (userId: string, userName: string) => {
+    const updated = adminAnalyticsService.setUserRole(userId, 'learner')
+    if (updated) {
+      onDataChanged()
+      setActionSuccessMsg(`Reset ${userName} role to Standard Learner.`)
+      setTimeout(() => setActionSuccessMsg(null), 3500)
+    }
+  }
+
+  const handleApproveMentorApp = (appId: string, applicantName: string) => {
+    const updated = mentorApplicationService.approveApplication(appId)
+    if (updated) {
+      setMentorApps(mentorApplicationService.getAllApplications())
+      onDataChanged()
+      setActionSuccessMsg(`Approved mentor application for ${applicantName}. Appointed as verified educator.`)
+      setTimeout(() => setActionSuccessMsg(null), 3500)
+    }
+  }
+
+  const handleRejectMentorApp = (appId: string, applicantName: string) => {
+    const updated = mentorApplicationService.rejectApplication(appId)
+    if (updated) {
+      setMentorApps(mentorApplicationService.getAllApplications())
+      setActionSuccessMsg(`Declined mentor application for ${applicantName}.`)
+      setTimeout(() => setActionSuccessMsg(null), 3500)
     }
   }
 
@@ -545,6 +614,28 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               >
                 <Globe className="w-3.5 h-3.5 text-cyan-500" />
                 <span>West Africa Regions</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSubView('mentors')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  subView === 'mentors'
+                    ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-2xs font-extrabold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                <span>Mentor Desk &amp; Apps</span>
+                {pendingMentorCount > 0 ? (
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500 text-white font-bold animate-pulse">
+                    {pendingMentorCount} New
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                    {mentorApps.length}
+                  </span>
+                )}
               </button>
             </div>
 
@@ -879,8 +970,13 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   {user.name}
                                 </span>
                                 {user.role === 'admin' && (
-                                  <span className="px-1.5 py-0.2 rounded bg-brand-100 dark:bg-brand-950 text-brand-800 dark:text-brand-300 font-mono text-[9px] font-bold">
+                                  <span className="px-1.5 py-0.2 rounded bg-brand-100 dark:bg-brand-950 text-brand-800 dark:text-brand-300 font-mono text-[9px] font-bold border border-brand-200 dark:border-brand-800">
                                     ADMIN
+                                  </span>
+                                )}
+                                {user.role === 'instructor' && (
+                                  <span className="px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 font-mono text-[9px] font-bold border border-indigo-200 dark:border-indigo-800">
+                                    MENTOR
                                   </span>
                                 )}
                               </div>
@@ -945,30 +1041,58 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
                         {/* Action */}
                         <td className="py-3 px-4 text-right">
-                          {user.role !== 'admin' && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleToggleStatus(user.id, user.name)}
-                              className={`h-7 px-2.5 text-[11px] font-bold ${
-                                user.status === 'inactive' || user.status === 'idle'
-                                   ? 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
-                                   : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/60'
-                              }`}
-                            >
-                              {user.status === 'inactive' || user.status === 'idle' ? (
-                                <>
-                                  <UserCheck className="w-3 h-3 mr-1" />
-                                  Reactivate
-                                </>
-                              ) : (
-                                <>
-                                  <User className="w-3 h-3 mr-1" />
-                                  Mark Idle
-                                </>
-                              )}
-                            </Button>
-                          )}
+                          <div className="flex items-center justify-end gap-1.5">
+                            {user.role !== 'admin' && (
+                              <>
+                                {user.role === 'instructor' ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDemoteToLearner(user.id, user.name)}
+                                    className="h-7 px-2 text-[10px] font-bold text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    title="Revoke mentor permissions"
+                                  >
+                                    <GraduationCap className="w-3 h-3 mr-1 text-slate-500" />
+                                    Demote
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handlePromoteToMentor(user.id, user.name)}
+                                    className="h-7 px-2 text-[10px] font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 hover:bg-brand-100"
+                                    title="Grant Mentor Hub course authoring & student inquiry access"
+                                  >
+                                    <GraduationCap className="w-3 h-3 mr-1 text-brand-600 dark:text-brand-400" />
+                                    Make Mentor
+                                  </Button>
+                                )}
+
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleToggleStatus(user.id, user.name)}
+                                  className={`h-7 px-2 text-[10px] font-bold ${
+                                    user.status === 'inactive' || user.status === 'idle'
+                                      ? 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
+                                      : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/60'
+                                  }`}
+                                >
+                                  {user.status === 'inactive' || user.status === 'idle' ? (
+                                    <>
+                                      <UserCheck className="w-3 h-3 mr-1" />
+                                      Reactivate
+                                    </>
+                                  ) : (
+                                    <>
+                                      <User className="w-3 h-3 mr-1" />
+                                      Mark Idle
+                                    </>
+                                  )}
+                                </Button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -1176,6 +1300,217 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   )
                 })}
               </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════════
+              SUBVIEW 4: MENTOR APPLICATIONS & APPOINTMENT DESK
+              ═══════════════════════════════════════════════════════════════ */}
+          {subView === 'mentors' && (
+            <div className="p-4 sm:p-6 space-y-4">
+              {/* Mentor Status Filter Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { id: 'ALL', label: 'All Applications', count: mentorApps.length },
+                    { id: 'pending', label: 'Pending Review', count: mentorApps.filter((a) => a.status === 'pending').length },
+                    { id: 'approved', label: 'Approved Mentors', count: mentorApps.filter((a) => a.status === 'approved').length },
+                    { id: 'rejected', label: 'Declined', count: mentorApps.filter((a) => a.status === 'rejected').length },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setSelectedAppStatus(tab.id as any)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        selectedAppStatus === tab.id
+                          ? 'bg-brand-600 text-white shadow-2xs'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      <span
+                        className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                          selectedAppStatus === tab.id
+                            ? 'bg-white/20 text-white'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        {tab.count}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="text-xs text-slate-500 font-mono">
+                  <span>Only Admins can verify &amp; appoint course mentors.</span>
+                </div>
+              </div>
+
+              {/* Applications List */}
+              {filteredMentorApps.length === 0 ? (
+                <div className="py-12 text-center space-y-2">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    No mentor applications found
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                    New applicant submissions from the landing page will appear here for administrator verification and appointment.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3.5">
+                  {filteredMentorApps.map((app) => (
+                    <div
+                      key={app.id}
+                      className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 space-y-3.5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                    >
+                      {/* Top row: Applicant Info & Badges */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                            {app.fullName.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                {app.fullName}
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200">
+                                <Globe className="w-2.5 h-2.5 text-brand-500" />
+                                {app.country} ({app.countryCode || 'AF'})
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                <Laptop className="w-2.5 h-2.5 text-slate-500" />
+                                {app.institutionOrCompany}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5">
+                              <span className="flex items-center gap-1">
+                                <Mail className="w-3 h-3 text-slate-400" />
+                                {app.email}
+                              </span>
+                              <span>•</span>
+                              <span>Applied: {getHumanRelativeTime(app.appliedAt)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Status Badge */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {app.status === 'pending' && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-mono text-[10px] font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                              Pending Review
+                            </span>
+                          )}
+                          {app.status === 'approved' && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] font-bold">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                              Appointed Mentor
+                            </span>
+                          )}
+                          {app.status === 'rejected' && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-[10px] font-bold">
+                              <X className="w-3 h-3 text-slate-400" />
+                              Declined
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Mentorship Tracks & Experience */}
+                      <div className="flex items-center gap-2 flex-wrap text-xs">
+                        <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono text-[11px]">
+                          <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                          <span>Tracks:</span>
+                        </span>
+                        {app.programmingTracks.map((track) => (
+                          <span
+                            key={track}
+                            className="px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-mono text-[10px] font-bold"
+                          >
+                            {track}
+                          </span>
+                        ))}
+                        <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold">
+                          {app.yearsOfExperience}
+                        </span>
+                      </div>
+
+                      {/* Bio Statement */}
+                      <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 font-sans italic leading-relaxed">
+                        &ldquo;{app.bio}&rdquo;
+                      </div>
+
+                      {/* Bottom Footer: Links & Action Buttons */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                        {/* Links */}
+                        <div className="flex items-center gap-3 text-xs font-mono">
+                          {app.githubUrl && (
+                            <a
+                              href={app.githubUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+                            >
+                              <span>GitHub Profile ↗</span>
+                            </a>
+                          )}
+                          {app.linkedinUrl && (
+                            <a
+                              href={app.linkedinUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                            >
+                              <span>LinkedIn Profile ↗</span>
+                            </a>
+                          )}
+                        </div>
+
+                        {/* Admin Action Buttons */}
+                        <div className="flex items-center gap-2">
+                          {app.status === 'pending' && (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRejectMentorApp(app.id, app.fullName)}
+                                className="h-7 px-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                              >
+                                Decline
+                              </Button>
+
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => handleApproveMentorApp(app.id, app.fullName)}
+                                className="h-7 px-3 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-2xs"
+                                leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                              >
+                                Approve &amp; Appoint Mentor
+                              </Button>
+                            </>
+                          )}
+                          {app.status === 'approved' && (
+                            <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Active Mentor • Verified by {app.reviewedBy || 'Admin'}
+                            </span>
+                          )}
+                          {app.status === 'rejected' && (
+                            <span className="text-[11px] font-mono text-slate-400">
+                              Application Declined
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </CardContent>

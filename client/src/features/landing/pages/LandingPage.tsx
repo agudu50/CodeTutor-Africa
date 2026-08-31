@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { useTheme } from '@/app/providers/ThemeProvider'
+import { Button } from '@/components/ui'
+import { MentorApplicationModal } from '../components/MentorApplicationModal'
 import {
   ArrowRight,
   Sun,
@@ -604,9 +606,10 @@ interface LandingNavbarProps {
   isDark: boolean
   onToggleTheme: () => void
   navLinks: { href: string; label: string }[]
+  onOpenMentorModal: () => void
 }
 
-const LandingNavbar: React.FC<LandingNavbarProps> = memo(({ isDark, onToggleTheme, navLinks }) => {
+const LandingNavbar: React.FC<LandingNavbarProps> = memo(({ isDark, onToggleTheme, navLinks, onOpenMentorModal }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -643,6 +646,17 @@ const LandingNavbar: React.FC<LandingNavbarProps> = memo(({ isDark, onToggleThem
 
         {/* Right Action Buttons */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Apply as Mentor Button */}
+          <button
+            type="button"
+            onClick={onOpenMentorModal}
+            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#005F02] dark:text-emerald-400 hover:bg-[#005F02]/10 border border-[#005F02]/30 transition-colors cursor-pointer"
+            title="Apply to join CodeTutor verified mentor network"
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>Apply as Mentor</span>
+          </button>
+
           {/* Theme Toggle */}
           <button
             type="button"
@@ -680,7 +694,7 @@ const LandingNavbar: React.FC<LandingNavbarProps> = memo(({ isDark, onToggleThem
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu Drawer (Instant GPU-Accelerated Transition) */}
+      {/* Mobile Dropdown Menu Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -714,8 +728,21 @@ const LandingNavbar: React.FC<LandingNavbarProps> = memo(({ isDark, onToggleThem
               ))}
             </div>
 
+            {/* Apply to Mentor Mobile CTA */}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false)
+                onOpenMentorModal()
+              }}
+              className="w-full py-2.5 rounded-xl text-xs font-bold border border-[#005F02]/40 text-[#005F02] dark:text-emerald-400 hover:bg-[#005F02]/10 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Apply to Become a Mentor</span>
+            </button>
+
             {/* Action Buttons */}
-            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2.5">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2.5">
               <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="w-full">
                 <button className="w-full py-3 rounded-xl text-xs font-extrabold bg-[#005F02] hover:bg-[#004e02] text-white shadow-md flex items-center justify-center gap-2 cursor-pointer">
                   <span>Launch Workspace</span>
@@ -750,6 +777,7 @@ export const LandingPage: React.FC = () => {
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
+  const [isMentorModalOpen, setIsMentorModalOpen] = useState(false)
 
   const statsRef = useRef(null)
   const statsInView = useInView(statsRef, { once: true, margin: '-60px' })
@@ -953,6 +981,7 @@ export const LandingPage: React.FC = () => {
         isDark={isDark}
         onToggleTheme={() => setTheme(isDark ? 'light' : 'dark')}
         navLinks={navLinks}
+        onOpenMentorModal={() => setIsMentorModalOpen(true)}
       />
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -2015,9 +2044,42 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 8: FINAL CTA BANNER
+          SECTION 8: BECOME A MENTOR & EDUCATOR BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-16 relative z-10">
+      <section className="py-12 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div className="space-y-2.5 max-w-2xl text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-400/40 text-brand-300 font-mono text-xs font-bold">
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>Educator &amp; Mentor Network</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                Empower African Tech Talent as a Course Mentor
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Are you a computer science lecturer, software engineer, or coding club lead? Apply to author offline course tracks, mentor university learners, and resolve practice questions. All mentor appointments are reviewed &amp; verified by platform administrators.
+              </p>
+            </div>
+
+            <div className="shrink-0 w-full sm:w-auto">
+              <Button
+                variant="primary"
+                onClick={() => setIsMentorModalOpen(true)}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-xs font-extrabold bg-brand-600 hover:bg-brand-700 text-white shadow-lg flex items-center justify-center gap-2"
+                leftIcon={<GraduationCap className="w-4 h-4" />}
+              >
+                Apply to Become a Mentor
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 9: FINAL CTA BANNER
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-[#005F02] rounded-3xl p-6 sm:p-12 text-center text-white shadow-xl space-y-6 relative overflow-hidden">
             <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto shadow-sm">
@@ -2052,7 +2114,7 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 9: ENHANCED FOOTER (DESKTOP & MOBILE OPTIMIZED)
+          SECTION 10: ENHANCED FOOTER (DESKTOP & MOBILE OPTIMIZED)
           ═══════════════════════════════════════════════════════════════ */}
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mt-auto transition-colors relative z-10">
         <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
@@ -2145,6 +2207,15 @@ export const LandingPage: React.FC = () => {
                 </div>
                 <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400 font-medium">
                   <li>
+                    <button
+                      type="button"
+                      onClick={() => setIsMentorModalOpen(true)}
+                      className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5 text-left cursor-pointer font-bold text-brand-600 dark:text-brand-400"
+                    >
+                      Become a Mentor ↗
+                    </button>
+                  </li>
+                  <li>
                     <a href="#demo" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
                       Interactive Sandbox
                     </a>
@@ -2193,6 +2264,14 @@ export const LandingPage: React.FC = () => {
 
         </div>
       </footer>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          MENTOR APPLICATION MODAL (DIRECT FROM LANDING PAGE)
+          ═══════════════════════════════════════════════════════════════ */}
+      <MentorApplicationModal
+        isOpen={isMentorModalOpen}
+        onClose={() => setIsMentorModalOpen(false)}
+      />
 
       {/* ═══════════════════════════════════════════════════════════════
           FLOATING BACK TO TOP BUTTON
