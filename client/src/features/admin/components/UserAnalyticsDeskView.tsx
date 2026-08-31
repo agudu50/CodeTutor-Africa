@@ -543,34 +543,37 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     switch (status) {
       case 'active_now':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 shadow-3xs whitespace-nowrap shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
             Active Now
           </span>
         )
       case 'active_today':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs whitespace-nowrap shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
             Active Today
           </span>
         )
       case 'active_this_week':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800 shadow-3xs whitespace-nowrap shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
             Active this Week
           </span>
         )
       case 'idle':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shadow-3xs whitespace-nowrap shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             Idle (&gt;7d)
           </span>
         )
       case 'inactive':
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-3xs whitespace-nowrap shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
             Inactive (&gt;30d)
           </span>
         )
@@ -1067,13 +1070,13 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/50 text-[11px] font-mono uppercase text-slate-500 dark:text-slate-400">
                     <th className="py-3 pl-4 pr-1 w-10 text-center font-semibold">#</th>
-                    <th className="py-3 px-4 font-semibold">Learner Profile</th>
-                    <th className="py-3 px-4 font-semibold">Nation / Region</th>
-                    <th className="py-3 px-4 font-semibold">Activity Status</th>
-                    <th className="py-3 px-4 font-semibold">XP & Streak</th>
-                    <th className="py-3 px-4 font-semibold">Progress Metrics</th>
-                    <th className="py-3 px-4 font-semibold">Client Engine</th>
-                    <th className="py-3 px-4 font-semibold text-right">Admin Action</th>
+                    <th className="py-3 px-4 font-semibold min-w-[200px]">Learner Profile</th>
+                    <th className="py-3 px-4 font-semibold min-w-[130px]">Nation / Region</th>
+                    <th className="py-3 px-4 font-semibold min-w-[150px] whitespace-nowrap">Activity Status</th>
+                    <th className="py-3 px-4 font-semibold min-w-[120px] whitespace-nowrap">XP &amp; Streak</th>
+                    <th className="py-3 px-4 font-semibold min-w-[140px] whitespace-nowrap">Progress Metrics</th>
+                    <th className="py-3 px-4 font-semibold min-w-[120px] whitespace-nowrap">Client Engine</th>
+                    <th className="py-3 px-4 font-semibold text-right min-w-[145px] whitespace-nowrap">Admin Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-sans">
@@ -1090,18 +1093,18 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         className="hover:bg-slate-50/80 dark:hover:bg-slate-950/40 transition-colors"
                       >
                         {/* Number Index */}
-                        <td className="py-3 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
+                        <td className="py-3.5 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
                           {String(index + 1).padStart(2, '0')}
                         </td>
 
                         {/* Learner Name & Role */}
-                        <td className="py-3 px-4">
+                        <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-600 to-emerald-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-3xs">
                               {user.name.charAt(0)}
                             </div>
                             <div className="min-w-0">
-                              <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="font-bold text-slate-900 dark:text-white truncate">
                                   {user.name}
                                 </span>
@@ -1135,18 +1138,18 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         </td>
 
                         {/* Country */}
-                        <td className="py-3 px-4 font-mono">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-[10px]">
-                            <Globe className="w-2.5 h-2.5 text-brand-500" />
+                        <td className="py-3.5 px-4 font-mono">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-[10px] whitespace-nowrap">
+                            <Globe className="w-2.5 h-2.5 text-brand-500 shrink-0" />
                             {user.countryName} ({user.countryCode})
                           </span>
                         </td>
 
                         {/* Status */}
-                        <td className="py-3 px-4">{getStatusBadge(user.status)}</td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
 
                         {/* XP & Streak */}
-                        <td className="py-3 px-4 font-mono">
+                        <td className="py-3.5 px-4 font-mono whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-slate-900 dark:text-white">
                               {user.totalXp.toLocaleString()} XP
@@ -1159,7 +1162,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         </td>
 
                         {/* Progress Metrics */}
-                        <td className="py-3 px-4 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+                        <td className="py-3.5 px-4 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
                           <div>
                             <span className="font-semibold text-slate-900 dark:text-white">
                               {user.problemsSolved}
@@ -1173,35 +1176,33 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         </td>
 
                         {/* Engine Mode */}
-                        <td className="py-3 px-4">{getDeviceIcon(user.deviceMode)}</td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">{getDeviceIcon(user.deviceMode)}</td>
 
                         {/* Action */}
-                        <td className="py-3 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5 flex-nowrap">
                             {user.role !== 'admin' && (
                               <>
                                 {user.role === 'instructor' ? (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
+                                  <button
+                                    type="button"
                                     onClick={() => handleDemoteToLearner(user.id, user.name)}
-                                    className="h-7 px-2 text-[10px] font-bold text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    className="h-7.5 px-3 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-800 transition-colors whitespace-nowrap inline-flex items-center gap-1.5 shadow-3xs cursor-pointer"
                                     title="Revoke mentor permissions"
                                   >
-                                    <GraduationCap className="w-3 h-3 mr-1 text-slate-500" />
-                                    Demote
-                                  </Button>
+                                    <GraduationCap className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                    <span>Demote</span>
+                                  </button>
                                 ) : (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
+                                  <button
+                                    type="button"
                                     onClick={() => handleOpenApproveModalForUser(user)}
-                                    className="h-7 px-2 text-[10px] font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 hover:bg-brand-100"
+                                    className="h-7.5 px-3 rounded-xl text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900/60 border border-brand-200 dark:border-brand-800 transition-colors whitespace-nowrap inline-flex items-center gap-1.5 shadow-3xs cursor-pointer"
                                     title="Grant Mentor Hub course authoring & student inquiry access"
                                   >
-                                    <GraduationCap className="w-3 h-3 mr-1 text-brand-600 dark:text-brand-400" />
-                                    Make Mentor
-                                  </Button>
+                                    <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                                    <span>Make Mentor</span>
+                                  </button>
                                 )}
                               </>
                             )}
@@ -1650,27 +1651,27 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               {/* Live Activity Status Indicator */}
                               <div className="flex items-center gap-2 shrink-0">
                                 {mentor.status === 'active_now' && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                                    <span>Active Now (Online)</span>
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                                    <span>Active Now</span>
                                   </span>
                                 )}
                                 {mentor.status === 'active_today' && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                                    <span>Active Today ({getHumanRelativeTime(mentor.lastActive)})</span>
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold whitespace-nowrap">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                                    <span>Active Today</span>
                                   </span>
                                 )}
                                 {mentor.status === 'active_this_week' && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold">
-                                    <span className="w-2 h-2 rounded-full bg-sky-500" />
-                                    <span>Active This Week ({getHumanRelativeTime(mentor.lastActive)})</span>
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold whitespace-nowrap">
+                                    <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
+                                    <span>Active this Week</span>
                                   </span>
                                 )}
                                 {(mentor.status === 'idle' || mentor.status === 'inactive') && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold">
-                                    <span className="w-2 h-2 rounded-full bg-slate-400" />
-                                    <span>Inactive / Offline ({getHumanRelativeTime(mentor.lastActive)})</span>
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold whitespace-nowrap">
+                                    <span className="w-2 h-2 rounded-full bg-slate-400 shrink-0" />
+                                    <span>Inactive / Offline</span>
                                   </span>
                                 )}
                               </div>
