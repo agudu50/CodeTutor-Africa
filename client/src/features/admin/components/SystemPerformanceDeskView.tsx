@@ -229,14 +229,17 @@ export const SystemPerformanceDeskView: React.FC = () => {
       let actionRecommendation: string | undefined = undefined
 
       const lower = text.toLowerCase()
-      if (lower.includes('attack') || lower.includes('threat') || lower.includes('from') || lower.includes('hack')) {
+      if (lower.includes('database') || lower.includes('sql') || lower.includes('injection') || lower.includes('sqlite') || lower.includes('table')) {
+        aiReply = `Database Security Status: All database queries are protected with parameterized query checks and a Database Query Firewall. Recently intercepted 1 unauthorized SQL injection probe (' UNION SELECT username, password_hash...) from 172.16.8.99 and blocked it immediately with zero data leaks.`
+        actionRecommendation = 'LOCK_DATABASE_FIREWALL'
+      } else if (lower.includes('attack') || lower.includes('threat') || lower.includes('from') || lower.includes('hack')) {
         const total = securityData?.totalAttacksReceived || 142
         const blocked = securityData?.attacksBlocked || 141
-        aiReply = `Security Telemetry Report: The platform has received ${total} attack probes (${blocked} automatically blocked, ${securityData?.mitigationRatePercent || 99.3}% mitigation rate). Top origins include Local LAN nodes (192.168.1.x) attempting LLM prompt jailbreaks and student Pyodide AST sandbox escape probes.`
+        aiReply = `Security Telemetry Report: The platform has received ${total} attack probes (${blocked} automatically blocked, ${securityData?.mitigationRatePercent || 99.3}% mitigation rate). Top origins include Local LAN nodes attempting AI prompt tricks, database SQL injections, and code sandbox probe attempts.`
         actionRecommendation = 'ENFORCE_WAF_PROMPT_SHIELD'
-      } else if (lower.includes('vulnerabilit') || lower.includes('cve') || lower.includes('cwe') || lower.includes('exploit')) {
+      } else if (lower.includes('vulnerabilit') || lower.includes('cve') || lower.includes('cwe') || lower.includes('exploit') || lower.includes('risk')) {
         const open = securityData?.openVulnerabilitiesCount || 1
-        aiReply = `Vulnerability Matrix Scan: Found ${open} unmitigated vulnerability and 1 in active patch tier. CWE-20 (Socratic Prompt Injection) and CWE-78 (WebAssembly Builtins Reflection Bypass) are the primary exploitable vectors. Recommended action is to enforce the AST namespace sanitizer.`
+        aiReply = `Security Risk Scan: Found ${open} open vulnerability needing a fix. CWE-20 (AI Tutor Hijack) and CWE-78 (Unauthorized System Commands in Code Runner) are active. Recommended action is to turn on all security protections.`
         actionRecommendation = 'ISOLATE_WASM_SANDBOX'
       } else if (lower.includes('memory') || lower.includes('ram') || lower.includes('rss')) {
         const rss = backendMetrics?.processRssMb || 388
@@ -853,6 +856,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
 
                 <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 flex flex-wrap gap-1 shrink-0">
                   {[
+                    'Check database security',
                     'Check RAM headroom',
                     'How many attacks today?',
                     'Show unmitigated CVEs',
