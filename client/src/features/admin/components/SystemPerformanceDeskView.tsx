@@ -1274,106 +1274,118 @@ export const SystemPerformanceDeskView: React.FC = () => {
             </CardHeader>
 
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 dark:bg-slate-950/60 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+              <div className="w-full overflow-hidden">
+                <table className="w-full table-fixed text-left text-xs border-collapse">
+                  <thead className="bg-slate-50/90 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">
                     <tr>
-                      <th className="p-3.5 pl-5">Timestamp</th>
-                      <th className="p-3.5">Threat Origin ("From")</th>
-                      <th className="p-3.5">Attack Vector & Target</th>
-                      <th className="p-3.5">Severity</th>
-                      <th className="p-3.5">Status & Mitigation</th>
-                      <th className="p-3.5 pr-5">Payload Sample</th>
+                      <th className="py-3 px-2 w-10 text-center">#</th>
+                      <th className="py-3 px-2.5 w-20">Timestamp</th>
+                      <th className="py-3 px-3 w-[18%]">Threat Origin ("From")</th>
+                      <th className="py-3 px-3 w-[20%]">Attack Vector & Target</th>
+                      <th className="py-3 px-2.5 w-[10%]">Severity</th>
+                      <th className="py-3 px-3 w-[20%]">Status & Mitigation</th>
+                      <th className="py-3 px-3 pr-4 w-[28%]">Payload Sample</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800/80">
                     {filteredThreats.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="text-center py-8 text-slate-400 text-xs">
+                        <td colSpan={7} className="text-center py-10 text-slate-400 text-xs">
                           No threats match the current search or severity filter.
                         </td>
                       </tr>
                     ) : (
-                      filteredThreats.map((threat) => {
+                      filteredThreats.map((threat, idx) => {
                         const isBlocked = threat.status === 'blocked'
                         const isMitigated = threat.status === 'mitigated'
 
                         return (
                           <tr
                             key={threat.id}
-                            className="hover:bg-slate-50/70 dark:hover:bg-slate-950/40 transition-colors"
+                            className="hover:bg-slate-50/80 dark:hover:bg-slate-950/50 transition-colors"
                           >
+                            {/* Row Numbering */}
+                            <td className="py-3 px-2 align-top text-center">
+                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-extrabold border border-slate-200 dark:border-slate-700">
+                                {String(idx + 1).padStart(2, '0')}
+                              </span>
+                            </td>
+
                             {/* Timestamp */}
-                            <td className="p-3.5 pl-5 font-mono text-[11px] text-slate-500 whitespace-nowrap align-top">
-                              {new Date(threat.timestamp).toLocaleTimeString()}
+                            <td className="py-3 px-2.5 font-mono text-[11px] text-slate-600 dark:text-slate-400 align-top">
+                              <div className="mt-0.5 font-medium leading-tight">
+                                {new Date(threat.timestamp).toLocaleTimeString()}
+                              </div>
                             </td>
 
                             {/* Origin / From */}
-                            <td className="p-3.5 whitespace-nowrap align-top">
-                              <div className="space-y-0.5">
-                                <div className="flex items-center gap-1.5 font-mono font-bold text-slate-900 dark:text-white">
-                                  <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                                  <span>{threat.originIp}</span>
+                            <td className="py-3 px-3 align-top">
+                              <div className="space-y-1">
+                                <div className="inline-flex items-center gap-1 font-mono font-bold text-slate-900 dark:text-white px-1.5 py-0.5 rounded bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/40 text-[11px]">
+                                  <Globe className="w-3 h-3 text-blue-500 shrink-0" />
+                                  <span className="truncate">{threat.originIp}</span>
                                 </div>
-                                <span className="text-[10px] text-slate-500 block">
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug break-words">
                                   {threat.originLocation}
-                                </span>
+                                </p>
                               </div>
                             </td>
 
                             {/* Attack Vector & Target */}
-                            <td className="p-3.5 min-w-[180px] align-top">
+                            <td className="py-3 px-3 align-top">
                               <div className="space-y-1">
-                                <span className="font-mono font-bold text-slate-900 dark:text-white block">
+                                <span className="font-mono font-bold text-slate-900 dark:text-white block text-[11px] leading-tight break-words">
                                   {threat.attackVector}
                                 </span>
-                                <span className="text-[10px] font-mono text-slate-500 block break-words">
+                                <div className="inline-block text-[10px] font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-200/60 dark:border-slate-700/60 break-all leading-tight">
                                   Target: {threat.targetComponent}
-                                </span>
+                                </div>
                               </div>
                             </td>
 
                             {/* Severity */}
-                            <td className="p-3.5 whitespace-nowrap align-top">
-                              <span
-                                className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
-                                  threat.severity === 'critical'
-                                    ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
-                                    : threat.severity === 'high'
-                                    ? 'bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300'
-                                    : threat.severity === 'medium'
-                                    ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                }`}
-                              >
-                                {threat.severity.toUpperCase()}
-                              </span>
+                            <td className="py-3 px-2.5 align-top">
+                              <div className="mt-0.5">
+                                <span
+                                  className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-black border ${
+                                    threat.severity === 'critical'
+                                      ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900/60'
+                                      : threat.severity === 'high'
+                                      ? 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-900/60'
+                                      : threat.severity === 'medium'
+                                      ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900/60'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                  }`}
+                                >
+                                  {threat.severity.toUpperCase()}
+                                </span>
+                              </div>
                             </td>
 
                             {/* Status & Mitigation */}
-                            <td className="p-3.5 min-w-[200px] align-top">
+                            <td className="py-3 px-3 align-top">
                               <div className="space-y-1">
                                 <span
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  className={`inline-flex items-center gap-1 px-2 py-0.2 rounded-full text-[10px] font-bold border ${
                                     isBlocked
-                                      ? 'bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400'
+                                      ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/50'
                                       : isMitigated
-                                      ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400'
-                                      : 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400'
+                                      ? 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900/50'
+                                      : 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-900/50'
                                   }`}
                                 >
                                   <ShieldCheck className="w-3 h-3 shrink-0" />
                                   {threat.status.toUpperCase()}
                                 </span>
-                                <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-tight">
+                                <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-snug break-words">
                                   {threat.mitigationAction}
                                 </p>
                               </div>
                             </td>
 
-                            {/* Payload sample - fully visible, word-wrapped, select-all */}
-                            <td className="p-3.5 pr-5 min-w-[280px] max-w-md align-top">
-                              <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 break-words whitespace-pre-wrap font-mono leading-relaxed select-all text-[11px] text-slate-800 dark:text-slate-200">
+                            {/* Payload sample - fitted, word-wrapped, clean padding */}
+                            <td className="py-3 px-3 pr-4 align-top">
+                              <div className="p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 break-words whitespace-pre-wrap font-mono leading-relaxed select-all text-[10px] text-slate-800 dark:text-slate-200">
                                 {threat.payloadSample}
                               </div>
                             </td>
