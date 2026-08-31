@@ -1,7 +1,20 @@
 export type UserActivityStatus = 'active_now' | 'active_today' | 'active_this_week' | 'idle' | 'inactive'
 export type UserRole = 'learner' | 'instructor' | 'admin'
-export type AuditLogCategory = 'learning' | 'practice' | 'arcade' | 'tutor' | 'curriculum' | 'system' | 'security' | 'auth'
+export type AuditLogCategory = 'learning' | 'practice' | 'arcade' | 'tutor' | 'curriculum' | 'system' | 'security' | 'auth' | 'support'
 export type AuditLogStatus = 'success' | 'warning' | 'info' | 'error'
+
+export interface ContactInquiry {
+  id: string
+  fullName: string
+  email: string
+  country: string
+  inquiryType: string
+  subject: string
+  message: string
+  submittedAt: string
+  status: 'new' | 'read' | 'replied' | 'archived'
+  adminNotes?: string
+}
 
 export interface AdminUserRecord {
   id: string

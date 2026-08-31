@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   AdminUserRecord,
   AuditLogEntry,
   UserStatsSummary,
+  ContactInquiry,
 } from '@/types/admin-analytics'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { courseStoreService } from '@/services/learning/course-store.service'
@@ -36,6 +37,7 @@ import {
   ChevronUp,
   GraduationCap,
   Mail,
+  MessageSquare,
   X,
 } from 'lucide-react'
 
@@ -91,6 +93,8 @@ function getHumanActionTitle(log: AuditLogEntry): { verb: string; highlightTarge
       return { verb: 'reactivated learner status for', highlightTarget: log.target, categoryLabel: 'User Management' }
     case 'USER_FLAGGED_IDLE':
       return { verb: 'flagged learner as idle', highlightTarget: log.target, categoryLabel: 'User Management' }
+    case 'CONTACT_INQUIRY_RECEIVED':
+      return { verb: 'sent a contact message to support desk', highlightTarget: log.target, categoryLabel: 'Help Desk' }
     default:
       return { verb: 'performed activity on', highlightTarget: log.target, categoryLabel: log.category }
   }
@@ -107,7 +111,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   auditLogs,
   onDataChanged,
 }) => {
-  const [subView, setSubView] = useState<'users' | 'audit' | 'regional' | 'mentors'>('users')
+  const [subView, setSubView] = useState<'users' | 'audit' | 'regional' | 'mentors' | 'inquiries'>('users')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('ALL')
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
@@ -128,13 +132,73 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [approveModalTarget, setApproveModalTarget] = useState<ApproveMentorTarget | null>(null)
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
 
-  React.useEffect(() => {
+  // Contact Inquiries State
+  const [inquiries, setInquiries] = useState<ContactInquiry[]>(() => adminAnalyticsService.getContactInquiries())
+  const [selectedInquiryCategory, setSelectedInquiryCategory] = useState<string>('ALL')
+  const [selectedInquiryStatus, setSelectedInquiryStatus] = useState<string>('ALL')
+  const [inquirySearchQuery, setInquirySearchQuery] = useState('')
+
+  useEffect(() => {
     const handleUpdate = () => {
       setMentorApps(mentorApplicationService.getAllApplications())
     }
     window.addEventListener('mentor_applications_updated', handleUpdate)
-    return () => window.removeEventListener('mentor_applications_updated', handleUpdate)
+
+    const handleInquiriesUpdate = (e: any) => {
+      if (e.detail) {
+        setInquiries([...e.detail])
+      } else {
+        setInquiries(adminAnalyticsService.getContactInquiries())
+      }
+    }
+    window.addEventListener('admin_inquiries_updated', handleInquiriesUpdate)
+
+    return () => {
+      window.removeEventListener('mentor_applications_updated', handleUpdate)
+      window.removeEventListener('admin_inquiries_updated', handleInquiriesUpdate)
+    }
   }, [])
+
+  const unreadInquiriesCount = useMemo(() => {
+    return inquiries.filter((i) => i.status === 'new').length
+  }, [inquiries])
+
+  const filteredInquiries = useMemo(() => {
+    return inquiries.filter((inq) => {
+      const q = inquirySearchQuery.toLowerCase().trim()
+      const matchesSearch =
+        !q ||
+        inq.fullName.toLowerCase().includes(q) ||
+        inq.email.toLowerCase().includes(q) ||
+        inq.subject.toLowerCase().includes(q) ||
+        inq.message.toLowerCase().includes(q) ||
+        inq.country.toLowerCase().includes(q)
+
+      const matchesCategory =
+        selectedInquiryCategory === 'ALL' || inq.inquiryType === selectedInquiryCategory
+
+      const matchesStatus =
+        selectedInquiryStatus === 'ALL' || inq.status === selectedInquiryStatus
+
+      return matchesSearch && matchesCategory && matchesStatus
+    })
+  }, [inquiries, inquirySearchQuery, selectedInquiryCategory, selectedInquiryStatus])
+
+  const handleUpdateInquiryStatus = (id: string, newStatus: 'new' | 'read' | 'replied' | 'archived') => {
+    adminAnalyticsService.updateInquiryStatus(id, newStatus)
+    setInquiries(adminAnalyticsService.getContactInquiries())
+    onDataChanged()
+    setActionSuccessMsg(`Inquiry updated to [${newStatus.toUpperCase()}].`)
+    setTimeout(() => setActionSuccessMsg(null), 3000)
+  }
+
+  const handleDeleteInquiry = (id: string) => {
+    adminAnalyticsService.deleteContactInquiry(id)
+    setInquiries(adminAnalyticsService.getContactInquiries())
+    onDataChanged()
+    setActionSuccessMsg(`Inquiry deleted from support desk.`)
+    setTimeout(() => setActionSuccessMsg(null), 3000)
+  }
 
   const mentorUsers = useMemo(() => {
     return users.filter((u) => u.role === 'instructor')
@@ -764,6 +828,28 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   </span>
                 )}
               </button>
+
+              <button
+                type="button"
+                onClick={() => setSubView('inquiries')}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  subView === 'inquiries'
+                    ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-extrabold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <span>Inquiries &amp; Help Desk</span>
+                {unreadInquiriesCount > 0 ? (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-600 text-white font-bold animate-pulse">
+                    {unreadInquiriesCount} New
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                    {inquiries.length}
+                  </span>
+                )}
+              </button>
             </div>
 
             {/* Contextual Actions Toolbar for current view */}
@@ -1055,6 +1141,55 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       </button>
                     )}
                   </div>
+                </div>
+              </>
+            )}
+
+            {subView === 'inquiries' && (
+              <>
+                {/* Inquiry Search */}
+                <div className="sm:col-span-5 relative">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search sender, email, subject, or message content..."
+                    value={inquirySearchQuery}
+                    onChange={(e) => setInquirySearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+
+                {/* Category Filter */}
+                <div className="sm:col-span-4 relative">
+                  <select
+                    value={selectedInquiryCategory}
+                    onChange={(e) => setSelectedInquiryCategory(e.target.value)}
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="ALL">All Categories ({inquiries.length})</option>
+                    <option value="general">General Inquiries &amp; Feedback</option>
+                    <option value="partnership">University / Institutional Partnerships</option>
+                    <option value="mentor">Mentor &amp; Educator Network</option>
+                    <option value="technical">Offline Engine &amp; Technical Help</option>
+                    <option value="classroom">Coding Club &amp; Lab Deployment</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Status Filter */}
+                <div className="sm:col-span-3 relative">
+                  <select
+                    value={selectedInquiryStatus}
+                    onChange={(e) => setSelectedInquiryStatus(e.target.value)}
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="ALL">All Statuses ({inquiries.length})</option>
+                    <option value="new">New / Unread ({inquiries.filter((i) => i.status === 'new').length})</option>
+                    <option value="read">Read ({inquiries.filter((i) => i.status === 'read').length})</option>
+                    <option value="replied">Replied ({inquiries.filter((i) => i.status === 'replied').length})</option>
+                    <option value="archived">Archived ({inquiries.filter((i) => i.status === 'archived').length})</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </>
             )}
@@ -2011,6 +2146,147 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     </div>
                   )}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════════
+              SUBVIEW 5: CONTACT INQUIRIES & HELP DESK
+              ═══════════════════════════════════════════════════════════════ */}
+          {subView === 'inquiries' && (
+            <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+              {filteredInquiries.length === 0 ? (
+                <div className="p-12 text-center space-y-2">
+                  <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    No contact messages or inquiries found.
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Try adjusting the search query or category filter above.
+                  </p>
+                </div>
+              ) : (
+                filteredInquiries.map((inquiry, idx) => {
+                  const inquiryNum = String(idx + 1).padStart(2, '0')
+                  const relativeTime = getHumanRelativeTime(inquiry.submittedAt)
+                  const isNew = inquiry.status === 'new'
+
+                  return (
+                    <div
+                      key={inquiry.id}
+                      className={`p-4 sm:p-6 transition-colors space-y-4 ${
+                        isNew
+                          ? 'bg-indigo-50/20 dark:bg-indigo-950/20'
+                          : 'hover:bg-slate-50/80 dark:hover:bg-slate-950/40'
+                      }`}
+                    >
+                      {/* Top Header: Number + Sender + Category + Status */}
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 min-w-0">
+                          {/* Number Badge */}
+                          <span className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-slate-200 dark:border-slate-700/80 shadow-3xs">
+                            {inquiryNum}
+                          </span>
+
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-extrabold text-sm text-slate-900 dark:text-white">
+                                {inquiry.fullName}
+                              </span>
+                              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+                                ({inquiry.email})
+                              </span>
+                              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold border border-slate-200 dark:border-slate-700">
+                                {inquiry.country}
+                              </span>
+                              <span className="px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-mono text-[10px] font-bold border border-brand-200 dark:border-brand-800">
+                                {inquiry.inquiryType.toUpperCase()}
+                              </span>
+                            </div>
+
+                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 pt-0.5">
+                              Subject: {inquiry.subject}
+                            </h4>
+                          </div>
+                        </div>
+
+                        {/* Right Meta Info */}
+                        <div className="flex items-center gap-2 sm:flex-col sm:items-end shrink-0">
+                          <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                            <Clock className="w-3 h-3 text-slate-400" />
+                            <span>{relativeTime}</span>
+                          </div>
+
+                          {isNew ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500 text-white font-mono text-[10px] font-bold animate-pulse">
+                              New Message
+                            </span>
+                          ) : inquiry.status === 'replied' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                              Replied
+                            </span>
+                          ) : inquiry.status === 'archived' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono text-[10px] font-bold border border-slate-200 dark:border-slate-700">
+                              Archived
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono text-[10px] font-bold border border-slate-200 dark:border-slate-700">
+                              Read
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Message Content Box */}
+                      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans shadow-3xs">
+                        {inquiry.message}
+                      </div>
+
+                      {/* Admin Actions Bar */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <a
+                            href={`mailto:${inquiry.email}?subject=Re: ${encodeURIComponent(inquiry.subject)}&body=Hello ${encodeURIComponent(inquiry.fullName)},%0D%0A%0D%0AThank you for reaching out to CodeTutor Africa regarding "${encodeURIComponent(inquiry.subject)}".%0D%0A%0D%0A`}
+                            onClick={() => handleUpdateInquiryStatus(inquiry.id, 'replied')}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>Reply via Email ↗</span>
+                          </a>
+
+                          {inquiry.status === 'new' && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateInquiryStatus(inquiry.id, 'read')}
+                              className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+                            >
+                              Mark as Read
+                            </button>
+                          )}
+
+                          {inquiry.status !== 'archived' && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateInquiryStatus(inquiry.id, 'archived')}
+                              className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 text-xs font-semibold transition-colors cursor-pointer"
+                            >
+                              Archive
+                            </button>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteInquiry(inquiry.id)}
+                          className="text-[11px] text-rose-500 hover:text-rose-700 font-semibold p-1 transition-colors cursor-pointer"
+                        >
+                          Delete Message
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })
               )}
             </div>
           )}

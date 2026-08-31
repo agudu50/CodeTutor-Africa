@@ -1,7 +1,44 @@
-import { AdminUserRecord, AuditLogEntry, UserStatsSummary } from '@/types/admin-analytics'
+import { AdminUserRecord, AuditLogEntry, UserStatsSummary, ContactInquiry } from '@/types/admin-analytics'
 
 const USERS_STORAGE_KEY = 'codetutor_admin_users_v1'
 const AUDIT_LOGS_STORAGE_KEY = 'codetutor_admin_audit_logs_v1'
+const INQUIRIES_STORAGE_KEY = 'codetutor_admin_contact_inquiries_v1'
+
+export const INITIAL_CONTACT_INQUIRIES: ContactInquiry[] = [
+  {
+    id: 'inq-1',
+    fullName: 'Dr. Kwame Boateng',
+    email: 'k.boateng@knust.edu.gh',
+    country: 'GH',
+    inquiryType: 'partnership',
+    subject: 'Deploying CodeTutor in KNUST Computer Science Labs',
+    message: 'Hello CodeTutor Africa Team, We would like to install the offline curriculum bundle across 120 desktop computers in our undergraduate laboratory for our upcoming semester.',
+    submittedAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+    status: 'new',
+  },
+  {
+    id: 'inq-2',
+    fullName: 'Amina Adeleke',
+    email: 'amina.adeleke@unilag.edu.ng',
+    country: 'NG',
+    inquiryType: 'classroom',
+    subject: 'Lagos Women Who Code Offline Bootcamps',
+    message: 'We are organizing a 4-week weekend coding club for secondary school girls in Lagos with limited mobile broadband. We would love offline setup assistance.',
+    submittedAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
+    status: 'new',
+  },
+  {
+    id: 'inq-3',
+    fullName: 'Mamadou Diallo',
+    email: 'm.diallo@esp.sn',
+    country: 'SN',
+    inquiryType: 'mentor',
+    subject: 'Mentorship on French-Speaking West Africa Track',
+    message: 'I am a senior Python engineer in Dakar and would like to help review exercises and mentor francophone learners.',
+    submittedAt: new Date(Date.now() - 18 * 3600 * 1000).toISOString(),
+    status: 'read',
+  },
+]
 
 export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
   {
@@ -495,6 +532,7 @@ export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
 class AdminAnalyticsService {
   private users: AdminUserRecord[] = []
   private auditLogs: AuditLogEntry[] = []
+  private inquiries: ContactInquiry[] = []
 
   constructor() {
     this.init()
@@ -550,9 +588,18 @@ class AdminAnalyticsService {
         this.auditLogs = [...INITIAL_AUDIT_LOGS]
         this.saveLogs()
       }
+
+      const storedInquiries = localStorage.getItem(INQUIRIES_STORAGE_KEY)
+      if (storedInquiries) {
+        this.inquiries = JSON.parse(storedInquiries)
+      } else {
+        this.inquiries = [...INITIAL_CONTACT_INQUIRIES]
+        this.saveInquiries()
+      }
     } catch {
       this.users = [...INITIAL_ADMIN_USERS]
       this.auditLogs = [...INITIAL_AUDIT_LOGS]
+      this.inquiries = [...INITIAL_CONTACT_INQUIRIES]
     }
   }
 
@@ -571,6 +618,15 @@ class AdminAnalyticsService {
       window.dispatchEvent(new CustomEvent('admin_audit_logs_updated', { detail: this.auditLogs }))
     } catch (e) {
       console.warn('Failed to persist audit logs', e)
+    }
+  }
+
+  private saveInquiries() {
+    try {
+      localStorage.setItem(INQUIRIES_STORAGE_KEY, JSON.stringify(this.inquiries))
+      window.dispatchEvent(new CustomEvent('admin_inquiries_updated', { detail: this.inquiries }))
+    } catch (e) {
+      console.warn('Failed to persist contact inquiries', e)
     }
   }
 
@@ -788,11 +844,93 @@ class AdminAnalyticsService {
     return this.users[idx]
   }
 
+  getContactInquiries(): ContactInquiry[] {
+    return [...this.inquiries]
+  }
+
+  addContactInquiry(inquiryData: Omit<ContactInquiry, 'id' | 'submittedAt' | 'status'>): ContactInquiry {
+    const newInquiry: ContactInquiry = {
+      ...inquiryData,
+      id: `inq-${Date.now()}`,
+      submittedAt: new Date().toISOString(),
+      status: 'new',
+    }
+
+    this.inquiries.unshift(newInquiry)
+    this.saveInquiries()
+
+    // Automatically record an immutable audit log entry for the admin desk
+    this.logAction({
+      actorName: newInquiry.fullName,
+      actorRole: 'learner',
+      action: 'CONTACT_INQUIRY_RECEIVED',
+      category: 'support',
+      target: `${newInquiry.fullName} (${newInquiry.email})`,
+      details: `Received [${newInquiry.inquiryType.toUpperCase()}] inquiry: "${newInquiry.subject}" from ${newInquiry.country}.`,
+      status: 'info',
+      ipAddress: '197.251.134.42 (Web Contact)',
+      userAgent: 'CodeTutor Contact Portal',
+    })
+
+    return newInquiry
+  }
+
+  updateInquiryStatus(id: string, status: 'new' | 'read' | 'replied' | 'archived', adminNotes?: string): ContactInquiry | null {
+    const idx = this.inquiries.findIndex((i) => i.id === id)
+    if (idx === -1) return null
+
+    this.inquiries[idx] = {
+      ...this.inquiries[idx],
+      status,
+      adminNotes: adminNotes !== undefined ? adminNotes : this.inquiries[idx].adminNotes,
+    }
+    this.saveInquiries()
+
+    this.logAction({
+      actorName: 'Lead Curriculum Director (Admin)',
+      actorRole: 'admin',
+      action: 'INQUIRY_STATUS_UPDATED',
+      category: 'support',
+      target: `${this.inquiries[idx].fullName} (${this.inquiries[idx].email})`,
+      details: `Admin marked inquiry "${this.inquiries[idx].subject}" as [${status.toUpperCase()}].`,
+      status: 'info',
+      ipAddress: '127.0.0.1',
+      userAgent: 'CodeTutor Admin Console',
+    })
+
+    return this.inquiries[idx]
+  }
+
+  deleteContactInquiry(id: string): boolean {
+    const idx = this.inquiries.findIndex((i) => i.id === id)
+    if (idx === -1) return false
+
+    const item = this.inquiries[idx]
+    this.inquiries.splice(idx, 1)
+    this.saveInquiries()
+
+    this.logAction({
+      actorName: 'Lead Curriculum Director (Admin)',
+      actorRole: 'admin',
+      action: 'INQUIRY_DELETED',
+      category: 'support',
+      target: `${item.fullName} (${item.email})`,
+      details: `Admin deleted inquiry "${item.subject}".`,
+      status: 'warning',
+      ipAddress: '127.0.0.1',
+      userAgent: 'CodeTutor Admin Console',
+    })
+
+    return true
+  }
+
   resetToDefaults() {
     this.users = [...INITIAL_ADMIN_USERS]
     this.auditLogs = [...INITIAL_AUDIT_LOGS]
+    this.inquiries = [...INITIAL_CONTACT_INQUIRIES]
     this.saveUsers()
     this.saveLogs()
+    this.saveInquiries()
   }
 
   exportAuditLogsAsJson(customLogs?: AuditLogEntry[]): string {
