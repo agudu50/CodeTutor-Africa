@@ -36,7 +36,7 @@ import {
 
 export const SystemPerformanceDeskView: React.FC = () => {
   // Main Sub-Tab View ('performance' | 'security' | 'audit')
-  const [activeSubTab, setActiveSubTab] = useState<'performance' | 'security' | 'audit'>('performance')
+  const [activeSubTab, setActiveSubTab] = useState<'performance' | 'security' | 'audit'>('security')
 
   // Performance Telemetry State
   const [frontendMetrics, setFrontendMetrics] = useState<FrontendMetrics | null>(null)
@@ -911,7 +911,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                     Total Attacks Intercepted
                   </span>
                   <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                    <Flame className="w-4 h-4 animate-pulse" />
+                    <Flame className="w-4 h-4 animate-pulse text-rose-500" />
                   </div>
                 </div>
               </CardHeader>
@@ -1124,7 +1124,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                       {/* Left: Metadata & Exploit details */}
-                      <div className="space-y-2 flex-1">
+                      <div className="space-y-2.5 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
                             {vuln.cveId}
@@ -1176,12 +1176,12 @@ export const SystemPerformanceDeskView: React.FC = () => {
                         </div>
 
                         {/* What the Threat Can Exploit */}
-                        <div className="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800 space-y-1">
+                        <div className="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-1">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-rose-700 dark:text-rose-400">
-                            <Target className="w-3.5 h-3.5" />
+                            <Target className="w-3.5 h-3.5 shrink-0" />
                             <span>What the Threat Can Exploit & Attack Vector:</span>
                           </div>
-                          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed break-words whitespace-normal">
                             {vuln.exploitVector}
                           </p>
                         </div>
@@ -1304,12 +1304,12 @@ export const SystemPerformanceDeskView: React.FC = () => {
                             className="hover:bg-slate-50/70 dark:hover:bg-slate-950/40 transition-colors"
                           >
                             {/* Timestamp */}
-                            <td className="p-3.5 pl-5 font-mono text-[11px] text-slate-500 whitespace-nowrap">
+                            <td className="p-3.5 pl-5 font-mono text-[11px] text-slate-500 whitespace-nowrap align-top">
                               {new Date(threat.timestamp).toLocaleTimeString()}
                             </td>
 
                             {/* Origin / From */}
-                            <td className="p-3.5 whitespace-nowrap">
+                            <td className="p-3.5 whitespace-nowrap align-top">
                               <div className="space-y-0.5">
                                 <div className="flex items-center gap-1.5 font-mono font-bold text-slate-900 dark:text-white">
                                   <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />
@@ -1322,19 +1322,19 @@ export const SystemPerformanceDeskView: React.FC = () => {
                             </td>
 
                             {/* Attack Vector & Target */}
-                            <td className="p-3.5">
-                              <div className="space-y-0.5">
+                            <td className="p-3.5 min-w-[180px] align-top">
+                              <div className="space-y-1">
                                 <span className="font-mono font-bold text-slate-900 dark:text-white block">
                                   {threat.attackVector}
                                 </span>
-                                <span className="text-[10px] font-mono text-slate-500 block truncate max-w-xs">
+                                <span className="text-[10px] font-mono text-slate-500 block break-words">
                                   Target: {threat.targetComponent}
                                 </span>
                               </div>
                             </td>
 
                             {/* Severity */}
-                            <td className="p-3.5 whitespace-nowrap">
+                            <td className="p-3.5 whitespace-nowrap align-top">
                               <span
                                 className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                                   threat.severity === 'critical'
@@ -1351,7 +1351,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                             </td>
 
                             {/* Status & Mitigation */}
-                            <td className="p-3.5">
+                            <td className="p-3.5 min-w-[200px] align-top">
                               <div className="space-y-1">
                                 <span
                                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -1371,11 +1371,11 @@ export const SystemPerformanceDeskView: React.FC = () => {
                               </div>
                             </td>
 
-                            {/* Payload sample */}
-                            <td className="p-3.5 pr-5 font-mono text-[11px] text-slate-600 dark:text-slate-400 max-w-xs">
-                              <span className="p-1.5 rounded bg-slate-100 dark:bg-slate-800/80 block truncate border border-slate-200/60 dark:border-slate-700/60">
+                            {/* Payload sample - fully visible, word-wrapped, select-all */}
+                            <td className="p-3.5 pr-5 min-w-[280px] max-w-md align-top">
+                              <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 break-words whitespace-pre-wrap font-mono leading-relaxed select-all text-[11px] text-slate-800 dark:text-slate-200">
                                 {threat.payloadSample}
-                              </span>
+                              </div>
                             </td>
                           </tr>
                         )
