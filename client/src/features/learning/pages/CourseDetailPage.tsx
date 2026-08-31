@@ -11,6 +11,7 @@ import {
   BookOpen,
   ChevronDown,
   ArrowRight,
+  Users,
 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
@@ -91,8 +92,13 @@ export const CourseDetailPage: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             {course.title}
           </h1>
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            {course.modules.length} modules
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 flex items-center gap-2 flex-wrap">
+            <span>{course.modules.length} modules</span>
+            <span>•</span>
+            <span className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1 font-mono text-xs">
+              <Users className="w-3.5 h-3.5" />
+              {(course.enrolledCount || 420).toLocaleString()} learners enrolled
+            </span>
           </p>
         </div>
 

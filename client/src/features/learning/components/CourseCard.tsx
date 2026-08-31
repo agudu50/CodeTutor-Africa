@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Course } from '@/types'
 import { Card, CardTitle, Badge, Button, Progress } from '@/components/ui'
-import { BookOpen, Clock, ArrowRight, Shield } from 'lucide-react'
+import { BookOpen, Clock, ArrowRight, Shield, Users } from 'lucide-react'
 
 export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
   const difficultyBadge =
@@ -65,14 +65,18 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
           {course.description}
         </p>
 
-        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1 font-medium font-mono">
+        <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 pt-1 font-medium font-mono flex-wrap">
+          <span className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
+            <Users className="w-3.5 h-3.5" />
+            {(course.enrolledCount || 420).toLocaleString()} Learners
+          </span>
           <span className="flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
             {course.totalLessons} Lessons
           </span>
           <span className="flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-amber-500" />
-            ~{course.estimatedHours} Hours
+            ~{course.estimatedHours}h
           </span>
         </div>
       </div>

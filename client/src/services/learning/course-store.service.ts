@@ -31,7 +31,14 @@ class CourseStoreService {
         const hasUpdatedCategories = parsed.some((c: Course) => c.category === 'Foundations')
 
         if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent && isClean0Percent && hasUpdatedCategories) {
-          this.courses = parsed
+          this.courses = parsed.map((c: Course) => {
+            if (c.enrolledCount) return c
+            const matchingMock = MOCK_COURSES.find((m) => m.id === c.id || m.language === c.language)
+            return {
+              ...c,
+              enrolledCount: matchingMock?.enrolledCount || 350,
+            }
+          })
         } else {
           this.courses = [...MOCK_COURSES]
           this.save()

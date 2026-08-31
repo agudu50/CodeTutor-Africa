@@ -9,6 +9,7 @@ import {
   Database,
   Code2,
   Pencil,
+  Users,
   X,
 } from 'lucide-react'
 
@@ -101,14 +102,18 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
             </div>
 
             {/* Metrics Sub-bar */}
-            <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-600 dark:text-slate-400">
+            <div className="grid grid-cols-3 gap-1.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-600 dark:text-slate-400">
+              <div className="flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <span className="font-bold text-slate-900 dark:text-white">{(course.enrolledCount || 420).toLocaleString()}</span>
+              </div>
               <div className="flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                 <span>{course.totalLessons} Lessons</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
-                <span>{course.estimatedHours} Hours</span>
+                <span>{course.estimatedHours}h</span>
               </div>
             </div>
 
@@ -155,6 +160,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
               <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <th className="py-3 px-4">Course Title & Slug</th>
                 <th className="py-3 px-4">Language</th>
+                <th className="py-3 px-4">Enrolled Students</th>
                 <th className="py-3 px-4">Difficulty</th>
                 <th className="py-3 px-4">Modules / Lessons</th>
                 <th className="py-3 px-4">Estimated Time</th>
@@ -198,6 +204,14 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                       <Code2 className="w-3 h-3" />
                       <span>{course.language}</span>
                     </span>
+                  </td>
+
+                  {/* Enrolled Students */}
+                  <td className="py-3.5 px-4 font-mono">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-900 dark:text-white font-bold">
+                      <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      <span>{(course.enrolledCount || 420).toLocaleString()} learners</span>
+                    </div>
                   </td>
 
                   {/* Difficulty */}

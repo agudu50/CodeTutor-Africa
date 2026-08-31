@@ -67,6 +67,7 @@ export interface Course extends BaseEntity {
   thumbnailUrl?: string
   totalLessons: number
   estimatedHours: number
+  enrolledCount?: number
   progressPercentage?: number
   modules: Module[]
   isAiGenerated?: boolean
