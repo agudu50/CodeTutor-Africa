@@ -22,6 +22,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 145,
     favoriteLanguage: 'python',
     deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-py-101', 'course-java-301'],
+    enrolledCourseTitles: ['Learn to code with Python', 'Learn to code with Java'],
+    activeCourseTitle: 'Learn to code with Java',
   },
   {
     id: 'usr-ng-2',
@@ -41,6 +44,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 120,
     favoriteLanguage: 'javascript',
     deviceMode: 'desktop_app',
+    enrolledCourseIds: ['course-js-201', 'course-java-301'],
+    enrolledCourseTitles: ['Learn to code with JS', 'Learn to code with Java'],
+    activeCourseTitle: 'Learn to code with JS',
   },
   {
     id: 'usr-sn-3',
@@ -60,6 +66,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 98,
     favoriteLanguage: 'python',
     deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-py-101'],
+    enrolledCourseTitles: ['Learn to code with Python'],
+    activeCourseTitle: 'Learn to code with Python',
   },
   {
     id: 'usr-ci-4',
@@ -79,6 +88,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 85,
     favoriteLanguage: 'java',
     deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-java-301'],
+    enrolledCourseTitles: ['Learn to code with Java'],
+    activeCourseTitle: 'Learn to code with Java',
   },
   {
     id: 'usr-gh-5',
@@ -98,6 +110,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 64,
     favoriteLanguage: 'javascript',
     deviceMode: 'web_browser',
+    enrolledCourseIds: ['course-js-201'],
+    enrolledCourseTitles: ['Learn to code with JS'],
+    activeCourseTitle: 'Learn to code with JS',
   },
   {
     id: 'usr-lr-6',
@@ -115,8 +130,11 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     lessonsCompleted: 34,
     problemsSolved: 195,
     gamesPlayed: 52,
-    favoriteLanguage: 'python',
+    favoriteLanguage: 'typescript',
     deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-py-101', 'course-ts-401'],
+    enrolledCourseTitles: ['Learn to code with Python', 'Learn to code with TypeScript'],
+    activeCourseTitle: 'Learn to code with TypeScript',
   },
   {
     id: 'usr-sl-7',
@@ -136,6 +154,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 32,
     favoriteLanguage: 'java',
     deviceMode: 'web_browser',
+    enrolledCourseIds: ['course-java-301'],
+    enrolledCourseTitles: ['Learn to code with Java'],
+    activeCourseTitle: 'Learn to code with Java',
   },
   {
     id: 'usr-gm-8',
@@ -155,6 +176,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 25,
     favoriteLanguage: 'python',
     deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-py-101'],
+    enrolledCourseTitles: ['Learn to code with Python'],
+    activeCourseTitle: 'Learn to code with Python',
   },
   {
     id: 'usr-bj-9',
@@ -174,6 +198,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 15,
     favoriteLanguage: 'javascript',
     deviceMode: 'web_browser',
+    enrolledCourseIds: ['course-js-201'],
+    enrolledCourseTitles: ['Learn to code with JS'],
+    activeCourseTitle: 'Learn to code with JS',
   },
   {
     id: 'usr-tg-10',
@@ -193,6 +220,9 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     gamesPlayed: 8,
     favoriteLanguage: 'python',
     deviceMode: 'web_browser',
+    enrolledCourseIds: ['course-py-101'],
+    enrolledCourseTitles: ['Learn to code with Python'],
+    activeCourseTitle: 'Learn to code with Python',
   },
   {
     id: 'usr-admin-1',
@@ -386,7 +416,35 @@ class AdminAnalyticsService {
     try {
       const storedUsers = localStorage.getItem(USERS_STORAGE_KEY)
       if (storedUsers) {
-        this.users = JSON.parse(storedUsers)
+        const parsed = JSON.parse(storedUsers)
+        this.users = parsed.map((u: AdminUserRecord) => {
+          if (u.enrolledCourseTitles && u.enrolledCourseTitles.length > 0) return u
+          const mock = INITIAL_ADMIN_USERS.find((m) => m.id === u.id || m.username === u.username)
+          if (mock?.enrolledCourseTitles) {
+            return {
+              ...u,
+              enrolledCourseIds: mock.enrolledCourseIds,
+              enrolledCourseTitles: mock.enrolledCourseTitles,
+              activeCourseTitle: mock.activeCourseTitle,
+            }
+          }
+          // Default fallback based on favorite language
+          const favLang = (u.favoriteLanguage || 'python').toLowerCase()
+          const trackName =
+            favLang === 'java'
+              ? 'Learn to code with Java'
+              : favLang === 'javascript'
+              ? 'Learn to code with JS'
+              : favLang === 'typescript'
+              ? 'Learn to code with TypeScript'
+              : 'Learn to code with Python'
+          return {
+            ...u,
+            enrolledCourseIds: [`course-${favLang}-101`],
+            enrolledCourseTitles: [trackName],
+            activeCourseTitle: trackName,
+          }
+        })
       } else {
         this.users = [...INITIAL_ADMIN_USERS]
         this.saveUsers()

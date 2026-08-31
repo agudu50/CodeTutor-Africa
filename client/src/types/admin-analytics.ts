@@ -21,6 +21,9 @@ export interface AdminUserRecord {
   gamesPlayed: number
   favoriteLanguage: 'python' | 'javascript' | 'java' | 'typescript' | string
   deviceMode: 'offline_pwa' | 'desktop_app' | 'web_browser'
+  enrolledCourseIds?: string[]
+  enrolledCourseTitles?: string[]
+  activeCourseTitle?: string
 }
 
 export interface AuditLogEntry {

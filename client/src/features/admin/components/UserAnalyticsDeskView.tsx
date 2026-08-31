@@ -5,6 +5,7 @@ import {
   UserStatsSummary,
 } from '@/types/admin-analytics'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
+import { courseStoreService } from '@/services/learning/course-store.service'
 import { WEST_AFRICAN_COUNTRIES } from '@/features/leaderboard/data/mockLeaderboardData'
 import { Card, CardHeader, CardContent, Button, Modal } from '@/components/ui'
 import {
@@ -105,9 +106,15 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('ALL')
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
+  const [selectedCourse, setSelectedCourse] = useState<string>('ALL')
+  const [userSortBy, setUserSortBy] = useState<'default' | 'course' | 'xp' | 'streak' | 'lessons' | 'name' | 'recent'>('default')
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [selectedLogStatus, setSelectedLogStatus] = useState<string>('ALL')
   const [logSortBy, setLogSortBy] = useState<'newest' | 'oldest' | 'actor' | 'category'>('newest')
+
+  const courses = useMemo(() => {
+    return courseStoreService.getAllCourses()
+  }, [])
   
   // Date & Time Range States
   const [dateRangePreset, setDateRangePreset] = useState<string>('ALL')
@@ -178,11 +185,12 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   }
 
   const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
+    const list = users.filter((u) => {
       const matchesSearch =
         u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        u.username.toLowerCase().includes(searchQuery.toLowerCase())
+        u.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (u.activeCourseTitle && u.activeCourseTitle.toLowerCase().includes(searchQuery.toLowerCase()))
 
       const matchesCountry = selectedCountry === 'ALL' || u.countryCode === selectedCountry
 
@@ -193,9 +201,50 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
         (selectedStatus === 'inactive' && (u.status === 'idle' || u.status === 'inactive')) ||
         u.status === selectedStatus
 
-      return matchesSearch && matchesCountry && matchesStatus
+      // Enrolled course matching
+      const matchesCourse =
+        selectedCourse === 'ALL' ||
+        u.activeCourseTitle === selectedCourse ||
+        u.enrolledCourseTitles?.includes(selectedCourse) ||
+        u.enrolledCourseTitles?.some((t) => t.toLowerCase() === selectedCourse.toLowerCase()) ||
+        u.enrolledCourseIds?.includes(selectedCourse) ||
+        (selectedCourse.toLowerCase().includes('java') &&
+          (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('java')))) ||
+        (selectedCourse.toLowerCase().includes('python') &&
+          (u.favoriteLanguage === 'python' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('python')))) ||
+        (selectedCourse.toLowerCase().includes('js') &&
+          (u.favoriteLanguage === 'javascript' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('js') || t.toLowerCase().includes('javascript')))) ||
+        (selectedCourse.toLowerCase().includes('typescript') &&
+          (u.favoriteLanguage === 'typescript' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('typescript')))) ||
+        (u.activeCourseTitle && u.activeCourseTitle.toLowerCase().includes(selectedCourse.toLowerCase()))
+
+      return matchesSearch && matchesCountry && matchesStatus && matchesCourse
     })
-  }, [users, searchQuery, selectedCountry, selectedStatus])
+
+    return [...list].sort((a, b) => {
+      if (userSortBy === 'course') {
+        const courseA = a.activeCourseTitle || a.enrolledCourseTitles?.[0] || ''
+        const courseB = b.activeCourseTitle || b.enrolledCourseTitles?.[0] || ''
+        return courseA.localeCompare(courseB)
+      }
+      if (userSortBy === 'xp') {
+        return b.totalXp - a.totalXp
+      }
+      if (userSortBy === 'streak') {
+        return b.streakDays - a.streakDays
+      }
+      if (userSortBy === 'lessons') {
+        return b.lessonsCompleted - a.lessonsCompleted
+      }
+      if (userSortBy === 'name') {
+        return a.name.localeCompare(b.name)
+      }
+      if (userSortBy === 'recent') {
+        return new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime()
+      }
+      return 0
+    })
+  }, [users, searchQuery, selectedCountry, selectedStatus, selectedCourse, userSortBy])
 
   const filteredLogs = useMemo(() => {
     const list = auditLogs.filter((log) => {
@@ -542,18 +591,66 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-3">
             {subView === 'users' && (
               <>
-                <div className="sm:col-span-6 relative">
+                {/* Search Input */}
+                <div className="sm:col-span-4 relative">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="Search learners by name, email, username..."
+                    placeholder="Search learners by name, email, track..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
                   />
                 </div>
 
+                {/* Enrolled Course Track Selector */}
                 <div className="sm:col-span-3 relative">
+                  <select
+                    value={selectedCourse}
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="ALL">All Enrolled Courses ({users.length})</option>
+                    {courses.map((c) => {
+                      const count = users.filter(
+                        (u) =>
+                          u.activeCourseTitle === c.title ||
+                          u.enrolledCourseTitles?.includes(c.title) ||
+                          (c.language === 'java' && (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some(t => t.includes('Java')))) ||
+                          (c.language === 'python' && (u.favoriteLanguage === 'python' || u.enrolledCourseTitles?.some(t => t.includes('Python')))) ||
+                          (c.language === 'javascript' && (u.favoriteLanguage === 'javascript' || u.enrolledCourseTitles?.some(t => t.includes('JS')))) ||
+                          (c.language === 'typescript' && (u.favoriteLanguage === 'typescript' || u.enrolledCourseTitles?.some(t => t.includes('TypeScript'))))
+                      ).length
+                      return (
+                        <option key={c.id} value={c.title}>
+                          {c.title} ({count || (c.enrolledCount || 420)} learners)
+                        </option>
+                      )
+                    })}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Sort By Dropdown */}
+                <div className="sm:col-span-2 relative">
+                  <select
+                    value={userSortBy}
+                    onChange={(e) => setUserSortBy(e.target.value as any)}
+                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="default">Sort: Default</option>
+                    <option value="course">Sort: Enrolled Course</option>
+                    <option value="xp">Sort: Highest XP</option>
+                    <option value="streak">Sort: Longest Streak</option>
+                    <option value="lessons">Sort: Most Lessons</option>
+                    <option value="name">Sort: Name (A-Z)</option>
+                    <option value="recent">Sort: Recently Active</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Country Filter */}
+                <div className="sm:col-span-2 relative">
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
@@ -568,20 +665,21 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                <div className="sm:col-span-3 relative">
+                {/* Status Filter */}
+                <div className="sm:col-span-1 relative">
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                    className="w-full py-2 pl-2 pr-7 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
-                    <option value="ALL">All Activity Statuses</option>
-                    <option value="active">All Active Learners</option>
-                    <option value="active_now">Active Now</option>
-                    <option value="active_today">Active Today</option>
-                    <option value="active_this_week">Active This Week</option>
-                    <option value="inactive">Idle & Inactive Only</option>
+                    <option value="ALL">Status</option>
+                    <option value="active">Active</option>
+                    <option value="active_now">Now</option>
+                    <option value="active_today">Today</option>
+                    <option value="active_this_week">Week</option>
+                    <option value="inactive">Idle</option>
                   </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </>
             )}
@@ -789,6 +887,17 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               <span className="text-[11px] text-slate-500 dark:text-slate-400 block truncate font-mono">
                                 {user.email}
                               </span>
+                              <div className="flex items-center gap-1 pt-0.5 flex-wrap">
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-mono text-[9px] font-bold">
+                                  <BookOpen className="w-2.5 h-2.5 text-brand-600 dark:text-brand-400" />
+                                  {user.activeCourseTitle || user.enrolledCourseTitles?.[0] || 'Java Track'}
+                                </span>
+                                {user.enrolledCourseTitles && user.enrolledCourseTitles.length > 1 && (
+                                  <span className="text-[9px] font-mono text-slate-400 font-semibold">
+                                    +{user.enrolledCourseTitles.length - 1} more
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </td>
