@@ -1038,10 +1038,10 @@ export const SystemPerformanceDeskView: React.FC = () => {
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-rose-500 shrink-0" />
               <span className="text-xs font-bold text-slate-900 dark:text-white">
-                Live Attack Interception Simulator:
+                Live Security Test Simulator:
               </span>
               <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
-                Test defensive shields against real-time jailbreak probes and WASM memory escapes.
+                Test how the system blocks fake attacks and suspicious code in real time.
               </span>
             </div>
 
@@ -1054,7 +1054,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                 className="h-8 text-xs font-bold border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
                 leftIcon={<Flame className={`w-3.5 h-3.5 text-rose-500 ${isSimulatingAttack ? 'animate-bounce' : ''}`} />}
               >
-                {isSimulatingAttack ? 'Dispatching Ingress Probe...' : 'Simulate Ingress Attack (Test Defense)'}
+                {isSimulatingAttack ? 'Sending Test Attack...' : 'Run Test Attack (Check Defense)'}
               </Button>
               <Button
                 variant="primary"
@@ -1064,13 +1064,13 @@ export const SystemPerformanceDeskView: React.FC = () => {
                 className="h-8 text-xs font-bold"
                 leftIcon={<ShieldCheck className="w-3.5 h-3.5" />}
               >
-                Enforce Prompt & AST Shields
+                Turn On All Protections
               </Button>
             </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
-              SECTION 1: REAL-TIME VULNERABILITY MATRIX ("WHAT THE THREAT CAN EXPLOIT")
+              SECTION 1: SYSTEM SECURITY RISKS & VULNERABILITIES
               ═══════════════════════════════════════════════════════════════ */}
           <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl overflow-hidden">
             <CardHeader className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1080,11 +1080,11 @@ export const SystemPerformanceDeskView: React.FC = () => {
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                    Real-Time Vulnerability Matrix & Exploit Vectors
+                    System Security Risks & Vulnerabilities
                   </CardTitle>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Comprehensive audit of potential security vulnerabilities, how threats could exploit them, affected components, and 1-click remediation actions.
+                  List of security weak spots, what an attacker could do, and 1-click buttons to fix them.
                 </p>
               </div>
 
@@ -1096,11 +1096,11 @@ export const SystemPerformanceDeskView: React.FC = () => {
                   onChange={(e) => setVulnCategoryFilter(e.target.value)}
                   className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none"
                 >
-                  <option value="all">All Domains ({securityData?.vulnerabilities.length || 5})</option>
-                  <option value="LLM Guardrails">LLM Guardrails</option>
-                  <option value="Client Sandbox">Client Sandbox</option>
-                  <option value="Storage & Tokens">Storage & Tokens</option>
-                  <option value="API & Auth">API & Auth</option>
+                  <option value="all">All Areas ({securityData?.vulnerabilities.length || 5})</option>
+                  <option value="AI Tutor Safety">AI Tutor Safety</option>
+                  <option value="Student Code Runner">Student Code Runner</option>
+                  <option value="Offline Storage">Offline Storage</option>
+                  <option value="Server & Database">Server & Database</option>
                 </select>
               </div>
             </CardHeader>
@@ -1151,7 +1151,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                                   : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                               }`}
                             >
-                              CVSS {vuln.cvssScore} {vuln.severity.toUpperCase()}
+                              Risk Level: {vuln.severity.toUpperCase()}
                             </span>
 
                             <span
@@ -1166,17 +1166,17 @@ export const SystemPerformanceDeskView: React.FC = () => {
                               {isMitigated ? (
                                 <>
                                   <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                  Mitigated & Shielded
+                                  Protected & Safe
                                 </>
                               ) : isActivePatch ? (
                                 <>
                                   <CheckCircle2 className="w-3 h-3 text-amber-500" />
-                                  Active Guardrail Patch
+                                  Temporary Fix Active
                                 </>
                               ) : (
                                 <>
                                   <Flame className="w-3 h-3 text-rose-500" />
-                                  Unmitigated Exposure
+                                  Needs Immediate Fix
                                 </>
                               )}
                             </span>
@@ -1186,7 +1186,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                           <div className="p-2.5 sm:p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-1">
                             <div className="flex items-center gap-1.5 text-xs font-bold text-rose-700 dark:text-rose-400">
                               <Target className="w-3.5 h-3.5 shrink-0" />
-                              <span>What the Threat Can Exploit & Attack Vector:</span>
+                              <span>What Could Go Wrong (Risk):</span>
                             </div>
                             <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed break-words whitespace-normal">
                               {vuln.exploitVector}
@@ -1195,7 +1195,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
 
                           {/* Affected component */}
                           <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-mono flex-wrap">
-                            <span className="font-bold text-slate-600 dark:text-slate-300">Target Component:</span>
+                            <span className="font-bold text-slate-600 dark:text-slate-300">Where in the System:</span>
                             <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 break-all">
                               {vuln.affectedComponent}
                             </span>
@@ -1224,7 +1224,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                               )
                             }
                           >
-                            {isMitigated ? 'Re-Apply Shield' : 'Deploy 1-Click Fix'}
+                            {isMitigated ? 'Re-Check Protection' : 'Fix Now (1-Click)'}
                           </Button>
                         )}
                       </div>
@@ -1236,7 +1236,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
           </Card>
 
           {/* ═══════════════════════════════════════════════════════════════
-              SECTION 2: REAL-TIME ATTACK FEED & THREAT ORIGIN STREAM ("FROM" / "TARGET")
+              SECTION 2: RECENT ATTACKS & WHERE THEY CAME FROM
               ═══════════════════════════════════════════════════════════════ */}
           <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl overflow-hidden">
             <CardHeader className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1246,11 +1246,11 @@ export const SystemPerformanceDeskView: React.FC = () => {
                     <Flame className="w-4 h-4 text-rose-500" />
                   </div>
                   <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                    Live Threat Ingress & Attack Origins Stream
+                    Recent Attacks & Where They Came From
                   </CardTitle>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Real-time log of incoming attacks, origin IP addresses, geolocation nodes, target endpoints, and mitigation verdicts.
+                  Live log of blocked attacks, showing sender location, attack type, and how it was stopped.
                 </p>
               </div>
 
