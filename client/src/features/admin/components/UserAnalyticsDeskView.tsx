@@ -10,6 +10,7 @@ import { mentorApplicationService, MentorApplication } from '@/services/mentor/m
 import { WEST_AFRICAN_COUNTRIES } from '@/features/leaderboard/data/mockLeaderboardData'
 import { Card, CardHeader, CardContent, Button, Modal } from '@/components/ui'
 import { DemoteMentorModal } from './DemoteMentorModal'
+import { ApproveMentorModal, ApproveMentorTarget } from './ApproveMentorModal'
 import {
   Users,
   User,
@@ -124,6 +125,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [mentorActivityFilter, setMentorActivityFilter] = useState<'ALL' | 'active' | 'inactive'>('ALL')
   const [mentorToDemote, setMentorToDemote] = useState<AdminUserRecord | null>(null)
   const [isDemoteModalOpen, setIsDemoteModalOpen] = useState(false)
+  const [approveModalTarget, setApproveModalTarget] = useState<ApproveMentorTarget | null>(null)
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
 
   React.useEffect(() => {
     const handleUpdate = () => {
@@ -421,17 +424,74 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     }
   }
 
+  const handleOpenApproveModalForApp = (app: MentorApplication) => {
+    setApproveModalTarget({
+      id: app.id,
+      fullName: app.fullName,
+      email: app.email,
+      country: app.country,
+      countryCode: app.countryCode,
+      institutionOrCompany: app.institutionOrCompany,
+      programmingTracks: app.programmingTracks,
+      yearsOfExperience: app.yearsOfExperience,
+      bio: app.bio,
+      githubUrl: app.githubUrl,
+      linkedinUrl: app.linkedinUrl,
+      portfolioUrl: app.portfolioUrl,
+      isDirectUserPromotion: false,
+    })
+    setIsApproveModalOpen(true)
+  }
+
+  const handleOpenApproveModalForUser = (user: AdminUserRecord) => {
+    setApproveModalTarget({
+      id: user.id,
+      fullName: user.name,
+      email: user.email,
+      country: user.countryName,
+      countryCode: user.countryCode,
+      institutionOrCompany: 'CodeTutor Community Student',
+      programmingTracks: user.enrolledCourseTitles
+        ? user.enrolledCourseTitles.map((t) => t.replace('Learn to code with ', ''))
+        : [user.favoriteLanguage.toUpperCase()],
+      yearsOfExperience: `${user.streakDays} day streak • ${user.problemsSolved} drills completed`,
+      bio: `Top-performing community learner with ${user.totalXp.toLocaleString()} XP. Recommended for direct educator verification.`,
+      githubUrl: `https://github.com/${user.username}`,
+      isDirectUserPromotion: true,
+    })
+    setIsApproveModalOpen(true)
+  }
+
+  const handleConfirmApproveMentor = (
+    targetId: string,
+    applicantName: string,
+    _assignedTrack?: string,
+    _adminNote?: string
+  ) => {
+    if (targetId.startsWith('app-mentor-')) {
+      const updated = mentorApplicationService.approveApplication(targetId, 'Lead Curriculum Director (Admin)')
+      if (updated) {
+        setMentorApps(mentorApplicationService.getAllApplications())
+        onDataChanged()
+        setActionSuccessMsg(`Verified and appointed ${applicantName} as an Official Course Mentor.`)
+        setTimeout(() => setActionSuccessMsg(null), 4500)
+      }
+    } else {
+      const updated = adminAnalyticsService.setUserRole(targetId, 'instructor')
+      if (updated) {
+        onDataChanged()
+        setActionSuccessMsg(`Promoted ${applicantName} to Verified Course Mentor.`)
+        setTimeout(() => setActionSuccessMsg(null), 4500)
+      }
+    }
+  }
+
   const handleToggleMentorRole = (user: AdminUserRecord) => {
     if (user.role === 'instructor') {
       handleOpenDemoteModal(user)
       return
     }
-    const updated = adminAnalyticsService.setUserRole(user.id, 'instructor')
-    if (updated) {
-      onDataChanged()
-      setActionSuccessMsg(`Appointed ${user.name} as a Verified Mentor / Instructor`)
-      setTimeout(() => setActionSuccessMsg(null), 3500)
-    }
+    handleOpenApproveModalForUser(user)
   }
 
   const handleToggleMentorActivity = (userId: string, currentStatus: string, name: string) => {
@@ -451,12 +511,17 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   }
 
   const handleApproveMentorApp = (appId: string, applicantName: string) => {
-    const updated = mentorApplicationService.approveApplication(appId)
-    if (updated) {
-      setMentorApps(mentorApplicationService.getAllApplications())
-      onDataChanged()
-      setActionSuccessMsg(`Approved mentor application for ${applicantName}. Appointed as verified educator.`)
-      setTimeout(() => setActionSuccessMsg(null), 3500)
+    const app = mentorApps.find((a) => a.id === appId)
+    if (app) {
+      handleOpenApproveModalForApp(app)
+    } else {
+      const updated = mentorApplicationService.approveApplication(appId)
+      if (updated) {
+        setMentorApps(mentorApplicationService.getAllApplications())
+        onDataChanged()
+        setActionSuccessMsg(`Approved mentor application for ${applicantName}. Appointed as verified educator.`)
+        setTimeout(() => setActionSuccessMsg(null), 3500)
+      }
     }
   }
 
@@ -2191,6 +2256,14 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
         mentor={mentorToDemote}
         onClose={() => setIsDemoteModalOpen(false)}
         onConfirmDemote={handleConfirmDemoteMentor}
+      />
+
+      {/* Approve / Appoint Mentor Confirmation Modal */}
+      <ApproveMentorModal
+        isOpen={isApproveModalOpen}
+        target={approveModalTarget}
+        onClose={() => setIsApproveModalOpen(false)}
+        onConfirmApprove={handleConfirmApproveMentor}
       />
     </div>
   )
