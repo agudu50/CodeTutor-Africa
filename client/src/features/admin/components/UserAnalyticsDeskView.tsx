@@ -375,24 +375,6 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     })
   }, [mentorApps, searchQuery, selectedAppStatus])
 
-  const handleToggleStatus = (userId: string, userName: string) => {
-    const updated = adminAnalyticsService.toggleUserStatus(userId)
-    if (updated) {
-      onDataChanged()
-      setActionSuccessMsg(`Status updated for ${userName}. Audit trail recorded.`)
-      setTimeout(() => setActionSuccessMsg(null), 3000)
-    }
-  }
-
-  const handlePromoteToMentor = (userId: string, userName: string) => {
-    const updated = adminAnalyticsService.setUserRole(userId, 'instructor')
-    if (updated) {
-      onDataChanged()
-      setActionSuccessMsg(`Promoted ${userName} to Verified Mentor. Full Mentor Hub access enabled.`)
-      setTimeout(() => setActionSuccessMsg(null), 3500)
-    }
-  }
-
   const handleOpenDemoteModal = (mentor: AdminUserRecord) => {
     setMentorToDemote(mentor)
     setIsDemoteModalOpen(true)
@@ -492,22 +474,6 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
       return
     }
     handleOpenApproveModalForUser(user)
-  }
-
-  const handleToggleMentorActivity = (userId: string, currentStatus: string, name: string) => {
-    const isCurrentlyActive =
-      currentStatus === 'active_now' ||
-      currentStatus === 'active_today' ||
-      currentStatus === 'active_this_week'
-    const newStatus = isCurrentlyActive ? 'inactive' : 'active_now'
-    const updated = adminAnalyticsService.setUserStatus(userId, newStatus)
-    if (updated) {
-      onDataChanged()
-      setActionSuccessMsg(
-        `Updated ${name}'s activity status to [${newStatus === 'active_now' ? '🟢 Active Now (Online)' : '⚪ Inactive / Offline'}]`
-      )
-      setTimeout(() => setActionSuccessMsg(null), 3500)
-    }
   }
 
   const handleApproveMentorApp = (appId: string, applicantName: string) => {
@@ -1229,7 +1195,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handlePromoteToMentor(user.id, user.name)}
+                                    onClick={() => handleOpenApproveModalForUser(user)}
                                     className="h-7 px-2 text-[10px] font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 hover:bg-brand-100"
                                     title="Grant Mentor Hub course authoring & student inquiry access"
                                   >
@@ -1237,29 +1203,6 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                     Make Mentor
                                   </Button>
                                 )}
-
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleToggleStatus(user.id, user.name)}
-                                  className={`h-7 px-2 text-[10px] font-bold ${
-                                    user.status === 'inactive' || user.status === 'idle'
-                                      ? 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
-                                      : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/60'
-                                  }`}
-                                >
-                                  {user.status === 'inactive' || user.status === 'idle' ? (
-                                    <>
-                                      <UserCheck className="w-3 h-3 mr-1" />
-                                      Reactivate
-                                    </>
-                                  ) : (
-                                    <>
-                                      <User className="w-3 h-3 mr-1" />
-                                      Mark Idle
-                                    </>
-                                  )}
-                                </Button>
                               </>
                             )}
                           </div>
@@ -1826,19 +1769,6 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
                               {/* Admin Action Buttons */}
                               <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleToggleMentorActivity(mentor.id, mentor.status, mentor.name)}
-                                  className={`h-7 px-3 text-xs font-bold border transition-all ${
-                                    isLiveActive
-                                      ? 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                      : 'text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50'
-                                  }`}
-                                >
-                                  {isLiveActive ? 'Mark as Inactive' : 'Set as Active Now'}
-                                </Button>
-
                                 <Button
                                   variant="outline"
                                   size="sm"

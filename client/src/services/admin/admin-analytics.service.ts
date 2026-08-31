@@ -574,8 +574,45 @@ class AdminAnalyticsService {
     }
   }
 
+  private computeDynamicStatus(lastActiveIso?: string): 'active_now' | 'active_today' | 'active_this_week' | 'idle' | 'inactive' {
+    if (!lastActiveIso) return 'inactive'
+    try {
+      const lastActive = new Date(lastActiveIso).getTime()
+      const now = Date.now()
+      const diffMinutes = (now - lastActive) / (1000 * 60)
+      const diffHours = diffMinutes / 60
+
+      if (diffMinutes <= 45) return 'active_now'
+      if (diffHours <= 24) return 'active_today'
+      if (diffHours <= 168) return 'active_this_week'
+      if (diffHours <= 720) return 'idle'
+      return 'inactive'
+    } catch {
+      return 'idle'
+    }
+  }
+
   getAllUsers(): AdminUserRecord[] {
-    return [...this.users]
+    return this.users.map((u) => {
+      const computed = this.computeDynamicStatus(u.lastActive)
+      if (u.status !== computed && u.status !== 'active_now') {
+        return { ...u, status: computed }
+      }
+      return u
+    })
+  }
+
+  recordUserHeartbeat(userId: string): AdminUserRecord | null {
+    const idx = this.users.findIndex((u) => u.id === userId)
+    if (idx === -1) return null
+
+    this.users[idx] = {
+      ...this.users[idx],
+      status: 'active_now',
+      lastActive: new Date().toISOString(),
+    }
+    this.saveUsers()
+    return this.users[idx]
   }
 
   getUserStats(): UserStatsSummary {
@@ -623,42 +660,6 @@ class AdminAnalyticsService {
     }
     this.saveLogs()
     return newLog
-  }
-
-  toggleUserStatus(userId: string): AdminUserRecord | null {
-    const user = this.users.find((u) => u.id === userId)
-    if (!user) return null
-
-    if (user.status === 'inactive' || user.status === 'idle') {
-      user.status = 'active_today'
-      user.lastActive = new Date().toISOString()
-      this.logAction({
-        actorName: 'Lead Curriculum Director (Admin)',
-        actorRole: 'admin',
-        action: 'USER_RE_ENGAGED',
-        category: 'security',
-        target: `${user.name} (${user.username})`,
-        details: 'Manually reactivated learner status and dispatched offline study catch-up pack.',
-        status: 'info',
-        ipAddress: '127.0.0.1',
-        userAgent: 'CodeTutor Admin Console',
-      })
-    } else {
-      user.status = 'idle'
-      this.logAction({
-        actorName: 'Lead Curriculum Director (Admin)',
-        actorRole: 'admin',
-        action: 'USER_FLAGGED_IDLE',
-        category: 'security',
-        target: `${user.name} (${user.username})`,
-        details: 'User marked as idle for follow-up study mentoring.',
-        status: 'warning',
-        ipAddress: '127.0.0.1',
-        userAgent: 'CodeTutor Admin Console',
-      })
-    }
-    this.saveUsers()
-    return user
   }
 
   addUser(user: AdminUserRecord): AdminUserRecord {
