@@ -56,3 +56,50 @@ class InferenceMetrics(BaseModel):
     latency_ms: float = Field(default=0.0)
     tokens_per_second: float = Field(default=0.0)
     model_name: str = Field(default="")
+
+
+class ThreatEventModel(BaseModel):
+    id: str
+    timestamp: str
+    origin_ip: str
+    origin_location: str
+    target_component: str
+    attack_vector: str
+    severity: str  # critical, high, medium, low
+    status: str    # blocked, mitigated, quarantined, under_review
+    payload_sample: str
+    mitigation_action: str
+
+
+class VulnerabilityItemModel(BaseModel):
+    id: str
+    cve_id: str
+    title: str
+    category: str  # LLM Guardrails, Client Sandbox, Storage & Tokens, API & Auth
+    severity: str  # critical, high, medium, low
+    cvss_score: float
+    status: str    # unmitigated, active_patch, mitigated
+    exploit_vector: str
+    affected_component: str
+    remediation_action_id: Optional[str] = None
+    description: str
+
+
+class SecurityStatsModel(BaseModel):
+    total_attacks_received: int
+    attacks_blocked: int
+    mitigation_rate_percent: float
+    active_threat_level: str  # low, guarded, elevated, high, critical
+    attack_rate_per_min: float
+    open_vulnerabilities_count: int
+    patched_vulnerabilities_count: int
+    shield_status: str  # active, strict, bypass
+
+
+class SecurityTelemetryResponse(BaseModel):
+    stats: SecurityStatsModel
+    recent_threats: list[ThreatEventModel]
+    vulnerabilities: list[VulnerabilityItemModel]
+    defense_modules: Dict[str, Any]
+    last_audit_timestamp: str
+
