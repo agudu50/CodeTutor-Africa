@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { useTheme } from '@/app/providers/ThemeProvider'
 import { Button } from '@/components/ui'
 import { MentorApplicationModal } from '../components/MentorApplicationModal'
+import { ContactSection } from '../components/ContactSection'
 import {
   ArrowRight,
   Sun,
@@ -841,6 +842,7 @@ export const LandingPage: React.FC = () => {
     { href: '#testimonials', label: 'Student Voices' },
     { href: '#specs', label: 'Hardware Specs' },
     { href: '#faq', label: 'FAQ' },
+    { href: '#contact', label: 'Contact Us' },
   ]
 
   const featureCards = [
@@ -2076,7 +2078,12 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 9: FINAL CTA BANNER
+          SECTION 9: CONTACT US & INQUIRIES
+          ═══════════════════════════════════════════════════════════════ */}
+      <ContactSection />
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION 10: FINAL CTA BANNER
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -2113,7 +2120,7 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 10: ENHANCED FOOTER (DESKTOP & MOBILE OPTIMIZED)
+          SECTION 11: ENHANCED FOOTER (DESKTOP & MOBILE OPTIMIZED)
           ═══════════════════════════════════════════════════════════════ */}
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mt-auto transition-colors relative z-10">
         <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
@@ -2213,6 +2220,11 @@ export const LandingPage: React.FC = () => {
                     >
                       Become a Mentor ↗
                     </button>
+                  </li>
+                  <li>
+                    <a href="#contact" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5 font-bold text-[#005F02] dark:text-emerald-400">
+                      Contact Us
+                    </a>
                   </li>
                   <li>
                     <a href="#demo" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
