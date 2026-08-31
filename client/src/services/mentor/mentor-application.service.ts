@@ -54,6 +54,7 @@ const INITIAL_APPLICATIONS: MentorApplication[] = [
     bio: 'Lead Python backend engineer and community organizer for Women in Tech Lagos. Eager to mentor students working through Python fundamentals and real-world project development.',
     githubUrl: 'https://github.com/zainab-codes',
     linkedinUrl: 'https://linkedin.com/in/zainab-alhassan',
+    portfolioUrl: 'https://zainab-codes.dev',
     status: 'pending',
     appliedAt: '2026-02-27T09:15:00Z',
   },
@@ -68,6 +69,7 @@ const INITIAL_APPLICATIONS: MentorApplication[] = [
     yearsOfExperience: '4 years',
     bio: 'Full-stack educator and PWA developer. Leading campus workshops in Dakar on offline-first web technologies.',
     githubUrl: 'https://github.com/cheikh-sn',
+    portfolioUrl: 'https://cheikh-ndiaye.sn',
     status: 'approved',
     appliedAt: '2026-02-20T11:00:00Z',
     reviewedAt: '2026-02-21T16:00:00Z',
@@ -86,7 +88,21 @@ class MentorApplicationService {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) {
-        this.applications = JSON.parse(stored)
+        const parsed: MentorApplication[] = JSON.parse(stored)
+        // Ensure mock records have portfolioUrl backfilled
+        this.applications = parsed.map((app) => {
+          if (app.id === 'app-mentor-101' && !app.portfolioUrl) {
+            return { ...app, portfolioUrl: 'https://equaye-cs.knust.edu.gh' }
+          }
+          if (app.id === 'app-mentor-102' && !app.portfolioUrl) {
+            return { ...app, portfolioUrl: 'https://zainab-codes.dev' }
+          }
+          if (app.id === 'app-mentor-103' && !app.portfolioUrl) {
+            return { ...app, portfolioUrl: 'https://cheikh-ndiaye.sn' }
+          }
+          return app
+        })
+        this.save()
       } else {
         this.applications = [...INITIAL_APPLICATIONS]
         this.save()

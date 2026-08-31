@@ -1447,14 +1447,15 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       {/* Bottom Footer: Links & Action Buttons */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
                         {/* Links */}
-                        <div className="flex items-center gap-3 text-xs font-mono flex-wrap">
+                        <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
                           {app.githubUrl && (
                             <a
                               href={app.githubUrl.startsWith('http') ? app.githubUrl : `https://${app.githubUrl}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
                             >
+                              <Code2 className="w-3.5 h-3.5 text-slate-500" />
                               <span>GitHub Profile ↗</span>
                             </a>
                           )}
@@ -1463,8 +1464,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               href={app.linkedinUrl.startsWith('http') ? app.linkedinUrl : `https://${app.linkedinUrl}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
                             >
+                              <Globe className="w-3.5 h-3.5 text-indigo-500" />
                               <span>LinkedIn Profile ↗</span>
                             </a>
                           )}
@@ -1473,8 +1475,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               href={app.portfolioUrl.startsWith('http') ? app.portfolioUrl : `https://${app.portfolioUrl}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
                             >
+                              <Laptop className="w-3.5 h-3.5 text-emerald-500" />
                               <span>Portfolio Website ↗</span>
                             </a>
                           )}
