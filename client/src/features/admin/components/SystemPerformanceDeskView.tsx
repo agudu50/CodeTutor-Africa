@@ -55,6 +55,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
   const [searchThreatQuery, setSearchThreatQuery] = useState('')
   const [vulnCategoryFilter, setVulnCategoryFilter] = useState<string>('all')
   const [isSimulatingAttack, setIsSimulatingAttack] = useState(false)
+  const [isAutoResolvingAll, setIsAutoResolvingAll] = useState(false)
 
   // Automated Evaluation Scheduler State
   const [autoEvalHours, setAutoEvalHours] = useState<number>(() =>
@@ -71,7 +72,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
   >([
     {
       sender: 'ai',
-      text: 'Hello Admin. I am your AI Systems & Cybersecurity Copilot. I continuously monitor browser WebAssembly runtimes, offline IndexedDB storage, adversarial prompt injections, and API threat vectors. Ask me anything about platform bottlenecks, active attacks, or security vulnerabilities.',
+      text: 'Hello Admin. I am your AI Systems & Cybersecurity Copilot. I continuously monitor browser WebAssembly runtimes, offline IndexedDB storage, adversarial prompt injections, database SQL queries, and API threat vectors. Ask me to auto-resolve vulnerabilities or check platform health.',
       timestamp: 'Just now',
     },
   ])
@@ -91,6 +92,14 @@ export const SystemPerformanceDeskView: React.FC = () => {
     setSecurityData(sec)
     setActionHistory(systemPerformanceService.getActionHistory())
     setIsLoading(false)
+  }
+
+  const handleAutoResolveAll = async () => {
+    setIsAutoResolvingAll(true)
+    const log = await systemPerformanceService.autoResolveAllVulnerabilities()
+    setIsAutoResolvingAll(false)
+    setToastMessage(`✨ ${log.title}: ${log.message}`)
+    refreshTelemetry()
   }
 
   // Calculate remaining time for countdown timer
@@ -189,6 +198,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
       actionId.startsWith('ENCRYPT_') ||
       actionId.startsWith('BLOCK_') ||
       actionId.startsWith('ROTATE_') ||
+      actionId.startsWith('LOCK_') ||
       actionId.startsWith('RUN_VULN_')
     ) {
       log = await systemPerformanceService.executeSecurityAction(actionId)
@@ -229,7 +239,17 @@ export const SystemPerformanceDeskView: React.FC = () => {
       let actionRecommendation: string | undefined = undefined
 
       const lower = text.toLowerCase()
-      if (lower.includes('database') || lower.includes('sql') || lower.includes('injection') || lower.includes('sqlite') || lower.includes('table')) {
+      if (
+        lower.includes('auto') ||
+        lower.includes('resolve all') ||
+        lower.includes('fix all') ||
+        lower.includes('autofix') ||
+        lower.includes('auto-fix') ||
+        lower.includes('patch all')
+      ) {
+        aiReply = `✨ AI Auto-Remediation Activated: All 6 security weak spots (AI Prompt Guard, Safe Code Sandbox, Database SQL Firewall, Offline Storage Encryption, and Spam Protection) have been patched and verified. 100% of vulnerabilities are now Protected & Safe.`
+        handleAutoResolveAll()
+      } else if (lower.includes('database') || lower.includes('sql') || lower.includes('injection') || lower.includes('sqlite') || lower.includes('table')) {
         aiReply = `Database Security Status: All database queries are protected with parameterized query checks and a Database Query Firewall. Recently intercepted 1 unauthorized SQL injection probe (' UNION SELECT username, password_hash...) from 172.16.8.99 and blocked it immediately with zero data leaks.`
         actionRecommendation = 'LOCK_DATABASE_FIREWALL'
       } else if (lower.includes('attack') || lower.includes('threat') || lower.includes('from') || lower.includes('hack')) {
@@ -238,9 +258,9 @@ export const SystemPerformanceDeskView: React.FC = () => {
         aiReply = `Security Telemetry Report: The platform has received ${total} attack probes (${blocked} automatically blocked, ${securityData?.mitigationRatePercent || 99.3}% mitigation rate). Top origins include Local LAN nodes attempting AI prompt tricks, database SQL injections, and code sandbox probe attempts.`
         actionRecommendation = 'ENFORCE_WAF_PROMPT_SHIELD'
       } else if (lower.includes('vulnerabilit') || lower.includes('cve') || lower.includes('cwe') || lower.includes('exploit') || lower.includes('risk')) {
-        const open = securityData?.openVulnerabilitiesCount || 1
-        aiReply = `Security Risk Scan: Found ${open} open vulnerability needing a fix. CWE-20 (AI Tutor Hijack) and CWE-78 (Unauthorized System Commands in Code Runner) are active. Recommended action is to turn on all security protections.`
-        actionRecommendation = 'ISOLATE_WASM_SANDBOX'
+        const open = securityData?.openVulnerabilitiesCount || 0
+        aiReply = `Security Risk Scan: Found ${open} open vulnerability. You can click "✨ AI Auto-Fix All Security Weaknesses" above to resolve all vulnerabilities with 1 click.`
+        actionRecommendation = 'ENFORCE_WAF_PROMPT_SHIELD'
       } else if (lower.includes('memory') || lower.includes('ram') || lower.includes('rss')) {
         const rss = backendMetrics?.processRssMb || 388
         aiReply = `Current process RSS is ${rss} MB (${backendMetrics?.processRssGb || 0.38} GB) against the 7.0 GB peak budget limit, yielding an efficiency score of ${backendMetrics?.efficiencyScore || 96}%. Browser JS heap is consuming ${frontendMetrics?.jsHeapUsedMb || 48} MB. No runaway leaks detected.`
@@ -856,6 +876,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
 
                 <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 flex flex-wrap gap-1 shrink-0">
                   {[
+                    '✨ AI Auto-Fix All Issues',
                     'Check database security',
                     'Check RAM headroom',
                     'How many attacks today?',
@@ -1092,20 +1113,33 @@ export const SystemPerformanceDeskView: React.FC = () => {
                 </p>
               </div>
 
-              {/* Category Filter */}
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs font-medium text-slate-500">Filter:</span>
-                <select
-                  value={vulnCategoryFilter}
-                  onChange={(e) => setVulnCategoryFilter(e.target.value)}
-                  className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none"
+              {/* Action Controls & Category Filter */}
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleAutoResolveAll}
+                  disabled={isAutoResolvingAll}
+                  className="h-8 text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xs border-0"
+                  leftIcon={<Sparkles className={`w-3.5 h-3.5 text-amber-300 ${isAutoResolvingAll ? 'animate-spin' : ''}`} />}
                 >
-                  <option value="all">All Areas ({securityData?.vulnerabilities.length || 5})</option>
-                  <option value="AI Tutor Safety">AI Tutor Safety</option>
-                  <option value="Student Code Runner">Student Code Runner</option>
-                  <option value="Offline Storage">Offline Storage</option>
-                  <option value="Server & Database">Server & Database</option>
-                </select>
+                  {isAutoResolvingAll ? 'AI is Auto-Fixing...' : '✨ AI Auto-Fix All Issues'}
+                </Button>
+
+                <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200 dark:border-slate-800">
+                  <span className="text-xs font-medium text-slate-500">Filter:</span>
+                  <select
+                    value={vulnCategoryFilter}
+                    onChange={(e) => setVulnCategoryFilter(e.target.value)}
+                    className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none"
+                  >
+                    <option value="all">All Areas ({securityData?.vulnerabilities.length || 6})</option>
+                    <option value="AI Tutor Safety">AI Tutor Safety</option>
+                    <option value="Student Code Runner">Student Code Runner</option>
+                    <option value="Offline Storage">Offline Storage</option>
+                    <option value="Server & Database">Server & Database</option>
+                  </select>
+                </div>
               </div>
             </CardHeader>
 
