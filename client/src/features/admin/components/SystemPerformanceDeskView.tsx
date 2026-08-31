@@ -1105,8 +1105,8 @@ export const SystemPerformanceDeskView: React.FC = () => {
               </div>
             </CardHeader>
 
-            <CardContent className="p-4 sm:p-5 space-y-3.5">
-              {filteredVulnerabilities.map((vuln) => {
+            <CardContent className="p-4 sm:p-5 space-y-3">
+              {filteredVulnerabilities.map((vuln, idx) => {
                 const isMitigated = vuln.status === 'mitigated'
                 const isActivePatch = vuln.status === 'active_patch'
                 const isUnmitigated = vuln.status === 'unmitigated'
@@ -1114,7 +1114,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
                 return (
                   <div
                     key={vuln.id}
-                    className={`p-4 rounded-2xl border transition-all ${
+                    className={`p-3.5 sm:p-4 rounded-2xl border transition-all ${
                       isUnmitigated
                         ? 'border-rose-200 dark:border-rose-900/50 bg-rose-50/30 dark:bg-rose-950/20'
                         : isActivePatch
@@ -1122,81 +1122,89 @@ export const SystemPerformanceDeskView: React.FC = () => {
                         : 'border-emerald-200/60 dark:border-emerald-900/30 bg-emerald-50/20 dark:bg-emerald-950/10'
                     }`}
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                      {/* Left: Metadata & Exploit details */}
-                      <div className="space-y-2.5 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
-                            {vuln.cveId}
-                          </span>
-                          <span className="text-xs font-bold text-slate-900 dark:text-white">
-                            {vuln.title}
-                          </span>
-                          <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
-                            {vuln.category}
-                          </span>
-                          <span
-                            className={`text-[10px] font-mono font-black px-2 py-0.5 rounded ${
-                              vuln.cvssScore >= 7.0
-                                ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
-                                : vuln.cvssScore >= 5.0
-                                ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                                : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                            }`}
-                          >
-                            CVSS {vuln.cvssScore} {vuln.severity.toUpperCase()}
-                          </span>
+                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3.5">
+                      {/* Left: Index + Metadata & Exploit details */}
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        {/* Numbering Badge */}
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs mt-0.5">
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
 
-                          <span
-                            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              isMitigated
-                                ? 'bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400'
-                                : isActivePatch
-                                ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
-                                : 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300'
-                            }`}
-                          >
-                            {isMitigated ? (
-                              <>
-                                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                Mitigated & Shielded
-                              </>
-                            ) : isActivePatch ? (
-                              <>
-                                <CheckCircle2 className="w-3 h-3 text-amber-500" />
-                                Active Guardrail Patch
-                              </>
-                            ) : (
-                              <>
-                                <Flame className="w-3 h-3 text-rose-500" />
-                                Unmitigated Exposure
-                              </>
-                            )}
-                          </span>
-                        </div>
+                        <div className="space-y-2.5 flex-1 min-w-0">
+                          {/* Metadata row */}
+                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <span className="font-mono text-[11px] font-black px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
+                              {vuln.cveId}
+                            </span>
+                            <span className="text-xs font-bold text-slate-900 dark:text-white">
+                              {vuln.title}
+                            </span>
+                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
+                              {vuln.category}
+                            </span>
+                            <span
+                              className={`text-[10px] font-mono font-black px-2 py-0.5 rounded ${
+                                vuln.cvssScore >= 7.0
+                                  ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
+                                  : vuln.cvssScore >= 5.0
+                                  ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
+                                  : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              }`}
+                            >
+                              CVSS {vuln.cvssScore} {vuln.severity.toUpperCase()}
+                            </span>
 
-                        {/* What the Threat Can Exploit */}
-                        <div className="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-1">
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-rose-700 dark:text-rose-400">
-                            <Target className="w-3.5 h-3.5 shrink-0" />
-                            <span>What the Threat Can Exploit & Attack Vector:</span>
+                            <span
+                              className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                isMitigated
+                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400'
+                                  : isActivePatch
+                                  ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
+                                  : 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300'
+                              }`}
+                            >
+                              {isMitigated ? (
+                                <>
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                  Mitigated & Shielded
+                                </>
+                              ) : isActivePatch ? (
+                                <>
+                                  <CheckCircle2 className="w-3 h-3 text-amber-500" />
+                                  Active Guardrail Patch
+                                </>
+                              ) : (
+                                <>
+                                  <Flame className="w-3 h-3 text-rose-500" />
+                                  Unmitigated Exposure
+                                </>
+                              )}
+                            </span>
                           </div>
-                          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed break-words whitespace-normal">
-                            {vuln.exploitVector}
-                          </p>
-                        </div>
 
-                        {/* Affected component */}
-                        <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                          <span className="font-bold text-slate-600 dark:text-slate-300">Target Component:</span>
-                          <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-                            {vuln.affectedComponent}
-                          </span>
+                          {/* What the Threat Can Exploit */}
+                          <div className="p-2.5 sm:p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-1">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-rose-700 dark:text-rose-400">
+                              <Target className="w-3.5 h-3.5 shrink-0" />
+                              <span>What the Threat Can Exploit & Attack Vector:</span>
+                            </div>
+                            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed break-words whitespace-normal">
+                              {vuln.exploitVector}
+                            </p>
+                          </div>
+
+                          {/* Affected component */}
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-mono flex-wrap">
+                            <span className="font-bold text-slate-600 dark:text-slate-300">Target Component:</span>
+                            <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 break-all">
+                              {vuln.affectedComponent}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
                       {/* Right: 1-Click Remediation Action */}
-                      <div className="flex flex-col items-end justify-center shrink-0">
+                      <div className="flex lg:flex-col items-end justify-center shrink-0 self-end lg:self-center">
                         {vuln.remediationActionId && (
                           <Button
                             variant={isMitigated ? 'outline' : 'primary'}
