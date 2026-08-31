@@ -12,7 +12,6 @@ import {
   Cpu,
   HardDrive,
   Zap,
-  Sparkles,
   RotateCcw,
   CheckCircle2,
   AlertCircle,
@@ -98,7 +97,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
     setIsAutoResolvingAll(true)
     const log = await systemPerformanceService.autoResolveAllVulnerabilities()
     setIsAutoResolvingAll(false)
-    setToastMessage(`✨ ${log.title}: ${log.message}`)
+    setToastMessage(`${log.title}: ${log.message}`)
     refreshTelemetry()
   }
 
@@ -247,7 +246,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
         lower.includes('auto-fix') ||
         lower.includes('patch all')
       ) {
-        aiReply = `✨ AI Auto-Remediation Activated: All 6 security weak spots (AI Prompt Guard, Safe Code Sandbox, Database SQL Firewall, Offline Storage Encryption, and Spam Protection) have been patched and verified. 100% of vulnerabilities are now Protected & Safe.`
+        aiReply = `AI Auto-Remediation Activated: All 6 security weak spots (AI Prompt Guard, Safe Code Sandbox, Database SQL Firewall, Offline Storage Encryption, and Spam Protection) have been patched and verified. 100% of vulnerabilities are now Protected & Safe.`
         handleAutoResolveAll()
       } else if (lower.includes('database') || lower.includes('sql') || lower.includes('injection') || lower.includes('sqlite') || lower.includes('table')) {
         aiReply = `Database Security Status: All database queries are protected with parameterized query checks and a Database Query Firewall. Recently intercepted 1 unauthorized SQL injection probe (' UNION SELECT username, password_hash...) from 172.16.8.99 and blocked it immediately with zero data leaks.`
@@ -259,7 +258,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
         actionRecommendation = 'ENFORCE_WAF_PROMPT_SHIELD'
       } else if (lower.includes('vulnerabilit') || lower.includes('cve') || lower.includes('cwe') || lower.includes('exploit') || lower.includes('risk')) {
         const open = securityData?.openVulnerabilitiesCount || 0
-        aiReply = `Security Risk Scan: Found ${open} open vulnerability. You can click "✨ AI Auto-Fix All Security Weaknesses" above to resolve all vulnerabilities with 1 click.`
+        aiReply = `Security Risk Scan: Found ${open} open vulnerability. You can click "AI Auto-Fix All Issues" above to resolve all vulnerabilities with 1 click.`
         actionRecommendation = 'ENFORCE_WAF_PROMPT_SHIELD'
       } else if (lower.includes('memory') || lower.includes('ram') || lower.includes('rss')) {
         const rss = backendMetrics?.processRssMb || 388
@@ -324,31 +323,16 @@ export const SystemPerformanceDeskView: React.FC = () => {
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-          HERO BANNER: AI SYSTEM OBSERVABILITY, PERFORMANCE & CYBERSECURITY
+          HERO BANNER: AI SYSTEM OBSERVABILITY & SECURITY
           ═══════════════════════════════════════════════════════════════ */}
       <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-                <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                AI Ops, Telemetry & Cyber Defense
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs font-mono px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-bold">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                Active Threat Shield: 99.3% Mitigated
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs font-mono px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800 font-bold">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" />
-                ADTC Peak Budget: 7.0 GB
-              </span>
-            </div>
-
+          <div className="space-y-1.5">
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              AI Ops, Real-Time Threat Intelligence & System Health
+              AI Ops, System Health & Security
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl">
-              Unified command center for live performance telemetry, client WebAssembly memory budgets, real-time incoming attacks, threat origin tracking, and exploitable vulnerability management.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
+              Monitor live platform performance, incoming attack origins, and manage security vulnerabilities.
             </p>
           </div>
 
@@ -876,7 +860,7 @@ export const SystemPerformanceDeskView: React.FC = () => {
 
                 <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 flex flex-wrap gap-1 shrink-0">
                   {[
-                    '✨ AI Auto-Fix All Issues',
+                    'AI Auto-Fix All Issues',
                     'Check database security',
                     'Check RAM headroom',
                     'How many attacks today?',
@@ -1120,10 +1104,10 @@ export const SystemPerformanceDeskView: React.FC = () => {
                   size="sm"
                   onClick={handleAutoResolveAll}
                   disabled={isAutoResolvingAll}
-                  className="h-8 text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xs border-0"
-                  leftIcon={<Sparkles className={`w-3.5 h-3.5 text-amber-300 ${isAutoResolvingAll ? 'animate-spin' : ''}`} />}
+                  className="h-8 text-xs font-bold shadow-xs"
+                  leftIcon={<ShieldCheck className={`w-3.5 h-3.5 ${isAutoResolvingAll ? 'animate-spin' : ''}`} />}
                 >
-                  {isAutoResolvingAll ? 'AI is Auto-Fixing...' : '✨ AI Auto-Fix All Issues'}
+                  {isAutoResolvingAll ? 'AI is Auto-Fixing...' : 'AI Auto-Fix All Issues'}
                 </Button>
 
                 <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200 dark:border-slate-800">
