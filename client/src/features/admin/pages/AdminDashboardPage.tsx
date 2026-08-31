@@ -166,17 +166,13 @@ export const AdminDashboardPage: React.FC = () => {
             variant="outline"
             size="sm"
             onClick={() => {
-              courseStoreService.resetToDefaults()
-              gameStoreService.resetToDefaults()
-              practiceStoreService.resetToDefaults()
-              adminAnalyticsService.resetToDefaults()
               reloadData()
-              setToastMessage('Platform reset to default courses, practice drills, and challenges.')
+              setToastMessage('Platform data refreshed.')
             }}
             className="h-9 text-xs font-semibold justify-center"
             leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
           >
-            Reset All
+            Refresh
           </Button>
 
           {activeTab === 'courses' && (
