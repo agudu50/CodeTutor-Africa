@@ -838,7 +838,6 @@ export const LandingPage: React.FC = () => {
   const navLinks = [
     { href: '#features', label: 'Features' },
     { href: '#demo', label: 'Live Sandbox' },
-    { href: '#curriculum', label: 'Curriculum' },
     { href: '#testimonials', label: 'Student Voices' },
     { href: '#specs', label: 'Hardware Specs' },
     { href: '#faq', label: 'FAQ' },

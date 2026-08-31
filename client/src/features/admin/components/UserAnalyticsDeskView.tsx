@@ -1233,11 +1233,12 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   </p>
                 </div>
               ) : (
-                filteredLogs.map((log) => {
+                filteredLogs.map((log, index) => {
                   const isExpanded = expandedLogId === log.id
                   const relativeTime = getHumanRelativeTime(log.timestamp)
                   const fullTime = `${new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • ${new Date(log.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`
                   const humanAction = getHumanActionTitle(log)
+                  const logIndexNumber = String(index + 1).padStart(2, '0')
 
                   const getAvatarBg = () => {
                     if (log.category === 'auth') return 'bg-sky-50 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
@@ -1265,8 +1266,13 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       className="p-3.5 sm:p-4.5 hover:bg-slate-50/80 dark:hover:bg-slate-950/50 transition-colors space-y-2.5"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        {/* Left Column: Human Avatar / Action Icon + Activity Story */}
+                        {/* Left Column: Number Index + Human Avatar / Action Icon + Activity Story */}
                         <div className="flex items-start gap-3 min-w-0">
+                          {/* Numerical Index Badge */}
+                          <span className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-slate-200 dark:border-slate-700/80 shadow-3xs">
+                            {logIndexNumber}
+                          </span>
+
                           <div className={`p-2.5 rounded-2xl border ${getAvatarBg()} shrink-0 shadow-3xs mt-0.5`}>
                             {getCategoryIcon()}
                           </div>
