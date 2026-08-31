@@ -693,22 +693,23 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           SUB-VIEW CONTROLS & ACTIONS
           ═══════════════════════════════════════════════════════════════ */}
       <Card className="border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
-        <CardHeader className="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800/80">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            {/* Sub-tabs pills */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit">
+        <CardHeader className="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 space-y-3.5">
+          {/* Row 1: Sub-tabs Navigation Bar & Contextual Actions */}
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
+            {/* Sub-tabs pills - horizontally scrollable with sleek modern pill styling */}
+            <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 overflow-x-auto scrollbar-none w-full xl:w-auto">
               <button
                 type="button"
                 onClick={() => setSubView('users')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   subView === 'users'
-                    ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
+                    ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-extrabold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
                 <span>Learner Management</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                   {users.length}
                 </span>
               </button>
@@ -716,15 +717,15 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSubView('audit')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   subView === 'audit'
-                    ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs font-extrabold'
+                    ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-xs font-extrabold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <HardDrive className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Audit Logs & Security</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
+                <HardDrive className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Audit Logs &amp; Security</span>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   {auditLogs.length}
                 </span>
               </button>
@@ -732,47 +733,47 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSubView('regional')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   subView === 'regional'
-                    ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-2xs font-extrabold'
+                    ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-xs font-extrabold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Globe className="w-3.5 h-3.5 text-cyan-500" />
+                <Globe className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
                 <span>West Africa Regions</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSubView('mentors')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   subView === 'mentors'
-                    ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-2xs font-extrabold'
+                    ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs font-extrabold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
                 <span>Mentor Desk &amp; Apps</span>
                 {pendingMentorCount > 0 ? (
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500 text-white font-bold animate-pulse">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500 text-white font-bold animate-pulse">
                     {pendingMentorCount} New
                   </span>
                 ) : (
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                     {mentorApps.length}
                   </span>
                 )}
               </button>
             </div>
 
-            {/* Actions for current view */}
+            {/* Contextual Actions Toolbar for current view */}
             {subView === 'audit' && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleExportCsv(filteredLogs)}
-                  className="h-8 text-xs font-bold border-slate-200 dark:border-slate-700 justify-center"
+                  className="h-8 px-3 text-xs font-bold border-slate-200 dark:border-slate-700 justify-center whitespace-nowrap"
                   leftIcon={<Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
                 >
                   Export CSV ({filteredLogs.length})
@@ -781,7 +782,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => handleExportJson(filteredLogs)}
-                  className="h-8 text-xs font-bold border-slate-200 dark:border-slate-700 justify-center"
+                  className="h-8 px-3 text-xs font-bold border-slate-200 dark:border-slate-700 justify-center whitespace-nowrap"
                   leftIcon={<Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
                 >
                   Export JSON ({filteredLogs.length})
@@ -795,7 +796,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     setExportModalCategory(selectedCategory)
                     setIsExportModalOpen(true)
                   }}
-                  className="h-8 text-xs font-bold justify-center shadow-xs"
+                  className="h-8 px-3.5 text-xs font-bold justify-center shadow-xs whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white"
                   leftIcon={<Clock className="w-3.5 h-3.5" />}
                 >
                   Export with Date Range
