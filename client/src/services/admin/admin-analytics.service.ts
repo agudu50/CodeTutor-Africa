@@ -5,6 +5,94 @@ const AUDIT_LOGS_STORAGE_KEY = 'codetutor_admin_audit_logs_v1'
 
 export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
   {
+    id: 'usr-mentor-1',
+    name: 'Dr. Emmanuel Quaye',
+    username: 'dr_quaye_knust',
+    email: 'e.quaye@knust.edu.gh',
+    role: 'instructor',
+    countryCode: 'GH',
+    countryName: 'Ghana',
+    status: 'active_now',
+    lastActive: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+    registeredAt: '2026-01-02T08:00:00Z',
+    totalXp: 85400,
+    streakDays: 62,
+    lessonsCompleted: 85,
+    problemsSolved: 480,
+    gamesPlayed: 190,
+    favoriteLanguage: 'java',
+    deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-java-301'],
+    enrolledCourseTitles: ['Learn to code with Java'],
+    activeCourseTitle: 'Learn to code with Java',
+  },
+  {
+    id: 'usr-mentor-2',
+    name: 'Zainab Al-Hassan',
+    username: 'zainab_mentor',
+    email: 'zainab.codes@unilag.edu.ng',
+    role: 'instructor',
+    countryCode: 'NG',
+    countryName: 'Nigeria',
+    status: 'active_today',
+    lastActive: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
+    registeredAt: '2026-01-08T10:30:00Z',
+    totalXp: 72100,
+    streakDays: 45,
+    lessonsCompleted: 68,
+    problemsSolved: 390,
+    gamesPlayed: 140,
+    favoriteLanguage: 'python',
+    deviceMode: 'desktop_app',
+    enrolledCourseIds: ['course-py-101'],
+    enrolledCourseTitles: ['Learn to code with Python'],
+    activeCourseTitle: 'Learn to code with Python',
+  },
+  {
+    id: 'usr-mentor-3',
+    name: 'Cheikh Ndiaye',
+    username: 'cheikh_mentor',
+    email: 'c.ndiaye@ucad.edu.sn',
+    role: 'instructor',
+    countryCode: 'SN',
+    countryName: 'Senegal',
+    status: 'active_this_week',
+    lastActive: new Date(Date.now() - 3 * 86400 * 1000).toISOString(),
+    registeredAt: '2026-01-15T12:00:00Z',
+    totalXp: 58000,
+    streakDays: 28,
+    lessonsCompleted: 52,
+    problemsSolved: 310,
+    gamesPlayed: 95,
+    favoriteLanguage: 'javascript',
+    deviceMode: 'offline_pwa',
+    enrolledCourseIds: ['course-js-201'],
+    enrolledCourseTitles: ['Learn to code with JS'],
+    activeCourseTitle: 'Learn to code with JS',
+  },
+  {
+    id: 'usr-mentor-4',
+    name: 'Prof. Samuel Adebayo',
+    username: 'prof_adebayo',
+    email: 's.adebayo@oau.edu.ng',
+    role: 'instructor',
+    countryCode: 'NG',
+    countryName: 'Nigeria',
+    status: 'inactive',
+    lastActive: new Date(Date.now() - 26 * 86400 * 1000).toISOString(),
+    registeredAt: '2025-12-10T09:00:00Z',
+    totalXp: 34000,
+    streakDays: 0,
+    lessonsCompleted: 30,
+    problemsSolved: 180,
+    gamesPlayed: 40,
+    favoriteLanguage: 'java',
+    deviceMode: 'web_browser',
+    enrolledCourseIds: ['course-java-301'],
+    enrolledCourseTitles: ['Learn to code with Java'],
+    activeCourseTitle: 'Learn to code with Java',
+  },
+  {
     id: 'usr-gh-1',
     name: 'Kofi Mensah',
     username: 'kofi_dev',
@@ -416,8 +504,14 @@ class AdminAnalyticsService {
     try {
       const storedUsers = localStorage.getItem(USERS_STORAGE_KEY)
       if (storedUsers) {
-        const parsed = JSON.parse(storedUsers)
-        this.users = parsed.map((u: AdminUserRecord) => {
+        const parsed: AdminUserRecord[] = JSON.parse(storedUsers)
+        const existingEmails = new Set(parsed.map((u) => u.email.toLowerCase()))
+        const missingMentors = INITIAL_ADMIN_USERS.filter(
+          (u) => u.role === 'instructor' && !existingEmails.has(u.email.toLowerCase())
+        )
+        const combined = [...missingMentors, ...parsed]
+
+        this.users = combined.map((u) => {
           if (u.enrolledCourseTitles && u.enrolledCourseTitles.length > 0) return u
           const mock = INITIAL_ADMIN_USERS.find((m) => m.id === u.id || m.username === u.username)
           if (mock?.enrolledCourseTitles) {
@@ -428,7 +522,6 @@ class AdminAnalyticsService {
               activeCourseTitle: mock.activeCourseTitle,
             }
           }
-          // Default fallback based on favorite language
           const favLang = (u.favoriteLanguage || 'python').toLowerCase()
           const trackName =
             favLang === 'java'
@@ -593,6 +686,33 @@ class AdminAnalyticsService {
       target: `${this.users[idx].name} (${this.users[idx].email})`,
       details: `Admin changed user role from [${oldRole.toUpperCase()}] to [${newRole.toUpperCase()}]. ${newRole === 'instructor' ? 'Granted Mentor Hub course authoring & inquiry desk access.' : ''}`,
       status: 'success',
+      ipAddress: '127.0.0.1',
+      userAgent: 'CodeTutor Admin Console',
+    })
+
+    return this.users[idx]
+  }
+
+  setUserStatus(userId: string, newStatus: 'active_now' | 'active_today' | 'active_this_week' | 'idle' | 'inactive', actorName = 'Lead Curriculum Director (Admin)'): AdminUserRecord | null {
+    const idx = this.users.findIndex((u) => u.id === userId)
+    if (idx === -1) return null
+
+    const oldStatus = this.users[idx].status
+    this.users[idx] = {
+      ...this.users[idx],
+      status: newStatus,
+      lastActive: newStatus === 'active_now' ? new Date().toISOString() : this.users[idx].lastActive,
+    }
+    this.saveUsers()
+
+    this.logAction({
+      actorName,
+      actorRole: 'admin',
+      action: 'USER_STATUS_UPDATED',
+      category: 'security',
+      target: `${this.users[idx].name} (${this.users[idx].email})`,
+      details: `Admin changed activity status from [${oldStatus}] to [${newStatus}].`,
+      status: 'info',
       ipAddress: '127.0.0.1',
       userAgent: 'CodeTutor Admin Console',
     })

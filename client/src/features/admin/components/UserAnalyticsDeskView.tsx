@@ -109,15 +109,18 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('ALL')
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
+  const [selectedRole, setSelectedRole] = useState<'ALL' | 'instructor' | 'learner'>('ALL')
   const [selectedCourse, setSelectedCourse] = useState<string>('ALL')
   const [userSortBy, setUserSortBy] = useState<'default' | 'course' | 'xp' | 'streak' | 'lessons' | 'name' | 'recent'>('default')
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [selectedLogStatus, setSelectedLogStatus] = useState<string>('ALL')
   const [logSortBy, setLogSortBy] = useState<'newest' | 'oldest' | 'actor' | 'category'>('newest')
 
-  // Mentor Applications State
+  // Mentor Operations & Applications State
   const [mentorApps, setMentorApps] = useState<MentorApplication[]>(() => mentorApplicationService.getAllApplications())
   const [selectedAppStatus, setSelectedAppStatus] = useState<'ALL' | 'pending' | 'approved' | 'rejected'>('ALL')
+  const [mentorRosterSubTab, setMentorRosterSubTab] = useState<'roster' | 'applications'>('roster')
+  const [mentorActivityFilter, setMentorActivityFilter] = useState<'ALL' | 'active' | 'inactive'>('ALL')
 
   React.useEffect(() => {
     const handleUpdate = () => {
@@ -126,6 +129,20 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     window.addEventListener('mentor_applications_updated', handleUpdate)
     return () => window.removeEventListener('mentor_applications_updated', handleUpdate)
   }, [])
+
+  const mentorUsers = useMemo(() => {
+    return users.filter((u) => u.role === 'instructor')
+  }, [users])
+
+  const activeMentorCount = useMemo(() => {
+    return mentorUsers.filter(
+      (m) => m.status === 'active_now' || m.status === 'active_today' || m.status === 'active_this_week'
+    ).length
+  }, [mentorUsers])
+
+  const inactiveMentorCount = useMemo(() => {
+    return mentorUsers.filter((m) => m.status === 'idle' || m.status === 'inactive').length
+  }, [mentorUsers])
 
   const pendingMentorCount = useMemo(() => {
     return mentorApps.filter((a) => a.status === 'pending').length
@@ -226,7 +243,6 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
         u.activeCourseTitle === selectedCourse ||
         u.enrolledCourseTitles?.includes(selectedCourse) ||
         u.enrolledCourseTitles?.some((t) => t.toLowerCase() === selectedCourse.toLowerCase()) ||
-        u.enrolledCourseIds?.includes(selectedCourse) ||
         (selectedCourse.toLowerCase().includes('java') &&
           (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('java')))) ||
         (selectedCourse.toLowerCase().includes('python') &&
@@ -237,7 +253,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           (u.favoriteLanguage === 'typescript' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('typescript')))) ||
         (u.activeCourseTitle && u.activeCourseTitle.toLowerCase().includes(selectedCourse.toLowerCase()))
 
-      return matchesSearch && matchesCountry && matchesStatus && matchesCourse
+      const matchesRole = selectedRole === 'ALL' || u.role === selectedRole
+
+      return matchesSearch && matchesCountry && matchesStatus && matchesCourse && matchesRole
     })
 
     return [...list].sort((a, b) => {
@@ -263,7 +281,27 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
       }
       return 0
     })
-  }, [users, searchQuery, selectedCountry, selectedStatus, selectedCourse, userSortBy])
+  }, [users, searchQuery, selectedCountry, selectedStatus, selectedRole, selectedCourse, userSortBy])
+
+  const filteredMentors = useMemo(() => {
+    return mentorUsers.filter((m) => {
+      const matchesSearch =
+        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (m.activeCourseTitle && m.activeCourseTitle.toLowerCase().includes(searchQuery.toLowerCase()))
+
+      const matchesCountry = selectedCountry === 'ALL' || m.countryCode === selectedCountry
+
+      const isLiveActive =
+        m.status === 'active_now' || m.status === 'active_today' || m.status === 'active_this_week'
+
+      if (mentorActivityFilter === 'active' && !isLiveActive) return false
+      if (mentorActivityFilter === 'inactive' && isLiveActive) return false
+
+      return matchesSearch && matchesCountry
+    })
+  }, [mentorUsers, searchQuery, selectedCountry, mentorActivityFilter])
 
   const filteredLogs = useMemo(() => {
     const list = auditLogs.filter((log) => {
@@ -354,6 +392,36 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     if (updated) {
       onDataChanged()
       setActionSuccessMsg(`Reset ${userName} role to Standard Learner.`)
+      setTimeout(() => setActionSuccessMsg(null), 3500)
+    }
+  }
+
+  const handleToggleMentorRole = (user: AdminUserRecord) => {
+    const nextRole = user.role === 'instructor' ? 'learner' : 'instructor'
+    const updated = adminAnalyticsService.setUserRole(user.id, nextRole)
+    if (updated) {
+      onDataChanged()
+      setActionSuccessMsg(
+        nextRole === 'instructor'
+          ? `Appointed ${user.name} as a Verified Mentor / Instructor`
+          : `Demoted ${user.name} to Learner role`
+      )
+      setTimeout(() => setActionSuccessMsg(null), 3500)
+    }
+  }
+
+  const handleToggleMentorActivity = (userId: string, currentStatus: string, name: string) => {
+    const isCurrentlyActive =
+      currentStatus === 'active_now' ||
+      currentStatus === 'active_today' ||
+      currentStatus === 'active_this_week'
+    const newStatus = isCurrentlyActive ? 'inactive' : 'active_now'
+    const updated = adminAnalyticsService.setUserStatus(userId, newStatus)
+    if (updated) {
+      onDataChanged()
+      setActionSuccessMsg(
+        `Updated ${name}'s activity status to [${newStatus === 'active_now' ? '🟢 Active Now (Online)' : '⚪ Inactive / Offline'}]`
+      )
       setTimeout(() => setActionSuccessMsg(null), 3500)
     }
   }
@@ -683,15 +751,29 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
             {subView === 'users' && (
               <>
                 {/* Search Input */}
-                <div className="sm:col-span-4 relative">
+                <div className="sm:col-span-3 relative">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="Search learners by name, email, track..."
+                    placeholder="Search by name, email, track..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
                   />
+                </div>
+
+                {/* Role Selector */}
+                <div className="sm:col-span-2 relative">
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value as any)}
+                    className="w-full py-2 pl-3.5 pr-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="ALL">All Roles ({users.length})</option>
+                    <option value="instructor">Mentors ({mentorUsers.length})</option>
+                    <option value="learner">Learners ({users.filter((u) => u.role === 'learner').length})</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
                 {/* Enrolled Course Track Selector */}
@@ -714,28 +796,10 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       ).length
                       return (
                         <option key={c.id} value={c.title}>
-                          {c.title} ({count || (c.enrolledCount || 420)} learners)
+                          {c.title} ({count || (c.enrolledCount || 420)})
                         </option>
                       )
                     })}
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-
-                {/* Sort By Dropdown */}
-                <div className="sm:col-span-2 relative">
-                  <select
-                    value={userSortBy}
-                    onChange={(e) => setUserSortBy(e.target.value as any)}
-                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                  >
-                    <option value="default">Sort: Default</option>
-                    <option value="course">Sort: Enrolled Course</option>
-                    <option value="xp">Sort: Highest XP</option>
-                    <option value="streak">Sort: Longest Streak</option>
-                    <option value="lessons">Sort: Most Lessons</option>
-                    <option value="name">Sort: Name (A-Z)</option>
-                    <option value="recent">Sort: Recently Active</option>
                   </select>
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
@@ -745,7 +809,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                    className="w-full py-2 pl-3 pr-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     {WEST_AFRICAN_COUNTRIES.map((c) => (
                       <option key={c.code} value={c.code}>
@@ -753,15 +817,32 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                {/* Status Filter */}
+                {/* Sort By Dropdown */}
+                <div className="sm:col-span-1 relative">
+                  <select
+                    value={userSortBy}
+                    onChange={(e) => setUserSortBy(e.target.value as any)}
+                    className="w-full py-2 pl-2 pr-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                  >
+                    <option value="default">Sort</option>
+                    <option value="recent">Recent</option>
+                    <option value="xp">Highest XP</option>
+                    <option value="streak">Streak</option>
+                    <option value="lessons">Lessons</option>
+                    <option value="name">Name</option>
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Activity Status Filter */}
                 <div className="sm:col-span-1 relative">
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full py-2 pl-2 pr-7 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+                    className="w-full py-2 pl-2 pr-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
                     <option value="ALL">Status</option>
                     <option value="active">Active</option>
@@ -770,7 +851,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <option value="active_this_week">Week</option>
                     <option value="inactive">Idle</option>
                   </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </>
             )}
@@ -1304,224 +1385,604 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           )}
 
           {/* ═══════════════════════════════════════════════════════════════
-              SUBVIEW 4: MENTOR APPLICATIONS & APPOINTMENT DESK
+              SUBVIEW 4: MENTOR OPERATIONS, ACTIVE/INACTIVE ROSTER & APPS
               ═══════════════════════════════════════════════════════════════ */}
           {subView === 'mentors' && (
-            <div className="p-4 sm:p-6 space-y-4">
-              {/* Mentor Status Filter Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {[
-                    { id: 'ALL', label: 'All Applications', count: mentorApps.length },
-                    { id: 'pending', label: 'Pending Review', count: mentorApps.filter((a) => a.status === 'pending').length },
-                    { id: 'approved', label: 'Approved Mentors', count: mentorApps.filter((a) => a.status === 'approved').length },
-                    { id: 'rejected', label: 'Declined', count: mentorApps.filter((a) => a.status === 'rejected').length },
-                  ].map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setSelectedAppStatus(tab.id as any)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        selectedAppStatus === tab.id
-                          ? 'bg-brand-600 text-white shadow-2xs'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                      }`}
-                    >
-                      <span>{tab.label}</span>
-                      <span
-                        className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
-                          selectedAppStatus === tab.id
-                            ? 'bg-white/20 text-white'
-                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        {tab.count}
-                      </span>
-                    </button>
-                  ))}
+            <div className="p-4 sm:p-6 space-y-5">
+              {/* Top Mentor Overview Metrics Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
+                  <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
+                    <span>Total Mentors</span>
+                    <GraduationCap className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                  </div>
+                  <div className="text-xl font-bold text-slate-900 dark:text-white font-mono">
+                    {mentorUsers.length}
+                  </div>
+                  <div className="text-[10px] text-slate-500">Verified Instructors</div>
                 </div>
 
-                <div className="text-xs text-slate-500 font-mono">
-                  <span>Only Admins can verify &amp; appoint course mentors.</span>
+                <div className="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs space-y-1">
+                  <div className="flex items-center justify-between text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                    <span>Active Mentors</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                  </div>
+                  <div className="text-xl font-bold text-emerald-800 dark:text-emerald-200 font-mono">
+                    {activeMentorCount}
+                  </div>
+                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400">Online &amp; active this week</div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
+                  <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
+                    <span>Inactive Mentors</span>
+                    <Clock className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <div className="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono">
+                    {inactiveMentorCount}
+                  </div>
+                  <div className="text-[10px] text-slate-500">Offline &gt;7 days / idle</div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 shadow-2xs space-y-1">
+                  <div className="flex items-center justify-between text-amber-700 dark:text-amber-300 text-xs font-mono font-bold">
+                    <span>Pending Apps</span>
+                    <ShieldCheck className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <div className="text-xl font-bold text-amber-800 dark:text-amber-200 font-mono">
+                    {pendingMentorCount}
+                  </div>
+                  <div className="text-[10px] text-amber-600 dark:text-amber-400">Awaiting Admin Review</div>
                 </div>
               </div>
 
-              {/* Applications List */}
-              {filteredMentorApps.length === 0 ? (
-                <div className="py-12 text-center space-y-2">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
-                    <GraduationCap className="w-6 h-6" />
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                    No mentor applications found
-                  </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                    New applicant submissions from the landing page will appear here for administrator verification and appointment.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-3.5">
-                  {filteredMentorApps.map((app) => (
-                    <div
-                      key={app.id}
-                      className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 space-y-3.5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+              {/* Sub-Tabs: Verified Mentors Roster vs Applications Queue */}
+              <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMentorRosterSubTab('roster')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      mentorRosterSubTab === 'roster'
+                        ? 'bg-brand-600 text-white shadow-2xs font-extrabold'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    <Users className="w-3.5 h-3.5" />
+                    <span>Appointed Mentors Roster</span>
+                    <span
+                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                        mentorRosterSubTab === 'roster'
+                          ? 'bg-white/20 text-white'
+                          : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      }`}
                     >
-                      {/* Top row: Applicant Info & Badges */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
-                            {app.fullName.charAt(0)}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-sm font-bold text-slate-900 dark:text-white">
-                                {app.fullName}
-                              </span>
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200">
-                                <Globe className="w-2.5 h-2.5 text-brand-500" />
-                                {app.country} ({app.countryCode || 'AF'})
-                              </span>
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                                <Laptop className="w-2.5 h-2.5 text-slate-500" />
-                                {app.institutionOrCompany}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5">
-                              <span className="flex items-center gap-1">
-                                <Mail className="w-3 h-3 text-slate-400" />
-                                {app.email}
-                              </span>
-                              <span>•</span>
-                              <span>Applied: {getHumanRelativeTime(app.appliedAt)}</span>
-                            </div>
-                          </div>
-                        </div>
+                      {mentorUsers.length}
+                    </span>
+                  </button>
 
-                        {/* Status Badge */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          {app.status === 'pending' && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-mono text-[10px] font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                              Pending Review
-                            </span>
-                          )}
-                          {app.status === 'approved' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] font-bold">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                              Appointed Mentor
-                            </span>
-                          )}
-                          {app.status === 'rejected' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-[10px] font-bold">
-                              <X className="w-3 h-3 text-slate-400" />
-                              Declined
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                  <button
+                    type="button"
+                    onClick={() => setMentorRosterSubTab('applications')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      mentorRosterSubTab === 'applications'
+                        ? 'bg-brand-600 text-white shadow-2xs font-extrabold'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>Applications Queue</span>
+                    {pendingMentorCount > 0 ? (
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500 text-white font-bold animate-pulse">
+                        {pendingMentorCount} New
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                        {mentorApps.length}
+                      </span>
+                    )}
+                  </button>
+                </div>
 
-                      {/* Mentorship Tracks & Experience */}
-                      <div className="flex items-center gap-2 flex-wrap text-xs">
-                        <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono text-[11px]">
-                          <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                          <span>Tracks:</span>
-                        </span>
-                        {app.programmingTracks.map((track) => (
+                <div className="text-xs text-slate-500 font-mono">
+                  <span>Admins can review active teaching status and promote/demote mentors.</span>
+                </div>
+              </div>
+
+              {/* TAB 1: APPOINTED MENTORS ROSTER (ACTIVE & INACTIVE) */}
+              {mentorRosterSubTab === 'roster' && (
+                <div className="space-y-4">
+                  {/* Activity Filter Chips */}
+                  <div className="flex flex-wrap items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-1.5">
+                      {[
+                        { id: 'ALL', label: 'All Mentors', count: mentorUsers.length },
+                        { id: 'active', label: '🟢 Active Mentors', count: activeMentorCount },
+                        { id: 'inactive', label: '⚪ Inactive Mentors', count: inactiveMentorCount },
+                      ].map((btn) => (
+                        <button
+                          key={btn.id}
+                          type="button"
+                          onClick={() => setMentorActivityFilter(btn.id as any)}
+                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            mentorActivityFilter === btn.id
+                              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                          }`}
+                        >
+                          <span>{btn.label}</span>
                           <span
-                            key={track}
-                            className="px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-mono text-[10px] font-bold"
+                            className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                              mentorActivityFilter === btn.id
+                                ? 'bg-white/20 dark:bg-slate-900/20'
+                                : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                            }`}
                           >
-                            {track}
+                            {btn.count}
                           </span>
-                        ))}
-                        <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold">
-                          {app.yearsOfExperience}
-                        </span>
-                      </div>
-
-                      {/* Bio Statement */}
-                      <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 font-sans italic leading-relaxed">
-                        &ldquo;{app.bio}&rdquo;
-                      </div>
-
-                      {/* Bottom Footer: Links & Action Buttons */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
-                        {/* Links */}
-                        <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
-                          {app.githubUrl && (
-                            <a
-                              href={app.githubUrl.startsWith('http') ? app.githubUrl : `https://${app.githubUrl}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
-                            >
-                              <Code2 className="w-3.5 h-3.5 text-slate-500" />
-                              <span>GitHub Profile ↗</span>
-                            </a>
-                          )}
-                          {app.linkedinUrl && (
-                            <a
-                              href={app.linkedinUrl.startsWith('http') ? app.linkedinUrl : `https://${app.linkedinUrl}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
-                            >
-                              <Globe className="w-3.5 h-3.5 text-indigo-500" />
-                              <span>LinkedIn Profile ↗</span>
-                            </a>
-                          )}
-                          {app.portfolioUrl && (
-                            <a
-                              href={app.portfolioUrl.startsWith('http') ? app.portfolioUrl : `https://${app.portfolioUrl}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
-                            >
-                              <Laptop className="w-3.5 h-3.5 text-emerald-500" />
-                              <span>Portfolio Website ↗</span>
-                            </a>
-                          )}
-                        </div>
-
-                        {/* Admin Action Buttons */}
-                        <div className="flex items-center gap-2">
-                          {app.status === 'pending' && (
-                            <>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleRejectMentorApp(app.id, app.fullName)}
-                                className="h-7 px-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                              >
-                                Decline
-                              </Button>
-
-                              <Button
-                                variant="primary"
-                                size="sm"
-                                onClick={() => handleApproveMentorApp(app.id, app.fullName)}
-                                className="h-7 px-3 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-2xs"
-                                leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
-                              >
-                                Approve &amp; Appoint Mentor
-                              </Button>
-                            </>
-                          )}
-                          {app.status === 'approved' && (
-                            <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              Active Mentor • Verified by {app.reviewedBy || 'Admin'}
-                            </span>
-                          )}
-                          {app.status === 'rejected' && (
-                            <span className="text-[11px] font-mono text-slate-400">
-                              Application Declined
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                        </button>
+                      ))}
                     </div>
-                  ))}
+
+                    <div className="text-xs font-mono text-slate-500">
+                      Showing {filteredMentors.length} of {mentorUsers.length} mentors
+                    </div>
+                  </div>
+
+                  {/* Mentors Grid / Cards */}
+                  {filteredMentors.length === 0 ? (
+                    <div className="py-12 text-center space-y-2">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                        <GraduationCap className="w-6 h-6" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                        No mentors match this filter
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                        Try changing the activity filter or searching by another mentor name or country.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-3.5">
+                      {filteredMentors.map((mentor) => {
+                        const isLiveActive =
+                          mentor.status === 'active_now' ||
+                          mentor.status === 'active_today' ||
+                          mentor.status === 'active_this_week'
+
+                        const associatedApp = mentorApps.find(
+                          (a) => a.email.toLowerCase() === mentor.email.toLowerCase()
+                        )
+
+                        const enrolledCount = users.filter(
+                          (u) =>
+                            u.activeCourseTitle === mentor.activeCourseTitle ||
+                            (mentor.favoriteLanguage === 'java' && (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some(t => t.includes('Java')))) ||
+                            (mentor.favoriteLanguage === 'python' && (u.favoriteLanguage === 'python' || u.enrolledCourseTitles?.some(t => t.includes('Python')))) ||
+                            (mentor.favoriteLanguage === 'javascript' && (u.favoriteLanguage === 'javascript' || u.enrolledCourseTitles?.some(t => t.includes('JS'))))
+                        ).length
+
+                        return (
+                          <div
+                            key={mentor.id}
+                            className={`p-4 sm:p-5 rounded-2xl border transition-all space-y-3.5 ${
+                              isLiveActive
+                                ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500/50 shadow-2xs'
+                                : 'bg-slate-50/70 dark:bg-slate-950/40 border-slate-200/80 dark:border-slate-800/80 opacity-90'
+                            }`}
+                          >
+                            {/* Top row: Mentor Header & Live Status */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                <div className="relative">
+                                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                                    {mentor.name.charAt(0)}
+                                  </div>
+                                  {mentor.status === 'active_now' ? (
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 animate-pulse" />
+                                  ) : isLiveActive ? (
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" />
+                                  ) : (
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-slate-400 border-2 border-white dark:border-slate-900" />
+                                  )}
+                                </div>
+
+                                <div>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                      {mentor.name}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20">
+                                      <GraduationCap className="w-3 h-3" />
+                                      MENTOR
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                                      <Globe className="w-2.5 h-2.5 text-brand-500" />
+                                      {mentor.countryName} ({mentor.countryCode})
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5">
+                                    <span>@{mentor.username}</span>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-1">
+                                      <Mail className="w-3 h-3 text-slate-400" />
+                                      {mentor.email}
+                                    </span>
+                                    <span>•</span>
+                                    <span>Registered: {new Date(mentor.registeredAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Live Activity Status Indicator */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                {mentor.status === 'active_now' && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                                    <span>Active Now (Online)</span>
+                                  </span>
+                                )}
+                                {mentor.status === 'active_today' && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                    <span>Active Today ({getHumanRelativeTime(mentor.lastActive)})</span>
+                                  </span>
+                                )}
+                                {mentor.status === 'active_this_week' && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold">
+                                    <span className="w-2 h-2 rounded-full bg-sky-500" />
+                                    <span>Active This Week ({getHumanRelativeTime(mentor.lastActive)})</span>
+                                  </span>
+                                )}
+                                {(mentor.status === 'idle' || mentor.status === 'inactive') && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold">
+                                    <span className="w-2 h-2 rounded-full bg-slate-400" />
+                                    <span>Inactive / Offline ({getHumanRelativeTime(mentor.lastActive)})</span>
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Middle row: Course Track, Learners & Stats */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
+                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
+                                  <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                                  <span>Curriculum &amp; Track:</span>
+                                </div>
+                                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                  {mentor.activeCourseTitle || `Learn to code with ${mentor.favoriteLanguage.toUpperCase()}`}
+                                </div>
+                                <div className="text-[10px] text-brand-600 dark:text-brand-400 font-mono font-semibold">
+                                  {enrolledCount} enrolled students taking track
+                                </div>
+                              </div>
+
+                              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
+                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
+                                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>Activity &amp; Device:</span>
+                                </div>
+                                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                  Last seen: {getHumanRelativeTime(mentor.lastActive)}
+                                </div>
+                                <div>{getDeviceIcon(mentor.deviceMode)}</div>
+                              </div>
+
+                              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
+                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
+                                  <Zap className="w-3.5 h-3.5 text-amber-500" />
+                                  <span>Contribution Telemetry:</span>
+                                </div>
+                                <div className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
+                                  {mentor.totalXp.toLocaleString()} XP • {mentor.problemsSolved} Drills Curated
+                                </div>
+                                <div className="text-[10px] text-slate-500 font-mono">
+                                  {mentor.lessonsCompleted} Published Modules
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Bottom row: Profile Links & Admin Action Controls */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                              {/* Profiles Links */}
+                              <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                                {associatedApp?.githubUrl ? (
+                                  <a
+                                    href={associatedApp.githubUrl.startsWith('http') ? associatedApp.githubUrl : `https://${associatedApp.githubUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
+                                  >
+                                    <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                    <span>GitHub Profile ↗</span>
+                                  </a>
+                                ) : (
+                                  <a
+                                    href={`https://github.com/${mentor.username}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
+                                  >
+                                    <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                    <span>GitHub Profile ↗</span>
+                                  </a>
+                                )}
+
+                                {associatedApp?.linkedinUrl && (
+                                  <a
+                                    href={associatedApp.linkedinUrl.startsWith('http') ? associatedApp.linkedinUrl : `https://${associatedApp.linkedinUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
+                                  >
+                                    <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                                    <span>LinkedIn Profile ↗</span>
+                                  </a>
+                                )}
+
+                                {associatedApp?.portfolioUrl && (
+                                  <a
+                                    href={associatedApp.portfolioUrl.startsWith('http') ? associatedApp.portfolioUrl : `https://${associatedApp.portfolioUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
+                                  >
+                                    <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+                                    <span>Portfolio Website ↗</span>
+                                  </a>
+                                )}
+                              </div>
+
+                              {/* Admin Action Buttons */}
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleToggleMentorActivity(mentor.id, mentor.status, mentor.name)}
+                                  className={`h-7 px-3 text-xs font-bold border transition-all ${
+                                    isLiveActive
+                                      ? 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                      : 'text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50'
+                                  }`}
+                                >
+                                  {isLiveActive ? 'Mark as Inactive' : 'Set as Active Now'}
+                                </Button>
+
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleToggleMentorRole(mentor)}
+                                  className="h-7 px-3 text-xs font-bold text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                                >
+                                  Demote
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 2: MENTOR APPLICATIONS & REVIEW QUEUE */}
+              {mentorRosterSubTab === 'applications' && (
+                <div className="space-y-4">
+                  {/* Status filter bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {[
+                        { id: 'ALL', label: 'All Applications', count: mentorApps.length },
+                        { id: 'pending', label: 'Pending Review', count: mentorApps.filter((a) => a.status === 'pending').length },
+                        { id: 'approved', label: 'Approved Mentors', count: mentorApps.filter((a) => a.status === 'approved').length },
+                        { id: 'rejected', label: 'Declined', count: mentorApps.filter((a) => a.status === 'rejected').length },
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setSelectedAppStatus(tab.id as any)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            selectedAppStatus === tab.id
+                              ? 'bg-brand-600 text-white shadow-2xs'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                          }`}
+                        >
+                          <span>{tab.label}</span>
+                          <span
+                            className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                              selectedAppStatus === tab.id
+                                ? 'bg-white/20 text-white'
+                                : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            {tab.count}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Applications List */}
+                  {filteredMentorApps.length === 0 ? (
+                    <div className="py-12 text-center space-y-2">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                        <GraduationCap className="w-6 h-6" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                        No mentor applications found
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                        New applicant submissions from the landing page will appear here for administrator verification and appointment.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-3.5">
+                      {filteredMentorApps.map((app) => (
+                        <div
+                          key={app.id}
+                          className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 space-y-3.5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                        >
+                          {/* Top row: Applicant Info & Badges */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                                {app.fullName.charAt(0)}
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                    {app.fullName}
+                                  </span>
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200">
+                                    <Globe className="w-2.5 h-2.5 text-brand-500" />
+                                    {app.country} ({app.countryCode || 'AF'})
+                                  </span>
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                    <Laptop className="w-2.5 h-2.5 text-slate-500" />
+                                    {app.institutionOrCompany}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5">
+                                  <span className="flex items-center gap-1">
+                                    <Mail className="w-3 h-3 text-slate-400" />
+                                    {app.email}
+                                  </span>
+                                  <span>•</span>
+                                  <span>Applied: {getHumanRelativeTime(app.appliedAt)}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Status Badge */}
+                            <div className="flex items-center gap-2 shrink-0">
+                              {app.status === 'pending' && (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-mono text-[10px] font-bold">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                  Pending Review
+                                </span>
+                              )}
+                              {app.status === 'approved' && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] font-bold">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                  Appointed Mentor
+                                </span>
+                              )}
+                              {app.status === 'rejected' && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-[10px] font-bold">
+                                  <X className="w-3 h-3 text-slate-400" />
+                                  Declined
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Mentorship Tracks & Experience */}
+                          <div className="flex items-center gap-2 flex-wrap text-xs">
+                            <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono text-[11px]">
+                              <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                              <span>Tracks:</span>
+                            </span>
+                            {app.programmingTracks.map((track) => (
+                              <span
+                                key={track}
+                                className="px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-mono text-[10px] font-bold"
+                              >
+                                {track}
+                              </span>
+                            ))}
+                            <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold">
+                              {app.yearsOfExperience}
+                            </span>
+                          </div>
+
+                          {/* Bio Statement */}
+                          <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 font-sans italic leading-relaxed">
+                            &ldquo;{app.bio}&rdquo;
+                          </div>
+
+                          {/* Bottom Footer: Links & Action Buttons */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                            {/* Links */}
+                            <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                              {app.githubUrl && (
+                                <a
+                                  href={app.githubUrl.startsWith('http') ? app.githubUrl : `https://${app.githubUrl}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
+                                >
+                                  <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                  <span>GitHub Profile ↗</span>
+                                </a>
+                              )}
+                              {app.linkedinUrl && (
+                                <a
+                                  href={app.linkedinUrl.startsWith('http') ? app.linkedinUrl : `https://${app.linkedinUrl}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
+                                >
+                                  <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                                  <span>LinkedIn Profile ↗</span>
+                                </a>
+                              )}
+                              {app.portfolioUrl && (
+                                <a
+                                  href={app.portfolioUrl.startsWith('http') ? app.portfolioUrl : `https://${app.portfolioUrl}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
+                                >
+                                  <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+                                  <span>Portfolio Website ↗</span>
+                                </a>
+                              )}
+                            </div>
+
+                            {/* Admin Action Buttons */}
+                            <div className="flex items-center gap-2">
+                              {app.status === 'pending' && (
+                                <>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleRejectMentorApp(app.id, app.fullName)}
+                                    className="h-7 px-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                  >
+                                    Decline
+                                  </Button>
+
+                                  <Button
+                                    variant="primary"
+                                    size="sm"
+                                    onClick={() => handleApproveMentorApp(app.id, app.fullName)}
+                                    className="h-7 px-3 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-2xs"
+                                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                                  >
+                                    Approve &amp; Appoint Mentor
+                                  </Button>
+                                </>
+                              )}
+                              {app.status === 'approved' && (
+                                <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                  <CheckCircle2 className="w-3.5 h-3.5" />
+                                  Active Mentor • Verified by {app.reviewedBy || 'Admin'}
+                                </span>
+                              )}
+                              {app.status === 'rejected' && (
+                                <span className="text-[11px] font-mono text-slate-400">
+                                  Application Declined
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
