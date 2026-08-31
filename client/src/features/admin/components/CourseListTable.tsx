@@ -8,7 +8,7 @@ import {
   Clock,
   Database,
   Code2,
-  Settings,
+  Pencil,
   X,
 } from 'lucide-react'
 
@@ -119,7 +119,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                 onClick={() => onEditCourse(course)}
                 className="flex-1 py-2 px-3 rounded-xl bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-brand-100 cursor-pointer"
               >
-                <Settings className="w-3.5 h-3.5" />
+                <Pencil className="w-3.5 h-3.5" />
                 <span>Edit Course</span>
               </button>
 
@@ -242,7 +242,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                         className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/50 transition-colors cursor-pointer"
                         title="Edit course"
                       >
-                        <Settings className="w-3.5 h-3.5" />
+                        <Pencil className="w-3.5 h-3.5" />
                       </button>
 
                       <button

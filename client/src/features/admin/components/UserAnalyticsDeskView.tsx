@@ -741,6 +741,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/50 text-[11px] font-mono uppercase text-slate-500 dark:text-slate-400">
+                    <th className="py-3 pl-4 pr-1 w-10 text-center font-semibold">#</th>
                     <th className="py-3 px-4 font-semibold">Learner Profile</th>
                     <th className="py-3 px-4 font-semibold">Nation / Region</th>
                     <th className="py-3 px-4 font-semibold">Activity Status</th>
@@ -753,16 +754,21 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-sans">
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-slate-500 dark:text-slate-400 text-xs">
+                      <td colSpan={8} className="py-8 text-center text-slate-500 dark:text-slate-400 text-xs">
                         No learners matched your filter criteria.
                       </td>
                     </tr>
                   ) : (
-                    filteredUsers.map((user) => (
+                    filteredUsers.map((user, index) => (
                       <tr
                         key={user.id}
                         className="hover:bg-slate-50/80 dark:hover:bg-slate-950/40 transition-colors"
                       >
+                        {/* Number Index */}
+                        <td className="py-3 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
+                          {String(index + 1).padStart(2, '0')}
+                        </td>
+
                         {/* Learner Name & Role */}
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2.5">
@@ -837,8 +843,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               onClick={() => handleToggleStatus(user.id, user.name)}
                               className={`h-7 px-2.5 text-[11px] font-bold ${
                                 user.status === 'inactive' || user.status === 'idle'
-                                  ? 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
-                                  : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/60'
+                                   ? 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/60'
+                                   : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/60'
                               }`}
                             >
                               {user.status === 'inactive' || user.status === 'idle' ? (

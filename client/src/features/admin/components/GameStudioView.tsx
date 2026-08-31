@@ -373,12 +373,12 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
         {/* Language Track Selector Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold border-t border-slate-100 dark:border-slate-800/80 pt-3">
           {[
-            { id: 'all', label: '🌟 All Languages', badge: 'ALL' },
-            { id: 'python', label: '🐍 Python', badge: 'PY' },
-            { id: 'javascript', label: '⚡ JavaScript', badge: 'JS' },
-            { id: 'java', label: '☕ Java', badge: 'JV' },
-            { id: 'typescript', label: '🔷 TypeScript', badge: 'TS' },
-            { id: 'sql', label: '🗄️ SQL & DB', badge: 'DB' },
+            { id: 'all', label: 'All Languages', badge: 'ALL' },
+            { id: 'python', label: 'Python', badge: 'PY' },
+            { id: 'javascript', label: 'JavaScript', badge: 'JS' },
+            { id: 'java', label: 'Java', badge: 'JV' },
+            { id: 'typescript', label: 'TypeScript', badge: 'TS' },
+            { id: 'sql', label: 'SQL & DB', badge: 'DB' },
           ].map((lang) => {
             const isActive = selectedLanguage === lang.id
             return (
