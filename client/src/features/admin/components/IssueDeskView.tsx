@@ -451,7 +451,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                     <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 uppercase">
                       Ticket Stage:
                     </span>
-                    <div className="grid grid-cols-3 sm:flex items-center gap-1.5 w-full sm:w-auto">
+                    <div className="grid grid-cols-2 sm:flex items-center gap-1.5 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'open')}
@@ -485,11 +485,22 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       >
                         Resolved ✓
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(selectedIssue.id, 'closed')}
+                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
+                          selectedIssue.status === 'closed'
+                            ? 'bg-slate-700 text-white border-slate-700 shadow-2xs'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                        }`}
+                      >
+                        Closed
+                      </button>
                     </div>
                   </div>
 
                   <span className="text-[11px] font-mono text-slate-400 block text-right sm:text-left">
-                    {selectedIssue.status === 'resolved' ? 'Closed' : 'Active Ticket'}
+                    {selectedIssue.status === 'resolved' || selectedIssue.status === 'closed' ? 'Archived Ticket' : 'Active Ticket'}
                   </span>
                 </div>
 

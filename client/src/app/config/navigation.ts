@@ -75,6 +75,13 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     iconName: 'Trophy',
   },
   {
+    id: 'mentor',
+    label: 'Mentor Hub',
+    path: '/mentor',
+    iconName: 'GraduationCap',
+    badge: 'Mentor',
+  },
+  {
     id: 'admin',
     label: 'Admin',
     path: '/admin',

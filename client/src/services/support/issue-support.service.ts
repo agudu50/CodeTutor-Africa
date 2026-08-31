@@ -1,3 +1,5 @@
+import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
+
 export type IssueCategory =
   | 'course_bug'
   | 'practice_problem'
@@ -8,7 +10,7 @@ export type IssueCategory =
 
 export type IssuePriority = 'low' | 'medium' | 'high' | 'urgent'
 
-export type IssueStatus = 'open' | 'in_review' | 'resolved'
+export type IssueStatus = 'open' | 'in_review' | 'resolved' | 'closed'
 
 export interface IssueReport {
   id: string
@@ -24,6 +26,7 @@ export interface IssueReport {
   updatedCodeSnippet?: string
   errorMessage?: string
   adminReply?: string
+  instructorName?: string
   createdAt: string
   resolvedAt?: string
 }
@@ -131,19 +134,46 @@ class IssueSupportService {
     id: string,
     status: IssueStatus,
     adminReply?: string,
-    updatedCodeSnippet?: string
+    updatedCodeSnippet?: string,
+    instructorName?: string
   ): IssueReport | undefined {
     const idx = this.issues.findIndex((i) => i.id === id)
     if (idx === -1) return undefined
+
+    const isReplying = adminReply !== undefined && adminReply.trim().length > 0
+    const author = instructorName || 'Course Mentor / Lead Instructor'
 
     this.issues[idx] = {
       ...this.issues[idx],
       status,
       adminReply: adminReply !== undefined ? adminReply : this.issues[idx].adminReply,
       updatedCodeSnippet: updatedCodeSnippet !== undefined ? updatedCodeSnippet : this.issues[idx].updatedCodeSnippet,
+      instructorName: author,
       resolvedAt: status === 'resolved' ? new Date().toISOString() : undefined,
     }
     this.save()
+
+    // Cross-sync: Notify and log to Admin Operations Audit Trail
+    try {
+      if (adminAnalyticsService && typeof adminAnalyticsService.logAction === 'function') {
+        adminAnalyticsService.logAction({
+          actorName: author,
+          actorRole: 'mentor',
+          action: isReplying ? 'MENTOR_REPLIED_TO_INQUIRY' : 'MENTOR_UPDATED_TICKET_STAGE',
+          category: 'tutor',
+          target: `#${id} (${this.issues[idx].userName} - ${this.issues[idx].subject})`,
+          details: isReplying
+            ? `Delivered instructor solution note & resolution to student ${this.issues[idx].userName}. Stage: ${status.toUpperCase()}`
+            : `Updated ticket stage to [${status.toUpperCase()}] for ${this.issues[idx].userName}.`,
+          status: status === 'resolved' ? 'success' : 'info',
+          ipAddress: '127.0.0.1',
+          userAgent: 'CodeTutor Mentor Desk',
+        })
+      }
+    } catch {
+      // safe fallback if dynamic log happens during initialization
+    }
+
     return this.issues[idx]
   }
 

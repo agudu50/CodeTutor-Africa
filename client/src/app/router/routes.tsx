@@ -17,6 +17,7 @@ import LessonViewPage from '@/features/learning/pages/LessonViewPage'
 import ProgressPage from '@/features/progress/pages/ProgressPage'
 import SettingsPage from '@/features/settings/pages/SettingsPage'
 import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage'
+import MentorDashboardPage from '@/features/mentor/pages/MentorDashboardPage'
 import QuizzesPage from '@/features/learning/pages/QuizzesPage'
 import LeaderboardPage from '@/features/leaderboard/pages/LeaderboardPage'
 
@@ -118,6 +119,10 @@ export const routes: RouteObject[] = [
       {
         path: 'settings',
         element: <SettingsPage />,
+      },
+      {
+        path: 'mentor',
+        element: <MentorDashboardPage />,
       },
       {
         path: 'admin',
