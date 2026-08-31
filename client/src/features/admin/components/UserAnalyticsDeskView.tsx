@@ -9,6 +9,7 @@ import { courseStoreService } from '@/services/learning/course-store.service'
 import { mentorApplicationService, MentorApplication } from '@/services/mentor/mentor-application.service'
 import { WEST_AFRICAN_COUNTRIES } from '@/features/leaderboard/data/mockLeaderboardData'
 import { Card, CardHeader, CardContent, Button, Modal } from '@/components/ui'
+import { DemoteMentorModal } from './DemoteMentorModal'
 import {
   Users,
   User,
@@ -121,6 +122,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [selectedAppStatus, setSelectedAppStatus] = useState<'ALL' | 'pending' | 'approved' | 'rejected'>('ALL')
   const [mentorRosterSubTab, setMentorRosterSubTab] = useState<'roster' | 'applications'>('roster')
   const [mentorActivityFilter, setMentorActivityFilter] = useState<'ALL' | 'active' | 'inactive'>('ALL')
+  const [mentorToDemote, setMentorToDemote] = useState<AdminUserRecord | null>(null)
+  const [isDemoteModalOpen, setIsDemoteModalOpen] = useState(false)
 
   React.useEffect(() => {
     const handleUpdate = () => {
@@ -387,25 +390,46 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     }
   }
 
-  const handleDemoteToLearner = (userId: string, userName: string) => {
-    const updated = adminAnalyticsService.setUserRole(userId, 'learner')
-    if (updated) {
+  const handleOpenDemoteModal = (mentor: AdminUserRecord) => {
+    setMentorToDemote(mentor)
+    setIsDemoteModalOpen(true)
+  }
+
+  const handleConfirmDemoteMentor = (userId: string, reason: string) => {
+    const demoted = adminAnalyticsService.demoteMentorToLearner(userId, reason)
+    if (demoted) {
+      mentorApplicationService.revokeOrDemoteApplication(demoted.email)
       onDataChanged()
-      setActionSuccessMsg(`Reset ${userName} role to Standard Learner.`)
-      setTimeout(() => setActionSuccessMsg(null), 3500)
+      setActionSuccessMsg(
+        `Successfully demoted ${demoted.name} to Standard Learner. Mentor Hub authoring access revoked.`
+      )
+      setTimeout(() => setActionSuccessMsg(null), 4500)
+    }
+  }
+
+  const handleDemoteToLearner = (userId: string, userName: string) => {
+    const user = users.find((u) => u.id === userId)
+    if (user && user.role === 'instructor') {
+      handleOpenDemoteModal(user)
+    } else {
+      const updated = adminAnalyticsService.setUserRole(userId, 'learner')
+      if (updated) {
+        onDataChanged()
+        setActionSuccessMsg(`Reset ${userName} role to Standard Learner.`)
+        setTimeout(() => setActionSuccessMsg(null), 3500)
+      }
     }
   }
 
   const handleToggleMentorRole = (user: AdminUserRecord) => {
-    const nextRole = user.role === 'instructor' ? 'learner' : 'instructor'
-    const updated = adminAnalyticsService.setUserRole(user.id, nextRole)
+    if (user.role === 'instructor') {
+      handleOpenDemoteModal(user)
+      return
+    }
+    const updated = adminAnalyticsService.setUserRole(user.id, 'instructor')
     if (updated) {
       onDataChanged()
-      setActionSuccessMsg(
-        nextRole === 'instructor'
-          ? `Appointed ${user.name} as a Verified Mentor / Instructor`
-          : `Demoted ${user.name} to Learner role`
-      )
+      setActionSuccessMsg(`Appointed ${user.name} as a Verified Mentor / Instructor`)
       setTimeout(() => setActionSuccessMsg(null), 3500)
     }
   }
@@ -2160,6 +2184,14 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           </div>
         </div>
       </Modal>
+
+      {/* Demote Mentor Confirmation Modal */}
+      <DemoteMentorModal
+        isOpen={isDemoteModalOpen}
+        mentor={mentorToDemote}
+        onClose={() => setIsDemoteModalOpen(false)}
+        onConfirmDemote={handleConfirmDemoteMentor}
+      />
     </div>
   )
 }

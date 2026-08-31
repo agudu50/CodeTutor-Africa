@@ -667,6 +667,68 @@ class AdminAnalyticsService {
     return user
   }
 
+  demoteMentorToLearner(userId: string, reason = 'Administrative role restructuring', actorName = 'Lead Curriculum Director (Admin)'): AdminUserRecord | null {
+    const idx = this.users.findIndex((u) => u.id === userId)
+    if (idx === -1) return null
+
+    const mentor = this.users[idx]
+    this.users[idx] = {
+      ...mentor,
+      role: 'learner',
+    }
+    this.saveUsers()
+
+    this.logAction({
+      actorName,
+      actorRole: 'admin',
+      action: 'MENTOR_DEMOTED',
+      category: 'curriculum',
+      target: `${mentor.name} (${mentor.email})`,
+      details: `Admin demoted mentor to standard learner. Reason: "${reason}". Revoked all Mentor Hub authoring, course editing & student inquiry resolution access.`,
+      status: 'warning',
+      ipAddress: '127.0.0.1',
+      userAgent: 'CodeTutor Admin Console',
+    })
+
+    const activeSessionId = localStorage.getItem('codetutor_active_user_session_id')
+    if (activeSessionId === userId) {
+      window.dispatchEvent(new CustomEvent('active_user_session_changed', { detail: this.users[idx] }))
+    }
+
+    return this.users[idx]
+  }
+
+  getActiveUserSession(): AdminUserRecord {
+    try {
+      const storedId = localStorage.getItem('codetutor_active_user_session_id')
+      if (storedId) {
+        const found = this.users.find((u) => u.id === storedId)
+        if (found) return found
+      }
+    } catch {
+      // fallback
+    }
+    const defaultUser = this.users.find((u) => u.role === 'instructor') || this.users[0]
+    return defaultUser
+  }
+
+  setActiveUserSession(userId: string): AdminUserRecord | null {
+    const found = this.users.find((u) => u.id === userId)
+    if (found) {
+      try {
+        localStorage.setItem('codetutor_active_user_session_id', userId)
+      } catch {}
+      window.dispatchEvent(new CustomEvent('active_user_session_changed', { detail: found }))
+      return found
+    }
+    return null
+  }
+
+  isCurrentUserMentor(): boolean {
+    const user = this.getActiveUserSession()
+    return Boolean(user && (user.role === 'instructor' || user.role === 'admin'))
+  }
+
   setUserRole(userId: string, newRole: 'learner' | 'instructor' | 'admin', actorName = 'Lead Curriculum Director (Admin)'): AdminUserRecord | null {
     const idx = this.users.findIndex((u) => u.id === userId)
     if (idx === -1) return null
@@ -684,11 +746,16 @@ class AdminAnalyticsService {
       action: newRole === 'instructor' ? 'USER_PROMOTED_TO_MENTOR' : newRole === 'admin' ? 'USER_PROMOTED_TO_ADMIN' : 'USER_ROLE_UPDATED',
       category: 'curriculum',
       target: `${this.users[idx].name} (${this.users[idx].email})`,
-      details: `Admin changed user role from [${oldRole.toUpperCase()}] to [${newRole.toUpperCase()}]. ${newRole === 'instructor' ? 'Granted Mentor Hub course authoring & inquiry desk access.' : ''}`,
+      details: `Admin changed user role from [${oldRole.toUpperCase()}] to [${newRole.toUpperCase()}]. ${newRole === 'instructor' ? 'Granted Mentor Hub course authoring & inquiry desk access.' : 'Revoked Mentor Hub authoring privileges.'}`,
       status: 'success',
       ipAddress: '127.0.0.1',
       userAgent: 'CodeTutor Admin Console',
     })
+
+    const activeSessionId = localStorage.getItem('codetutor_active_user_session_id')
+    if (activeSessionId === userId) {
+      window.dispatchEvent(new CustomEvent('active_user_session_changed', { detail: this.users[idx] }))
+    }
 
     return this.users[idx]
   }

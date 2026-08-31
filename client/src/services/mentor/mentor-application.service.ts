@@ -248,6 +248,22 @@ class MentorApplicationService {
     return this.applications[idx]
   }
 
+  revokeOrDemoteApplication(email: string, reviewerName = 'Lead Curriculum Director (Admin)'): boolean {
+    const idx = this.applications.findIndex((a) => a.email.toLowerCase() === email.toLowerCase())
+    if (idx !== -1) {
+      this.applications[idx] = {
+        ...this.applications[idx],
+        status: 'rejected',
+        reviewedAt: new Date().toISOString(),
+        reviewedBy: reviewerName,
+        adminNotes: 'Mentor privileges revoked and demoted to standard learner by Admin.',
+      }
+      this.save()
+      return true
+    }
+    return false
+  }
+
   deleteApplication(id: string): boolean {
     const initialLen = this.applications.length
     this.applications = this.applications.filter((a) => a.id !== id)

@@ -36,11 +36,13 @@ const EXPERIENCE_OPTIONS = [
 interface MentorApplicationModalProps {
   isOpen: boolean
   onClose: () => void
+  onApplicationSubmitted?: () => void
 }
 
 export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
   isOpen,
   onClose,
+  onApplicationSubmitted,
 }) => {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -78,15 +80,13 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
   }
 
   const toggleTrack = (trackId: string) => {
-    if (selectedTracks.includes(trackId)) {
-      setSelectedTracks(selectedTracks.filter((t) => t !== trackId))
-    } else {
-      setSelectedTracks([...selectedTracks, trackId])
-    }
+    setSelectedTracks((prev) =>
+      prev.includes(trackId) ? prev.filter((t) => t !== trackId) : [...prev, trackId]
+    )
   }
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     if (!fullName.trim() || !email.trim() || !institutionOrCompany.trim() || selectedTracks.length === 0) {
       return
     }
@@ -110,6 +110,9 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
 
     setIsSubmitting(false)
     setIsSuccess(true)
+    if (onApplicationSubmitted) {
+      onApplicationSubmitted()
+    }
   }
 
   const handleClose = () => {
