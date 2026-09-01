@@ -135,25 +135,25 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [isDemoteModalOpen, setIsDemoteModalOpen] = useState(false)
   const [approveModalTarget, setApproveModalTarget] = useState<ApproveMentorTarget | null>(null)
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
-  const [collapsedMentorCardIds, setCollapsedMentorCardIds] = useState<Record<string, boolean>>({})
+  const [expandedMentorCardIds, setExpandedMentorCardIds] = useState<Record<string, boolean>>({})
 
-  const toggleMentorCardCollapse = (mentorId: string) => {
-    setCollapsedMentorCardIds((prev) => ({
+  const toggleMentorCardExpanded = (mentorId: string) => {
+    setExpandedMentorCardIds((prev) => ({
       ...prev,
       [mentorId]: !prev[mentorId],
     }))
   }
 
   const handleCollapseAllMentors = () => {
+    setExpandedMentorCardIds({})
+  }
+
+  const handleExpandAllMentors = () => {
     const map: Record<string, boolean> = {}
     mentorUsers.forEach((m) => {
       map[m.id] = true
     })
-    setCollapsedMentorCardIds(map)
-  }
-
-  const handleExpandAllMentors = () => {
-    setCollapsedMentorCardIds({})
+    setExpandedMentorCardIds(map)
   }
 
   // Contact Inquiries State
@@ -1805,7 +1805,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         ) || mentorLearners.length
 
                         const isExpanded = expandedMentorId === mentor.id
-                        const isCardCollapsed = !!collapsedMentorCardIds[mentor.id]
+                        const isCardExpanded = !!expandedMentorCardIds[mentor.id]
 
                         return (
                           <div
@@ -1913,19 +1913,19 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
                                   <button
                                     type="button"
-                                    onClick={() => toggleMentorCardCollapse(mentor.id)}
+                                    onClick={() => toggleMentorCardExpanded(mentor.id)}
                                     className="h-8 px-2.5 sm:px-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-3xs"
-                                    title={isCardCollapsed ? "Show mentor details" : "Hide mentor details"}
+                                    title={isCardExpanded ? "Hide mentor details" : "Show mentor details"}
                                   >
-                                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isCardCollapsed ? '-rotate-90' : 'rotate-0'}`} />
-                                    <span>{isCardCollapsed ? 'Show Info' : 'Hide Info'}</span>
+                                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isCardExpanded ? 'rotate-180' : 'rotate-0'}`} />
+                                    <span>{isCardExpanded ? 'Hide Info' : 'Show Info'}</span>
                                   </button>
                                 </div>
                               </div>
                             </div>
 
                             {/* Collapsible Details Body */}
-                            {!isCardCollapsed && (
+                            {isCardExpanded && (
                               <div className="space-y-4 pt-1 animate-in fade-in duration-200">
 
                             {/* ═══════════════════════════════════════════════════════════════
