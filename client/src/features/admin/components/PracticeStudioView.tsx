@@ -404,13 +404,13 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
                       <td className="py-3.5 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
                         {String(index + 1).padStart(2, '0')}
                       </td>
-                      <td className="px-4 py-3.5 max-w-xs">
-                        <span className="font-bold text-slate-900 dark:text-white block truncate text-xs">
+                      <td className="px-4 py-3.5 min-w-[280px] max-w-md">
+                        <span className="font-bold text-slate-900 dark:text-white block text-xs leading-snug">
                           {q.title}
                         </span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed" title={q.description}>
                           {q.description}
-                        </span>
+                        </p>
                       </td>
 
                       <td className="px-4 py-3.5 whitespace-nowrap">

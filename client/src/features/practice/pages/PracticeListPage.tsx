@@ -228,7 +228,7 @@ export const PracticeListPage: React.FC = () => {
                     {question.title}
                   </h3>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3" title={question.description}>
                     {question.description}
                   </p>
 
