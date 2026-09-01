@@ -135,6 +135,26 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [isDemoteModalOpen, setIsDemoteModalOpen] = useState(false)
   const [approveModalTarget, setApproveModalTarget] = useState<ApproveMentorTarget | null>(null)
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
+  const [collapsedMentorCardIds, setCollapsedMentorCardIds] = useState<Record<string, boolean>>({})
+
+  const toggleMentorCardCollapse = (mentorId: string) => {
+    setCollapsedMentorCardIds((prev) => ({
+      ...prev,
+      [mentorId]: !prev[mentorId],
+    }))
+  }
+
+  const handleCollapseAllMentors = () => {
+    const map: Record<string, boolean> = {}
+    mentorUsers.forEach((m) => {
+      map[m.id] = true
+    })
+    setCollapsedMentorCardIds(map)
+  }
+
+  const handleExpandAllMentors = () => {
+    setCollapsedMentorCardIds({})
+  }
 
   // Contact Inquiries State
   const [inquiries, setInquiries] = useState<ContactInquiry[]>(() => adminAnalyticsService.getContactInquiries())
@@ -1723,8 +1743,27 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       ))}
                     </div>
 
-                    <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                      Showing {filteredMentors.length} of {mentorUsers.length} mentors
+                    <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={handleCollapseAllMentors}
+                          className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer shadow-3xs"
+                        >
+                          Collapse All
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleExpandAllMentors}
+                          className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer shadow-3xs"
+                        >
+                          Expand All
+                        </button>
+                      </div>
+
+                      <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                        Showing {filteredMentors.length} of {mentorUsers.length} mentors
+                      </div>
                     </div>
                   </div>
 
@@ -1766,6 +1805,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         ) || mentorLearners.length
 
                         const isExpanded = expandedMentorId === mentor.id
+                        const isCardCollapsed = !!collapsedMentorCardIds[mentor.id]
 
                         return (
                           <div
@@ -1777,10 +1817,10 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                             }`}
                           >
                             {/* Top row: Mentor Header & Live Status */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                              <div className="flex items-center gap-3">
-                                <div className="relative">
-                                  <div className="w-11 h-11 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0 overflow-hidden">
+                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+                              <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+                                <div className="relative shrink-0 mt-0.5 sm:mt-0">
+                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0 overflow-hidden border border-slate-200 dark:border-slate-800">
                                     {mentor.avatarUrl ? (
                                       <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
                                     ) : (
@@ -1788,75 +1828,105 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                     )}
                                   </div>
                                   {mentor.status === 'active_now' ? (
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 animate-pulse" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 animate-pulse shadow-3xs" />
                                   ) : isLiveActive ? (
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 shadow-3xs" />
                                   ) : (
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-slate-400 border-2 border-white dark:border-slate-900" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-slate-400 border-2 border-white dark:border-slate-900 shadow-3xs" />
                                   )}
                                 </div>
 
-                                <div>
+                                <div className="min-w-0 flex-1">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                    <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
                                       {mentor.name}
                                     </span>
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20 shadow-3xs shrink-0">
                                       <GraduationCap className="w-3 h-3" />
                                       VERIFIED MENTOR
                                     </span>
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-3xs shrink-0">
                                       <Globe className="w-2.5 h-2.5 text-brand-500" />
                                       {mentor.countryName} ({mentor.countryCode})
                                     </span>
                                   </div>
 
-                                  <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5 flex-wrap">
-                                    <span>@{mentor.username}</span>
-                                    <span>•</span>
+                                  <div className="flex items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400 font-mono mt-1 flex-wrap">
+                                    <span className="font-semibold text-slate-700 dark:text-slate-300">@{mentor.username}</span>
+                                    <span className="text-slate-300 dark:text-slate-600 hidden xs:inline">•</span>
                                     <span className="flex items-center gap-1">
-                                      <Mail className="w-3 h-3 text-slate-400" />
-                                      {mentor.email}
+                                      <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                                      <span className="break-all">{mentor.email}</span>
                                     </span>
-                                    <span>•</span>
-                                    <span>Registered: {new Date(mentor.registeredAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
+                                    <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">•</span>
+                                    <span className="text-[11px] text-slate-400 dark:text-slate-500 whitespace-nowrap">
+                                      Registered {new Date(mentor.registeredAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}
+                                    </span>
                                   </div>
                                 </div>
                               </div>
 
-                              {/* Live Activity Status & Total Enrolled Highlight Badge */}
-                              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
-                                <div className="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-brand-800 dark:text-brand-300 font-mono text-xs font-bold flex items-center gap-1.5 shadow-3xs">
-                                  <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                                  <span>{totalMentorStudentsEnrolled.toLocaleString()} Students Enrolled</span>
+                              {/* Live Activity Status & Action Controls */}
+                              <div className="flex items-center gap-2 flex-wrap shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800/80 w-full lg:w-auto justify-between lg:justify-end">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-brand-800 dark:text-brand-300 font-mono text-xs font-bold flex items-center gap-1.5 shadow-3xs">
+                                    <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                                    <span>{totalMentorStudentsEnrolled.toLocaleString()} Enrolled</span>
+                                  </div>
+
+                                  {mentor.status === 'active_now' && (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                                      <span>Active Now</span>
+                                    </span>
+                                  )}
+                                  {mentor.status === 'active_today' && (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                                      <span>Active Today</span>
+                                    </span>
+                                  )}
+                                  {mentor.status === 'active_this_week' && (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                      <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
+                                      <span>Active this Week</span>
+                                    </span>
+                                  )}
+                                  {(mentor.status === 'idle' || mentor.status === 'inactive') && (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                      <span className="w-2 h-2 rounded-full bg-slate-400 shrink-0" />
+                                      <span>Inactive</span>
+                                    </span>
+                                  )}
                                 </div>
 
-                                {mentor.status === 'active_now' && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
-                                    <span>Active Now</span>
-                                  </span>
-                                )}
-                                {mentor.status === 'active_today' && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold whitespace-nowrap">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                                    <span>Active Today</span>
-                                  </span>
-                                )}
-                                {mentor.status === 'active_this_week' && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold whitespace-nowrap">
-                                    <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
-                                    <span>Active this Week</span>
-                                  </span>
-                                )}
-                                {(mentor.status === 'idle' || mentor.status === 'inactive') && (
-                                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold whitespace-nowrap">
-                                    <span className="w-2 h-2 rounded-full bg-slate-400 shrink-0" />
-                                    <span>Inactive / Offline</span>
-                                  </span>
-                                )}
+                                <div className="flex items-center gap-1.5">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleToggleMentorRole(mentor)}
+                                    className="h-8 px-2.5 sm:px-3 text-xs font-bold text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 shadow-3xs cursor-pointer"
+                                    leftIcon={<AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />}
+                                  >
+                                    Demote
+                                  </Button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleMentorCardCollapse(mentor.id)}
+                                    className="h-8 px-2.5 sm:px-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-3xs"
+                                    title={isCardCollapsed ? "Show mentor details" : "Hide mentor details"}
+                                  >
+                                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isCardCollapsed ? '-rotate-90' : 'rotate-0'}`} />
+                                    <span>{isCardCollapsed ? 'Show Info' : 'Hide Info'}</span>
+                                  </button>
+                                </div>
                               </div>
                             </div>
+
+                            {/* Collapsible Details Body */}
+                            {!isCardCollapsed && (
+                              <div className="space-y-4 pt-1 animate-in fade-in duration-200">
 
                             {/* ═══════════════════════════════════════════════════════════════
                                 ADMIN PER-MENTOR COURSES & ENROLLED STUDENTS BREAKDOWN
@@ -2024,72 +2094,61 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               )}
                             </div>
 
-                            {/* Bottom row: Profile Links & Admin Action Controls */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                              {/* Profiles Links */}
-                              <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
-                                {associatedApp?.githubUrl ? (
-                                  <a
-                                    href={associatedApp.githubUrl.startsWith('http') ? associatedApp.githubUrl : `https://${associatedApp.githubUrl}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
-                                  >
-                                    <Code2 className="w-3.5 h-3.5 text-slate-500" />
-                                    <span>GitHub Profile ↗</span>
-                                  </a>
-                                ) : (
-                                  <a
-                                    href={`https://github.com/${mentor.username}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
-                                  >
-                                    <Code2 className="w-3.5 h-3.5 text-slate-500" />
-                                    <span>GitHub Profile ↗</span>
-                                  </a>
-                                )}
+                              {/* Bottom row: Profile Links */}
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                {/* Profiles Links */}
+                                <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                                  {associatedApp?.githubUrl ? (
+                                    <a
+                                      href={associatedApp.githubUrl.startsWith('http') ? associatedApp.githubUrl : `https://${associatedApp.githubUrl}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
+                                    >
+                                      <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                      <span>GitHub Profile ↗</span>
+                                    </a>
+                                  ) : (
+                                    <a
+                                      href={`https://github.com/${mentor.username}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
+                                    >
+                                      <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                      <span>GitHub Profile ↗</span>
+                                    </a>
+                                  )}
 
-                                {associatedApp?.linkedinUrl && (
-                                  <a
-                                    href={associatedApp.linkedinUrl.startsWith('http') ? associatedApp.linkedinUrl : `https://${associatedApp.linkedinUrl}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
-                                  >
-                                    <Globe className="w-3.5 h-3.5 text-indigo-500" />
-                                    <span>LinkedIn Profile ↗</span>
-                                  </a>
-                                )}
+                                  {associatedApp?.linkedinUrl && (
+                                    <a
+                                      href={associatedApp.linkedinUrl.startsWith('http') ? associatedApp.linkedinUrl : `https://${associatedApp.linkedinUrl}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
+                                    >
+                                      <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                                      <span>LinkedIn Profile ↗</span>
+                                    </a>
+                                  )}
 
-                                {associatedApp?.portfolioUrl && (
-                                  <a
-                                    href={associatedApp.portfolioUrl.startsWith('http') ? associatedApp.portfolioUrl : `https://${associatedApp.portfolioUrl}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
-                                  >
-                                    <Laptop className="w-3.5 h-3.5 text-emerald-500" />
-                                    <span>Portfolio Website ↗</span>
-                                  </a>
-                                )}
-                              </div>
-
-                              {/* Admin Action Buttons */}
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleToggleMentorRole(mentor)}
-                                  className="h-8 px-3 text-xs font-bold text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 shadow-3xs cursor-pointer"
-                                  leftIcon={<AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />}
-                                >
-                                  Demote
-                                </Button>
+                                  {associatedApp?.portfolioUrl && (
+                                    <a
+                                      href={associatedApp.portfolioUrl.startsWith('http') ? associatedApp.portfolioUrl : `https://${associatedApp.portfolioUrl}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
+                                    >
+                                      <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+                                      <span>Portfolio Website ↗</span>
+                                    </a>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )
+                          )}
+                        </div>
+                      )
                       })}
                     </div>
                   )}
