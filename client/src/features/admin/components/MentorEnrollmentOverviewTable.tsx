@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { AdminUserRecord } from '@/types/admin-analytics'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle, Dropdown } from '@/components/ui'
 import {
   GraduationCap,
   Users,
@@ -212,79 +212,70 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
           </div>
 
           {/* Search and Filters Toolbar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 pt-1">
+          {/* Search and Filters Toolbar */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 pt-1 items-center">
             {/* Search Input */}
-            <div>
-              <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search mentors..."
-                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-              </div>
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search mentors..."
+                className="w-full pl-9 pr-3 text-xs font-semibold rounded-xl border bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 min-h-[34px] shadow-2xs transition-all"
+              />
             </div>
 
             {/* Language Track Filter */}
-            <div>
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer font-mono"
-              >
-                <option value="ALL">All Languages</option>
-                <option value="python">Python</option>
-                <option value="javascript">JavaScript</option>
-                <option value="java">Java</option>
-                <option value="typescript">TypeScript</option>
-              </select>
-            </div>
+            <Dropdown
+              size="sm"
+              options={[
+                { value: 'ALL', label: 'All Languages' },
+                { value: 'python', label: 'Python' },
+                { value: 'javascript', label: 'JavaScript' },
+                { value: 'java', label: 'Java' },
+                { value: 'typescript', label: 'TypeScript' },
+              ]}
+              value={selectedLanguage}
+              onChange={(val) => setSelectedLanguage(val)}
+            />
 
             {/* Country Filter */}
-            <div>
-              <select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer font-mono"
-              >
-                <option value="ALL">All Nations</option>
-                {countriesList.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Dropdown
+              size="sm"
+              options={[
+                { value: 'ALL', label: 'All Nations' },
+                ...countriesList.map((c) => ({ value: c, label: c })),
+              ]}
+              value={selectedCountry}
+              onChange={(val) => setSelectedCountry(val)}
+            />
 
             {/* Status Filter */}
-            <div>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer font-mono"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="active">Active Now / Today</option>
-                <option value="inactive">Idle / Offline</option>
-              </select>
-            </div>
+            <Dropdown
+              size="sm"
+              options={[
+                { value: 'ALL', label: 'All Statuses' },
+                { value: 'active', label: 'Active Now / Today' },
+                { value: 'inactive', label: 'Idle / Offline' },
+              ]}
+              value={selectedStatus}
+              onChange={(val) => setSelectedStatus(val)}
+            />
 
             {/* Sort Order */}
-            <div>
-              <select
-                value={sortBy}
-                onChange={(e: any) => setSortBy(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer font-mono font-bold"
-              >
-                <option value="students_desc">Most Enrolled (High → Low)</option>
-                <option value="students_asc">Least Enrolled (Low → High)</option>
-                <option value="courses_desc">Most Courses Assigned</option>
-                <option value="name_asc">Mentor Name (A → Z)</option>
-                <option value="xp_desc">Highest Telemetry XP</option>
-              </select>
-            </div>
+            <Dropdown
+              size="sm"
+              options={[
+                { value: 'students_desc', label: 'Most Enrolled (High → Low)' },
+                { value: 'students_asc', label: 'Least Enrolled (Low → High)' },
+                { value: 'courses_desc', label: 'Most Courses Assigned' },
+                { value: 'name_asc', label: 'Mentor Name (A → Z)' },
+                { value: 'xp_desc', label: 'Highest Telemetry XP' },
+              ]}
+              value={sortBy}
+              onChange={(val) => setSortBy(val as any)}
+            />
           </div>
         </CardHeader>
 
