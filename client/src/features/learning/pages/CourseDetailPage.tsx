@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
+import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { Button } from '@/components/ui'
 import {
   ChevronLeft,
@@ -12,6 +13,8 @@ import {
   ChevronDown,
   ArrowRight,
   Users,
+  GraduationCap,
+  Globe,
 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
@@ -134,6 +137,59 @@ export const CourseDetailPage: React.FC = () => {
             </button>
           </Link>
         </div>
+
+        {/* Lead Mentor Profile Card */}
+        {(() => {
+          const mentorName = course.mentorName || course.instructorName || 'Lead Mentor'
+          const mentor = adminAnalyticsService.getAllUsers().find(
+            (u) =>
+              u.id === course.mentorId ||
+              u.name.toLowerCase() === mentorName.toLowerCase() ||
+              u.username.toLowerCase() === mentorName.toLowerCase()
+          )
+          const avatarUrl = mentor?.avatarUrl || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80'
+          const countryCode = mentor?.countryCode || 'GH'
+          const countryName = mentor?.countryName || 'Ghana'
+
+          return (
+            <div className="p-4 sm:p-5 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
+                  Course Author &amp; Lead Educator
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-mono text-[10px] font-bold">
+                  <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                  VERIFIED INSTRUCTOR
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-base shrink-0 shadow-3xs overflow-hidden border border-slate-200 dark:border-slate-700">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={mentorName} className="w-full h-full object-cover" />
+                  ) : (
+                    mentorName.charAt(0)
+                  )}
+                </div>
+                <div className="min-w-0 space-y-0.5">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
+                    {mentorName}
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400 flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <Globe className="w-3 h-3 text-brand-500" />
+                      {countryName} ({countryCode})
+                    </span>
+                    <span>•</span>
+                    <span className="uppercase text-brand-600 dark:text-brand-400 font-bold">
+                      {course.language} Specialist
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })()}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════

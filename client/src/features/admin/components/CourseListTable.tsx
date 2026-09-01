@@ -2,6 +2,7 @@ import React, { memo, useState } from 'react'
 import { Course } from '@/types'
 import { Link } from 'react-router-dom'
 import { ConfirmDeleteModal } from '@/components/feedback/ConfirmDeleteModal'
+import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import {
   BookOpen,
   ArrowRight,
@@ -124,12 +125,31 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                   <span className="text-slate-500 dark:text-slate-400 font-sans text-[11px]">learners</span>
                 </div>
 
-                {(course.mentorName || course.instructorName) && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
-                    <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span>{course.mentorName || course.instructorName}</span>
-                  </span>
-                )}
+                {(() => {
+                  const mentorName = course.mentorName || course.instructorName
+                  if (!mentorName) return null
+                  const mentor = adminAnalyticsService.getAllUsers().find(
+                    (u) =>
+                      u.id === course.mentorId ||
+                      u.name.toLowerCase() === mentorName.toLowerCase() ||
+                      u.username.toLowerCase() === mentorName.toLowerCase()
+                  )
+                  return (
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800 shadow-3xs">
+                      <div className="w-4 h-4 rounded-full bg-brand-600 text-white flex items-center justify-center text-[8px] font-bold overflow-hidden shrink-0 border border-emerald-300 dark:border-emerald-700">
+                        {mentor?.avatarUrl ? (
+                          <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <GraduationCap className="w-2.5 h-2.5" />
+                        )}
+                      </div>
+                      <span className="truncate max-w-[120px]">{mentorName}</span>
+                      {mentor?.countryCode && (
+                        <span className="text-[9px] text-emerald-600 dark:text-emerald-400">({mentor.countryCode})</span>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
 
               {/* Modules, Lessons, and Duration 3-Card Grid */}
@@ -300,12 +320,31 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                         <span>{(course.enrolledCount || 420).toLocaleString()}</span>
                         <span className="text-slate-400 font-normal font-sans text-[11px]">learners</span>
                       </div>
-                      {(course.mentorName || course.instructorName) && (
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-mono text-[10px] font-bold">
-                          <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                          <span className="truncate max-w-[140px]">{course.mentorName || course.instructorName}</span>
-                        </div>
-                      )}
+                      {(() => {
+                        const mentorName = course.mentorName || course.instructorName
+                        if (!mentorName) return null
+                        const mentor = adminAnalyticsService.getAllUsers().find(
+                          (u) =>
+                            u.id === course.mentorId ||
+                            u.name.toLowerCase() === mentorName.toLowerCase() ||
+                            u.username.toLowerCase() === mentorName.toLowerCase()
+                        )
+                        return (
+                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-mono text-[10px] font-bold shadow-3xs">
+                            <div className="w-4 h-4 rounded-full bg-brand-600 text-white flex items-center justify-center text-[8px] font-bold overflow-hidden shrink-0 border border-emerald-300 dark:border-emerald-700">
+                              {mentor?.avatarUrl ? (
+                                <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <GraduationCap className="w-2.5 h-2.5" />
+                              )}
+                            </div>
+                            <span className="truncate max-w-[130px]">{mentorName}</span>
+                            {mentor?.countryCode && (
+                              <span className="text-[9px] text-emerald-600 dark:text-emerald-400">({mentor.countryCode})</span>
+                            )}
+                          </div>
+                        )
+                      })()}
                     </div>
                   </td>
 

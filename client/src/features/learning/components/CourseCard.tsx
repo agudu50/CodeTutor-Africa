@@ -2,7 +2,8 @@ import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Course } from '@/types'
 import { Card, CardTitle, Badge, Button, Progress } from '@/components/ui'
-import { BookOpen, Clock, ArrowRight, Shield, Users } from 'lucide-react'
+import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
+import { BookOpen, Clock, ArrowRight, Shield, Users, GraduationCap } from 'lucide-react'
 
 export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
   const difficultyBadge =
@@ -79,6 +80,38 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
             ~{course.estimatedHours}h
           </span>
         </div>
+
+        {/* Lead Mentor Tag */}
+        {(() => {
+          const mentorName = course.mentorName || course.instructorName
+          if (!mentorName) return null
+          const mentor = adminAnalyticsService.getAllUsers().find(
+            (u) =>
+              u.id === course.mentorId ||
+              u.name.toLowerCase() === mentorName.toLowerCase() ||
+              u.username.toLowerCase() === mentorName.toLowerCase()
+          )
+          const avatarUrl = mentor?.avatarUrl
+          return (
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <div className="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[9px] font-bold overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={mentorName} className="w-full h-full object-cover" />
+                ) : (
+                  <GraduationCap className="w-3 h-3" />
+                )}
+              </div>
+              <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 truncate">
+                {mentorName}
+              </span>
+              {mentor?.countryCode && (
+                <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                  ({mentor.countryCode})
+                </span>
+              )}
+            </div>
+          )
+        })()}
       </div>
 
       <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
