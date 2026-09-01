@@ -176,15 +176,47 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                <th className="py-3.5 pl-4 pr-1 w-12 text-center font-semibold">#</th>
-                <th className="py-3.5 px-4 font-semibold min-w-[240px]">Course Title &amp; Slug</th>
-                <th className="py-3.5 px-4 font-semibold min-w-[130px]">Language</th>
-                <th className="py-3.5 px-4 font-semibold min-w-[180px]">Enrolled Students</th>
-                <th className="py-3.5 px-4 font-semibold min-w-[110px]">Difficulty</th>
-                <th className="py-3.5 px-4 font-semibold min-w-[180px]">Modules / Lessons</th>
-                <th className="py-3.5 px-4 font-semibold min-w-[130px]">Estimated Time</th>
-                <th className="py-3.5 pr-4 pl-2 font-semibold text-right min-w-[120px]">Actions</th>
+              <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-950/90 text-[11px] font-mono font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <th className="py-4 pl-4 pr-1 w-12 text-center font-bold">#</th>
+                <th className="py-4 px-4 font-bold min-w-[240px]">
+                  <div className="flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                    <span>Course Title &amp; Slug</span>
+                  </div>
+                </th>
+                <th className="py-4 px-4 font-bold min-w-[130px]">
+                  <div className="flex items-center gap-1.5">
+                    <Code2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>Language</span>
+                  </div>
+                </th>
+                <th className="py-4 px-4 font-bold min-w-[180px]">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>Enrolled Students</span>
+                  </div>
+                </th>
+                <th className="py-4 px-4 font-bold min-w-[110px]">
+                  <div className="flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                    <span>Difficulty</span>
+                  </div>
+                </th>
+                <th className="py-4 px-4 font-bold min-w-[180px]">
+                  <div className="flex items-center gap-1.5">
+                    <Database className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <span>Modules / Lessons</span>
+                  </div>
+                </th>
+                <th className="py-4 px-4 font-bold min-w-[130px]">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Estimated Time</span>
+                  </div>
+                </th>
+                <th className="py-4 pr-4 pl-2 font-bold text-right min-w-[120px]">
+                  <span>Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-sans">
