@@ -45,7 +45,7 @@ export interface SpeedrunSnippet {
   courseId?: string
   courseTitle?: string
   lessonTitle?: string
-  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
+  language: Exclude<GameLanguage, 'all'>
   title: string
   description: string
   code: string
@@ -59,7 +59,7 @@ export interface BugHuntChallenge {
   courseId?: string
   courseTitle?: string
   lessonTitle?: string
-  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
+  language: Exclude<GameLanguage, 'all'>
   title: string
   description: string
   lines: string[]
@@ -80,7 +80,7 @@ export interface OutputPredictorChallenge {
   courseId?: string
   courseTitle?: string
   lessonTitle?: string
-  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
+  language: Exclude<GameLanguage, 'all'>
   title: string
   code: string
   options: string[]
@@ -96,7 +96,7 @@ export interface CodeShuffleChallenge {
   courseId?: string
   courseTitle?: string
   lessonTitle?: string
-  language: 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
+  language: Exclude<GameLanguage, 'all'>
   title: string
   goalDescription: string
   expectedOutput: string

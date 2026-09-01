@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import type { GameLanguage, GameId } from '@/features/games/types/games.types'
 import type { GameModuleItem, GameDrillItem } from '@/features/games/data/gameModulesData'
 import { LANGUAGE_TRACKS } from '@/features/games/data/gameModulesData'
@@ -16,6 +16,7 @@ import {
   Clock,
   Layers,
   ChevronDown,
+  Check,
 } from 'lucide-react'
 
 interface GameModuleEditorModalProps {
@@ -33,14 +34,295 @@ const DRILL_TYPE_OPTIONS: { id: GameId; label: string; icon: React.FC<{ classNam
   { id: 'shuffle', label: 'Code Shuffle', icon: Shuffle },
 ]
 
+/* ─── CUSTOM LANGUAGE TRACK DROPDOWN ────────────────────────────────────── */
+interface CustomLanguageDropdownProps {
+  value: GameLanguage | ''
+  onChange: (val: GameLanguage) => void
+}
+
+const CustomLanguageDropdown: React.FC<CustomLanguageDropdownProps> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const tracks = LANGUAGE_TRACKS.filter((t) => t.id !== 'all')
+  const selectedTrack = tracks.find((t) => t.id === value)
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2.5 px-3.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        {selectedTrack ? (
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-black uppercase bg-emerald-50 text-[#005F02] dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
+              {selectedTrack.badge}
+            </span>
+            <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+              {selectedTrack.title}
+            </span>
+          </div>
+        ) : (
+          <span className="text-slate-400 dark:text-slate-500 font-medium text-xs">
+            Select Language Track...
+          </span>
+        )}
+        <ChevronDown
+          className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-60 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150">
+          {tracks.map((t) => {
+            const isSelected = t.id === value
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  onChange(t.id as GameLanguage)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-3 py-2 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                    {t.badge}
+                  </span>
+                  <span className="truncate">{t.title}</span>
+                </div>
+                {isSelected && <Check className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM DRILL TYPE DROPDOWN ────────────────────────────────────────── */
+interface CustomDrillTypeDropdownProps {
+  value?: GameId | ''
+  onChange: (val: GameId) => void
+}
+
+const CustomDrillTypeDropdown: React.FC<CustomDrillTypeDropdownProps> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const selectedOpt = DRILL_TYPE_OPTIONS.find((o) => o.id === value)
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between text-xs font-bold shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        {selectedOpt ? (
+          <div className="flex items-center gap-2 truncate">
+            <div className="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0">
+              <selectedOpt.icon className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
+            </div>
+            <span className="text-slate-900 dark:text-white truncate">{selectedOpt.label}</span>
+          </div>
+        ) : (
+          <span className="text-slate-400 dark:text-slate-500 font-medium text-xs truncate">
+            Select Drill Type...
+          </span>
+        )}
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150">
+          {DRILL_TYPE_OPTIONS.map((opt) => {
+            const isSelected = opt.id === value
+            const OptIcon = opt.icon
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => {
+                  onChange(opt.id)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <OptIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="truncate">{opt.label}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM DIFFICULTY DROPDOWN ────────────────────────────────────────── */
+interface CustomDifficultyDropdownProps {
+  value?: 'Beginner' | 'Intermediate' | 'Advanced' | ''
+  onChange: (val: 'Beginner' | 'Intermediate' | 'Advanced') => void
+}
+
+const DIFFICULTY_CONFIG: Record<string, { label: string; pill: string; dot: string }> = {
+  Beginner: {
+    label: 'Beginner',
+    pill: 'bg-emerald-50 text-[#005F02] dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
+    dot: 'bg-emerald-500',
+  },
+  Intermediate: {
+    label: 'Intermediate',
+    pill: 'bg-amber-50 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300 dark:border-amber-800',
+    dot: 'bg-amber-500',
+  },
+  Advanced: {
+    label: 'Advanced',
+    pill: 'bg-rose-50 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 dark:border-rose-800',
+    dot: 'bg-rose-500',
+  },
+}
+
+const CustomDifficultyDropdown: React.FC<CustomDifficultyDropdownProps> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const currentCfg = value ? DIFFICULTY_CONFIG[value] : null
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`py-1.5 px-3 rounded-xl border-2 transition-all cursor-pointer flex items-center gap-2 text-xs font-bold shadow-xs ${
+          currentCfg
+            ? currentCfg.pill
+            : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500'
+        } ${isOpen ? 'ring-2 ring-slate-400/30' : ''}`}
+      >
+        {currentCfg ? (
+          <>
+            <span className={`w-2 h-2 rounded-full shrink-0 ${currentCfg.dot}`} />
+            <span>{value}</span>
+          </>
+        ) : (
+          <span className="font-medium text-xs">Select Difficulty...</span>
+        )}
+        <ChevronDown
+          className={`w-3 h-3 transition-transform duration-200 shrink-0 ml-0.5 ${
+            isOpen ? 'rotate-180' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 top-full mt-1 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl min-w-[150px] space-y-1 animate-in fade-in zoom-in-95 duration-150">
+          {(['Beginner', 'Intermediate', 'Advanced'] as const).map((diff) => {
+            const isSelected = diff === value
+            const cfg = DIFFICULTY_CONFIG[diff]
+            return (
+              <button
+                key={diff}
+                type="button"
+                onClick={() => {
+                  onChange(diff)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? `${cfg.pill} border`
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} />
+                  <span>{diff}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
   isOpen,
   onClose,
-  initialLanguage = 'python',
+  initialLanguage,
   editingModule,
   onSaved,
 }) => {
-  const [language, setLanguage] = useState<GameLanguage>(initialLanguage)
+  const [language, setLanguage] = useState<GameLanguage | ''>(
+    editingModule ? editingModule.language : ''
+  )
   const [moduleNumber, setModuleNumber] = useState<number>(1)
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
@@ -48,23 +330,22 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
 
   useEffect(() => {
     if (editingModule) {
-      setLanguage(editingModule.language || initialLanguage)
+      setLanguage(editingModule.language || '')
       setModuleNumber(editingModule.moduleNumber || 1)
       setTitle(editingModule.title || '')
       setDescription(editingModule.description || '')
       setDrills(editingModule.drills ? [...editingModule.drills] : [])
     } else {
-      setLanguage(initialLanguage === 'all' ? 'python' : initialLanguage)
-      const existing = gameStoreService.getModulesForLanguage(initialLanguage)
-      setModuleNumber((existing?.length || 0) + 1)
+      setLanguage('')
+      setModuleNumber(1)
       setTitle('')
       setDescription('')
       setDrills([
-        { gameId: 'speedrun', title: 'Core Syntax Drill', difficulty: 'Beginner', estimatedMins: 2 },
-        { gameId: 'bughunt', title: 'Common Mistakes Fix', difficulty: 'Beginner', estimatedMins: 2 },
+        { gameId: '' as any, title: '', difficulty: '' as any, estimatedMins: 2 },
+        { gameId: '' as any, title: '', difficulty: '' as any, estimatedMins: 2 },
       ])
     }
-  }, [editingModule, initialLanguage, isOpen])
+  }, [editingModule, isOpen])
 
   if (!isOpen) return null
 
@@ -72,9 +353,9 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
     setDrills((prev) => [
       ...prev,
       {
-        gameId: 'speedrun',
-        title: `New Drill ${prev.length + 1}`,
-        difficulty: 'Beginner',
+        gameId: '' as any,
+        title: '',
+        difficulty: '' as any,
         estimatedMins: 2,
       },
     ])
@@ -94,8 +375,17 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!language) {
+      alert('Please select a language track.')
+      return
+    }
     if (!title.trim()) {
       alert('Please enter a module title.')
+      return
+    }
+    const unconfiguredDrill = drills.find((d) => !d.gameId || !d.difficulty)
+    if (unconfiguredDrill) {
+      alert('Please select both a drill type and difficulty for all interactive drills.')
       return
     }
 
@@ -153,20 +443,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300">Language Track</label>
-              <div className="relative">
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value as GameLanguage)}
-                  className="w-full py-2.5 pl-3.5 pr-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                >
-                  {LANGUAGE_TRACKS.filter((t) => t.id !== 'all').map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.badge} - {t.title}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
+              <CustomLanguageDropdown value={language} onChange={setLanguage} />
             </div>
 
             <div className="space-y-1">
@@ -258,41 +535,19 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
                       />
                     </div>
 
-                    <div className="relative">
-                      <select
-                        value={drill.gameId}
-                        onChange={(e) => handleUpdateDrill(idx, { gameId: e.target.value as GameId })}
-                        className="w-full py-2 pl-3 pr-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                      >
-                        {DRILL_TYPE_OPTIONS.map((opt) => (
-                          <option key={opt.id} value={opt.id}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
+                    <CustomDrillTypeDropdown
+                      value={drill.gameId}
+                      onChange={(gameId) => handleUpdateDrill(idx, { gameId })}
+                    />
                   </div>
 
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5 flex-1">
                       <label className="text-[10px] text-slate-500 font-bold">Difficulty:</label>
-                      <div className="relative">
-                        <select
-                          value={drill.difficulty}
-                          onChange={(e) =>
-                            handleUpdateDrill(idx, {
-                              difficulty: e.target.value as 'Beginner' | 'Intermediate' | 'Advanced',
-                            })
-                          }
-                          className="py-1 pl-2.5 pr-7 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-900 dark:text-white shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                        >
-                          <option value="Beginner">Beginner</option>
-                          <option value="Intermediate">Intermediate</option>
-                          <option value="Advanced">Advanced</option>
-                        </select>
-                        <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
+                      <CustomDifficultyDropdown
+                        value={drill.difficulty}
+                        onChange={(difficulty) => handleUpdateDrill(idx, { difficulty })}
+                      />
                     </div>
 
                     <div className="flex items-center gap-1.5">

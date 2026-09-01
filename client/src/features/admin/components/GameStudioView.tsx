@@ -277,31 +277,52 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
 
       {/* Metrics Summary Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-2.5 sm:gap-3 text-xs font-mono">
-        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-sans font-bold uppercase block">
-            Curriculum Mods
-          </span>
-          <span className="text-xl font-bold text-slate-900 dark:text-white">{counts.totalModules}</span>
+        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 space-y-1.5 shadow-xs">
+          <div className="flex items-center gap-1.5 text-[10px] text-[#005F02] dark:text-emerald-400 font-sans font-bold uppercase">
+            <Layers className="w-3.5 h-3.5 shrink-0" />
+            <span>Curriculum Mods</span>
+          </div>
+          <span className="text-xl font-black text-slate-900 dark:text-white block">{counts.totalModules}</span>
         </div>
-        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
-          <span className="text-[10px] text-slate-400 font-sans font-bold uppercase block">Total Drills</span>
-          <span className="text-xl font-bold text-slate-900 dark:text-white">{counts.total}</span>
+
+        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 space-y-1.5 shadow-xs">
+          <div className="flex items-center gap-1.5 text-[10px] text-slate-600 dark:text-slate-400 font-sans font-bold uppercase">
+            <Gamepad2 className="w-3.5 h-3.5 shrink-0" />
+            <span>Total Drills</span>
+          </div>
+          <span className="text-xl font-black text-slate-900 dark:text-white block">{counts.total}</span>
         </div>
-        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
-          <span className="text-[10px] text-amber-500 font-sans font-bold uppercase block">⚡ Speedrun</span>
-          <span className="text-xl font-bold text-amber-600 dark:text-amber-400">{counts.speedrun}</span>
+
+        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-amber-300 dark:border-amber-700 space-y-1.5 shadow-xs">
+          <div className="flex items-center gap-1.5 text-[10px] text-amber-600 dark:text-amber-400 font-sans font-bold uppercase">
+            <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span>Speedrun</span>
+          </div>
+          <span className="text-xl font-black text-amber-600 dark:text-amber-400 block">{counts.speedrun}</span>
         </div>
-        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
-          <span className="text-[10px] text-rose-500 font-sans font-bold uppercase block">🐛 Bug Hunt</span>
-          <span className="text-xl font-bold text-rose-600 dark:text-rose-400">{counts.bughunt}</span>
+
+        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-rose-300 dark:border-rose-700 space-y-1.5 shadow-xs">
+          <div className="flex items-center gap-1.5 text-[10px] text-rose-600 dark:text-rose-400 font-sans font-bold uppercase">
+            <Bug className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+            <span>Bug Hunt</span>
+          </div>
+          <span className="text-xl font-black text-rose-600 dark:text-rose-400 block">{counts.bughunt}</span>
         </div>
-        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
-          <span className="text-[10px] text-indigo-500 font-sans font-bold uppercase block">❓ Predictor</span>
-          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{counts.predictor}</span>
+
+        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-indigo-300 dark:border-indigo-700 space-y-1.5 shadow-xs">
+          <div className="flex items-center gap-1.5 text-[10px] text-indigo-600 dark:text-indigo-400 font-sans font-bold uppercase">
+            <HelpCircle className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+            <span>Predictor</span>
+          </div>
+          <span className="text-xl font-black text-indigo-600 dark:text-indigo-400 block">{counts.predictor}</span>
         </div>
-        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
-          <span className="text-[10px] text-emerald-500 font-sans font-bold uppercase block">🔀 Shuffle</span>
-          <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{counts.shuffle}</span>
+
+        <div className="p-3 rounded-2xl bg-white dark:bg-slate-900 border-2 border-emerald-300 dark:border-emerald-700 space-y-1.5 shadow-xs">
+          <div className="flex items-center gap-1.5 text-[10px] text-[#005F02] dark:text-emerald-400 font-sans font-bold uppercase">
+            <Shuffle className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+            <span>Shuffle</span>
+          </div>
+          <span className="text-xl font-black text-[#005F02] dark:text-emerald-400 block">{counts.shuffle}</span>
         </div>
       </div>
 

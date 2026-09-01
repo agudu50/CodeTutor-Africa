@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   SpeedrunSnippet,
   BugHuntChallenge,
@@ -21,9 +21,25 @@ import {
   Code2,
   Sparkles,
   ChevronDown,
+  Check,
 } from 'lucide-react'
 
 type ChallengeLanguage = Exclude<GameLanguage, 'all'>
+
+const CHALLENGE_LANGUAGES: { id: ChallengeLanguage; label: string; badge: string }[] = [
+  { id: 'python', label: 'Python', badge: 'PY' },
+  { id: 'javascript', label: 'JavaScript', badge: 'JS' },
+  { id: 'typescript', label: 'TypeScript', badge: 'TS' },
+  { id: 'html', label: 'HTML / HTML5', badge: 'HTML' },
+  { id: 'css', label: 'CSS / CSS3', badge: 'CSS' },
+  { id: 'git', label: 'Git & Version Control', badge: 'GIT' },
+  { id: 'java', label: 'Java', badge: 'JAVA' },
+  { id: 'sql', label: 'SQL & Databases', badge: 'SQL' },
+  { id: 'cpp', label: 'C++', badge: 'CPP' },
+  { id: 'c', label: 'C', badge: 'C' },
+  { id: 'go', label: 'Go', badge: 'GO' },
+  { id: 'rust', label: 'Rust', badge: 'RS' },
+]
 
 const ANIMATION_OPTIONS: {
   id: GameAnimationType
@@ -83,6 +99,215 @@ const ANIMATION_OPTIONS: {
   },
 ]
 
+/* ─── CUSTOM LANGUAGE DROPDOWN ─────────────────────────────────────────── */
+interface CustomChallengeLanguageDropdownProps {
+  value: ChallengeLanguage | ''
+  onChange: (val: ChallengeLanguage) => void
+}
+
+const CustomChallengeLanguageDropdown: React.FC<CustomChallengeLanguageDropdownProps> = ({
+  value,
+  onChange,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const selected = CHALLENGE_LANGUAGES.find((l) => l.id === value)
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2.5 px-3.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        {selected ? (
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-black uppercase bg-emerald-50 text-[#005F02] dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
+              {selected.badge}
+            </span>
+            <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+              {selected.label}
+            </span>
+          </div>
+        ) : (
+          <span className="text-slate-400 dark:text-slate-500 font-medium text-xs">
+            Select Programming Language...
+          </span>
+        )}
+        <ChevronDown
+          className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-60 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150">
+          {CHALLENGE_LANGUAGES.map((l) => {
+            const isSelected = l.id === value
+            return (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => {
+                  onChange(l.id)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-3 py-2 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="px-2 py-0.5 rounded-md font-mono text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                    {l.badge}
+                  </span>
+                  <span className="truncate">{l.label}</span>
+                </div>
+                {isSelected && <Check className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM TARGET MODULE DROPDOWN ─────────────────────────────────────── */
+interface CustomChallengeModuleDropdownProps {
+  value: string
+  language: ChallengeLanguage | ''
+  onChange: (modId: string, lessonTitle?: string) => void
+}
+
+const CustomChallengeModuleDropdown: React.FC<CustomChallengeModuleDropdownProps> = ({
+  value,
+  language,
+  onChange,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const modules = language ? gameStoreService.getModulesForLanguage(language) : []
+  const selectedMod = modules.find((m) => m.id === value)
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2.5 px-3.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        {value === '' ? (
+          <span className="font-bold text-slate-700 dark:text-slate-300 truncate text-xs">
+            -- Standalone / Custom --
+          </span>
+        ) : selectedMod ? (
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+              #{selectedMod.moduleNumber}
+            </span>
+            <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+              {selectedMod.title}
+            </span>
+          </div>
+        ) : (
+          <span className="text-slate-400 dark:text-slate-500 font-medium text-xs">
+            Select Target Module...
+          </span>
+        )}
+        <ChevronDown
+          className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-60 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150">
+          <button
+            type="button"
+            onClick={() => {
+              onChange('')
+              setIsOpen(false)
+            }}
+            className={`w-full px-3 py-2 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+              value === ''
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <span className="italic font-normal text-slate-600 dark:text-slate-400">-- Standalone / Custom --</span>
+            {value === '' && <Check className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+          </button>
+
+          {modules.map((m) => {
+            const isSelected = m.id === value
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => {
+                  onChange(m.id, `Module ${m.moduleNumber}: ${m.title}`)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-3 py-2 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                    #{m.moduleNumber}
+                  </span>
+                  <span className="truncate">{m.title}</span>
+                </div>
+                {isSelected && <Check className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export type EditableChallengeType =
   | { type: 'speedrun'; data: Partial<SpeedrunSnippet> }
   | { type: 'bughunt'; data: Partial<BugHuntChallenge> }
@@ -102,21 +327,27 @@ interface GameChallengeEditorModalProps {
 export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> = ({
   isOpen,
   onClose,
-  initialType = 'speedrun',
-  initialLanguage = 'python',
+  initialType,
+  initialLanguage,
   initialModuleId,
   editingChallenge,
   onSaved,
 }) => {
-  const [gameType, setGameType] = useState<GameId>(initialType)
-  const [language, setLanguage] = useState<ChallengeLanguage>(initialLanguage)
+  const [gameType, setGameType] = useState<GameId | ''>(
+    editingChallenge ? editingChallenge.type : (initialType || '')
+  )
+  const [language, setLanguage] = useState<ChallengeLanguage | ''>(
+    editingChallenge ? ((editingChallenge.data.language as ChallengeLanguage) || '') : (initialLanguage || '')
+  )
   const [selectedModuleId, setSelectedModuleId] = useState<string>(initialModuleId || '')
   const [courseId, setCourseId] = useState<string>('course-py-101')
   const [lessonTitle, setLessonTitle] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [timeLimitSecs, setTimeLimitSecs] = useState<number>(25)
-  const [animationType, setAnimationType] = useState<GameAnimationType>('default')
+  const [animationType, setAnimationType] = useState<GameAnimationType | ''>(
+    editingChallenge ? (editingChallenge.data.animationType || '') : ''
+  )
 
   // Speedrun fields
   const [speedrunCode, setSpeedrunCode] = useState<string>('def example():\n    return True')
@@ -159,7 +390,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
       setLessonTitle(data.lessonTitle || '')
       setTitle(data.title || '')
       setDescription((data as any).description || (data as any).goalDescription || '')
-      setAnimationType(data.animationType || 'default')
+      setAnimationType(data.animationType || '')
 
       if (editingChallenge.type === 'speedrun') {
         const d = data as Partial<SpeedrunSnippet>
@@ -190,48 +421,60 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
         setShuffleBlocks(d.scrambledBlocks || [])
       }
     } else {
-      setGameType(initialType)
+      setGameType('')
+      setLanguage('')
+      setSelectedModuleId('')
+      setAnimationType('')
       setTitle('')
       setDescription('')
       setLessonTitle('')
     }
-  }, [editingChallenge, initialType, isOpen])
+  }, [editingChallenge, isOpen])
 
   if (!isOpen) return null
 
   const handleSave = () => {
+    if (!gameType) {
+      alert('Please select a Game Mode.')
+      return
+    }
+    if (!language) {
+      alert('Please select a Programming Language.')
+      return
+    }
     if (!title.trim()) {
       alert('Please provide a challenge title.')
       return
     }
 
     const selectedCourse = courses.find((c) => c.id === courseId)
+    const finalAnimationType: GameAnimationType = animationType || 'default'
 
     if (gameType === 'speedrun') {
       if (editingChallenge?.type === 'speedrun' && editingChallenge.data.id) {
         gameStoreService.updateSpeedrunSnippet(editingChallenge.data.id, {
           title,
           description,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
           code: speedrunCode,
           timeLimitSecs,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Updated Speedrun snippet "${title}"`)
       } else {
         gameStoreService.createSpeedrunSnippet({
           title,
           description,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
           code: speedrunCode,
           timeLimitSecs,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Created new Speedrun snippet "${title}"`)
       }
@@ -241,7 +484,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
         gameStoreService.updateBugHuntChallenge(editingChallenge.data.id, {
           title,
           description,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
@@ -250,14 +493,14 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           bugExplanation,
           correctOptions: bugOptions,
           timeLimitSecs,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Updated Bug Hunt challenge "${title}"`)
       } else {
         gameStoreService.createBugHuntChallenge({
           title,
           description,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
@@ -266,7 +509,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           bugExplanation,
           correctOptions: bugOptions,
           timeLimitSecs,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Created new Bug Hunt challenge "${title}"`)
       }
@@ -274,7 +517,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
       if (editingChallenge?.type === 'predictor' && editingChallenge.data.id) {
         gameStoreService.updateOutputPredictorChallenge(editingChallenge.data.id, {
           title,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
@@ -283,13 +526,13 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           correctIndex: predictorCorrectIndex,
           explanation: predictorExplanation,
           timeLimitSecs,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Updated Output Predictor challenge "${title}"`)
       } else {
         gameStoreService.createOutputPredictorChallenge({
           title,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
@@ -298,7 +541,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           correctIndex: predictorCorrectIndex,
           explanation: predictorExplanation,
           timeLimitSecs,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Created new Output Predictor challenge "${title}"`)
       }
@@ -310,13 +553,13 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           goalDescription: shuffleGoal || description,
           expectedOutput: shuffleExpected,
           explanation: shuffleExplanation,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
           scrambledBlocks: shuffleBlocks,
           correctOrder,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Updated Code Shuffle challenge "${title}"`)
       } else {
@@ -325,13 +568,13 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           goalDescription: shuffleGoal || description,
           expectedOutput: shuffleExpected,
           explanation: shuffleExplanation,
-          language,
+          language: language as ChallengeLanguage,
           courseId,
           courseTitle: selectedCourse?.title,
           lessonTitle,
           scrambledBlocks: shuffleBlocks,
           correctOrder,
-          animationType,
+          animationType: finalAnimationType,
         })
         onSaved(`Created new Code Shuffle challenge "${title}"`)
       }
@@ -378,52 +621,52 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
               <button
                 type="button"
                 onClick={() => setGameType('speedrun')}
-                className={`p-2.5 rounded-xl border flex items-center gap-2 font-bold cursor-pointer transition-all ${
+                className={`p-2.5 rounded-xl border-2 flex items-center justify-center gap-2 font-bold cursor-pointer transition-all shadow-xs ${
                   gameType === 'speedrun'
-                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500 ring-2 ring-amber-500/20'
-                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500 ring-2 ring-amber-500/20'
+                    : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
                 }`}
               >
-                <Zap className="w-4 h-4 text-amber-500" />
+                <Zap className="w-4 h-4 text-amber-500 shrink-0" />
                 <span>Speedrun</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setGameType('bughunt')}
-                className={`p-2.5 rounded-xl border flex items-center gap-2 font-bold cursor-pointer transition-all ${
+                className={`p-2.5 rounded-xl border-2 flex items-center justify-center gap-2 font-bold cursor-pointer transition-all shadow-xs ${
                   gameType === 'bughunt'
-                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500 ring-2 ring-rose-500/20'
-                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500 ring-2 ring-rose-500/20'
+                    : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
                 }`}
               >
-                <Bug className="w-4 h-4 text-rose-500" />
+                <Bug className="w-4 h-4 text-rose-500 shrink-0" />
                 <span>Bug Hunt</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setGameType('predictor')}
-                className={`p-2.5 rounded-xl border flex items-center gap-2 font-bold cursor-pointer transition-all ${
+                className={`p-2.5 rounded-xl border-2 flex items-center justify-center gap-2 font-bold cursor-pointer transition-all shadow-xs ${
                   gameType === 'predictor'
-                    ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500 ring-2 ring-indigo-500/20'
-                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500 ring-2 ring-indigo-500/20'
+                    : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
                 }`}
               >
-                <HelpCircle className="w-4 h-4 text-indigo-500" />
+                <HelpCircle className="w-4 h-4 text-indigo-500 shrink-0" />
                 <span>Predictor</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setGameType('shuffle')}
-                className={`p-2.5 rounded-xl border flex items-center gap-2 font-bold cursor-pointer transition-all ${
+                className={`p-2.5 rounded-xl border-2 flex items-center justify-center gap-2 font-bold cursor-pointer transition-all shadow-xs ${
                   gameType === 'shuffle'
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500 ring-2 ring-emerald-500/20'
-                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border-[#005F02] ring-2 ring-[#005F02]/20'
+                    : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
                 }`}
               >
-                <Shuffle className="w-4 h-4 text-emerald-500" />
+                <Shuffle className="w-4 h-4 text-[#005F02] shrink-0" />
                 <span>Code Shuffle</span>
               </button>
             </div>
@@ -433,60 +676,25 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300">Programming Language</label>
-              <div className="relative">
-                <select
-                  value={language}
-                  onChange={(e) => {
-                    const nextLang = e.target.value as ChallengeLanguage
-                    setLanguage(nextLang)
-                    setSelectedModuleId('')
-                  }}
-                  className="w-full py-2.5 pl-3.5 pr-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                >
-                  <option value="python">Python</option>
-                  <option value="javascript">JavaScript</option>
-                  <option value="typescript">TypeScript</option>
-                  <option value="html">HTML / HTML5</option>
-                  <option value="css">CSS / CSS3</option>
-                  <option value="git">Git & Version Control</option>
-                  <option value="java">Java</option>
-                  <option value="sql">SQL & Databases</option>
-                  <option value="cpp">C++</option>
-                  <option value="c">C</option>
-                  <option value="go">Go</option>
-                  <option value="rust">Rust</option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
+              <CustomChallengeLanguageDropdown
+                value={language}
+                onChange={(nextLang) => {
+                  setLanguage(nextLang)
+                  setSelectedModuleId('')
+                }}
+              />
             </div>
 
             <div className="space-y-1">
               <label className="font-bold text-slate-700 dark:text-slate-300">Target Curriculum Module</label>
-              <div className="relative">
-                <select
-                  value={selectedModuleId}
-                  onChange={(e) => {
-                    const modId = e.target.value
-                    setSelectedModuleId(modId)
-                    if (modId) {
-                      const mods = gameStoreService.getModulesForLanguage(language)
-                      const matched = mods.find((m) => m.id === modId)
-                      if (matched) {
-                        setLessonTitle(`Module ${matched.moduleNumber}: ${matched.title}`)
-                      }
-                    }
-                  }}
-                  className="w-full py-2.5 pl-3.5 pr-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer truncate"
-                >
-                  <option value="">-- Standalone / Custom --</option>
-                  {gameStoreService.getModulesForLanguage(language).map((m) => (
-                    <option key={m.id} value={m.id}>
-                      Module {m.moduleNumber}: {m.title}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
+              <CustomChallengeModuleDropdown
+                value={selectedModuleId}
+                language={language}
+                onChange={(modId, title) => {
+                  setSelectedModuleId(modId)
+                  if (title) setLessonTitle(title)
+                }}
+              />
             </div>
 
             <div className="space-y-1">
@@ -497,7 +705,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                 onChange={(e) => setTimeLimitSecs(Number(e.target.value))}
                 min={5}
                 max={120}
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-mono font-bold"
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold"
               />
             </div>
           </div>
@@ -511,7 +719,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Slicing Lists or Event Loop Microtasks"
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-bold"
               />
             </div>
 
@@ -522,7 +730,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                 value={lessonTitle}
                 onChange={(e) => setLessonTitle(e.target.value)}
                 placeholder="e.g. Module 1: Variable Scopes"
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-bold"
               />
             </div>
           </div>
@@ -535,12 +743,12 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
               placeholder="Provide context explaining the computer science concept behind this challenge."
-              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white resize-none"
+              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white resize-none"
             />
           </div>
 
           {/* 3D Game Animation Selection */}
-          <div className="space-y-2 p-4 rounded-2xl bg-gradient-to-br from-indigo-50/70 via-slate-50 to-emerald-50/70 dark:from-slate-950 dark:via-slate-900/90 dark:to-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xs">
+          <div className="space-y-2 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
                 <Sparkles className="w-4 h-4 text-amber-500" />
@@ -562,10 +770,10 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                     key={opt.id}
                     type="button"
                     onClick={() => setAnimationType(opt.id)}
-                    className={`p-3 rounded-xl border text-left flex flex-col justify-between gap-1.5 transition-all cursor-pointer ${
+                    className={`p-3 rounded-xl border-2 text-left flex flex-col justify-between gap-1.5 transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-white dark:bg-slate-900 border-[#005F02] dark:border-emerald-500 ring-2 ring-[#005F02]/20 dark:ring-emerald-500/20 shadow-sm scale-[1.02]'
-                        : 'bg-white/70 dark:bg-slate-900/70 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                        ? 'bg-white dark:bg-slate-900 border-[#005F02] dark:border-emerald-500 ring-2 ring-[#005F02]/20 dark:ring-emerald-500/20 shadow-xs scale-[1.01]'
+                        : 'bg-white/80 dark:bg-slate-900/80 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1">
@@ -573,7 +781,7 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                       <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-md ${
                         isSelected
                           ? 'bg-[#005F02] text-white'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                       }`}>
                         {opt.badge}
                       </span>
@@ -591,6 +799,17 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
               })}
             </div>
           </div>
+
+          {/* ═══════════════════════════════════════════════════════════════
+              GAME-SPECIFIC CONFIGURATION
+              ═══════════════════════════════════════════════════════════════ */}
+          {!gameType && (
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border-2 border-dashed border-slate-300 dark:border-slate-700 text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">
+                Please select a Game Mode above to configure its challenge rules and code.
+              </p>
+            </div>
+          )}
 
           {/* ═══════════════════════════════════════════════════════════════
               GAME-SPECIFIC CONFIGURATION

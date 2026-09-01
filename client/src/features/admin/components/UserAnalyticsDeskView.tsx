@@ -1603,49 +1603,57 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           {subView === 'mentors' && (
             <div className="p-4 sm:p-6 space-y-5">
               {/* Top Mentor Overview Metrics Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
-                  <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5">
+                  <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 text-xs font-mono font-bold">
                     <span>Total Mentors</span>
-                    <GraduationCap className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                    <div className="w-6 h-6 rounded-lg bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 flex items-center justify-center">
+                      <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                    </div>
                   </div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white font-mono">
+                  <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono">
                     {mentorUsers.length}
                   </div>
-                  <div className="text-[10px] text-slate-500">Verified Instructors</div>
+                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Verified Instructors</div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs space-y-1">
-                  <div className="flex items-center justify-between text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/50 border-2 border-emerald-300 dark:border-emerald-700 shadow-xs space-y-1.5">
+                  <div className="flex items-center justify-between text-emerald-800 dark:text-emerald-300 text-xs font-mono font-bold">
                     <span>Active Mentors</span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    <div className="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center">
+                      <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
+                    </div>
                   </div>
-                  <div className="text-xl font-bold text-emerald-800 dark:text-emerald-200 font-mono">
+                  <div className="text-xl sm:text-2xl font-black text-emerald-900 dark:text-emerald-100 font-mono">
                     {activeMentorCount}
                   </div>
-                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400">Online &amp; active this week</div>
+                  <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">Online &amp; active this week</div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
-                  <div className="flex items-center justify-between text-slate-500 text-xs font-mono">
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5">
+                  <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 text-xs font-mono font-bold">
                     <span>Inactive Mentors</span>
-                    <Clock className="w-4 h-4 text-slate-400" />
+                    <div className="w-6 h-6 rounded-lg bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">
+                      <Clock className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                    </div>
                   </div>
-                  <div className="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono">
+                  <div className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-200 font-mono">
                     {inactiveMentorCount}
                   </div>
-                  <div className="text-[10px] text-slate-500">Offline &gt;7 days / idle</div>
+                  <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Offline &gt;7 days / idle</div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 shadow-2xs space-y-1">
-                  <div className="flex items-center justify-between text-amber-700 dark:text-amber-300 text-xs font-mono font-bold">
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/50 border-2 border-amber-300 dark:border-amber-700 shadow-xs space-y-1.5">
+                  <div className="flex items-center justify-between text-amber-800 dark:text-amber-300 text-xs font-mono font-bold">
                     <span>Pending Apps</span>
-                    <ShieldCheck className="w-4 h-4 text-amber-500" />
+                    <div className="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-900/60 border border-amber-300 dark:border-amber-700 flex items-center justify-center">
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    </div>
                   </div>
-                  <div className="text-xl font-bold text-amber-800 dark:text-amber-200 font-mono">
+                  <div className="text-xl sm:text-2xl font-black text-amber-900 dark:text-amber-100 font-mono">
                     {pendingMentorCount}
                   </div>
-                  <div className="text-[10px] text-amber-600 dark:text-amber-400">Awaiting Admin Review</div>
+                  <div className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">Awaiting Admin Review</div>
                 </div>
               </div>
 
@@ -1715,9 +1723,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
                     <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
                       {[
-                        { id: 'ALL', label: 'All Mentors', count: mentorUsers.length },
-                        { id: 'active', label: '🟢 Active Mentors', count: activeMentorCount },
-                        { id: 'inactive', label: '⚪ Inactive Mentors', count: inactiveMentorCount },
+                        { id: 'ALL', label: 'All Mentors', count: mentorUsers.length, dot: null },
+                        { id: 'active', label: 'Active Mentors', count: activeMentorCount, dot: 'bg-emerald-500' },
+                        { id: 'inactive', label: 'Inactive Mentors', count: inactiveMentorCount, dot: 'bg-slate-400' },
                       ].map((btn) => (
                         <button
                           key={btn.id}
@@ -1729,6 +1737,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80'
                           }`}
                         >
+                          {btn.dot && <span className={`w-2 h-2 rounded-full shrink-0 ${btn.dot}`} />}
                           <span className="whitespace-nowrap">{btn.label}</span>
                           <span
                             className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
