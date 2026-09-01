@@ -126,63 +126,63 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
           TOP KPI METRIC CARDS: MENTOR PLATFORM STATS
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-mono">
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Total Appointed Mentors
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-slate-900 dark:text-white">
+            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
               {mentorsSummary.length}
             </span>
             <GraduationCap className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
-          <span className="text-[11px] text-slate-500 font-sans block">
+          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
             Across {countriesList.length} African countries
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Total Enrolled Students
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-[#005F02] dark:text-emerald-400">
+            <span className="text-2xl font-extrabold text-[#005F02] dark:text-emerald-400">
               {totalStudentsAcrossMentors.toLocaleString()}
             </span>
-            <Users className="w-4 h-4 text-emerald-500" />
+            <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span className="text-[11px] text-slate-500 font-sans block">
+          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
             Across all mentor curricula
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Curriculum Courses Assigned
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-brand-600 dark:text-brand-400">
+            <span className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">
               {totalAssignedCourses}
             </span>
-            <BookOpen className="w-4 h-4 text-brand-500" />
+            <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
-          <span className="text-[11px] text-slate-500 font-sans block">
+          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
             Assigned to lead educators
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Active Educators
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+            <span className="text-2xl font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               {activeMentorsNowCount} / {mentorsSummary.length}
             </span>
-            <Zap className="w-4 h-4 text-amber-500" />
+            <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <span className="text-[11px] text-slate-500 font-sans block">
+          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
             Online today or this week
           </span>
         </div>

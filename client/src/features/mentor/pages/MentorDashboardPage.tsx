@@ -334,63 +334,63 @@ export const MentorDashboardPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 font-mono">
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Open Inquiries
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
+            <span className="text-xl sm:text-2xl font-extrabold text-amber-700 dark:text-amber-400">
               {openInquiriesCount}
             </span>
-            <HelpCircle className="w-4 h-4 text-amber-500" />
+            <HelpCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {resolvedInquiriesCount} resolved tickets
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             {isInstructor ? 'Your Courses' : 'Curriculum Courses'}
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <span className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
               {displayCourses.length}
             </span>
             <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {totalLessons} lessons {isInstructor ? 'authored' : 'online'}
           </span>
         </div>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             {isInstructor ? 'Your Enrolled Students' : 'Total Enrolled'}
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-[#005F02] dark:text-emerald-400">
+            <span className="text-xl sm:text-2xl font-extrabold text-[#005F02] dark:text-emerald-400">
               {totalEnrolledStudents.toLocaleString()}
             </span>
-            <Users className="w-4 h-4 text-emerald-500" />
+            <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {isInstructor
               ? `Across your ${displayCourses.length} assigned track(s)`
               : `Across ${courses.length} active tracks`}
           </span>
         </div>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Response Status
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-sky-600 dark:text-sky-400">
+            <span className="text-xl sm:text-2xl font-extrabold text-sky-700 dark:text-sky-400">
               &lt; 2h
             </span>
-            <Clock className="w-4 h-4 text-sky-500" />
+            <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {isInstructor ? 'Active Mentor Desk' : 'Admin synced real-time'}
           </span>
         </div>

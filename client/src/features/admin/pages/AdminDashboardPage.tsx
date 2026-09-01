@@ -196,76 +196,76 @@ export const AdminDashboardPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 font-mono">
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Active Courses
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <span className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
               {courses.length}
             </span>
             <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {totalLessons} lessons
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Practice Drills
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-[#005F02] dark:text-emerald-400">
+            <span className="text-xl sm:text-2xl font-extrabold text-[#005F02] dark:text-emerald-400">
               {practiceCount}
             </span>
-            <Code2 className="w-4 h-4 text-emerald-500" />
+            <Code2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             Automated test suites
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Arcade Games
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
+            <span className="text-xl sm:text-2xl font-extrabold text-amber-700 dark:text-amber-400">
               {gameCounts.total}
             </span>
-            <Gamepad2 className="w-4 h-4 text-amber-500" />
+            <Gamepad2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             4 interactive modes
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Platform Learners
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
+            <span className="text-xl sm:text-2xl font-extrabold text-purple-700 dark:text-purple-400">
               {adminUsers.length}
             </span>
-            <Users className="w-4 h-4 text-purple-500" />
+            <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {adminUsers.filter((u) => u.status === 'active_now' || u.status === 'active_today').length} active today
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 col-span-2 sm:col-span-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
+          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Support Tickets
           </span>
           <div className="flex items-baseline justify-between">
-            <span className={`text-xl sm:text-2xl font-bold ${openIssuesCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
+            <span className={`text-xl sm:text-2xl font-extrabold ${openIssuesCount > 0 ? 'text-rose-700 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
               {openIssuesCount}
             </span>
-            <HelpCircle className="w-4 h-4 text-rose-500" />
+            <HelpCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
             {issues.length} total tickets
           </span>
         </div>
