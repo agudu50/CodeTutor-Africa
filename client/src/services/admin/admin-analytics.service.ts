@@ -560,11 +560,36 @@ class AdminAnalyticsService {
       const storedUsers = localStorage.getItem(USERS_STORAGE_KEY)
       if (storedUsers) {
         const parsed: AdminUserRecord[] = JSON.parse(storedUsers)
-        const existingEmails = new Set(parsed.map((u) => u.email.toLowerCase()))
-        const missingMentors = INITIAL_ADMIN_USERS.filter(
-          (u) => u.role === 'instructor' && !existingEmails.has(u.email.toLowerCase())
+        const initialInstructors = INITIAL_ADMIN_USERS.filter((u) => u.role === 'instructor')
+        const initialInstructorIds = new Set(initialInstructors.map((u) => u.id))
+        const initialInstructorEmails = new Set(initialInstructors.map((u) => u.email.toLowerCase()))
+
+        // Non-instructors from parsed storage
+        const otherUsers = parsed.filter(
+          (u) => !initialInstructorIds.has(u.id) && !initialInstructorEmails.has(u.email.toLowerCase())
         )
-        const combined = [...missingMentors, ...parsed]
+
+        // For initial instructors, preserve their live dynamic status if in parsed, but guarantee role is instructor
+        const mergedInstructors = initialInstructors.map((initInst) => {
+          const found = parsed.find(
+            (p) => p.id === initInst.id || p.email.toLowerCase() === initInst.email.toLowerCase()
+          )
+          if (found) {
+            return {
+              ...initInst,
+              status: found.status || initInst.status,
+              totalXp: found.totalXp || initInst.totalXp,
+              streakDays: found.streakDays ?? initInst.streakDays,
+              avatarUrl: found.avatarUrl || initInst.avatarUrl,
+              enrolledCourseIds: initInst.enrolledCourseIds,
+              enrolledCourseTitles: initInst.enrolledCourseTitles,
+              activeCourseTitle: initInst.activeCourseTitle,
+            }
+          }
+          return initInst
+        })
+
+        const combined = [...mergedInstructors, ...otherUsers]
 
         this.users = combined.map((u) => {
           const mock = INITIAL_ADMIN_USERS.find(
