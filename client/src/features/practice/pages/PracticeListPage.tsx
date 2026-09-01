@@ -208,10 +208,10 @@ export const PracticeListPage: React.FC = () => {
                     {question.courseTitle && (
                       <span
                         title={`Aligned with course: ${question.courseTitle}`}
-                        className="text-[9px] font-sans font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 truncate max-w-[130px] flex items-center gap-1"
+                        className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0 flex items-center gap-1"
                       >
                         <BookOpen className="w-2.5 h-2.5 shrink-0" />
-                        <span className="truncate">{question.courseTitle}</span>
+                        <span>{question.courseTitle}</span>
                       </span>
                     )}
                   </div>
@@ -245,9 +245,9 @@ export const PracticeListPage: React.FC = () => {
                 </div>
 
                 <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span>{question.testCases.length} Test Cases</span>
+                    <span>{question.testCases.length} {question.testCases.length === 1 ? 'Test Case' : 'Test Cases'}</span>
                   </span>
                   <Link to={`/practice/${question.id}`}>
                     <Button

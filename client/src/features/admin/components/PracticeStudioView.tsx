@@ -413,15 +413,15 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
                         </span>
                       </td>
 
-                      <td className="px-4 py-3.5 max-w-[140px]">
+                      <td className="px-4 py-3.5 whitespace-nowrap">
                         {q.courseTitle ? (
-                          <span className="text-[10px] font-medium text-[#005F02] dark:text-emerald-400 flex items-center gap-1 truncate">
-                            <BookOpen className="w-3 h-3 shrink-0" />
-                            <span className="truncate">{q.courseTitle}</span>
+                          <span className="text-[11px] font-semibold text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                            <span>{q.courseTitle}</span>
                           </span>
                         ) : (
                           <span className="text-[10px] text-slate-400 font-mono italic">
-                            General
+                            General Curriculum
                           </span>
                         )}
                       </td>
@@ -459,11 +459,19 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
                         </div>
                       </td>
 
-                      <td className="px-4 py-3.5">
-                        <span className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>{q.testCases.length} Cases</span>
-                        </span>
+                      <td className="px-4 py-3.5 whitespace-nowrap">
+                        <div className="flex flex-col gap-1">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 w-fit shadow-3xs">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <span>{q.testCases.length} {q.testCases.length === 1 ? 'Test Case' : 'Test Cases'}</span>
+                          </span>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                            {q.testCases.some((t) => t.isHidden)
+                              ? `${q.testCases.filter((t) => !t.isHidden).length} Public • ${q.testCases.filter((t) => t.isHidden).length} Hidden`
+                              : '100% Automated Coverage'
+                            }
+                          </span>
+                        </div>
                       </td>
 
                       <td className="px-4 py-3.5 text-right space-x-1 whitespace-nowrap">
