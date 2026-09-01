@@ -64,23 +64,28 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
           MOBILE VIEW: TOUCH-FRIENDLY CARD FEED (block md:hidden)
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 gap-3 md:hidden">
-        {courses.map((course) => (
+        {courses.map((course, index) => (
           <div
             key={course.id}
             className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3"
           >
             {/* Header: Thumbnail + Title */}
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center">
-                {course.thumbnailUrl ? (
-                  <img
-                    src={course.thumbnailUrl}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <BookOpen className="w-5 h-5 text-brand-600 dark:text-brand-400 opacity-60" />
-                )}
+              <div className="relative">
+                <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center">
+                  {course.thumbnailUrl ? (
+                    <img
+                      src={course.thumbnailUrl}
+                      alt={course.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <BookOpen className="w-5 h-5 text-brand-600 dark:text-brand-400 opacity-60" />
+                  )}
+                </div>
+                <span className="absolute -top-1.5 -left-1.5 px-1.5 py-0.2 rounded-md bg-slate-900 text-white dark:bg-brand-600 font-mono text-[9px] font-bold shadow-3xs">
+                  #{String(index + 1).padStart(2, '0')}
+                </span>
               </div>
 
               <div className="space-y-1 min-w-0 flex-1">
@@ -168,7 +173,8 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <th className="py-3 px-4">Course Title & Slug</th>
+                <th className="py-3 pl-4 pr-1 w-10 text-center font-semibold">#</th>
+                <th className="py-3 px-4">Course Title &amp; Slug</th>
                 <th className="py-3 px-4">Language</th>
                 <th className="py-3 px-4">Enrolled Students</th>
                 <th className="py-3 px-4">Difficulty</th>
@@ -178,11 +184,16 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-sans">
-              {courses.map((course) => (
+              {courses.map((course, index) => (
                 <tr
                   key={course.id}
                   className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
                 >
+                  {/* Index */}
+                  <td className="py-3.5 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
+                    {String(index + 1).padStart(2, '0')}
+                  </td>
+
                   {/* Title & Thumbnail */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-3">
