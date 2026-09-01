@@ -92,7 +92,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                 </span>
               </div>
 
-              <div className="space-y-1 min-w-0 flex-1">
+              <div className="space-y-1.5 min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] uppercase border font-mono ${getLanguageBadge(course.language)}`}>
                     <Code2 className="w-2.5 h-2.5" />
@@ -102,19 +102,21 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                     {course.difficulty}
                   </span>
                 </div>
-                <h4 className="font-bold text-sm text-slate-900 dark:text-white leading-snug line-clamp-1">
+
+                <h4 className="font-bold text-sm text-slate-900 dark:text-white leading-snug">
                   {course.title}
                 </h4>
-                <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">
-                  <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-[10px]">/{course.slug}</span>
+
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-mono border border-slate-200/80 dark:border-slate-700">
+                    /{course.slug}
+                  </span>
+
                   {(course.mentorName || course.instructorName) && (
-                    <>
-                      <span>•</span>
-                      <span className="text-[#005F02] dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                        <GraduationCap className="w-3 h-3 inline" />
-                        {course.mentorName || course.instructorName}
-                      </span>
-                    </>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+                      <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span>{course.mentorName || course.instructorName}</span>
+                    </span>
                   )}
                 </div>
               </div>
@@ -274,8 +276,8 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                         <span className="text-slate-400 font-normal font-sans text-[11px]">learners</span>
                       </div>
                       {(course.mentorName || course.instructorName) && (
-                        <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-[#005F02]/20 dark:border-emerald-800 font-mono text-[10px] font-bold">
-                          <GraduationCap className="w-3 h-3 shrink-0" />
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-mono text-[10px] font-bold">
+                          <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           <span className="truncate max-w-[140px]">{course.mentorName || course.instructorName}</span>
                         </div>
                       )}
