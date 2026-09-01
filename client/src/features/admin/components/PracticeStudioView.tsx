@@ -377,17 +377,18 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-[10px] font-mono uppercase font-bold text-slate-500 dark:text-slate-400">
                 <tr>
+                  <th className="py-3 pl-4 pr-1 w-10 text-center font-bold">#</th>
                   <th className="px-4 py-3">Challenge</th>
                   <th className="px-4 py-3">Associated Course</th>
                   <th className="px-4 py-3">Language</th>
                   <th className="px-4 py-3">Difficulty</th>
-                  <th className="px-4 py-3">Category & Tags</th>
+                  <th className="px-4 py-3">Category &amp; Tags</th>
                   <th className="px-4 py-3">Test Cases</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                {filteredQuestions.map((q) => {
+                {filteredQuestions.map((q, index) => {
                   const difficultyBadge =
                     q.difficulty === 'beginner'
                       ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
@@ -400,6 +401,9 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
                       key={q.id}
                       className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group"
                     >
+                      <td className="py-3.5 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
+                        {String(index + 1).padStart(2, '0')}
+                      </td>
                       <td className="px-4 py-3.5 max-w-xs">
                         <span className="font-bold text-slate-900 dark:text-white block truncate text-xs">
                           {q.title}

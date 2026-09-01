@@ -176,7 +176,7 @@ export const PracticeListPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-          {filteredQuestions.map((question) => {
+          {filteredQuestions.map((question, index) => {
             const difficultyBadge =
               question.difficulty === 'beginner'
                 ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/80'
@@ -191,9 +191,12 @@ export const PracticeListPage: React.FC = () => {
                 className="flex flex-col justify-between p-4 sm:p-5 space-y-3.5 border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl h-full group"
               >
                 <div className="space-y-2.5">
-                  {/* Badges: Difficulty & Language & Course */}
+                  {/* Badges: Number Index & Difficulty & Language & Course */}
                   <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
                     <div className="flex items-center gap-1.5">
+                      <span className="px-1.5 py-0.5 rounded-md bg-slate-900 text-white dark:bg-brand-600 font-mono text-[9px] font-bold shadow-3xs">
+                        #{String(index + 1).padStart(2, '0')}
+                      </span>
                       <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border ${difficultyBadge}`}>
                         {question.difficulty}
                       </span>
