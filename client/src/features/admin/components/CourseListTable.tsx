@@ -67,16 +67,16 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
       {/* ═══════════════════════════════════════════════════════════════
           MOBILE VIEW: TOUCH-FRIENDLY CARD FEED (block md:hidden)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 gap-3 md:hidden">
+      <div className="grid grid-cols-1 gap-3.5 md:hidden">
         {courses.map((course, index) => (
           <div
             key={course.id}
-            className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3"
+            className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-3.5"
           >
-            {/* Header: Thumbnail + Title */}
+            {/* Header: Thumbnail + Title + Badges */}
             <div className="flex items-start gap-3">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center shadow-3xs">
+              <div className="relative shrink-0">
+                <div className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-3xs">
                   {course.thumbnailUrl ? (
                     <img
                       src={course.thumbnailUrl}
@@ -84,7 +84,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <BookOpen className="w-5 h-5 text-brand-600 dark:text-brand-400 opacity-80" />
+                    <BookOpen className="w-6 h-6 text-brand-600 dark:text-brand-400 opacity-80" />
                   )}
                 </div>
                 <span className="absolute -top-1.5 -left-1.5 px-1.5 py-0.2 rounded-md bg-slate-900 text-white dark:bg-brand-600 font-mono text-[9px] font-bold shadow-3xs">
@@ -103,47 +103,72 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                   </span>
                 </div>
 
-                <h4 className="font-bold text-sm text-slate-900 dark:text-white leading-snug">
+                <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
                   {course.title}
                 </h4>
 
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-mono border border-slate-200/80 dark:border-slate-700">
-                    /{course.slug}
-                  </span>
+                <span className="inline-block px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-mono border border-slate-200/80 dark:border-slate-700">
+                  /{course.slug}
+                </span>
+              </div>
+            </div>
 
-                  {(course.mentorName || course.instructorName) && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
-                      <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span>{course.mentorName || course.instructorName}</span>
-                    </span>
-                  )}
+            {/* Mid Section: Enrolled Students & Lead Mentor Card */}
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-2.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 text-xs font-mono">
+                  <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span className="font-extrabold text-sm text-slate-900 dark:text-white">
+                    {(course.enrolledCount || 420).toLocaleString()}
+                  </span>
+                  <span className="text-slate-500 dark:text-slate-400 font-sans text-[11px]">learners</span>
+                </div>
+
+                {(course.mentorName || course.instructorName) && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+                    <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>{course.mentorName || course.instructorName}</span>
+                  </span>
+                )}
+              </div>
+
+              {/* Modules, Lessons, and Duration 3-Card Grid */}
+              <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/70 dark:border-slate-800 text-center font-mono">
+                <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-3xs space-y-0.5">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-sans font-bold block tracking-wider">
+                    Modules
+                  </span>
+                  <span className="text-xs font-extrabold text-slate-900 dark:text-white">
+                    {course.modules?.length || 18}
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-3xs space-y-0.5">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-sans font-bold block tracking-wider">
+                    Lessons
+                  </span>
+                  <span className="text-xs font-extrabold text-brand-700 dark:text-brand-300">
+                    {course.totalLessons}
+                  </span>
+                </div>
+
+                <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-3xs space-y-0.5">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-sans font-bold block tracking-wider">
+                    Duration
+                  </span>
+                  <span className="text-xs font-extrabold text-slate-900 dark:text-white">
+                    {course.estimatedHours} hrs
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Metrics Sub-bar */}
-            <div className="grid grid-cols-3 gap-1.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 text-xs font-mono text-slate-700 dark:text-slate-300">
-              <div className="flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                <span className="font-bold text-slate-900 dark:text-white">{(course.enrolledCount || 420).toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Database className="w-3.5 h-3.5 text-slate-500" />
-                <span>{course.totalLessons} Lessons</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-slate-500" />
-                <span>{course.estimatedHours}h</span>
-              </div>
-            </div>
-
-            {/* Action Bar */}
+            {/* Action Buttons */}
             <div className="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => onEditCourse(course)}
-                className="flex-1 py-2 px-3 rounded-xl bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-brand-100 cursor-pointer shadow-3xs"
+                className="flex-1 py-2 px-3 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/80 dark:hover:bg-brand-900/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-3xs"
               >
                 <Pencil className="w-3.5 h-3.5" />
                 <span>Edit Course</span>
@@ -151,18 +176,18 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
               <Link
                 to={`/learning/courses/${course.id}`}
-                className="py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center justify-center gap-1 shadow-3xs"
-                title="Preview"
+                className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center justify-center gap-1 shadow-3xs"
+                title="Preview course page"
               >
                 <ArrowRight className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">Preview</span>
+                <span className="text-xs">Preview</span>
               </Link>
 
               <button
                 type="button"
                 onClick={() => setCourseToDelete(course)}
-                className="p-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
-                title="Delete"
+                className="p-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 border border-slate-200 dark:border-slate-800 hover:border-rose-200 transition-colors cursor-pointer shadow-3xs"
+                title="Delete course"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
