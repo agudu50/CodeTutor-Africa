@@ -14,7 +14,7 @@ import {
   ChevronDown,
   Layers,
   Zap,
-  Settings,
+  Pencil,
   X,
   ArrowRight,
 } from 'lucide-react'
@@ -490,7 +490,7 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
                           title="Edit Practice Challenge"
                           className="inline-flex items-center justify-center p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                         >
-                          <Settings className="w-3.5 h-3.5" />
+                          <Pencil className="w-3.5 h-3.5" />
                         </button>
 
                         <button
