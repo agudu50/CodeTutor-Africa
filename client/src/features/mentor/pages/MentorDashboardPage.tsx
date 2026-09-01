@@ -274,61 +274,6 @@ export const MentorDashboardPage: React.FC = () => {
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-          MENTOR PERSONA QUICK-SWITCHER & ROLE INDICATOR
-          ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-brand-50/80 dark:bg-brand-950/40 border border-brand-200/80 dark:border-brand-800/80 text-xs">
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="p-1.5 rounded-lg bg-brand-600 text-white shadow-3xs">
-            <GraduationCap className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-slate-900 dark:text-white">Active Session Persona:</span>
-              <span className="font-mono text-brand-700 dark:text-brand-300 font-bold">
-                {currentUser.name}
-              </span>
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase ${
-                isInstructor
-                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                  : 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
-              }`}>
-                {currentUser.role} View
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-mono">
-              {isInstructor
-                ? `Scoped View: Viewing only your ${displayCourses.length} course(s) and ${totalEnrolledStudents.toLocaleString()} enrolled student(s).`
-                : `Administrator View: Full access to all ${courses.length} courses and ${totalEnrolledStudents.toLocaleString()} total platform enrollments.`}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-slate-500 font-mono text-[11px]">Persona Switcher:</span>
-          <select
-            value={currentUser.id}
-            onChange={(e) => handleSwitchPersona(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-brand-300 dark:border-brand-700 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-3xs cursor-pointer"
-          >
-            <optgroup label="Verified Mentors (Scoped to Their Courses)">
-              {adminUsers.filter((u) => u.role === 'instructor').map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.favoriteLanguage?.toUpperCase()} Mentor)
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Administrators (View All Courses & Mentors)">
-              {adminUsers.filter((u) => u.role === 'admin').map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name} (Admin • Global Overview)
-                </option>
-              ))}
-            </optgroup>
-          </select>
-        </div>
-      </div>
-
-      {/* ═══════════════════════════════════════════════════════════════
           MENTOR PORTAL HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
@@ -343,13 +288,13 @@ export const MentorDashboardPage: React.FC = () => {
                   Mentor Operations &amp; Community Hub
                 </h1>
                 <span className="px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20">
-                  {isInstructor ? 'VERIFIED EDUCATOR' : 'PLATFORM ADMINISTRATOR'}
+                  {isInstructor ? `${currentUser.favoriteLanguage?.toUpperCase()} VERIFIED EDUCATOR` : 'PLATFORM ADMINISTRATOR'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 Active session: <strong className="text-slate-800 dark:text-slate-200">{currentUser.name}</strong> •{' '}
                 {isInstructor
-                  ? 'Manage your assigned tracks, review student questions, and track learner enrollment in your courses.'
+                  ? `Assigned to ${displayCourses.map(c => c.title).join(', ')} (${totalEnrolledStudents.toLocaleString()} enrolled students).`
                   : 'Platform Admin: Overview of all courses, students, and per-mentor track assignments.'}
               </p>
             </div>

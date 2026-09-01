@@ -14,6 +14,7 @@ import { GameStudioView } from '../components/GameStudioView'
 import { PracticeStudioView } from '../components/PracticeStudioView'
 import { UserAnalyticsDeskView } from '../components/UserAnalyticsDeskView'
 import { SystemPerformanceDeskView } from '../components/SystemPerformanceDeskView'
+import { MentorEnrollmentOverviewTable } from '../components/MentorEnrollmentOverviewTable'
 import { Button } from '@/components/ui'
 import {
   ShieldCheck,
@@ -26,10 +27,11 @@ import {
   Code2,
   Users,
   Zap,
+  GraduationCap,
 } from 'lucide-react'
 
 export const AdminDashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'practice' | 'games' | 'issues' | 'analytics' | 'performance'>('courses')
+  const [activeTab, setActiveTab] = useState<'courses' | 'mentors' | 'practice' | 'games' | 'issues' | 'analytics' | 'performance'>('courses')
   const [courses, setCourses] = useState<Course[]>([])
   const [issues, setIssues] = useState<IssueReport[]>([])
   const [practiceCount, setPracticeCount] = useState<number>(() => practiceStoreService.getAllQuestions().length)
@@ -152,10 +154,10 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-                Admin Operations & Curriculum Portal
+                Admin Operations &amp; Curriculum Portal
               </h1>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Manage offline courses, configure practice test suites & arcade games, and review student feedback tickets.
+                Manage offline courses, configure practice test suites &amp; arcade games, and review student feedback tickets.
               </p>
             </div>
           </div>
@@ -270,38 +272,54 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          PORTAL TABS: COURSES vs PRACTICE vs GAMES vs USERS & AUDIT vs ISSUES
+          PORTAL TABS: COURSES vs MENTORS vs PRACTICE vs GAMES vs USERS & AUDIT vs ISSUES
           ═══════════════════════════════════════════════════════════════ */}
       <div className="space-y-4">
-        <div className="grid grid-cols-2 sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit">
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit overflow-x-auto scrollbar-none">
           <button
             type="button"
             onClick={() => setActiveTab('courses')}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'courses'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-            <span className="truncate">Courses</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0">
+            <span>Courses</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
               {courses.length}
             </span>
           </button>
 
           <button
             type="button"
+            onClick={() => setActiveTab('mentors')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'mentors'
+                ? 'bg-white dark:bg-slate-900 text-brand-700 dark:text-brand-300 shadow-2xs font-extrabold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+            <span>Mentors</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-brand-100 dark:bg-brand-950 text-brand-800 dark:text-brand-300 font-bold">
+              {adminUsers.filter((u) => u.role === 'instructor').length}
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('practice')}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'practice'
                 ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs font-extrabold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Code2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-            <span className="truncate">Practice Studio</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold shrink-0">
+            <span>Practice</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
               {practiceCount}
             </span>
           </button>
@@ -309,15 +327,15 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('games')}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'games'
                 ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-2xs font-extrabold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Gamepad2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-            <span className="truncate">Game Studio</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold shrink-0">
+            <span>Games</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
               {gameCounts.total}
             </span>
           </button>
@@ -325,15 +343,15 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('analytics')}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'analytics'
                 ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-2xs font-extrabold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Users className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-            <span className="truncate">Learners & Audit</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 font-bold shrink-0">
+            <span>Learners</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 font-bold">
               {adminUsers.length}
             </span>
           </button>
@@ -341,15 +359,15 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('performance')}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'performance'
                 ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-2xs font-extrabold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Zap className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
-            <span className="truncate">AI Ops & Health</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 font-bold shrink-0">
+            <span>AI Ops</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 font-bold">
               98%
             </span>
           </button>
@@ -357,16 +375,16 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('issues')}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'issues'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <HelpCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-            <span className="truncate">Support Desk</span>
+            <span>Support</span>
             {openIssuesCount > 0 && (
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 font-bold shrink-0">
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 font-bold">
                 {openIssuesCount}
               </span>
             )}
@@ -379,6 +397,11 @@ export const AdminDashboardPage: React.FC = () => {
             courses={courses}
             onEditCourse={handleEditCourse}
             onDeleteCourse={handleDeleteCourse}
+          />
+        ) : activeTab === 'mentors' ? (
+          <MentorEnrollmentOverviewTable
+            adminUsers={adminUsers}
+            onDataChanged={reloadData}
           />
         ) : activeTab === 'practice' ? (
           <PracticeStudioView onUpdated={reloadData} />
