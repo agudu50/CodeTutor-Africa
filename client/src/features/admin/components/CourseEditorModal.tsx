@@ -62,6 +62,8 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
   const [language, setLanguage] = useState<ProgrammingLanguage>('python')
+  const [isCustomLanguage, setIsCustomLanguage] = useState(false)
+  const [customLanguageText, setCustomLanguageText] = useState('')
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('beginner')
   const [category, setCategory] = useState('Core Programming')
   const [estimatedHours, setEstimatedHours] = useState(20)
@@ -91,7 +93,32 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
     if (courseToEdit) {
       setTitle(courseToEdit.title)
       setSlug(courseToEdit.slug)
-      setLanguage(courseToEdit.language)
+      const currentLang = courseToEdit.language || 'python'
+      const knownLanguages = [
+        'python',
+        'javascript',
+        'typescript',
+        'html',
+        'css',
+        'git',
+        'java',
+        'sql',
+        'cpp',
+        'c',
+        'go',
+        'rust',
+        'php',
+        'csharp',
+      ]
+      if (knownLanguages.includes(currentLang.toLowerCase())) {
+        setLanguage(currentLang.toLowerCase() as ProgrammingLanguage)
+        setIsCustomLanguage(false)
+        setCustomLanguageText('')
+      } else {
+        setLanguage(currentLang as ProgrammingLanguage)
+        setIsCustomLanguage(true)
+        setCustomLanguageText(currentLang)
+      }
       setDifficulty(courseToEdit.difficulty)
       setCategory(courseToEdit.category)
       setEstimatedHours(courseToEdit.estimatedHours)
@@ -341,10 +368,21 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   }
 
   const languageOptions = [
-    { value: 'javascript', label: 'JavaScript' },
-    { value: 'typescript', label: 'TypeScript' },
-    { value: 'python', label: 'Python' },
-    { value: 'java', label: 'Java' },
+    { value: 'python', label: 'Python (Data Science, AI & General Programming)' },
+    { value: 'javascript', label: 'JavaScript (Frontend, Node.js & Fullstack)' },
+    { value: 'typescript', label: 'TypeScript (Type-Safe Enterprise Apps)' },
+    { value: 'html', label: 'HTML / HTML5 (Web Semantics & DOM Structure)' },
+    { value: 'css', label: 'CSS / CSS3 (Styling, Flexbox, Grid & UI Design)' },
+    { value: 'git', label: 'Git & GitHub (Version Control & Collaboration)' },
+    { value: 'java', label: 'Java (OOP, Android & Cloud Backend)' },
+    { value: 'sql', label: 'SQL (PostgreSQL, SQLite & Databases)' },
+    { value: 'cpp', label: 'C++ (High-Performance Systems & Algorithms)' },
+    { value: 'c', label: 'C (Low-Level Systems & Embedded HW)' },
+    { value: 'go', label: 'Go / Golang (Cloud Native & Concurrency)' },
+    { value: 'rust', label: 'Rust (Memory Safe Systems & WebAssembly)' },
+    { value: 'php', label: 'PHP (Web Platforms & Server Backend)' },
+    { value: 'csharp', label: 'C# / .NET (Enterprise, Desktop & Games)' },
+    { value: 'custom', label: '+ Add Other / Custom Technology Track...' },
   ]
 
   const difficultyOptions = [
@@ -402,15 +440,54 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             {/* Language */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                Programming Language
+                Programming Language / Track
               </label>
               <Dropdown
                 options={languageOptions}
-                value={language}
-                onChange={(val) => setLanguage(val as ProgrammingLanguage)}
+                value={isCustomLanguage ? 'custom' : language}
+                onChange={(val) => {
+                  if (val === 'custom') {
+                    setIsCustomLanguage(true)
+                    setLanguage((customLanguageText.trim().toLowerCase() || 'custom') as ProgrammingLanguage)
+                  } else {
+                    setIsCustomLanguage(false)
+                    setLanguage(val as ProgrammingLanguage)
+                  }
+                }}
                 className="text-xs font-medium"
               />
             </div>
+
+            {/* Custom Language Input when 'custom' is selected */}
+            {isCustomLanguage && (
+              <div className="space-y-1 sm:col-span-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Custom Technology / Track Name <span className="text-rose-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomLanguage(false)
+                      setLanguage('python')
+                    }}
+                    className="text-[10px] text-brand-600 dark:text-brand-400 hover:underline font-mono"
+                  >
+                    Select from standard list
+                  </button>
+                </div>
+                <Input
+                  placeholder="e.g. Kotlin, Swift, Dart, Ruby, Docker, Bash, React"
+                  value={customLanguageText}
+                  onChange={(e) => {
+                    setCustomLanguageText(e.target.value)
+                    setLanguage(e.target.value.toLowerCase().trim() as ProgrammingLanguage)
+                  }}
+                  className="text-xs font-medium border-slate-300 dark:border-slate-700"
+                  required
+                />
+              </div>
+            )}
 
             {/* Difficulty */}
             <div className="space-y-1">

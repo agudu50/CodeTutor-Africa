@@ -53,11 +53,39 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
       case 'python':
         return 'bg-sky-50 dark:bg-sky-950/70 text-sky-900 dark:text-sky-300 border-sky-300 dark:border-sky-800 font-bold'
       case 'javascript':
+      case 'js':
         return 'bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800 font-bold'
       case 'typescript':
+      case 'ts':
         return 'bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-300 border-blue-300 dark:border-blue-800 font-bold'
-      case 'java':
+      case 'html':
+      case 'html5':
         return 'bg-orange-50 dark:bg-orange-950/70 text-orange-900 dark:text-orange-300 border-orange-300 dark:border-orange-800 font-bold'
+      case 'css':
+      case 'css3':
+        return 'bg-cyan-50 dark:bg-cyan-950/70 text-cyan-900 dark:text-cyan-300 border-cyan-300 dark:border-cyan-800 font-bold'
+      case 'git':
+      case 'github':
+        return 'bg-rose-50 dark:bg-rose-950/70 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-800 font-bold'
+      case 'java':
+        return 'bg-red-50 dark:bg-red-950/70 text-red-900 dark:text-red-300 border-red-300 dark:border-red-800 font-bold'
+      case 'sql':
+      case 'database':
+        return 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 font-bold'
+      case 'cpp':
+      case 'c++':
+      case 'c':
+        return 'bg-indigo-50 dark:bg-indigo-950/70 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800 font-bold'
+      case 'rust':
+        return 'bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 border-amber-400 font-bold'
+      case 'go':
+      case 'golang':
+        return 'bg-teal-50 dark:bg-teal-950 text-teal-900 dark:text-teal-300 border-teal-300 font-bold'
+      case 'php':
+        return 'bg-violet-50 dark:bg-violet-950 text-violet-900 dark:text-violet-300 border-violet-300 font-bold'
+      case 'csharp':
+      case 'c#':
+        return 'bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-300 border-green-300 font-bold'
       default:
         return 'bg-purple-50 dark:bg-purple-950/70 text-purple-900 dark:text-purple-300 border-purple-300 dark:border-purple-800 font-bold'
     }

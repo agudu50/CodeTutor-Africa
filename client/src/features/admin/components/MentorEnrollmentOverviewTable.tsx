@@ -233,11 +233,21 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
               <Dropdown
                 size="sm"
                 options={[
-                  { value: 'ALL', label: 'All Languages' },
+                  { value: 'ALL', label: 'All Languages & Tracks' },
                   { value: 'python', label: 'Python' },
                   { value: 'javascript', label: 'JavaScript' },
-                  { value: 'java', label: 'Java' },
                   { value: 'typescript', label: 'TypeScript' },
+                  { value: 'html', label: 'HTML / HTML5' },
+                  { value: 'css', label: 'CSS / CSS3' },
+                  { value: 'git', label: 'Git & GitHub' },
+                  { value: 'java', label: 'Java' },
+                  { value: 'sql', label: 'SQL' },
+                  { value: 'cpp', label: 'C++' },
+                  { value: 'c', label: 'C' },
+                  { value: 'go', label: 'Go' },
+                  { value: 'rust', label: 'Rust' },
+                  { value: 'php', label: 'PHP' },
+                  { value: 'csharp', label: 'C#' },
                 ]}
                 value={selectedLanguage}
                 onChange={(val) => setSelectedLanguage(val)}

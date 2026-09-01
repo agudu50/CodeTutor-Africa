@@ -445,9 +445,16 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
                 >
                   <option value="python">Python</option>
                   <option value="javascript">JavaScript</option>
-                  <option value="java">Java</option>
                   <option value="typescript">TypeScript</option>
+                  <option value="html">HTML / HTML5</option>
+                  <option value="css">CSS / CSS3</option>
+                  <option value="git">Git & Version Control</option>
+                  <option value="java">Java</option>
                   <option value="sql">SQL & Databases</option>
+                  <option value="cpp">C++</option>
+                  <option value="c">C</option>
+                  <option value="go">Go</option>
+                  <option value="rust">Rust</option>
                 </select>
                 <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>

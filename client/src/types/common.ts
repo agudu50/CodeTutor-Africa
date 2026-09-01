@@ -1,4 +1,20 @@
-export type ProgrammingLanguage = 'python' | 'javascript' | 'java' | 'typescript' | 'cpp' | 'c' | 'go' | 'rust' | 'csharp' | 'php' | 'sql' | 'html'
+export type ProgrammingLanguage =
+  | 'python'
+  | 'javascript'
+  | 'typescript'
+  | 'html'
+  | 'css'
+  | 'git'
+  | 'java'
+  | 'sql'
+  | 'cpp'
+  | 'c'
+  | 'go'
+  | 'rust'
+  | 'csharp'
+  | 'php'
+  | (string & {})
+
 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced'
 

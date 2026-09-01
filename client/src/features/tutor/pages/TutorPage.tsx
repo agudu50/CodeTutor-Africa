@@ -54,8 +54,15 @@ export const TutorPage: React.FC = () => {
   const languageOptions = [
     { value: 'python', label: 'Python' },
     { value: 'javascript', label: 'JavaScript' },
-    { value: 'java', label: 'Java' },
     { value: 'typescript', label: 'TypeScript' },
+    { value: 'html', label: 'HTML / HTML5' },
+    { value: 'css', label: 'CSS / CSS3' },
+    { value: 'git', label: 'Git & GitHub' },
+    { value: 'java', label: 'Java' },
+    { value: 'sql', label: 'SQL & Databases' },
+    { value: 'cpp', label: 'C++' },
+    { value: 'go', label: 'Go' },
+    { value: 'rust', label: 'Rust' },
   ]
 
   const modeOptions = [
