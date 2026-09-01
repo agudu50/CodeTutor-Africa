@@ -276,10 +276,10 @@ export const MentorDashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           MENTOR PORTAL HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none">
         <div className="space-y-1">
           <div className="flex items-start sm:items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-brand-600 text-white shadow-xs shrink-0 mt-0.5 sm:mt-0">
+            <div className="p-2.5 rounded-xl bg-brand-600 text-white shadow-xs shrink-0 mt-0.5 sm:mt-0">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
@@ -309,7 +309,7 @@ export const MentorDashboardPage: React.FC = () => {
               reloadData()
               setToastMessage('Mentor desk data refreshed.')
             }}
-            className="h-9 text-xs font-semibold justify-center"
+            className="h-9 text-xs font-semibold justify-center border-slate-300 dark:border-slate-700"
             leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
           >
             Refresh
@@ -333,7 +333,7 @@ export const MentorDashboardPage: React.FC = () => {
           HIGH-LEVEL SUMMARY METRICS (4 Equal KPI Cards)
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 font-mono">
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
             Open Inquiries
           </span>
@@ -348,7 +348,7 @@ export const MentorDashboardPage: React.FC = () => {
           </span>
         </div>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
             {isInstructor ? 'Your Courses' : 'Curriculum Courses'}
           </span>
