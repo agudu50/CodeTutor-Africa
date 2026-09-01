@@ -191,8 +191,11 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
       {/* ═══════════════════════════════════════════════════════════════
           MAIN MENTOR ENROLLMENT TABLE CARD
           ═══════════════════════════════════════════════════════════════ */}
-      <Card className="border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
-        <CardHeader className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 space-y-3.5">
+      {/* ═══════════════════════════════════════════════════════════════
+          MAIN MENTOR ENROLLMENT TABLE CARD
+          ═══════════════════════════════════════════════════════════════ */}
+      <Card className="border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
+        <CardHeader className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 space-y-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -211,11 +214,10 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
             </div>
           </div>
 
-          {/* Search and Filters Toolbar */}
-          {/* Search and Filters Toolbar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 pt-1 items-center">
+          {/* Search and Filters Toolbar (Responsive 2x2 Grid on Mobile) */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 pt-1 items-center">
             {/* Search Input */}
-            <div className="relative">
+            <div className="col-span-2 sm:col-span-2 lg:col-span-1 relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
@@ -227,55 +229,63 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
             </div>
 
             {/* Language Track Filter */}
-            <Dropdown
-              size="sm"
-              options={[
-                { value: 'ALL', label: 'All Languages' },
-                { value: 'python', label: 'Python' },
-                { value: 'javascript', label: 'JavaScript' },
-                { value: 'java', label: 'Java' },
-                { value: 'typescript', label: 'TypeScript' },
-              ]}
-              value={selectedLanguage}
-              onChange={(val) => setSelectedLanguage(val)}
-            />
+            <div className="col-span-1">
+              <Dropdown
+                size="sm"
+                options={[
+                  { value: 'ALL', label: 'All Languages' },
+                  { value: 'python', label: 'Python' },
+                  { value: 'javascript', label: 'JavaScript' },
+                  { value: 'java', label: 'Java' },
+                  { value: 'typescript', label: 'TypeScript' },
+                ]}
+                value={selectedLanguage}
+                onChange={(val) => setSelectedLanguage(val)}
+              />
+            </div>
 
             {/* Country Filter */}
-            <Dropdown
-              size="sm"
-              options={[
-                { value: 'ALL', label: 'All Nations' },
-                ...countriesList.map((c) => ({ value: c, label: c })),
-              ]}
-              value={selectedCountry}
-              onChange={(val) => setSelectedCountry(val)}
-            />
+            <div className="col-span-1">
+              <Dropdown
+                size="sm"
+                options={[
+                  { value: 'ALL', label: 'All Nations' },
+                  ...countriesList.map((c) => ({ value: c, label: c })),
+                ]}
+                value={selectedCountry}
+                onChange={(val) => setSelectedCountry(val)}
+              />
+            </div>
 
             {/* Status Filter */}
-            <Dropdown
-              size="sm"
-              options={[
-                { value: 'ALL', label: 'All Statuses' },
-                { value: 'active', label: 'Active Now / Today' },
-                { value: 'inactive', label: 'Idle / Offline' },
-              ]}
-              value={selectedStatus}
-              onChange={(val) => setSelectedStatus(val)}
-            />
+            <div className="col-span-1">
+              <Dropdown
+                size="sm"
+                options={[
+                  { value: 'ALL', label: 'All Statuses' },
+                  { value: 'active', label: 'Active Now / Today' },
+                  { value: 'inactive', label: 'Idle / Offline' },
+                ]}
+                value={selectedStatus}
+                onChange={(val) => setSelectedStatus(val)}
+              />
+            </div>
 
             {/* Sort Order */}
-            <Dropdown
-              size="sm"
-              options={[
-                { value: 'students_desc', label: 'Most Enrolled (High → Low)' },
-                { value: 'students_asc', label: 'Least Enrolled (Low → High)' },
-                { value: 'courses_desc', label: 'Most Courses Assigned' },
-                { value: 'name_asc', label: 'Mentor Name (A → Z)' },
-                { value: 'xp_desc', label: 'Highest Telemetry XP' },
-              ]}
-              value={sortBy}
-              onChange={(val) => setSortBy(val as any)}
-            />
+            <div className="col-span-1">
+              <Dropdown
+                size="sm"
+                options={[
+                  { value: 'students_desc', label: 'Most Enrolled (High → Low)' },
+                  { value: 'students_asc', label: 'Least Enrolled (Low → High)' },
+                  { value: 'courses_desc', label: 'Most Courses Assigned' },
+                  { value: 'name_asc', label: 'Mentor Name (A → Z)' },
+                  { value: 'xp_desc', label: 'Highest Telemetry XP' },
+                ]}
+                value={sortBy}
+                onChange={(val) => setSortBy(val as any)}
+              />
+            </div>
           </div>
         </CardHeader>
 
@@ -284,9 +294,9 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
           {/* ═══════════════════════════════════════════════════════════════
               MOBILE VIEW: MENTOR CARDS (md:hidden)
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="md:hidden p-3.5 sm:p-4 space-y-3.5 bg-slate-50/60 dark:bg-slate-950/40">
             {filteredMentors.length === 0 ? (
-              <div className="py-10 text-center text-slate-500 font-mono text-xs">
+              <div className="py-10 text-center text-slate-500 font-mono text-xs rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900">
                 No mentors matched your search and filter criteria.
               </div>
             ) : (
@@ -297,19 +307,22 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                   : 0
 
                 return (
-                  <div key={mentor.id} className="p-4 space-y-3.5 bg-white dark:bg-slate-900">
+                  <div
+                    key={mentor.id}
+                    className="p-4 sm:p-5 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3.5"
+                  >
                     {/* Header Row: Avatar, Name, Role & Status */}
                     <div className="flex items-start justify-between gap-2.5">
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-3xs">
                           {mentor.name.charAt(0)}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="font-bold text-slate-900 dark:text-white text-sm">
+                            <span className="font-bold text-slate-900 dark:text-white text-sm truncate">
                               {mentor.name}
                             </span>
-                            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#005F02]/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20">
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#005F02]/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 shrink-0">
                               #{String(index + 1).padStart(2, '0')}
                             </span>
                           </div>
@@ -348,16 +361,16 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
 
                     {/* Metadata Badges: Specialty, Country & Enrolled Count */}
                     <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-0.5">
-                        <span className="text-[10px] uppercase text-slate-400 font-bold block">Track &amp; Country</span>
-                        <div className="flex items-center gap-1 text-slate-800 dark:text-slate-200 font-semibold truncate">
-                          <Globe className="w-3 h-3 text-brand-500 shrink-0" />
+                      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-0.5">
+                        <span className="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold block tracking-wider">Track &amp; Country</span>
+                        <div className="flex items-center gap-1 text-slate-800 dark:text-slate-200 font-bold truncate">
+                          <Globe className="w-3.5 h-3.5 text-brand-500 shrink-0" />
                           <span>{mentor.favoriteLanguage?.toUpperCase()} • {mentor.countryCode}</span>
                         </div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 space-y-0.5">
-                        <span className="text-[10px] uppercase text-emerald-800 dark:text-emerald-400 font-bold block">Enrolled Students</span>
+                      <div className="p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 space-y-0.5">
+                        <span className="text-[10px] uppercase text-emerald-800 dark:text-emerald-400 font-bold block tracking-wider">Enrolled Students</span>
                         <div className="flex items-center gap-1 font-bold text-[#005F02] dark:text-emerald-400">
                           <Users className="w-3.5 h-3.5 shrink-0" />
                           <span className="text-sm font-extrabold">{totalEnrolledCount.toLocaleString()}</span>
@@ -366,23 +379,23 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                     </div>
 
                     {/* Assigned Courses */}
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                           <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                           <span>{courseCount} Assigned {courseCount === 1 ? 'Course' : 'Courses'}</span>
                         </span>
-                        <span className="text-[10px] font-mono text-slate-400">
+                        <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 font-semibold">
                           {enrollmentSharePercent}% platform share
                         </span>
                       </div>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {courses.map((c) => (
                           <span
                             key={c.id}
-                            className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-mono font-semibold"
+                            className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-mono font-semibold"
                           >
-                            {c.title} ({c.enrolledCount || 0})
+                            {c.title} <span className="text-brand-600 dark:text-brand-400 font-bold font-sans">({c.enrolledCount || 0})</span>
                           </span>
                         ))}
                       </div>
@@ -392,7 +405,7 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                     <button
                       type="button"
                       onClick={() => setExpandedMentorId(isExpanded ? null : mentor.id)}
-                      className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-3xs"
+                      className="w-full py-2.5 px-3 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900/60 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-3xs"
                     >
                       <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                       <span>{isExpanded ? 'Hide Student Roster' : `View Student Roster (${learners.length})`}</span>
@@ -402,7 +415,7 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                     {/* Expanded Mobile Student List */}
                     {isExpanded && (
                       <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-2">
-                        <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">
+                        <span className="text-[10px] font-mono uppercase font-bold text-slate-700 dark:text-slate-300 block">
                           Verified Students ({learners.length})
                         </span>
                         {learners.length === 0 ? (
@@ -410,21 +423,21 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                             No student user records found.
                           </p>
                         ) : (
-                          <div className="space-y-2">
+                          <div className="space-y-1.5">
                             {learners.map((learner) => (
-                              <div key={learner.id} className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                              <div key={learner.id} className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
                                 <div className="min-w-0">
                                   <div className="font-bold text-slate-900 dark:text-white truncate">
                                     {learner.name}
                                   </div>
-                                  <div className="text-[10px] font-mono text-slate-400 truncate">
+                                  <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 truncate">
                                     {learner.countryCode} • {learner.totalXp} XP • 🔥 {learner.streakDays}d
                                   </div>
                                 </div>
-                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold shrink-0 ${
+                                <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold shrink-0 ${
                                   learner.status === 'active_now' || learner.status === 'active_today'
-                                    ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                                    ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                 }`}>
                                   {learner.status === 'active_now' ? 'ONLINE' : 'ACTIVE'}
                                 </span>
