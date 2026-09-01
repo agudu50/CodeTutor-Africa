@@ -61,12 +61,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 }) => {
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
-  const [language, setLanguage] = useState<ProgrammingLanguage>('python')
+  const [language, setLanguage] = useState<ProgrammingLanguage | ''>('')
   const [isCustomLanguage, setIsCustomLanguage] = useState(false)
   const [customLanguageText, setCustomLanguageText] = useState('')
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>('beginner')
-  const [category, setCategory] = useState('Core Programming')
-  const [estimatedHours, setEstimatedHours] = useState(20)
+  const [difficulty, setDifficulty] = useState<DifficultyLevel | ''>('')
+  const [category, setCategory] = useState('')
+  const [estimatedHours, setEstimatedHours] = useState<number | ''>('')
   const [description, setDescription] = useState('')
   const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [mentorId, setMentorId] = useState('')
@@ -142,23 +142,19 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         }))
       )
     } else {
-      // Default new course boilerplate
-      const activeSession = adminAnalyticsService.getActiveUserSession()
-      const isMentor = activeSession && activeSession.role === 'instructor'
-      const defaultMentor = isMentor
-        ? activeSession
-        : adminAnalyticsService.getAllUsers().find((u) => u.role === 'instructor')
-
+      // Default empty boilerplate for new courses (no pre-selected values)
       setTitle('')
       setSlug('')
-      setLanguage('python')
-      setDifficulty('beginner')
-      setCategory('Core Programming')
-      setEstimatedHours(16)
+      setLanguage('')
+      setIsCustomLanguage(false)
+      setCustomLanguageText('')
+      setDifficulty('')
+      setCategory('')
+      setEstimatedHours('')
       setDescription('')
       setThumbnailUrl('')
-      setMentorId(defaultMentor?.id || '')
-      setMentorName(defaultMentor?.name || '')
+      setMentorId('')
+      setMentorName('')
       setModules([
         {
           id: `mod-${Date.now()}-1`,
@@ -327,15 +323,20 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       })),
     }))
 
+    const finalLanguage = (language || 'python') as ProgrammingLanguage
+    const finalDifficulty = (difficulty || 'beginner') as DifficultyLevel
+    const finalCategory = category.trim() || 'General'
+    const finalEstimatedHours = typeof estimatedHours === 'number' && estimatedHours > 0 ? estimatedHours : 16
+
     let saved: Course
     if (courseToEdit) {
       saved = courseStoreService.updateCourse(courseToEdit.id, {
         title,
         slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        language,
-        difficulty,
-        category,
-        estimatedHours,
+        language: finalLanguage,
+        difficulty: finalDifficulty,
+        category: finalCategory,
+        estimatedHours: finalEstimatedHours,
         description,
         mentorId: mentorId || undefined,
         mentorName: mentorName || undefined,
@@ -348,10 +349,10 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       saved = courseStoreService.createCourse({
         title,
         slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        language,
-        difficulty,
-        category,
-        estimatedHours,
+        language: finalLanguage,
+        difficulty: finalDifficulty,
+        category: finalCategory,
+        estimatedHours: finalEstimatedHours,
         description,
         mentorId: mentorId || undefined,
         mentorName: mentorName || undefined,
@@ -440,11 +441,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             {/* Language */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                Programming Language / Track
+                Programming Language / Track <span className="text-rose-500">*</span>
               </label>
               <Dropdown
                 options={languageOptions}
                 value={isCustomLanguage ? 'custom' : language}
+                placeholder="-- Select Language / Track --"
                 onChange={(val) => {
                   if (val === 'custom') {
                     setIsCustomLanguage(true)
@@ -492,11 +494,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             {/* Difficulty */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                Difficulty Level
+                Difficulty Level <span className="text-rose-500">*</span>
               </label>
               <Dropdown
                 options={difficultyOptions}
                 value={difficulty}
+                placeholder="-- Select Difficulty Level --"
                 onChange={(val) => setDifficulty(val as DifficultyLevel)}
                 className="text-xs font-medium"
               />
@@ -508,7 +511,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 Curriculum Category
               </label>
               <Input
-                placeholder="e.g. Core Programming, Web, Systems"
+                placeholder="e.g. Web Development, Core Programming, Systems"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="text-xs border-slate-300 dark:border-slate-700"
@@ -524,8 +527,9 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 type="number"
                 min={1}
                 max={200}
+                placeholder="e.g. 16"
                 value={estimatedHours}
-                onChange={(e) => setEstimatedHours(Number(e.target.value))}
+                onChange={(e) => setEstimatedHours(e.target.value === '' ? '' : Number(e.target.value))}
                 className="text-xs border-slate-300 dark:border-slate-700 font-mono"
               />
             </div>
@@ -546,7 +550,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 }}
                 className="w-full h-9 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 font-sans"
               >
-                <option value="">-- No Mentor Assigned (Platform General) --</option>
+                <option value="">-- Select Course Mentor / Instructor --</option>
                 {adminAnalyticsService.getAllUsers().filter((u) => u.role === 'instructor').map((mentor) => (
                   <option key={mentor.id} value={mentor.id}>
                     {mentor.name} ({mentor.countryName} • @{mentor.username})
