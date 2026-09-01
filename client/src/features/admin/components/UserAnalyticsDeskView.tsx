@@ -104,14 +104,17 @@ interface UserAnalyticsDeskViewProps {
   users: AdminUserRecord[]
   auditLogs: AuditLogEntry[]
   onDataChanged: () => void
+  restrictedMentorUser?: AdminUserRecord | null
 }
 
 export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   users,
   auditLogs,
   onDataChanged,
+  restrictedMentorUser = null,
 }) => {
   const [subView, setSubView] = useState<'users' | 'audit' | 'regional' | 'mentors' | 'inquiries'>('users')
+  const [expandedMentorId, setExpandedMentorId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('ALL')
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL')
@@ -199,6 +202,24 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     setActionSuccessMsg(`Inquiry deleted from support desk.`)
     setTimeout(() => setActionSuccessMsg(null), 3000)
   }
+
+  const mentorCoursesForRestricted = useMemo(() => {
+    if (restrictedMentorUser) {
+      return courseStoreService.getCoursesByMentor(
+        restrictedMentorUser.id,
+        restrictedMentorUser.enrolledCourseIds,
+        restrictedMentorUser.favoriteLanguage
+      )
+    }
+    return []
+  }, [restrictedMentorUser])
+
+  const effectiveUsers = useMemo(() => {
+    if (restrictedMentorUser) {
+      return adminAnalyticsService.getLearnersForMentor(restrictedMentorUser, mentorCoursesForRestricted)
+    }
+    return users
+  }, [users, restrictedMentorUser, mentorCoursesForRestricted])
 
   const mentorUsers = useMemo(() => {
     return users.filter((u) => u.role === 'instructor')
@@ -291,7 +312,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   }
 
   const filteredUsers = useMemo(() => {
-    const list = users.filter((u) => {
+    const list = effectiveUsers.filter((u) => {
       const matchesSearch =
         u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -1718,7 +1739,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-3.5">
+                    <div className="grid grid-cols-1 gap-4">
                       {filteredMentors.map((mentor) => {
                         const isLiveActive =
                           mentor.status === 'active_now' ||
@@ -1729,18 +1750,24 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                           (a) => a.email.toLowerCase() === mentor.email.toLowerCase()
                         )
 
-                        const enrolledCount = users.filter(
-                          (u) =>
-                            u.activeCourseTitle === mentor.activeCourseTitle ||
-                            (mentor.favoriteLanguage === 'java' && (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some(t => t.includes('Java')))) ||
-                            (mentor.favoriteLanguage === 'python' && (u.favoriteLanguage === 'python' || u.enrolledCourseTitles?.some(t => t.includes('Python')))) ||
-                            (mentor.favoriteLanguage === 'javascript' && (u.favoriteLanguage === 'javascript' || u.enrolledCourseTitles?.some(t => t.includes('JS'))))
-                        ).length
+                        const assignedCourses = courseStoreService.getCoursesByMentor(
+                          mentor.id,
+                          mentor.enrolledCourseIds,
+                          mentor.favoriteLanguage
+                        )
+
+                        const mentorLearners = adminAnalyticsService.getLearnersForMentor(mentor, assignedCourses)
+                        const totalMentorStudentsEnrolled = assignedCourses.reduce(
+                          (sum, c) => sum + (c.enrolledCount || 0),
+                          0
+                        ) || mentorLearners.length
+
+                        const isExpanded = expandedMentorId === mentor.id
 
                         return (
                           <div
                             key={mentor.id}
-                            className={`p-4 sm:p-5 rounded-2xl border transition-all space-y-3.5 ${
+                            className={`p-4 sm:p-5 rounded-2xl border transition-all space-y-4 ${
                               isLiveActive
                                 ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500/50 shadow-2xs'
                                 : 'bg-slate-50/70 dark:bg-slate-950/40 border-slate-200/80 dark:border-slate-800/80 opacity-90'
@@ -1769,7 +1796,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                     </span>
                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20">
                                       <GraduationCap className="w-3 h-3" />
-                                      MENTOR
+                                      VERIFIED MENTOR
                                     </span>
                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                                       <Globe className="w-2.5 h-2.5 text-brand-500" />
@@ -1777,7 +1804,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                     </span>
                                   </div>
 
-                                  <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5">
+                                  <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5 flex-wrap">
                                     <span>@{mentor.username}</span>
                                     <span>•</span>
                                     <span className="flex items-center gap-1">
@@ -1790,8 +1817,13 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                 </div>
                               </div>
 
-                              {/* Live Activity Status Indicator */}
-                              <div className="flex items-center gap-2 shrink-0">
+                              {/* Live Activity Status & Total Enrolled Highlight Badge */}
+                              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                                <div className="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-brand-800 dark:text-brand-300 font-mono text-xs font-bold flex items-center gap-1.5 shadow-3xs">
+                                  <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                                  <span>{totalMentorStudentsEnrolled.toLocaleString()} Students Enrolled</span>
+                                </div>
+
                                 {mentor.status === 'active_now' && (
                                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
                                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
@@ -1819,21 +1851,69 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               </div>
                             </div>
 
-                            {/* Middle row: Course Track, Learners & Stats */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-                              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
-                                  <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                                  <span>Curriculum &amp; Track:</span>
-                                </div>
-                                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                                  {mentor.activeCourseTitle || `Learn to code with ${mentor.favoriteLanguage.toUpperCase()}`}
-                                </div>
-                                <div className="text-[10px] text-brand-600 dark:text-brand-400 font-mono font-semibold">
-                                  {enrolledCount} enrolled students taking track
-                                </div>
+                            {/* ═══════════════════════════════════════════════════════════════
+                                ADMIN PER-MENTOR COURSES & ENROLLED STUDENTS BREAKDOWN
+                                ═══════════════════════════════════════════════════════════════ */}
+                            <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-950/70 border border-slate-200/90 dark:border-slate-800/90">
+                              <div className="flex items-center justify-between flex-wrap gap-2 text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+                                <span className="flex items-center gap-1.5 text-brand-700 dark:text-brand-300">
+                                  <BookOpen className="w-3.5 h-3.5" />
+                                  <span>Courses Under This Mentor ({assignedCourses.length}):</span>
+                                </span>
+                                <span className="text-[11px] text-slate-500">
+                                  {totalMentorStudentsEnrolled.toLocaleString()} total learners enrolled under this mentor
+                                </span>
                               </div>
 
+                              {assignedCourses.length === 0 ? (
+                                <p className="text-xs text-slate-400 italic">No specific courses assigned yet.</p>
+                              ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                  {assignedCourses.map((c) => {
+                                    const courseSpecificLearners = mentorLearners.filter(
+                                      (l) =>
+                                        (l.enrolledCourseIds && l.enrolledCourseIds.includes(c.id)) ||
+                                        (l.enrolledCourseTitles && l.enrolledCourseTitles.some((t) => t.toLowerCase() === c.title.toLowerCase())) ||
+                                        (l.activeCourseTitle && l.activeCourseTitle.toLowerCase() === c.title.toLowerCase()) ||
+                                        (l.favoriteLanguage === c.language)
+                                    )
+                                    const enrolledInThisCourse = c.enrolledCount || courseSpecificLearners.length || 0
+
+                                    return (
+                                      <div
+                                        key={c.id}
+                                        className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shadow-3xs"
+                                      >
+                                        <div className="min-w-0 space-y-0.5">
+                                          <div className="flex items-center gap-1.5 flex-wrap">
+                                            <span className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                                              {c.title}
+                                            </span>
+                                            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                              {c.language}
+                                            </span>
+                                          </div>
+                                          <p className="text-[10px] font-mono text-slate-400 truncate">
+                                            /{c.slug} • {c.totalLessons} lessons
+                                          </p>
+                                        </div>
+
+                                        <div className="text-right shrink-0">
+                                          <div className="flex items-center gap-1 text-xs font-bold font-mono text-[#005F02] dark:text-emerald-400">
+                                            <Users className="w-3.5 h-3.5" />
+                                            <span>{enrolledInThisCourse.toLocaleString()}</span>
+                                          </div>
+                                          <span className="text-[9px] font-mono text-slate-400">enrolled</span>
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Middle row: Activity & Telemetry */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
                                 <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
                                   <Clock className="w-3.5 h-3.5 text-slate-400" />
@@ -1857,6 +1937,84 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   {mentor.lessonsCompleted} Published Modules
                                 </div>
                               </div>
+                            </div>
+
+                            {/* Expandable Learner List Accordion Button */}
+                            <div className="pt-1">
+                              <button
+                                type="button"
+                                onClick={() => setExpandedMentorId(isExpanded ? null : mentor.id)}
+                                className="w-full py-2 px-3 rounded-xl bg-brand-50/80 dark:bg-brand-950/50 hover:bg-brand-100 dark:hover:bg-brand-900/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80 text-xs font-bold flex items-center justify-between transition-colors cursor-pointer"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                                  <span>View Enrolled Learners for {mentor.name} ({mentorLearners.length} verified learners)</span>
+                                </span>
+                                {isExpanded ? (
+                                  <ChevronUp className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                                )}
+                              </button>
+
+                              {isExpanded && (
+                                <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-inner overflow-hidden animate-in fade-in duration-200">
+                                  {mentorLearners.length === 0 ? (
+                                    <p className="text-xs text-slate-400 py-3 text-center">
+                                      No direct learner profile records found for this mentor.
+                                    </p>
+                                  ) : (
+                                    <div className="overflow-x-auto">
+                                      <table className="w-full text-left text-xs">
+                                        <thead>
+                                          <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-mono text-slate-400 uppercase">
+                                            <th className="py-2 px-3">Student Name</th>
+                                            <th className="py-2 px-3">Country</th>
+                                            <th className="py-2 px-3">Active Course</th>
+                                            <th className="py-2 px-3">XP &amp; Streak</th>
+                                            <th className="py-2 px-3">Status</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                                          {mentorLearners.map((learner) => (
+                                            <tr key={learner.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                              <td className="py-2 px-3 font-semibold text-slate-900 dark:text-white">
+                                                <div className="flex items-center gap-2">
+                                                  <div className="w-6 h-6 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold">
+                                                    {learner.name.charAt(0)}
+                                                  </div>
+                                                  <div>
+                                                    <div>{learner.name}</div>
+                                                    <div className="text-[10px] text-slate-400 font-mono">@{learner.username}</div>
+                                                  </div>
+                                                </div>
+                                              </td>
+                                              <td className="py-2 px-3 font-mono text-slate-600 dark:text-slate-300">
+                                                {learner.countryName} ({learner.countryCode})
+                                              </td>
+                                              <td className="py-2 px-3 font-mono text-brand-600 dark:text-brand-400">
+                                                {learner.activeCourseTitle || learner.enrolledCourseTitles?.[0] || 'Enrolled'}
+                                              </td>
+                                              <td className="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">
+                                                {learner.totalXp.toLocaleString()} XP • 🔥 {learner.streakDays}d
+                                              </td>
+                                              <td className="py-2 px-3">
+                                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
+                                                  learner.status === 'active_now' || learner.status === 'active_today'
+                                                    ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
+                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                                                }`}>
+                                                  {learner.status.replace('_', ' ').toUpperCase()}
+                                                </span>
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
                             {/* Bottom row: Profile Links & Admin Action Controls */}

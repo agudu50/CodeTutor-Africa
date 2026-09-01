@@ -73,4 +73,8 @@ export interface Course extends BaseEntity {
   isAiGenerated?: boolean
   generatedPrompt?: string
   games?: CourseGameLink[]
+  mentorId?: string
+  mentorName?: string
+  instructorId?: string
+  instructorName?: string
 }

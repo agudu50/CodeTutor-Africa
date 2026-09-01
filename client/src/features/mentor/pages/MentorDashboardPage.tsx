@@ -232,10 +232,34 @@ export const MentorDashboardPage: React.FC = () => {
   // ═══════════════════════════════════════════════════════════════
   // AUTHORIZED MENTOR HUB VIEW (FOR ACTIVE INSTRUCTORS & ADMINS)
   // ═══════════════════════════════════════════════════════════════
+  const isInstructor = currentUser.role === 'instructor'
+
+  // If viewing as instructor / mentor, scope courses and students to ONLY their own
+  const mentorCourses = isInstructor
+    ? courseStoreService.getCoursesByMentor(
+        currentUser.id,
+        currentUser.enrolledCourseIds,
+        currentUser.favoriteLanguage
+      )
+    : courses
+
+  const displayCourses = isInstructor ? mentorCourses : courses
+
+  const mentorLearners = isInstructor
+    ? adminAnalyticsService.getLearnersForMentor(currentUser, mentorCourses)
+    : adminUsers.filter((u) => u.role === 'learner')
+
   const openInquiriesCount = issues.filter((i) => i.status === 'open' || i.status === 'in_review').length
   const resolvedInquiriesCount = issues.filter((i) => i.status === 'resolved' || i.status === 'closed').length
-  const totalLessons = courses.reduce((acc, c) => acc + (c.modules?.reduce((mAcc, m) => mAcc + (m.lessons?.length || 0), 0) || 0), 0)
-  const totalEnrolledStudents = courses.reduce((acc, c) => acc + (c.enrolledCount || 420), 0)
+
+  const totalLessons = displayCourses.reduce(
+    (acc, c) => acc + (c.modules?.reduce((mAcc, m) => mAcc + (m.lessons?.length || 0), 0) || c.totalLessons || 0),
+    0
+  )
+
+  const totalEnrolledStudents = isInstructor
+    ? displayCourses.reduce((acc, c) => acc + (c.enrolledCount || 0), 0) || mentorLearners.length
+    : courses.reduce((acc, c) => acc + (c.enrolledCount || 420), 0)
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
@@ -248,6 +272,61 @@ export const MentorDashboardPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+          MENTOR PERSONA QUICK-SWITCHER & ROLE INDICATOR
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-brand-50/80 dark:bg-brand-950/40 border border-brand-200/80 dark:border-brand-800/80 text-xs">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="p-1.5 rounded-lg bg-brand-600 text-white shadow-3xs">
+            <GraduationCap className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-slate-900 dark:text-white">Active Session Persona:</span>
+              <span className="font-mono text-brand-700 dark:text-brand-300 font-bold">
+                {currentUser.name}
+              </span>
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase ${
+                isInstructor
+                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                  : 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
+              }`}>
+                {currentUser.role} View
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-mono">
+              {isInstructor
+                ? `Scoped View: Viewing only your ${displayCourses.length} course(s) and ${totalEnrolledStudents.toLocaleString()} enrolled student(s).`
+                : `Administrator View: Full access to all ${courses.length} courses and ${totalEnrolledStudents.toLocaleString()} total platform enrollments.`}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-slate-500 font-mono text-[11px]">Persona Switcher:</span>
+          <select
+            value={currentUser.id}
+            onChange={(e) => handleSwitchPersona(e.target.value)}
+            className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-brand-300 dark:border-brand-700 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-3xs cursor-pointer"
+          >
+            <optgroup label="Verified Mentors (Scoped to Their Courses)">
+              {adminUsers.filter((u) => u.role === 'instructor').map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.favoriteLanguage?.toUpperCase()} Mentor)
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Administrators (View All Courses & Mentors)">
+              {adminUsers.filter((u) => u.role === 'admin').map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name} (Admin • Global Overview)
+                </option>
+              ))}
+            </optgroup>
+          </select>
+        </div>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           MENTOR PORTAL HEADER BANNER
@@ -264,11 +343,14 @@ export const MentorDashboardPage: React.FC = () => {
                   Mentor Operations &amp; Community Hub
                 </h1>
                 <span className="px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20">
-                  VERIFIED EDUCATOR
+                  {isInstructor ? 'VERIFIED EDUCATOR' : 'PLATFORM ADMINISTRATOR'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Active mentor session: <strong className="text-slate-800 dark:text-slate-200">{currentUser.name}</strong> • Review student questions, author offline curriculum tracks, and track learner enrollment.
+                Active session: <strong className="text-slate-800 dark:text-slate-200">{currentUser.name}</strong> •{' '}
+                {isInstructor
+                  ? 'Manage your assigned tracks, review student questions, and track learner enrollment in your courses.'
+                  : 'Platform Admin: Overview of all courses, students, and per-mentor track assignments.'}
               </p>
             </div>
           </div>
@@ -323,22 +405,22 @@ export const MentorDashboardPage: React.FC = () => {
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
-            Curriculum Courses
+            {isInstructor ? 'Your Courses' : 'Curriculum Courses'}
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-              {courses.length}
+              {displayCourses.length}
             </span>
             <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-            {totalLessons} lessons online
+            {totalLessons} lessons {isInstructor ? 'authored' : 'online'}
           </span>
         </div>
 
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-400 block tracking-wider">
-            Total Enrolled
+            {isInstructor ? 'Your Enrolled Students' : 'Total Enrolled'}
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-xl sm:text-2xl font-bold text-[#005F02] dark:text-emerald-400">
@@ -347,7 +429,9 @@ export const MentorDashboardPage: React.FC = () => {
             <Users className="w-4 h-4 text-emerald-500" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-            Across {courses.length} active tracks
+            {isInstructor
+              ? `Across your ${displayCourses.length} assigned track(s)`
+              : `Across ${courses.length} active tracks`}
           </span>
         </div>
 
@@ -362,7 +446,7 @@ export const MentorDashboardPage: React.FC = () => {
             <Clock className="w-4 h-4 text-sky-500" />
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-            Admin synced real-time
+            {isInstructor ? 'Active Mentor Desk' : 'Admin synced real-time'}
           </span>
         </div>
       </div>
@@ -399,9 +483,9 @@ export const MentorDashboardPage: React.FC = () => {
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>Curriculum &amp; Course Builder</span>
+          <span>{isInstructor ? 'Your Mentored Courses' : 'Curriculum & Course Builder'}</span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-            {courses.length}
+            {displayCourses.length}
           </span>
         </button>
 
@@ -415,9 +499,9 @@ export const MentorDashboardPage: React.FC = () => {
           }`}
         >
           <Users className="w-3.5 h-3.5" />
-          <span>Enrolled Students &amp; Mentors</span>
+          <span>{isInstructor ? 'Your Enrolled Students' : 'Enrolled Students & Mentors'}</span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-            {adminUsers.length}
+            {isInstructor ? mentorLearners.length : adminUsers.length}
           </span>
         </button>
       </div>
@@ -430,11 +514,27 @@ export const MentorDashboardPage: React.FC = () => {
       )}
 
       {activeTab === 'courses' && (
-        <CourseListTable
-          courses={courses}
-          onEditCourse={handleEditCourse}
-          onDeleteCourse={handleDeleteCourse}
-        />
+        <div className="space-y-4">
+          {isInstructor && (
+            <div className="p-3.5 rounded-xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200/80 dark:border-brand-800/80 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  Showing only the {displayCourses.length} curriculum track(s) assigned to you ({currentUser.name}).
+                </span>
+              </div>
+              <span className="font-mono font-bold text-[#005F02] dark:text-emerald-400 whitespace-nowrap">
+                {totalEnrolledStudents.toLocaleString()} total learners enrolled
+              </span>
+            </div>
+          )}
+
+          <CourseListTable
+            courses={displayCourses}
+            onEditCourse={handleEditCourse}
+            onDeleteCourse={handleDeleteCourse}
+          />
+        </div>
       )}
 
       {activeTab === 'students' && (
@@ -442,6 +542,7 @@ export const MentorDashboardPage: React.FC = () => {
           users={adminUsers}
           auditLogs={auditLogs}
           onDataChanged={reloadData}
+          restrictedMentorUser={isInstructor ? currentUser : null}
         />
       )}
 
@@ -471,3 +572,4 @@ export const MentorDashboardPage: React.FC = () => {
 }
 
 export default MentorDashboardPage
+

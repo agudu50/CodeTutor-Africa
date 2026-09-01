@@ -32,11 +32,13 @@ class CourseStoreService {
 
         if (hasAll18ModulesWithQuizzes && hasBeginnerFriendlyContent && isClean0Percent && hasUpdatedCategories) {
           this.courses = parsed.map((c: Course) => {
-            if (c.enrolledCount) return c
             const matchingMock = MOCK_COURSES.find((m) => m.id === c.id || m.language === c.language)
             return {
               ...c,
-              enrolledCount: matchingMock?.enrolledCount || 350,
+              enrolledCount: c.enrolledCount || matchingMock?.enrolledCount || 350,
+              mentorId: c.mentorId || matchingMock?.mentorId,
+              mentorName: c.mentorName || matchingMock?.mentorName,
+              instructorName: c.instructorName || matchingMock?.instructorName || c.mentorName || matchingMock?.mentorName,
             }
           })
         } else {
@@ -144,6 +146,45 @@ class CourseStoreService {
     course.totalLessons = course.modules.reduce((acc: number, m: Module) => acc + m.lessons.length, 0)
     this.save()
     return newLesson
+  }
+
+  getCoursesByMentor(mentorIdOrName?: string, mentorCourseIds?: string[], mentorLanguage?: string): Course[] {
+    if (!mentorIdOrName && (!mentorCourseIds || mentorCourseIds.length === 0)) {
+      return []
+    }
+    const query = mentorIdOrName?.toLowerCase().trim() || ''
+
+    return this.courses.filter((course: Course) => {
+      // 1. Direct ID match
+      if (course.mentorId && course.mentorId === mentorIdOrName) return true
+      // 2. Mentor Name / Instructor Name match
+      if (course.mentorName && query && course.mentorName.toLowerCase().includes(query)) return true
+      if (course.instructorName && query && course.instructorName.toLowerCase().includes(query)) return true
+      // 3. Assigned course IDs match
+      if (mentorCourseIds && mentorCourseIds.includes(course.id)) return true
+      // 4. Assigned language match (fallback for language mentors)
+      if (mentorLanguage && course.language === mentorLanguage) return true
+      return false
+    })
+  }
+
+  getMentorEnrolledStudentCount(mentorIdOrName?: string, mentorCourseIds?: string[], mentorLanguage?: string): number {
+    const mentorCourses = this.getCoursesByMentor(mentorIdOrName, mentorCourseIds, mentorLanguage)
+    return mentorCourses.reduce((acc: number, c: Course) => acc + (c.enrolledCount || 0), 0)
+  }
+
+  assignMentorToCourse(courseId: string, mentorId: string, mentorName: string): Course | undefined {
+    const idx = this.courses.findIndex((c: Course) => c.id === courseId)
+    if (idx === -1) return undefined
+
+    this.courses[idx] = {
+      ...this.courses[idx],
+      mentorId,
+      mentorName,
+      instructorName: mentorName,
+    }
+    this.save()
+    return this.courses[idx]
   }
 
   resetToDefaults(): void {

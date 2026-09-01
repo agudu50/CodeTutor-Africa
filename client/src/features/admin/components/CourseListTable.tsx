@@ -11,6 +11,7 @@ import {
   Pencil,
   Users,
   X,
+  GraduationCap,
 } from 'lucide-react'
 
 interface CourseListTableProps {
@@ -95,9 +96,18 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                 <h4 className="font-bold text-sm text-slate-900 dark:text-white leading-snug line-clamp-1">
                   {course.title}
                 </h4>
-                <p className="text-[11px] font-mono text-slate-400 truncate">
-                  /{course.slug}
-                </p>
+                <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">
+                  <span>/{course.slug}</span>
+                  {(course.mentorName || course.instructorName) && (
+                    <>
+                      <span>•</span>
+                      <span className="text-[#005F02] dark:text-emerald-400 font-semibold flex items-center gap-0.5">
+                        <GraduationCap className="w-3 h-3 inline" />
+                        {course.mentorName || course.instructorName}
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -208,9 +218,17 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
                   {/* Enrolled Students */}
                   <td className="py-3.5 px-4 font-mono">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-900 dark:text-white font-bold">
-                      <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                      <span>{(course.enrolledCount || 420).toLocaleString()} learners</span>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-900 dark:text-white font-bold">
+                        <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                        <span>{(course.enrolledCount || 420).toLocaleString()} learners</span>
+                      </div>
+                      {(course.mentorName || course.instructorName) && (
+                        <div className="flex items-center gap-1 text-[10px] text-[#005F02] dark:text-emerald-400 font-semibold">
+                          <GraduationCap className="w-3 h-3 shrink-0" />
+                          <span className="truncate max-w-[150px]">{course.mentorName || course.instructorName}</span>
+                        </div>
+                      )}
                     </div>
                   </td>
 

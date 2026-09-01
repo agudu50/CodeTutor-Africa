@@ -1,4 +1,6 @@
 import { AdminUserRecord, AuditLogEntry, UserStatsSummary, ContactInquiry } from '@/types/admin-analytics'
+import { Course } from '@/types'
+import { courseStoreService } from '@/services/learning/course-store.service'
 
 const USERS_STORAGE_KEY = 'codetutor_admin_users_v1'
 const AUDIT_LOGS_STORAGE_KEY = 'codetutor_admin_audit_logs_v1'
@@ -123,11 +125,11 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     lessonsCompleted: 30,
     problemsSolved: 180,
     gamesPlayed: 40,
-    favoriteLanguage: 'java',
+    favoriteLanguage: 'typescript',
     deviceMode: 'web_browser',
-    enrolledCourseIds: ['course-java-301'],
-    enrolledCourseTitles: ['Learn to code with Java'],
-    activeCourseTitle: 'Learn to code with Java',
+    enrolledCourseIds: ['course-ts-401'],
+    enrolledCourseTitles: ['Learn to code with TypeScript'],
+    activeCourseTitle: 'Learn to code with TypeScript',
   },
   {
     id: 'usr-gh-1',
@@ -933,6 +935,114 @@ class AdminAnalyticsService {
     this.saveInquiries()
   }
 
+  /**
+   * Returns all student / learner user records enrolled in a specific mentor's courses.
+   */
+  getLearnersForMentor(mentorUserOrId: string | AdminUserRecord, customMentorCourses?: Course[]): AdminUserRecord[] {
+    const mentor = typeof mentorUserOrId === 'string'
+      ? this.users.find((u) => u.id === mentorUserOrId || u.username === mentorUserOrId || u.email === mentorUserOrId)
+      : mentorUserOrId
+
+    if (!mentor) return []
+
+    const mentorCourses = customMentorCourses || courseStoreService.getCoursesByMentor(
+      mentor.id,
+      mentor.enrolledCourseIds,
+      mentor.favoriteLanguage
+    )
+
+    const mentorCourseIds = new Set(mentorCourses.map((c) => c.id))
+    const mentorCourseTitles = new Set(mentorCourses.map((c) => c.title.toLowerCase()))
+    const mentorCourseLanguages = new Set(mentorCourses.map((c) => c.language))
+
+    // Fallback: also include courses explicitly in mentor's profile
+    if (mentor.enrolledCourseIds) {
+      mentor.enrolledCourseIds.forEach((id) => mentorCourseIds.add(id))
+    }
+    if (mentor.enrolledCourseTitles) {
+      mentor.enrolledCourseTitles.forEach((t) => mentorCourseTitles.add(t.toLowerCase()))
+    }
+    if (mentor.activeCourseTitle) {
+      mentorCourseTitles.add(mentor.activeCourseTitle.toLowerCase())
+    }
+
+    return this.users.filter((user) => {
+      // Exclude mentors and admins from student lists
+      if (user.role !== 'learner') return false
+
+      // Match 1: Course ID enrollment
+      if (user.enrolledCourseIds && user.enrolledCourseIds.some((cid) => mentorCourseIds.has(cid))) {
+        return true
+      }
+
+      // Match 2: Course Title enrollment
+      if (user.enrolledCourseTitles && user.enrolledCourseTitles.some((ct) => mentorCourseTitles.has(ct.toLowerCase()))) {
+        return true
+      }
+
+      // Match 3: Active course title
+      if (user.activeCourseTitle && mentorCourseTitles.has(user.activeCourseTitle.toLowerCase())) {
+        return true
+      }
+
+      // Match 4: Language alignment (for learners studying mentor's specialized language track)
+      if (mentor.favoriteLanguage && user.favoriteLanguage === mentor.favoriteLanguage && mentorCourseLanguages.has(user.favoriteLanguage as any)) {
+        return true
+      }
+
+      return false
+    })
+  }
+
+  /**
+   * Returns a complete breakdown for administrators of each mentor and the number of students enrolled under each of their courses.
+   */
+  getMentorCourseEnrollmentSummary(): Array<{
+    mentor: AdminUserRecord
+    courses: Array<Course & { studentCount: number; enrolledLearners: AdminUserRecord[] }>
+    totalPlatformStudents: number
+    totalEnrolledCount: number
+    enrolledLearners: AdminUserRecord[]
+  }> {
+    const mentors = this.users.filter((u) => u.role === 'instructor')
+    const learners = this.users.filter((u) => u.role === 'learner')
+
+    return mentors.map((mentor) => {
+      const mentorCourses = courseStoreService.getCoursesByMentor(
+        mentor.id,
+        mentor.enrolledCourseIds,
+        mentor.favoriteLanguage
+      )
+
+      // Calculate enrolled learners for this mentor
+      const mentorLearners = this.getLearnersForMentor(mentor, mentorCourses)
+
+      const enrichedCourses = mentorCourses.map((course) => {
+        const courseLearners = learners.filter((l) =>
+          (l.enrolledCourseIds && l.enrolledCourseIds.includes(course.id)) ||
+          (l.enrolledCourseTitles && l.enrolledCourseTitles.some((t) => t.toLowerCase() === course.title.toLowerCase())) ||
+          (l.activeCourseTitle && l.activeCourseTitle.toLowerCase() === course.title.toLowerCase())
+        )
+
+        return {
+          ...course,
+          studentCount: course.enrolledCount || courseLearners.length || 0,
+          enrolledLearners: courseLearners,
+        }
+      })
+
+      const totalEnrolled = enrichedCourses.reduce((sum, c) => sum + (c.enrolledCount || c.studentCount || 0), 0)
+
+      return {
+        mentor,
+        courses: enrichedCourses,
+        totalPlatformStudents: learners.length,
+        totalEnrolledCount: totalEnrolled,
+        enrolledLearners: mentorLearners,
+      }
+    })
+  }
+
   exportAuditLogsAsJson(customLogs?: AuditLogEntry[]): string {
     const list = customLogs || this.auditLogs
     return JSON.stringify(list, null, 2)
@@ -958,3 +1068,4 @@ class AdminAnalyticsService {
 }
 
 export const adminAnalyticsService = new AdminAnalyticsService()
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, memo } from 'react'
 import { Course, ProgrammingLanguage, DifficultyLevel, Module, QuizQuestion } from '@/types'
 import { courseStoreService } from '@/services/learning/course-store.service'
+import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { aiService } from '@/services/ai/ai.service'
 import { Button, Input, Textarea, Dropdown } from '@/components/ui'
 import {
@@ -65,6 +66,8 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   const [estimatedHours, setEstimatedHours] = useState(20)
   const [description, setDescription] = useState('')
   const [thumbnailUrl, setThumbnailUrl] = useState('')
+  const [mentorId, setMentorId] = useState('')
+  const [mentorName, setMentorName] = useState('')
   const [generatingLessonId, setGeneratingLessonId] = useState<string | null>(null)
   const [modules, setModules] = useState<Array<{
     id: string
@@ -93,6 +96,8 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setEstimatedHours(courseToEdit.estimatedHours)
       setDescription(courseToEdit.description)
       setThumbnailUrl(courseToEdit.thumbnailUrl || '')
+      setMentorId(courseToEdit.mentorId || '')
+      setMentorName(courseToEdit.mentorName || courseToEdit.instructorName || '')
       setModules(
         courseToEdit.modules.map((m) => ({
           id: m.id,
@@ -110,6 +115,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       )
     } else {
       // Default new course boilerplate
+      const activeSession = adminAnalyticsService.getActiveUserSession()
+      const isMentor = activeSession && activeSession.role === 'instructor'
+      const defaultMentor = isMentor
+        ? activeSession
+        : adminAnalyticsService.getAllUsers().find((u) => u.role === 'instructor')
+
       setTitle('')
       setSlug('')
       setLanguage('python')
@@ -118,6 +129,8 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setEstimatedHours(16)
       setDescription('')
       setThumbnailUrl('')
+      setMentorId(defaultMentor?.id || '')
+      setMentorName(defaultMentor?.name || '')
       setModules([
         {
           id: `mod-${Date.now()}-1`,
@@ -290,6 +303,9 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         category,
         estimatedHours,
         description,
+        mentorId: mentorId || undefined,
+        mentorName: mentorName || undefined,
+        instructorName: mentorName || undefined,
         thumbnailUrl: thumbnailUrl.trim() || undefined,
         totalLessons,
         modules: finalModules,
@@ -303,6 +319,9 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         category,
         estimatedHours,
         description,
+        mentorId: mentorId || undefined,
+        mentorName: mentorName || undefined,
+        instructorName: mentorName || undefined,
         thumbnailUrl: thumbnailUrl.trim() || undefined,
         totalLessons,
         modules: finalModules,
@@ -425,6 +444,31 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 onChange={(e) => setEstimatedHours(Number(e.target.value))}
                 className="text-xs"
               />
+            </div>
+
+            {/* Assigned Mentor */}
+            <div className="space-y-1 sm:col-span-2">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                <span>Assigned Course Mentor / Instructor</span>
+              </label>
+              <select
+                value={mentorId}
+                onChange={(e) => {
+                  const selectedId = e.target.value
+                  setMentorId(selectedId)
+                  const found = adminAnalyticsService.getAllUsers().find((u) => u.id === selectedId)
+                  setMentorName(found ? found.name : '')
+                }}
+                className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+              >
+                <option value="">-- No Mentor Assigned (Platform General) --</option>
+                {adminAnalyticsService.getAllUsers().filter((u) => u.role === 'instructor').map((mentor) => (
+                  <option key={mentor.id} value={mentor.id}>
+                    {mentor.name} ({mentor.countryName} • @{mentor.username})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
