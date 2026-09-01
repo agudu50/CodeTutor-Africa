@@ -1635,16 +1635,19 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setMentorRosterSubTab('roster')}
-                    className={`px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
+                    className={`px-2.5 sm:px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
                       mentorRosterSubTab === 'roster'
                         ? 'bg-brand-600 text-white shadow-xs font-extrabold'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <Users className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">Appointed Mentors</span>
+                    <span>
+                      <span className="sm:hidden">Mentors</span>
+                      <span className="hidden sm:inline">Appointed Mentors</span>
+                    </span>
                     <span
-                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
+                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold shrink-0 ${
                         mentorRosterSubTab === 'roster'
                           ? 'bg-white/20 text-white'
                           : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -1657,20 +1660,23 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setMentorRosterSubTab('applications')}
-                    className={`px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
+                    className={`px-2.5 sm:px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
                       mentorRosterSubTab === 'applications'
                         ? 'bg-brand-600 text-white shadow-xs font-extrabold'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <GraduationCap className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">Applications Queue</span>
+                    <span>
+                      <span className="sm:hidden">Applications</span>
+                      <span className="hidden sm:inline">Applications Queue</span>
+                    </span>
                     {pendingMentorCount > 0 ? (
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-amber-500 text-white font-bold animate-pulse">
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-amber-500 text-white font-bold animate-pulse shrink-0">
                         {pendingMentorCount} New
                       </span>
                     ) : (
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold shrink-0">
                         {mentorApps.length}
                       </span>
                     )}
