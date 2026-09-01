@@ -10,7 +10,7 @@ import {
   Code2,
   Pencil,
   Users,
-  X,
+  Trash2,
   GraduationCap,
 } from 'lucide-react'
 
@@ -162,7 +162,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                 className="p-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
                 title="Delete"
               >
-                <X className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -333,7 +333,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                         className="p-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 border border-transparent hover:border-rose-200 dark:hover:border-rose-800 transition-all cursor-pointer"
                         title="Delete course"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
