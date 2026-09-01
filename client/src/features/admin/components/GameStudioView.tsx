@@ -22,6 +22,7 @@ import {
   ChevronDown,
   Trash2,
   Edit,
+  Pencil,
 } from 'lucide-react'
 
 interface GameStudioViewProps {
@@ -413,41 +414,43 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
                 className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-sm space-y-4"
               >
                 {/* Track Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-2xl ${track.bgLight} border border-slate-200 dark:border-slate-800 font-mono font-black text-xs shrink-0 shadow-3xs`}>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3.5 border-b border-slate-100 dark:border-slate-800/80">
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div className={`p-2.5 rounded-2xl ${track.bgLight} border border-slate-200 dark:border-slate-800 font-mono font-black text-xs shrink-0 shadow-3xs mt-0.5 sm:mt-0`}>
                       {track.badge}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
                           {track.title}
                         </h2>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                           {modules.length} Modules
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        {track.subtitle} — {track.description}
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{track.subtitle}</span> — {track.description}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-                    <button
-                      type="button"
-                      onClick={() => handleCollapseAll(track.id)}
-                      className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
-                    >
-                      Collapse All
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleExpandAll(track.id)}
-                      className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
-                    >
-                      Expand All
-                    </button>
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800 justify-between sm:justify-end">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleCollapseAll(track.id)}
+                        className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer shadow-3xs"
+                      >
+                        Collapse All
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExpandAll(track.id)}
+                        className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer shadow-3xs"
+                      >
+                        Expand All
+                      </button>
+                    </div>
 
                     <Button
                       variant="outline"
@@ -481,33 +484,33 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
                             {/* Left: Module Number & Title */}
                             <div
                               onClick={() => toggleModuleAccordion(mod.id)}
-                              className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+                              className="flex items-start sm:items-center gap-2.5 sm:gap-3 flex-1 min-w-0 w-full cursor-pointer select-none"
                             >
-                              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-black text-xs flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-3xs">
+                              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 font-mono font-black text-xs flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-3xs mt-0.5 sm:mt-0">
                                 #{mod.moduleNumber}
                               </div>
 
                               <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-white truncate">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h3 className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">
                                     {mod.title}
                                   </h3>
-                                  <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                                  <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700/80 shrink-0">
                                     {(mod.drills || []).length} Drills
                                   </span>
                                 </div>
-                                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                                   {mod.description}
                                 </p>
                               </div>
 
-                              <div className={`p-1 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+                              <div className={`p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-transform duration-200 shrink-0 ${isExpanded ? 'rotate-180' : ''}`}>
                                 <ChevronDown className="w-4 h-4" />
                               </div>
                             </div>
 
                             {/* Right: Module Actions */}
-                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800 w-full sm:w-auto justify-end">
+                            <div className="flex items-center gap-2 shrink-0 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800 w-full sm:w-auto justify-between sm:justify-end">
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -518,23 +521,25 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
                                 Add Drill
                               </Button>
 
-                              <button
-                                type="button"
-                                onClick={() => handleEditModule(mod)}
-                                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-                                title="Edit module details"
-                              >
-                                <Edit className="w-3.5 h-3.5" />
-                              </button>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditModule(mod)}
+                                  className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer shadow-3xs transition-colors"
+                                  title="Edit module details"
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
 
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteModule(track.id, mod.id, mod.title)}
-                                className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer"
-                                title="Delete module"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteModule(track.id, mod.id, mod.title)}
+                                  className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer shadow-3xs transition-colors"
+                                  title="Delete module"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </div>
                           </div>
 
@@ -560,20 +565,20 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
                                   return (
                                     <div
                                       key={dIdx}
-                                      className="p-2.5 sm:p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-3 text-xs shadow-3xs"
+                                      className="p-2.5 sm:p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-3xs"
                                     >
                                       {/* Left: Drill mode icon & Title */}
-                                      <div className="flex items-center gap-2.5 min-w-0">
-                                        <div className={`p-1.5 rounded-lg ${color.bg} ${color.text} border ${color.border} shrink-0`}>
+                                      <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+                                        <div className={`p-1.5 rounded-lg ${color.bg} ${color.text} border ${color.border} shrink-0 mt-0.5 sm:mt-0`}>
                                           <IconComponent className="w-3.5 h-3.5" />
                                         </div>
 
-                                        <div className="min-w-0">
-                                          <h4 className="font-bold text-slate-900 dark:text-white truncate">
+                                        <div className="min-w-0 flex-1">
+                                          <h4 className="font-bold text-slate-900 dark:text-white leading-snug">
                                             {drill.title}
                                           </h4>
-                                          <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono mt-0.5">
-                                            <span className="font-bold uppercase">{drill.gameId}</span>
+                                          <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono mt-0.5 flex-wrap">
+                                            <span className="font-bold uppercase text-slate-600 dark:text-slate-300">{drill.gameId}</span>
                                             <span>•</span>
                                             <span>{drill.difficulty}</span>
                                             <span>•</span>
@@ -586,20 +591,20 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
                                       </div>
 
                                       {/* Right: Drill actions */}
-                                      <div className="flex items-center gap-1.5 shrink-0">
+                                      <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800/80 w-full sm:w-auto justify-end">
                                         <button
                                           type="button"
                                           onClick={() => handleEditDrill(track.id, mod, drill)}
-                                          className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 cursor-pointer transition-colors"
+                                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 cursor-pointer transition-colors shadow-3xs"
                                           title="Edit drill challenge content"
                                         >
-                                          <Edit className="w-3.5 h-3.5" />
+                                          <Pencil className="w-3.5 h-3.5" />
                                         </button>
 
                                         <button
                                           type="button"
                                           onClick={() => handleDeleteDrillFromModule(track.id, mod.id, dIdx, drill.title)}
-                                          className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer transition-colors"
+                                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer transition-colors shadow-3xs"
                                           title="Remove drill"
                                         >
                                           <Trash2 className="w-3.5 h-3.5" />
