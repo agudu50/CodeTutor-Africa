@@ -15,6 +15,7 @@ import {
   Play,
   Zap,
   HelpCircle,
+  Trash2,
 } from 'lucide-react'
 
 // Preset Curated Cover Images (SVGs and gradients that work 100% offline)
@@ -347,20 +348,20 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   ]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-3xl max-h-[92vh] rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 text-slate-900 dark:text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="relative w-full max-w-3xl max-h-[94vh] sm:max-h-[92vh] rounded-2xl sm:rounded-3xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 text-slate-900 dark:text-slate-100">
         {/* Header Bar */}
-        <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-brand-600 text-white shadow-xs">
+        <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="p-2 rounded-xl bg-brand-600 text-white shadow-xs shrink-0">
               <GraduationCap className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="text-base font-bold leading-none text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <h3 className="text-sm sm:text-base font-bold leading-tight text-slate-900 dark:text-white truncate">
                 {courseToEdit ? 'Edit Course Curriculum' : 'Create New Course Track'}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Admin Course Creator with AI theory, YouTube video links & multi-format quizzes.
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                Admin Course Creator with AI theory, video links &amp; quizzes.
               </p>
             </div>
           </div>
@@ -368,19 +369,19 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-2"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 overflow-y-auto space-y-5 flex-1">
+        <form onSubmit={handleSubmit} className="p-3.5 sm:p-5 overflow-y-auto space-y-4 sm:space-y-5 flex-1">
           {/* Metadata Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
             {/* Title */}
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Course Title <span className="text-rose-500">*</span>
               </label>
               <Input
@@ -388,13 +389,13 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 placeholder="e.g. Data Structures & Algorithms with Java"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                className="text-xs font-medium"
+                className="text-xs font-medium border-slate-300 dark:border-slate-700"
               />
             </div>
 
             {/* Language */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Programming Language
               </label>
               <Dropdown
@@ -407,7 +408,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 
             {/* Difficulty */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Difficulty Level
               </label>
               <Dropdown
@@ -420,20 +421,20 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 
             {/* Category */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Curriculum Category
               </label>
               <Input
                 placeholder="e.g. Core Programming, Web, Systems"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="text-xs"
+                className="text-xs border-slate-300 dark:border-slate-700"
               />
             </div>
 
             {/* Estimated Hours */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Estimated Hours
               </label>
               <Input
@@ -442,13 +443,13 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 max={200}
                 value={estimatedHours}
                 onChange={(e) => setEstimatedHours(Number(e.target.value))}
-                className="text-xs"
+                className="text-xs border-slate-300 dark:border-slate-700 font-mono"
               />
             </div>
 
             {/* Assigned Mentor */}
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                 <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                 <span>Assigned Course Mentor / Instructor</span>
               </label>
@@ -460,7 +461,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                   const found = adminAnalyticsService.getAllUsers().find((u) => u.id === selectedId)
                   setMentorName(found ? found.name : '')
                 }}
-                className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full h-9 px-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 font-sans"
               >
                 <option value="">-- No Mentor Assigned (Platform General) --</option>
                 {adminAnalyticsService.getAllUsers().filter((u) => u.role === 'instructor').map((mentor) => (
@@ -474,7 +475,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
               Course Description <span className="text-rose-500">*</span>
             </label>
             <Textarea
@@ -483,22 +484,22 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
               placeholder="High-level overview of outcomes, audience, and practical projects..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="text-xs font-sans leading-relaxed"
+              className="text-xs font-sans leading-relaxed border-slate-300 dark:border-slate-700"
             />
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
               COURSE THUMBNAIL / BANNER IMAGE BUILDER
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60">
-            <div className="flex items-center justify-between">
+          <div className="space-y-3 p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60">
+            <div className="flex items-start sm:items-center justify-between gap-2 flex-wrap">
               <div className="space-y-0.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 font-mono flex items-center gap-1.5">
                   <Zap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                   Course Cover Image / Thumbnail
                 </label>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Upload an image from your device (saved offline) or paste a custom image URL.
+                  Upload an image from device or paste an image URL.
                 </p>
               </div>
 
@@ -506,7 +507,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 <button
                   type="button"
                   onClick={() => setThumbnailUrl('')}
-                  className="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
+                  className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
                 >
                   Remove Image
                 </button>
@@ -525,7 +526,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             {/* Image Preview & Upload Controls */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
               {/* Preview Thumbnail Container */}
-              <div className="sm:col-span-4 h-28 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden flex items-center justify-center relative group">
+              <div className="sm:col-span-4 h-24 sm:h-28 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden flex items-center justify-center relative shadow-3xs">
                 {thumbnailUrl ? (
                   <img
                     src={thumbnailUrl}
@@ -533,28 +534,28 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-center p-3 text-slate-400 space-y-1">
-                    <BookOpen className="w-6 h-6 mx-auto opacity-50 text-brand-600 dark:text-brand-400" />
-                    <span className="text-[10px] font-mono block">No image selected</span>
+                  <div className="text-center p-2 text-slate-400 space-y-0.5">
+                    <BookOpen className="w-5 h-5 mx-auto opacity-50 text-brand-600 dark:text-brand-400" />
+                    <span className="text-[10px] font-mono block">No cover image</span>
                   </div>
                 )}
               </div>
 
               {/* Upload or URL Inputs */}
-              <div className="sm:col-span-8 space-y-2.5">
-                <div className="flex items-center gap-2">
+              <div className="sm:col-span-8 space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
-                    className="h-8 text-xs font-bold bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                    className="h-8 text-xs font-bold bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                     leftIcon={<Plus className="w-3.5 h-3.5" />}
                   >
                     Upload from Device
                   </Button>
 
-                  <span className="text-[11px] text-slate-400 font-mono">or paste URL:</span>
+                  <span className="text-[11px] text-slate-500 font-mono">or paste URL:</span>
                 </div>
 
                 <Input
@@ -562,12 +563,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                   placeholder="https://example.com/course-banner.jpg or data:image/..."
                   value={thumbnailUrl}
                   onChange={(e) => setThumbnailUrl(e.target.value)}
-                  className="text-xs font-mono"
+                  className="text-xs font-mono border-slate-300 dark:border-slate-700"
                 />
 
                 {/* Preset suggestions */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                <div className="space-y-1 pt-0.5">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider block">
                     Quick Preset Covers:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -579,7 +580,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                         className={`text-[10px] font-mono px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
                           thumbnailUrl === preset.url
                             ? 'bg-brand-600 text-white border-brand-600 shadow-2xs font-bold'
-                            : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-brand-400'
+                            : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-800 hover:border-brand-400'
                         }`}
                       >
                         {preset.label}
@@ -594,12 +595,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
           {/* ═══════════════════════════════════════════════════════════════
               MODULE & LESSON BUILDER WITH AI QUIZ & THEORY SYNTHESIZER
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex items-center justify-between">
+          <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2">
-                <Database className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                <Database className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 font-mono">
-                  Modules & Lessons ({modules.length} Modules)
+                  Modules &amp; Lessons ({modules.length} Modules)
                 </h4>
               </div>
 
@@ -608,7 +609,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 variant="outline"
                 size="sm"
                 onClick={handleAddModule}
-                className="text-xs font-bold text-brand-600 dark:text-brand-400 border-slate-200 dark:border-slate-700"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 border-slate-300 dark:border-slate-700"
                 leftIcon={<Plus className="w-3.5 h-3.5" />}
               >
                 Add Module
@@ -616,14 +617,14 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             </div>
 
             {/* Module Cards */}
-            <div className="space-y-4">
+            <div className="space-y-3.5 sm:space-y-4">
               {modules.map((mod, modIdx) => (
                 <div
                   key={mod.id}
-                  className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 space-y-3"
+                  className="p-3 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 space-y-3"
                 >
                   {/* Module Header */}
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
                     <input
                       type="text"
                       value={mod.title}
@@ -636,7 +637,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                         })
                       }}
                       placeholder="Module Title (e.g. Module 1: Core Syntax)"
-                      className="font-bold text-xs sm:text-sm bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white flex-1 py-0.5"
+                      className="font-bold text-xs sm:text-sm bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white flex-1 py-0.5 min-w-[180px]"
                     />
 
                     <div className="flex items-center gap-2 shrink-0">
@@ -645,7 +646,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                         variant="ghost"
                         size="sm"
                         onClick={() => handleAddLesson(modIdx)}
-                        className="h-7 text-[11px] font-semibold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/50"
+                        className="h-7 text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/50"
                         leftIcon={<Plus className="w-3 h-3" />}
                       >
                         Add Lesson
@@ -665,7 +666,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                   </div>
 
                   {/* Lessons list with AI generator + YouTube Video + Quiz counters */}
-                  <div className="space-y-3 pl-2 sm:pl-3 border-l-2 border-slate-200 dark:border-slate-800">
+                  <div className="space-y-2.5 sm:space-y-3 pl-1.5 sm:pl-3 border-l-2 border-slate-200 dark:border-slate-800">
                     {mod.lessons.map((les, lesIdx) => {
                       const isGenerating = generatingLessonId === les.id
                       const quizCount = les.quizQuestions?.length || 0
@@ -673,44 +674,62 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                       return (
                         <div
                           key={les.id}
-                          className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 shadow-2xs text-xs"
+                          className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 space-y-2.5 shadow-2xs text-xs"
                         >
-                          {/* Lesson Header Row */}
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-                              <input
-                                type="text"
-                                value={les.title}
-                                onChange={(e) => {
-                                  const val = e.target.value
-                                  setModules((prev) => {
-                                    const copy = [...prev]
-                                    copy[modIdx].lessons[lesIdx].title = val
-                                    return copy
-                                  })
-                                }}
-                                className="bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-800 dark:text-slate-200 font-bold flex-1 text-xs"
-                                placeholder="Lesson Title (e.g. Lesson 1: Introduction)"
-                              />
+                          {/* Lesson Header Area */}
+                          <div className="space-y-2">
+                            {/* Top Row: Lesson Index Pill + Title Input + Delete Button */}
+                            <div className="flex items-center gap-2">
+                              <span className="shrink-0 px-2 py-1 rounded-lg bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-[10px] font-mono font-bold text-brand-700 dark:text-brand-300">
+                                L{lesIdx + 1}
+                              </span>
+
+                              <div className="flex-1 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-950/60 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500/30 transition-all min-w-0">
+                                <BookOpen className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                                <input
+                                  type="text"
+                                  value={les.title}
+                                  onChange={(e) => {
+                                    const val = e.target.value
+                                    setModules((prev) => {
+                                      const copy = [...prev]
+                                      copy[modIdx].lessons[lesIdx].title = val
+                                      return copy
+                                    })
+                                  }}
+                                  className="w-full bg-transparent text-slate-900 dark:text-slate-100 font-bold text-xs focus:outline-none placeholder-slate-400"
+                                  placeholder="Lesson Title (e.g. Lesson 1: Introduction)"
+                                />
+                              </div>
+
+                              {mod.lessons.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveLesson(modIdx, lesIdx)}
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0"
+                                  title="Delete lesson"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0">
-                              {/* 1-Click AI Auto-Generator Button */}
+                            {/* Actions Toolbar Row: AI Auto-Generate Button + Duration Pill */}
+                            <div className="flex items-center justify-between gap-2 pt-0.5">
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
                                 isLoading={isGenerating}
                                 onClick={() => handleAIGenerateForLesson(modIdx, lesIdx)}
-                                className="h-7 text-[10px] sm:text-[11px] font-bold text-brand-600 dark:text-brand-400 bg-brand-50/60 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800/80 hover:bg-brand-100"
+                                className="h-7 px-2.5 text-[10px] sm:text-[11px] font-bold text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/70 border-brand-200 dark:border-brand-800/80 hover:bg-brand-100 dark:hover:bg-brand-900/60 shadow-3xs"
                                 leftIcon={<Zap className="w-3 h-3 text-brand-600 dark:text-brand-400" />}
                               >
                                 {isGenerating ? 'Synthesizing...' : 'AI Auto-Generate'}
                               </Button>
 
-                              <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-                                <Clock className="w-3 h-3 text-amber-500" />
+                              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/70 text-slate-700 dark:text-slate-300 font-mono text-[11px] font-semibold">
+                                <Clock className="w-3 h-3 text-amber-500 shrink-0" />
                                 <input
                                   type="number"
                                   min={5}
@@ -724,26 +743,15 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                                       return copy
                                     })
                                   }}
-                                  className="w-10 text-right bg-transparent border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-mono text-[11px] focus:outline-none"
+                                  className="w-7 text-right bg-transparent text-slate-900 dark:text-slate-100 font-mono text-[11px] focus:outline-none font-bold"
                                 />
-                                m
-                              </span>
-
-                              {mod.lessons.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveLesson(modIdx, lesIdx)}
-                                  className="p-1 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                                  title="Delete lesson"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
-                              )}
+                                <span className="text-slate-400 text-[10px]">min</span>
+                              </div>
                             </div>
                           </div>
 
                           {/* YouTube Video URL Input */}
-                          <div className="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                          <div className="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 flex-wrap sm:flex-nowrap">
                             <div className="p-1 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shrink-0">
                               <Play className="w-3 h-3 fill-rose-600 dark:fill-rose-400" />
                             </div>
@@ -759,10 +767,10 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                                 })
                               }}
                               placeholder="YouTube Video Link (e.g. https://www.youtube.com/watch?v=...)"
-                              className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1 text-[11px] font-mono text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-500 flex-1"
+                              className="bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1 text-[11px] font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500 flex-1 min-w-[200px]"
                             />
                             {les.videoUrl && (
-                              <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                              <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 shrink-0">
                                 Video Attached
                               </span>
                             )}
@@ -772,12 +780,12 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                               PRE-VIDEO READING TEXT & THEORY NOTES (MARKDOWN EDITOR)
                               ═══════════════════════════════════════════════════════════════ */}
                           <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800/80">
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-1 flex-wrap">
                               <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                                 <BookOpen className="w-3 h-3 text-brand-600 dark:text-brand-400" />
-                                <span>Pre-Video Reading Text & Theory (What students read before watching video):</span>
+                                <span>Pre-Video Theory &amp; Notes:</span>
                               </label>
-                              <span className="text-[10px] font-mono text-slate-400">Markdown Supported</span>
+                              <span className="text-[10px] font-mono text-slate-400">Markdown</span>
                             </div>
 
                             <textarea
@@ -792,16 +800,16 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                                 })
                               }}
                               placeholder="# Introduction & Key Theory&#10;&#10;Explain foundational principles, syntax rules, and memory architecture before the video tutorial begins..."
-                              className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-mono text-[11px] leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-500 resize-y"
+                              className="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-mono text-[11px] leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-500 resize-y"
                             />
                           </div>
 
                           {/* Generated Assessments Summary Indicator */}
                           {quizCount > 0 && (
-                            <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px] font-mono">
+                            <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px] font-mono flex-wrap gap-1">
                               <span className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400 font-semibold">
-                                <HelpCircle className="w-3.5 h-3.5" />
-                                <span>{quizCount} Interactive Assessment Items (MCQ, Fill-in, Coding)</span>
+                                <HelpCircle className="w-3.5 h-3.5 shrink-0" />
+                                <span>{quizCount} Interactive Assessment Items</span>
                               </span>
                               <span className="text-slate-400 font-sans text-[10px]">
                                 Ready for student test runner
@@ -818,18 +826,18 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
           </div>
 
           {/* Action Footer Bar */}
-          <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-              {modules.reduce((acc, m) => acc + m.lessons.length, 0)} Total Lessons
+          <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-800 gap-2">
+            <span className="text-[11px] font-mono font-semibold text-slate-600 dark:text-slate-400">
+              {modules.reduce((acc, m) => acc + m.lessons.length, 0)} Lessons Total
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={onClose}
-                className="text-xs font-semibold"
+                className="text-xs font-bold border-slate-300 dark:border-slate-700"
               >
                 Cancel
               </Button>
@@ -839,7 +847,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                 variant="primary"
                 size="sm"
                 isLoading={isSaving}
-                className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-4"
+                className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-3.5 sm:px-4"
                 leftIcon={<Check className="w-3.5 h-3.5" />}
               >
                 {courseToEdit ? 'Save Changes' : 'Publish Course'}
