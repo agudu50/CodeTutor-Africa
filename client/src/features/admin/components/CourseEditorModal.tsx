@@ -202,7 +202,10 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   }
 
   const handleRemoveModule = (modIdx: number) => {
-    setModules((prev) => prev.filter((_, idx) => idx !== modIdx))
+    const modTitle = modules[modIdx]?.title || `Module ${modIdx + 1}`
+    if (window.confirm(`Are you sure you want to remove "${modTitle}" and all its lessons?`)) {
+      setModules((prev) => prev.filter((_, idx) => idx !== modIdx))
+    }
   }
 
   const handleAddLesson = (modIdx: number) => {
@@ -221,11 +224,14 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   }
 
   const handleRemoveLesson = (modIdx: number, lesIdx: number) => {
-    setModules((prev) => {
-      const copy = [...prev]
-      copy[modIdx].lessons = copy[modIdx].lessons.filter((_, idx) => idx !== lesIdx)
-      return copy
-    })
+    const lessonTitle = modules[modIdx]?.lessons[lesIdx]?.title || `Lesson ${lesIdx + 1}`
+    if (window.confirm(`Are you sure you want to remove "${lessonTitle}"?`)) {
+      setModules((prev) => {
+        const copy = [...prev]
+        copy[modIdx].lessons = copy[modIdx].lessons.filter((_, idx) => idx !== lesIdx)
+        return copy
+      })
+    }
   }
 
   // ══════════════════════════════════════════════════════════════════════
@@ -506,7 +512,11 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
               {thumbnailUrl && (
                 <button
                   type="button"
-                  onClick={() => setThumbnailUrl('')}
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to remove the cover image?')) {
+                      setThumbnailUrl('')
+                    }
+                  }}
                   className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
                 >
                   Remove Image
@@ -656,10 +666,10 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                         <button
                           type="button"
                           onClick={() => handleRemoveModule(modIdx)}
-                          className="p-1 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                           title="Delete module"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
