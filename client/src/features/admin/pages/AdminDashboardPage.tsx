@@ -163,7 +163,7 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0">
           <Button
             variant="outline"
             size="sm"
@@ -171,7 +171,7 @@ export const AdminDashboardPage: React.FC = () => {
               reloadData()
               setToastMessage('Platform data refreshed.')
             }}
-            className="h-9 text-xs font-semibold justify-center border-slate-300 dark:border-slate-700"
+            className="h-9 text-xs font-semibold justify-center border-slate-300 dark:border-slate-700 flex-1 sm:flex-initial"
             leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
           >
             Refresh
@@ -182,7 +182,7 @@ export const AdminDashboardPage: React.FC = () => {
               variant="primary"
               size="sm"
               onClick={handleCreateNewCourse}
-              className="h-9 font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-3.5 justify-center"
+              className="h-9 font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-3.5 justify-center flex-1 sm:flex-initial"
               leftIcon={<Plus className="w-4 h-4" />}
             >
               Add New Course
@@ -275,7 +275,7 @@ export const AdminDashboardPage: React.FC = () => {
           PORTAL TABS: COURSES vs MENTORS vs PRACTICE vs GAMES vs USERS & AUDIT vs ISSUES
           ═══════════════════════════════════════════════════════════════ */}
       <div className="space-y-4">
-        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit overflow-x-auto scrollbar-none touch-pan-x">
           <button
             type="button"
             onClick={() => setActiveTab('courses')}
