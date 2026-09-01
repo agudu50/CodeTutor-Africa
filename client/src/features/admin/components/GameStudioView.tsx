@@ -306,55 +306,57 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
       </div>
 
       {/* Control Bar: View Toggle, Language Tabs, Actions */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           {/* View Mode Switcher */}
-          <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold">
+          <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold shadow-3xs">
             <button
               type="button"
               onClick={() => setViewMode('structured')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg transition-all cursor-pointer select-none ${
                 viewMode === 'structured'
                   ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Structured by Modules</span>
+              <Layers className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Modules View</span>
             </button>
 
             <button
               type="button"
               onClick={() => setViewMode('flat')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg transition-all cursor-pointer select-none ${
                 viewMode === 'flat'
                   ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <ListFilter className="w-3.5 h-3.5" />
-              <span>All Challenges (Flat List)</span>
+              <ListFilter className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">All Challenges</span>
             </button>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto justify-between sm:justify-end">
             <Button
               variant="outline"
               size="sm"
               onClick={handleResetDefaults}
-              className="h-8 text-xs font-semibold"
-              leftIcon={<RotateCcw className="w-3 h-3" />}
+              className="h-8.5 text-xs font-semibold px-2.5 sm:px-3 shrink-0 cursor-pointer"
+              leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+              title="Reset default challenges and modules"
             >
-              Reset Defaults
+              <span className="hidden sm:inline">Reset Defaults</span>
+              <span className="sm:hidden">Reset</span>
             </Button>
 
             <Button
               variant="outline"
               size="sm"
               onClick={() => handleOpenCreateModule()}
-              className="h-8 text-xs font-bold border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
-              leftIcon={<Plus className="w-3.5 h-3.5" />}
+              className="h-8.5 text-xs font-bold border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 flex-1 sm:flex-none justify-center shrink-0 cursor-pointer"
+              leftIcon={<Plus className="w-3.5 h-3.5 text-emerald-500" />}
             >
               Add Module
             </Button>
@@ -363,7 +365,7 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
               variant="primary"
               size="sm"
               onClick={() => handleOpenCreateChallenge()}
-              className="h-8 font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs px-3.5"
+              className="h-8.5 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs px-3.5 flex-1 sm:flex-none justify-center shrink-0 whitespace-nowrap cursor-pointer"
               leftIcon={<Plus className="w-3.5 h-3.5" />}
             >
               Add Challenge

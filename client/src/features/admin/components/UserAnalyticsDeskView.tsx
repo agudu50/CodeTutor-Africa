@@ -38,6 +38,7 @@ import {
   GraduationCap,
   Mail,
   MessageSquare,
+  AlertTriangle,
   X,
 } from 'lucide-react'
 
@@ -1272,16 +1273,16 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block truncate font-mono">
+                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
                                 {user.email}
                               </span>
-                              <div className="flex items-center gap-1 pt-0.5 flex-wrap">
-                                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-mono text-[9px] font-bold">
-                                  <BookOpen className="w-2.5 h-2.5 text-brand-600 dark:text-brand-400" />
-                                  {user.activeCourseTitle || user.enrolledCourseTitles?.[0] || 'Java Track'}
+                              <div className="flex items-center gap-1.5 pt-1 flex-wrap">
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-mono text-[10px] font-bold whitespace-nowrap shadow-3xs">
+                                  <BookOpen className="w-3 h-3 text-[#005F02] dark:text-emerald-400 shrink-0" />
+                                  <span>{user.activeCourseTitle || user.enrolledCourseTitles?.[0] || 'General Track'}</span>
                                 </span>
                                 {user.enrolledCourseTitles && user.enrolledCourseTitles.length > 1 && (
-                                  <span className="text-[9px] font-mono text-slate-400 font-semibold">
+                                  <span className="text-[10px] font-mono text-slate-400 font-semibold">
                                     +{user.enrolledCourseTitles.length - 1} more
                                   </span>
                                 )}
@@ -1340,20 +1341,20 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   <button
                                     type="button"
                                     onClick={() => handleDemoteToLearner(user.id, user.name)}
-                                    className="h-7.5 px-3 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-800 transition-colors whitespace-nowrap inline-flex items-center gap-1.5 shadow-3xs cursor-pointer"
-                                    title="Revoke mentor permissions"
+                                    className="h-8 px-3.5 rounded-xl text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 border border-rose-300 dark:border-rose-800 transition-all whitespace-nowrap inline-flex items-center gap-1.5 shadow-3xs hover:shadow-2xs cursor-pointer"
+                                    title="Revoke mentor permissions and demote to learner"
                                   >
-                                    <GraduationCap className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
                                     <span>Demote</span>
                                   </button>
                                 ) : (
                                   <button
                                     type="button"
                                     onClick={() => handleOpenApproveModalForUser(user)}
-                                    className="h-7.5 px-3 rounded-xl text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900/60 border border-brand-200 dark:border-brand-800 transition-colors whitespace-nowrap inline-flex items-center gap-1.5 shadow-3xs cursor-pointer"
+                                    className="h-8 px-3.5 rounded-xl text-xs font-bold text-white bg-[#005F02] hover:bg-[#004e02] shadow-xs hover:shadow-sm transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
                                     title="Grant Mentor Hub course authoring & student inquiry access"
                                   >
-                                    <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                                    <GraduationCap className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
                                     <span>Make Mentor</span>
                                   </button>
                                 )}
@@ -2074,7 +2075,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleToggleMentorRole(mentor)}
-                                  className="h-7 px-3 text-xs font-bold text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                                  className="h-8 px-3 text-xs font-bold text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 shadow-3xs cursor-pointer"
+                                  leftIcon={<AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />}
                                 >
                                   Demote
                                 </Button>
