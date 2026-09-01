@@ -423,7 +423,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 {/* Human Submitter Bio Card */}
                 <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
+                    <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
                       {selectedIssue.userName.charAt(0)}
                     </div>
                     <div className="min-w-0">

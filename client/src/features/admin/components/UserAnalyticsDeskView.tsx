@@ -1257,8 +1257,12 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         {/* Learner Name & Role */}
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-600 to-emerald-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-3xs">
-                              {user.name.charAt(0)}
+                            <div className="w-8 h-8 rounded-xl bg-brand-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-3xs overflow-hidden">
+                              {user.avatarUrl ? (
+                                <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                              ) : (
+                                user.name.charAt(0)
+                              )}
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-1.5 flex-wrap">
@@ -1777,8 +1781,12 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                               <div className="flex items-center gap-3">
                                 <div className="relative">
-                                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
-                                    {mentor.name.charAt(0)}
+                                  <div className="w-11 h-11 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0 overflow-hidden">
+                                    {mentor.avatarUrl ? (
+                                      <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                      mentor.name.charAt(0)
+                                    )}
                                   </div>
                                   {mentor.status === 'active_now' ? (
                                     <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 animate-pulse" />
@@ -2148,7 +2156,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                           {/* Top row: Applicant Info & Badges */}
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                              <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                                 {app.fullName.charAt(0)}
                               </div>
                               <div>

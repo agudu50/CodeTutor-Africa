@@ -51,6 +51,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'instructor',
     countryCode: 'GH',
     countryName: 'Ghana',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
     status: 'active_now',
     lastActive: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
     registeredAt: '2026-01-02T08:00:00Z',
@@ -73,6 +74,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'instructor',
     countryCode: 'NG',
     countryName: 'Nigeria',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
     status: 'active_today',
     lastActive: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
     registeredAt: '2026-01-08T10:30:00Z',
@@ -95,6 +97,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'instructor',
     countryCode: 'SN',
     countryName: 'Senegal',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
     status: 'active_this_week',
     lastActive: new Date(Date.now() - 3 * 86400 * 1000).toISOString(),
     registeredAt: '2026-01-15T12:00:00Z',
@@ -117,6 +120,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'instructor',
     countryCode: 'NG',
     countryName: 'Nigeria',
+    avatarUrl: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=200&auto=format&fit=crop&q=80',
     status: 'inactive',
     lastActive: new Date(Date.now() - 26 * 86400 * 1000).toISOString(),
     registeredAt: '2025-12-10T09:00:00Z',
@@ -139,6 +143,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'GH',
     countryName: 'Ghana',
+    avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80',
     status: 'active_now',
     lastActive: new Date(Date.now() - 3 * 60 * 1000).toISOString(),
     registeredAt: '2026-01-10T08:30:00Z',
@@ -161,6 +166,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'NG',
     countryName: 'Nigeria',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     status: 'active_now',
     lastActive: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
     registeredAt: '2026-01-14T09:15:00Z',
@@ -183,6 +189,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'SN',
     countryName: 'Senegal',
+    avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80',
     status: 'active_today',
     lastActive: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
     registeredAt: '2026-01-18T14:20:00Z',
@@ -205,6 +212,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'CI',
     countryName: "Côte d'Ivoire",
+    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80',
     status: 'active_today',
     lastActive: new Date(Date.now() - 5 * 3600 * 1000).toISOString(),
     registeredAt: '2026-01-22T11:45:00Z',
@@ -227,6 +235,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'GH',
     countryName: 'Ghana',
+    avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80',
     status: 'active_this_week',
     lastActive: new Date(Date.now() - 2 * 86400 * 1000).toISOString(),
     registeredAt: '2026-02-01T10:00:00Z',
@@ -249,6 +258,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'LR',
     countryName: 'Liberia',
+    avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80',
     status: 'active_this_week',
     lastActive: new Date(Date.now() - 4 * 86400 * 1000).toISOString(),
     registeredAt: '2026-02-05T16:30:00Z',
@@ -271,6 +281,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'SL',
     countryName: 'Sierra Leone',
+    avatarUrl: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=200&auto=format&fit=crop&q=80',
     status: 'idle',
     lastActive: new Date(Date.now() - 10 * 86400 * 1000).toISOString(),
     registeredAt: '2026-01-20T12:00:00Z',
@@ -293,6 +304,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'GM',
     countryName: 'The Gambia',
+    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
     status: 'idle',
     lastActive: new Date(Date.now() - 14 * 86400 * 1000).toISOString(),
     registeredAt: '2026-01-25T15:10:00Z',
@@ -315,6 +327,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'BJ',
     countryName: 'Benin',
+    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80',
     status: 'inactive',
     lastActive: new Date(Date.now() - 32 * 86400 * 1000).toISOString(),
     registeredAt: '2026-01-05T09:00:00Z',
@@ -337,6 +350,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'learner',
     countryCode: 'TG',
     countryName: 'Togo',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
     status: 'inactive',
     lastActive: new Date(Date.now() - 45 * 86400 * 1000).toISOString(),
     registeredAt: '2026-01-02T14:40:00Z',
@@ -359,6 +373,7 @@ export const INITIAL_ADMIN_USERS: AdminUserRecord[] = [
     role: 'admin',
     countryCode: 'GH',
     countryName: 'Ghana',
+    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&auto=format&fit=crop&q=80',
     status: 'active_now',
     lastActive: new Date().toISOString(),
     registeredAt: '2026-01-01T00:00:00Z',
@@ -552,11 +567,18 @@ class AdminAnalyticsService {
         const combined = [...missingMentors, ...parsed]
 
         this.users = combined.map((u) => {
-          if (u.enrolledCourseTitles && u.enrolledCourseTitles.length > 0) return u
-          const mock = INITIAL_ADMIN_USERS.find((m) => m.id === u.id || m.username === u.username)
+          const mock = INITIAL_ADMIN_USERS.find(
+            (m) => m.id === u.id || m.username === u.username || m.email.toLowerCase() === u.email.toLowerCase()
+          )
+          const avatarUrl = u.avatarUrl || mock?.avatarUrl || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80`
+
+          if (u.enrolledCourseTitles && u.enrolledCourseTitles.length > 0) {
+            return { ...u, avatarUrl }
+          }
           if (mock?.enrolledCourseTitles) {
             return {
               ...u,
+              avatarUrl,
               enrolledCourseIds: mock.enrolledCourseIds,
               enrolledCourseTitles: mock.enrolledCourseTitles,
               activeCourseTitle: mock.activeCourseTitle,
@@ -573,11 +595,13 @@ class AdminAnalyticsService {
               : 'Learn to code with Python'
           return {
             ...u,
+            avatarUrl,
             enrolledCourseIds: [`course-${favLang}-101`],
             enrolledCourseTitles: [trackName],
             activeCourseTitle: trackName,
           }
         })
+        this.saveUsers()
       } else {
         this.users = [...INITIAL_ADMIN_USERS]
         this.saveUsers()

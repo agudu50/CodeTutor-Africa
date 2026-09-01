@@ -37,6 +37,7 @@ export interface AdminUserRecord {
   enrolledCourseIds?: string[]
   enrolledCourseTitles?: string[]
   activeCourseTitle?: string
+  avatarUrl?: string
 }
 
 export interface AuditLogEntry {

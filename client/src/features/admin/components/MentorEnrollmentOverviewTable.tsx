@@ -314,8 +314,12 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                     {/* Header Row: Avatar, Name, Role & Status */}
                     <div className="flex items-start justify-between gap-2.5">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-3xs">
-                          {mentor.name.charAt(0)}
+                        <div className="w-11 h-11 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-3xs overflow-hidden border border-slate-200 dark:border-slate-700">
+                          {mentor.avatarUrl ? (
+                            <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                          ) : (
+                            mentor.name.charAt(0)
+                          )}
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
@@ -425,13 +429,22 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                         ) : (
                           <div className="space-y-1.5">
                             {learners.map((learner) => (
-                              <div key={learner.id} className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
-                                <div className="min-w-0">
-                                  <div className="font-bold text-slate-900 dark:text-white truncate">
-                                    {learner.name}
+                              <div key={learner.id} className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2.5 text-xs">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center text-[11px] font-bold shrink-0 overflow-hidden border border-slate-200 dark:border-slate-700">
+                                    {learner.avatarUrl ? (
+                                      <img src={learner.avatarUrl} alt={learner.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                      learner.name.charAt(0)
+                                    )}
                                   </div>
-                                  <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 truncate">
-                                    {learner.countryCode} • {learner.totalXp} XP • 🔥 {learner.streakDays}d
+                                  <div className="min-w-0">
+                                    <div className="font-bold text-slate-900 dark:text-white truncate">
+                                      {learner.name}
+                                    </div>
+                                    <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 truncate">
+                                      {learner.countryCode} • {learner.totalXp.toLocaleString()} XP • 🔥 {learner.streakDays}d
+                                    </div>
                                   </div>
                                 </div>
                                 <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold shrink-0 ${
@@ -496,8 +509,12 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                           {/* Mentor Profile */}
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-3xs">
-                                {mentor.name.charAt(0)}
+                              <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-3xs overflow-hidden border border-slate-200 dark:border-slate-700">
+                                {mentor.avatarUrl ? (
+                                  <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  mentor.name.charAt(0)
+                                )}
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
@@ -654,8 +671,12 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                                           <tr key={learner.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
                                             <td className="py-2.5 px-3">
                                               <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold">
-                                                  {learner.name.charAt(0)}
+                                                <div className="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden border border-slate-200 dark:border-slate-700">
+                                                  {learner.avatarUrl ? (
+                                                    <img src={learner.avatarUrl} alt={learner.name} className="w-full h-full object-cover" />
+                                                  ) : (
+                                                    learner.name.charAt(0)
+                                                  )}
                                                 </div>
                                                 <div>
                                                   <div className="font-bold text-slate-900 dark:text-white">{learner.name}</div>

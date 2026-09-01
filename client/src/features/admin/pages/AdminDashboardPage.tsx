@@ -146,24 +146,29 @@ export const AdminDashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           ADMIN PORTAL HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none">
-        <div className="space-y-1">
-          <div className="flex items-start sm:items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-brand-600 text-white shadow-xs shrink-0 mt-0.5 sm:mt-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-600 text-white shadow-xs shrink-0 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <div>
-              <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                  Platform Operations
+                </span>
+              </div>
+              <h1 className="text-base sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
                 Admin Operations &amp; Curriculum Portal
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
                 Manage offline courses, configure practice test suites &amp; arcade games, and review student feedback tickets.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
           <Button
             variant="outline"
             size="sm"
@@ -171,7 +176,7 @@ export const AdminDashboardPage: React.FC = () => {
               reloadData()
               setToastMessage('Platform data refreshed.')
             }}
-            className="h-9 text-xs font-semibold justify-center border-slate-300 dark:border-slate-700 flex-1 sm:flex-initial"
+            className="h-9 text-xs font-bold justify-center border-slate-300 dark:border-slate-700 flex-1 sm:flex-initial"
             leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
           >
             Refresh

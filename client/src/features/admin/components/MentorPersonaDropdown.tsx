@@ -284,8 +284,12 @@ export const MentorPersonaDropdown: React.FC<MentorPersonaDropdownProps> = ({
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div className="relative shrink-0">
-                          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-600 to-brand-600 text-white flex items-center justify-center font-bold text-xs shadow-3xs">
-                            {mentor.name.charAt(0)}
+                          <div className="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xs shadow-3xs overflow-hidden">
+                            {mentor.avatarUrl ? (
+                              <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                            ) : (
+                              mentor.name.charAt(0)
+                            )}
                           </div>
                           {isLiveActive && (
                             <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" />

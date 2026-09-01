@@ -97,7 +97,7 @@ export const DemoteMentorModal: React.FC<DemoteMentorModalProps> = ({
           {/* Target Mentor Card */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+              <div className="w-11 h-11 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                 {mentor.name.charAt(0)}
               </div>
               <div className="min-w-0">
