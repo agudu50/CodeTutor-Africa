@@ -41,7 +41,7 @@ export const OnboardingPage: React.FC = () => {
     {
       id: 'python',
       name: 'Python Track',
-      level: 'Foundations & Data Structures',
+      level: 'Foundations & Data Science',
       description: 'Ideal for beginners and engineering algorithm exams. Focus on clean syntax, recursion, and problem-solving intuition.',
       icon: <Terminal className="w-5 h-5 text-[#005F02]" />,
     },
@@ -50,6 +50,27 @@ export const OnboardingPage: React.FC = () => {
       name: 'JavaScript Track',
       level: 'Async Concurrency & Web Engines',
       description: 'Master the event loop, microtasks, modern ES6+ paradigms, and DOM manipulation locally on your CPU.',
+      icon: <Code2 className="w-5 h-5 text-[#005F02]" />,
+    },
+    {
+      id: 'html',
+      name: 'HTML & CSS Track',
+      level: 'Web Semantics, Flexbox & Responsive UI',
+      description: 'Build responsive interfaces from scratch with semantic markup, CSS layouts, and accessible design principles.',
+      icon: <BookOpen className="w-5 h-5 text-[#005F02]" />,
+    },
+    {
+      id: 'git',
+      name: 'Git & GitHub Track',
+      level: 'Version Control & Workflows',
+      description: 'Branching, merging, rebasing, pull requests, and collaborative developer workflows.',
+      icon: <ShieldCheck className="w-5 h-5 text-[#005F02]" />,
+    },
+    {
+      id: 'typescript',
+      name: 'TypeScript Track',
+      level: 'Type Safety & Enterprise Fullstack',
+      description: 'Static typing, generics, interfaces, and strict type safety built on top of the JavaScript runtime.',
       icon: <Code2 className="w-5 h-5 text-[#005F02]" />,
     },
     {

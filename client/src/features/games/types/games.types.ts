@@ -1,5 +1,15 @@
 export type GameId = 'speedrun' | 'bughunt' | 'predictor' | 'shuffle'
-export type GameLanguage = 'all' | 'python' | 'javascript' | 'typescript' | 'java' | 'sql'
+export type GameLanguage =
+  | 'all'
+  | 'python'
+  | 'javascript'
+  | 'typescript'
+  | 'html'
+  | 'css'
+  | 'git'
+  | 'java'
+  | 'sql'
+  | (string & {})
 
 export interface GameMetadata {
   id: GameId

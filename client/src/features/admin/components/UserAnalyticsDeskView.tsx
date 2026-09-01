@@ -334,15 +334,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
         u.activeCourseTitle === selectedCourse ||
         u.enrolledCourseTitles?.includes(selectedCourse) ||
         u.enrolledCourseTitles?.some((t) => t.toLowerCase() === selectedCourse.toLowerCase()) ||
-        (selectedCourse.toLowerCase().includes('java') &&
-          (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('java')))) ||
-        (selectedCourse.toLowerCase().includes('python') &&
-          (u.favoriteLanguage === 'python' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('python')))) ||
-        (selectedCourse.toLowerCase().includes('js') &&
-          (u.favoriteLanguage === 'javascript' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('js') || t.toLowerCase().includes('javascript')))) ||
-        (selectedCourse.toLowerCase().includes('typescript') &&
-          (u.favoriteLanguage === 'typescript' || u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes('typescript')))) ||
-        (u.activeCourseTitle && u.activeCourseTitle.toLowerCase().includes(selectedCourse.toLowerCase()))
+        (u.favoriteLanguage && selectedCourse.toLowerCase().includes(u.favoriteLanguage.toLowerCase())) ||
+        (u.activeCourseTitle && u.activeCourseTitle.toLowerCase().includes(selectedCourse.toLowerCase())) ||
+        (u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes(selectedCourse.toLowerCase())))
 
       const matchesRole = selectedRole === 'ALL' || u.role === selectedRole
 
@@ -955,10 +949,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         (u) =>
                           u.activeCourseTitle === c.title ||
                           u.enrolledCourseTitles?.includes(c.title) ||
-                          (c.language === 'java' && (u.favoriteLanguage === 'java' || u.enrolledCourseTitles?.some(t => t.includes('Java')))) ||
-                          (c.language === 'python' && (u.favoriteLanguage === 'python' || u.enrolledCourseTitles?.some(t => t.includes('Python')))) ||
-                          (c.language === 'javascript' && (u.favoriteLanguage === 'javascript' || u.enrolledCourseTitles?.some(t => t.includes('JS')))) ||
-                          (c.language === 'typescript' && (u.favoriteLanguage === 'typescript' || u.enrolledCourseTitles?.some(t => t.includes('TypeScript'))))
+                          (u.favoriteLanguage && c.language && u.favoriteLanguage.toLowerCase() === c.language.toLowerCase()) ||
+                          u.enrolledCourseTitles?.some(t => t.toLowerCase().includes(c.language.toLowerCase()))
                       ).length
                       return (
                         <option key={c.id} value={c.title}>

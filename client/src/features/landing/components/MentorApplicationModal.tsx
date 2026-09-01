@@ -16,13 +16,18 @@ import {
 } from 'lucide-react'
 
 const AVAILABLE_TRACKS = [
-  'Java',
   'Python',
   'JavaScript',
   'TypeScript',
-  'SQL & Database',
+  'HTML / HTML5',
+  'CSS / CSS3',
+  'Git & GitHub',
+  'Java',
+  'SQL & Databases',
+  'C / C++',
+  'Go / Golang',
+  'Rust',
   'Algorithms & Math',
-  'Systems & Architecture',
   'Web Development',
 ]
 

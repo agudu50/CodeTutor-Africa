@@ -108,11 +108,18 @@ export const PracticeListPage: React.FC = () => {
           <div className="sm:col-span-3">
             <Dropdown
               options={[
-                { value: 'all', label: 'All Languages' },
+                { value: 'all', label: 'All Languages & Tracks' },
+                { value: 'python', label: 'Python' },
                 { value: 'javascript', label: 'JavaScript' },
                 { value: 'typescript', label: 'TypeScript' },
-                { value: 'python', label: 'Python' },
+                { value: 'html', label: 'HTML / HTML5' },
+                { value: 'css', label: 'CSS / CSS3' },
+                { value: 'git', label: 'Git & GitHub' },
                 { value: 'java', label: 'Java' },
+                { value: 'sql', label: 'SQL & Databases' },
+                { value: 'cpp', label: 'C++' },
+                { value: 'go', label: 'Go' },
+                { value: 'rust', label: 'Rust' },
               ]}
               value={selectedLang}
               onChange={setSelectedLang}

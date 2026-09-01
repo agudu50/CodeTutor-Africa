@@ -85,6 +85,45 @@ export const LANGUAGE_TRACKS: LanguageTrackMeta[] = [
     totalModules: 18,
   },
   {
+    id: 'html',
+    title: 'HTML & Semantic Web',
+    badge: 'HTML',
+    subtitle: 'Semantic Elements & DOM Hierarchy',
+    description: 'Learn semantic HTML5 tags, accessibility attributes, forms, and browser rendering structures.',
+    courseId: 'course-html-501',
+    iconColor: 'text-orange-500',
+    gradient: 'from-orange-500/20 via-orange-500/5 to-transparent',
+    borderColor: 'border-orange-500/30 hover:border-orange-500/60',
+    bgLight: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
+    totalModules: 12,
+  },
+  {
+    id: 'css',
+    title: 'CSS & Modern Layouts',
+    badge: 'CSS',
+    subtitle: 'Flexbox, Grid & Responsive UI',
+    description: 'Master CSS cascade, specificity, Flexbox alignment, CSS Grid, media queries, and animations.',
+    courseId: 'course-css-601',
+    iconColor: 'text-cyan-500',
+    gradient: 'from-cyan-500/20 via-cyan-500/5 to-transparent',
+    borderColor: 'border-cyan-500/30 hover:border-cyan-500/60',
+    bgLight: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
+    totalModules: 12,
+  },
+  {
+    id: 'git',
+    title: 'Git & Version Control',
+    badge: 'GIT',
+    subtitle: 'Commits, Branches & Team Collaboration',
+    description: 'Master staging, commit hygiene, branch isolation, conflict resolution, rebasing, and GitHub workflows.',
+    courseId: 'course-git-701',
+    iconColor: 'text-rose-500',
+    gradient: 'from-rose-500/20 via-rose-500/5 to-transparent',
+    borderColor: 'border-rose-500/30 hover:border-rose-500/60',
+    bgLight: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
+    totalModules: 8,
+  },
+  {
     id: 'sql',
     title: 'SQL & Database Systems',
     badge: 'DB',
@@ -99,7 +138,7 @@ export const LANGUAGE_TRACKS: LanguageTrackMeta[] = [
   },
 ]
 
-export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
+export const LANGUAGE_GAME_MODULES: Record<string, GameModuleItem[]> = {
   // ═════════════════════════════════════════════════════════════════════════════
   // 1. PYTHON TRACK (18 Structured Modules)
   // ═════════════════════════════════════════════════════════════════════════════
@@ -1074,6 +1113,9 @@ export const LANGUAGE_GAME_MODULES: Record<GameLanguage, GameModuleItem[]> = {
     },
   ],
 
+  html: [],
+  css: [],
+  git: [],
   all: [],
 }
 
