@@ -130,7 +130,7 @@ export const AdminDashboardPage: React.FC = () => {
   const gameCounts = gameStoreService.getAllChallengesCount()
 
   return (
-    <PageContainer maxWidth="2xl" className="space-y-6">
+    <PageContainer maxWidth="full" className="max-w-[1600px] w-full min-w-0 space-y-6 overflow-x-clip px-3 sm:px-6 lg:px-8">
       {/* ═══════════════════════════════════════════════════════════════
           TOAST NOTIFICATION
           ═══════════════════════════════════════════════════════════════ */}
@@ -199,7 +199,7 @@ export const AdminDashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           HIGH-LEVEL SUMMARY METRICS (5 Equal KPI Cards)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 font-mono">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-4 font-mono">
         <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
           <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
             Active Courses
@@ -279,7 +279,7 @@ export const AdminDashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           PORTAL TABS: COURSES vs MENTORS vs PRACTICE vs GAMES vs USERS & AUDIT vs ISSUES
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="space-y-4">
+      <div className="space-y-4 w-full min-w-0 max-w-full">
         <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-fit overflow-x-auto scrollbar-none touch-pan-x">
           <button
             type="button"
@@ -397,32 +397,34 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Tab Viewport */}
-        {activeTab === 'courses' ? (
-          <CourseListTable
-            courses={courses}
-            onEditCourse={handleEditCourse}
-            onDeleteCourse={handleDeleteCourse}
-          />
-        ) : activeTab === 'mentors' ? (
-          <MentorEnrollmentOverviewTable
-            adminUsers={adminUsers}
-            onDataChanged={reloadData}
-          />
-        ) : activeTab === 'practice' ? (
-          <PracticeStudioView onUpdated={reloadData} />
-        ) : activeTab === 'games' ? (
-          <GameStudioView onUpdated={reloadData} />
-        ) : activeTab === 'analytics' ? (
-          <UserAnalyticsDeskView
-            users={adminUsers}
-            auditLogs={auditLogs}
-            onDataChanged={reloadData}
-          />
-        ) : activeTab === 'performance' ? (
-          <SystemPerformanceDeskView />
-        ) : (
-          <IssueDeskView issues={issues} onUpdated={reloadData} />
-        )}
+        <div className="w-full min-w-0 max-w-full">
+          {activeTab === 'courses' ? (
+            <CourseListTable
+              courses={courses}
+              onEditCourse={handleEditCourse}
+              onDeleteCourse={handleDeleteCourse}
+            />
+          ) : activeTab === 'mentors' ? (
+            <MentorEnrollmentOverviewTable
+              adminUsers={adminUsers}
+              onDataChanged={reloadData}
+            />
+          ) : activeTab === 'practice' ? (
+            <PracticeStudioView onUpdated={reloadData} />
+          ) : activeTab === 'games' ? (
+            <GameStudioView onUpdated={reloadData} />
+          ) : activeTab === 'analytics' ? (
+            <UserAnalyticsDeskView
+              users={adminUsers}
+              auditLogs={auditLogs}
+              onDataChanged={reloadData}
+            />
+          ) : activeTab === 'performance' ? (
+            <SystemPerformanceDeskView />
+          ) : (
+            <IssueDeskView issues={issues} onUpdated={reloadData} />
+          )}
+        </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════

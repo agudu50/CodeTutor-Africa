@@ -263,7 +263,7 @@ export const GameStudioView: React.FC<GameStudioViewProps> = ({ onUpdated }) => 
       : LANGUAGE_TRACKS.filter((t) => t.id === selectedLanguage)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full min-w-0 max-w-full">
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed top-18 right-4 sm:right-8 z-50 animate-in slide-in-from-top-3 fade-in">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { practiceStoreService } from '@/services/practice/practice-store.service'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { PracticeQuestion, Course } from '@/types'
@@ -10,11 +10,13 @@ import {
   Search,
   RotateCcw,
   CheckCircle2,
+  BookOpen,
+  ChevronDown,
+  Layers,
+  Zap,
   Settings,
   X,
   ArrowRight,
-  BookOpen,
-  ChevronDown,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -89,19 +91,33 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
       q.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
 
     const matchesCourse = selectedCourseId === 'all' || q.courseId === selectedCourseId
-    const matchesLang = selectedLanguage === 'all' || q.language === selectedLanguage
+    const matchesLang = selectedLanguage === 'all' || q.language?.toLowerCase() === selectedLanguage.toLowerCase()
     const matchesDiff = selectedDifficulty === 'all' || q.difficulty === selectedDifficulty
 
     return matchesSearch && matchesCourse && matchesLang && matchesDiff
   })
 
-  const jsCount = questions.filter((q) => q.language === 'javascript').length
-  const tsCount = questions.filter((q) => q.language === 'typescript').length
-  const pyCount = questions.filter((q) => q.language === 'python').length
-  const javaCount = questions.filter((q) => q.language === 'java').length
+  // Dynamic language distribution
+  const languageDistribution = useMemo(() => {
+    const map = new Map<string, number>()
+    questions.forEach((q) => {
+      const lang = q.language ? q.language.toLowerCase() : 'other'
+      map.set(lang, (map.get(lang) || 0) + 1)
+    })
+    return map
+  }, [questions])
+
+  const distinctLanguages = useMemo(() => {
+    return Array.from(languageDistribution.keys())
+  }, [languageDistribution])
+
+  const beginnerCount = useMemo(() => questions.filter((q) => q.difficulty === 'beginner').length, [questions])
+  const intermediateCount = useMemo(() => questions.filter((q) => q.difficulty === 'intermediate').length, [questions])
+  const advancedCount = useMemo(() => questions.filter((q) => q.difficulty === 'advanced').length, [questions])
+  const linkedCoursesCount = useMemo(() => new Set(questions.filter((q) => q.courseId).map((q) => q.courseId)).size, [questions])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 w-full min-w-0 max-w-full">
       {/* Toast Alert */}
       {toastMsg && (
         <div className="fixed top-18 right-4 sm:right-8 z-50 animate-in slide-in-from-top-2 fade-in">
@@ -123,11 +139,11 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
         editingQuestion={editingQuestion}
       />
 
-      {/* Studio Header Banner */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-emerald-950/20 via-slate-900/10 to-slate-900/30 dark:from-emerald-950/40 dark:to-slate-950 border border-emerald-500/20 dark:border-emerald-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+      {/* Studio Header Banner (Solid Theme) */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-[#005F02] text-white shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2.5 rounded-xl bg-[#005F02] text-white shadow-xs">
               <Code2 className="w-5 h-5" />
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -162,93 +178,190 @@ export const PracticeStudioView: React.FC<PracticeStudioViewProps> = ({ onUpdate
         </div>
       </div>
 
-      {/* Stats Summary Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-          <span className="text-[10px] text-slate-400 font-bold uppercase block">Total Problems</span>
-          <span className="text-xl font-extrabold text-slate-900 dark:text-white">{questions.length}</span>
+      {/* Scalable KPI Metrics Bar (Fixed 4-Card Overview) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xs space-y-1">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">
+            Total Problems
+          </span>
+          <div className="flex items-baseline justify-between">
+            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
+              {questions.length}
+            </span>
+            <Code2 className="w-4 h-4 text-[#005F02]" />
+          </div>
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block font-mono">
+            Across {distinctLanguages.length} programming tracks
+          </span>
         </div>
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-          <span className="text-[10px] text-amber-600 font-bold uppercase block">JavaScript</span>
-          <span className="text-xl font-extrabold text-amber-600 dark:text-amber-400">{jsCount}</span>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xs space-y-1">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">
+            Track Coverage
+          </span>
+          <div className="flex items-baseline justify-between">
+            <span className="text-2xl font-extrabold text-brand-600 dark:text-brand-400">
+              {distinctLanguages.length} Active Tracks
+            </span>
+            <Layers className="w-4 h-4 text-brand-600" />
+          </div>
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block font-mono truncate">
+            {distinctLanguages.map((l) => l.toUpperCase()).join(' • ')}
+          </span>
         </div>
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-          <span className="text-[10px] text-sky-600 font-bold uppercase block">TypeScript</span>
-          <span className="text-xl font-extrabold text-sky-600 dark:text-sky-400">{tsCount}</span>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xs space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">
+              Difficulty Levels
+            </span>
+            <Zap className="w-4 h-4 text-amber-500 shrink-0" />
+          </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
+              3 Tiers
+            </span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              configured
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              {beginnerCount} Beginner
+            </span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+              {intermediateCount} Intermediate
+            </span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono bg-rose-50 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+              {advancedCount} Advanced
+            </span>
+          </div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-          <span className="text-[10px] text-emerald-600 font-bold uppercase block">Python</span>
-          <span className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">{pyCount}</span>
-        </div>
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-          <span className="text-[10px] text-rose-600 font-bold uppercase block">Java</span>
-          <span className="text-xl font-extrabold text-rose-600 dark:text-rose-400">{javaCount}</span>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xs space-y-1">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">
+            Curriculum Alignment
+          </span>
+          <div className="flex items-baseline justify-between">
+            <span className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+              {linkedCoursesCount} Courses
+            </span>
+            <BookOpen className="w-4 h-4 text-emerald-600" />
+          </div>
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block font-mono">
+            100% Offline Executable
+          </span>
         </div>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2 flex-1">
-          <div className="relative flex-1 min-w-[180px]">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search problems by title, description, or tags..."
-              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
-            />
-          </div>
+      {/* Filter & Search Bar with Track Pills */}
+      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xs space-y-3">
+        {/* Interactive Language Track Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
+          <button
+            type="button"
+            onClick={() => setSelectedLanguage('all')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              selectedLanguage === 'all'
+                ? 'bg-[#005F02] text-white border-[#005F02] shadow-2xs font-extrabold'
+                : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
+          >
+            <span>All Tracks</span>
+            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+              selectedLanguage === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+            }`}>
+              {questions.length}
+            </span>
+          </button>
 
-          <div className="relative">
-            <select
-              value={selectedCourseId}
-              onChange={(e) => setSelectedCourseId(e.target.value)}
-              className="pl-3.5 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-            >
-              <option value="all">All Courses</option>
-              {courses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.title}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
+          {distinctLanguages.map((lang) => {
+            const count = languageDistribution.get(lang) || 0
+            const isSelected = selectedLanguage.toLowerCase() === lang.toLowerCase()
+            const displayLabel =
+              lang === 'javascript' ? 'JavaScript' :
+              lang === 'typescript' ? 'TypeScript' :
+              lang === 'python' ? 'Python' :
+              lang === 'java' ? 'Java' :
+              lang === 'html' ? 'HTML' :
+              lang === 'css' ? 'CSS' :
+              lang === 'git' ? 'Git' :
+              lang === 'sql' ? 'SQL' :
+              lang.toUpperCase()
 
-          <div className="relative">
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="pl-3.5 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-            >
-              <option value="all">All Languages</option>
-              <option value="javascript">JavaScript</option>
-              <option value="typescript">TypeScript</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
-
-          <div className="relative">
-            <select
-              value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="pl-3.5 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-            >
-              <option value="all">All Levels</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
+            return (
+              <button
+                key={lang}
+                type="button"
+                onClick={() => setSelectedLanguage(isSelected ? 'all' : lang)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-brand-600 text-white border-brand-600 shadow-2xs font-extrabold'
+                    : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <span>{displayLabel}</span>
+                <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                  isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}>
+                  {count}
+                </span>
+              </button>
+            )
+          })}
         </div>
 
-        <span className="text-xs text-slate-400 font-mono">
-          Showing {filteredQuestions.length} of {questions.length} problems
-        </span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="flex flex-wrap items-center gap-2 flex-1">
+            <div className="relative flex-1 min-w-[180px]">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search problems by title, description, or tags..."
+                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
+              />
+            </div>
+
+            <div className="relative">
+              <select
+                value={selectedCourseId}
+                onChange={(e) => setSelectedCourseId(e.target.value)}
+                className="pl-3.5 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+              >
+                <option value="all">All Courses</option>
+                {courses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+
+            <div className="relative">
+              <select
+                value={selectedDifficulty}
+                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                className="pl-3.5 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+              >
+                <option value="all">All Levels</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
+          <span className="text-xs text-slate-400 font-mono">
+            Showing {filteredQuestions.length} of {questions.length} problems
+          </span>
+        </div>
       </div>
 
       {/* Challenges Table */}

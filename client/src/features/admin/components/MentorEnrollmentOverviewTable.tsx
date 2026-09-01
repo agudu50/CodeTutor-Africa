@@ -121,7 +121,7 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
   }, [mentorsSummary])
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 w-full min-w-0 max-w-full">
       {/* ═══════════════════════════════════════════════════════════════
           TOP KPI METRIC CARDS: MENTOR PLATFORM STATS
           ═══════════════════════════════════════════════════════════════ */}
