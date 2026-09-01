@@ -1630,24 +1630,24 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               </div>
 
               {/* Sub-Tabs: Verified Mentors Roster vs Applications Queue */}
-              <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold shadow-3xs gap-1 sm:gap-1.5">
                   <button
                     type="button"
                     onClick={() => setMentorRosterSubTab('roster')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
                       mentorRosterSubTab === 'roster'
-                        ? 'bg-brand-600 text-white shadow-2xs font-extrabold'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                        ? 'bg-brand-600 text-white shadow-xs font-extrabold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    <Users className="w-3.5 h-3.5" />
-                    <span>Appointed Mentors Roster</span>
+                    <Users className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">Appointed Mentors</span>
                     <span
-                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
                         mentorRosterSubTab === 'roster'
                           ? 'bg-white/20 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                          : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       {mentorUsers.length}
@@ -1657,27 +1657,27 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setMentorRosterSubTab('applications')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
                       mentorRosterSubTab === 'applications'
-                        ? 'bg-brand-600 text-white shadow-2xs font-extrabold'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                        ? 'bg-brand-600 text-white shadow-xs font-extrabold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    <GraduationCap className="w-3.5 h-3.5" />
-                    <span>Applications Queue</span>
+                    <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">Applications Queue</span>
                     {pendingMentorCount > 0 ? (
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500 text-white font-bold animate-pulse">
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-amber-500 text-white font-bold animate-pulse">
                         {pendingMentorCount} New
                       </span>
                     ) : (
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
                         {mentorApps.length}
                       </span>
                     )}
                   </button>
                 </div>
 
-                <div className="text-xs text-slate-500 font-mono">
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono leading-relaxed">
                   <span>Admins can review active teaching status and promote/demote mentors.</span>
                 </div>
               </div>
@@ -1686,8 +1686,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               {mentorRosterSubTab === 'roster' && (
                 <div className="space-y-4">
                   {/* Activity Filter Chips */}
-                  <div className="flex flex-wrap items-center justify-between gap-2.5">
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
                       {[
                         { id: 'ALL', label: 'All Mentors', count: mentorUsers.length },
                         { id: 'active', label: '🟢 Active Mentors', count: activeMentorCount },
@@ -1697,15 +1697,15 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                           key={btn.id}
                           type="button"
                           onClick={() => setMentorActivityFilter(btn.id as any)}
-                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 select-none shadow-3xs ${
                             mentorActivityFilter === btn.id
-                              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80'
                           }`}
                         >
-                          <span>{btn.label}</span>
+                          <span className="whitespace-nowrap">{btn.label}</span>
                           <span
-                            className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
+                            className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
                               mentorActivityFilter === btn.id
                                 ? 'bg-white/20 dark:bg-slate-900/20'
                                 : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
@@ -1717,7 +1717,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                       ))}
                     </div>
 
-                    <div className="text-xs font-mono text-slate-500">
+                    <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
                       Showing {filteredMentors.length} of {mentorUsers.length} mentors
                     </div>
                   </div>
