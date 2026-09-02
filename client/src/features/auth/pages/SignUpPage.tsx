@@ -73,7 +73,7 @@ export const SignUpPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           LEFT SIDE: DASHBOARD BLUEPRINT BRANDING PANEL
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="relative lg:w-1/2 min-h-[340px] lg:min-h-screen bg-[#090D12] text-white overflow-hidden flex flex-col justify-between p-6 sm:p-10 lg:p-14 border-b-2 lg:border-b-0 lg:border-r-2 border-slate-300 dark:border-slate-800">
+      <div className="hidden lg:flex relative lg:w-1/2 min-h-screen bg-[#090D12] text-white overflow-hidden flex-col justify-between p-6 sm:p-10 lg:p-14 border-r-2 border-slate-300 dark:border-slate-800">
         {/* Background Image with Crisp High-Contrast Overlay */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
@@ -161,7 +161,7 @@ export const SignUpPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           RIGHT SIDE: DASHBOARD CARD SYSTEM REGISTRATION FORM
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="lg:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-12 relative overflow-y-auto bg-[#FAFAFA] dark:bg-[#0C1015]">
+      <div className="w-full lg:w-1/2 min-h-screen flex flex-col justify-between p-4 sm:p-8 lg:p-12 relative overflow-y-auto bg-[#FAFAFA] dark:bg-[#0C1015]">
         {/* Blueprint SVG Grid Pattern */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.065] dark:opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -173,19 +173,29 @@ export const SignUpPage: React.FC = () => {
         </svg>
 
         {/* Top Navigation & Theme Toggle Bar */}
-        <div className="relative z-10 flex items-center justify-between w-full mb-6">
+        <div className="relative z-10 flex items-center justify-between w-full mb-4 sm:mb-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs transition-colors group"
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs transition-colors group"
           >
             <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to Home</span>
+            <span>Back</span>
+          </Link>
+
+          {/* Mobile-Only Brand Center Badge */}
+          <Link to="/" className="lg:hidden inline-flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-white dark:bg-[#0C1015] border-2 border-slate-300 dark:border-slate-700 p-0.5 flex items-center justify-center shrink-0 shadow-3xs overflow-hidden">
+              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-md" />
+            </div>
+            <span className="font-black text-sm tracking-tight text-slate-900 dark:text-white">
+              CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
+            </span>
           </Link>
 
           <button
             type="button"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className="p-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs transition-colors cursor-pointer"
             aria-label="Toggle dark/light theme"
           >
             {isDark ? <Sun className="w-4 h-4 text-[#005F02] dark:text-emerald-400" /> : <Moon className="w-4 h-4 text-[#005F02]" />}
