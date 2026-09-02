@@ -139,6 +139,7 @@ console.log("Welcome to CodeTutor!");
 \`\`\`
 
 ### 🔍 Anatomy of this Line:
+
 1. **\`console\`**: This is the screen/terminal where the computer shows output.
 2. **\`.log()\`**: This is the action: *"write this down!"*
 3. **Parentheses \`(\` and \`)\`**: Everything you want to print goes inside these brackets.

@@ -162,33 +162,34 @@ export const LessonViewPage: React.FC = () => {
       </div>
 
       {/* Lesson Reader Card */}
-      <Card className="p-5 sm:p-8 space-y-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-        <div className="space-y-3 border-b border-slate-100 dark:border-slate-800 pb-5">
+      <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0C1015] shadow-md dark:shadow-2xl p-6 sm:p-9 space-y-8 text-slate-900 dark:text-white">
+        <div className="space-y-3.5 border-b-2 border-slate-200 dark:border-slate-800 pb-6">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="brand" size="sm" className="font-mono text-[10px] uppercase font-bold">
+            <span className="font-mono text-xs uppercase font-bold px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-2xs">
               Lesson {foundLesson.order}
-            </Badge>
-            <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-              <Clock className="w-3 h-3 text-amber-500" /> {foundLesson.durationMinutes} mins
+            </span>
+            <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-2 border-amber-200 dark:border-amber-800 shadow-2xs inline-flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>{foundLesson.durationMinutes} mins</span>
             </span>
             {foundLesson.videoUrl && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
-                <Play className="w-2.5 h-2.5 fill-rose-600 dark:fill-rose-400" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase px-3 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border-2 border-rose-200 dark:border-rose-800 shadow-2xs">
+                <Play className="w-3 h-3 fill-rose-600 dark:fill-rose-400" />
                 <span>Video Lesson</span>
               </span>
             )}
             {foundLesson.quizQuestions && foundLesson.quizQuestions.length > 0 && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-[#005F02]/10 text-[#005F02] border border-[#005F02]/30">
-                <Zap className="w-2.5 h-2.5" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-2xs">
+                <Zap className="w-3 h-3" />
                 <span>{foundLesson.quizQuestions.length} Quizzes</span>
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
             {foundLesson.title}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
             {foundLesson.description}
           </p>
         </div>
@@ -196,24 +197,24 @@ export const LessonViewPage: React.FC = () => {
         {/* ═══════════════════════════════════════════════════════════════
             PHASE 1: PRE-VIDEO READING TEXT & CONCEPTUAL THEORY
             ═══════════════════════════════════════════════════════════════ */}
-        <div className="space-y-4">
-          <div className="p-3 rounded-2xl bg-[#005F02]/10 border border-[#005F02]/30 flex items-center justify-between gap-3 text-xs font-mono">
-            <span className="flex items-center gap-2 text-[#005F02] font-bold">
-              <BookOpen className="w-4 h-4 text-[#005F02]" />
+        <div className="space-y-5">
+          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-between gap-3 text-xs font-mono shadow-xs">
+            <span className="flex items-center gap-2 text-[#005F02] dark:text-emerald-400 font-bold">
+              <BookOpen className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
               <span>Phase 1: Pre-Video Reading Notes & Theory</span>
             </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">
               Pre-cached Markdown Documentation
             </span>
           </div>
 
           {/* Learning Objectives Box */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 space-y-2.5">
-            <h2 className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider font-mono flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border-2 border-slate-300 dark:border-slate-700 space-y-3.5 shadow-xs">
+            <h2 className="text-xs font-bold text-[#005F02] dark:text-emerald-400 uppercase tracking-wider font-mono flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
               <span>Learning Objectives</span>
             </h2>
-            <ul className="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-slate-700 dark:text-slate-200 pl-1 leading-relaxed">
+            <div className="space-y-2.5">
               {(foundLesson.learningObjectives && foundLesson.learningObjectives.length > 0
                 ? foundLesson.learningObjectives
                 : [
@@ -222,30 +223,33 @@ export const LessonViewPage: React.FC = () => {
                     'Understand execution flow and code structure',
                   ]
               ).map((obj, oIdx) => (
-                <li key={oIdx}>{obj}</li>
+                <div key={oIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>{obj}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           {/* Technical Terms Box */}
           {foundLesson.technicalTerms && foundLesson.technicalTerms.length > 0 && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border-2 border-slate-300 dark:border-slate-700 space-y-3.5 shadow-xs">
               <h2 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono flex items-center gap-2">
                 <Zap className="w-4 h-4 text-amber-500" />
                 <span>Technical Terms & Vocabulary</span>
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {foundLesson.technicalTerms.map((t, tIdx) => (
                   <div
                     key={tIdx}
-                    className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-1 text-xs shadow-3xs"
+                    className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 space-y-1.5 text-xs shadow-2xs"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60 text-[11px]">
+                      <span className="font-mono font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800 text-[11px]">
                         {t.term}
                       </span>
                     </div>
-                    <p className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
                       {t.definition}
                     </p>
                     {t.example && (
@@ -280,7 +284,7 @@ export const LessonViewPage: React.FC = () => {
           </div>
 
           {/* VS Code Frame */}
-          <div className="rounded-3xl border border-slate-700/80 bg-[#1E1E1E] shadow-2xl overflow-hidden text-slate-200 font-mono text-xs flex flex-col select-none">
+          <div className="rounded-3xl border-2 border-slate-700 bg-[#1E1E1E] shadow-2xl overflow-hidden text-slate-200 font-mono text-xs flex flex-col select-none">
             {/* Window Titlebar */}
             <div className="h-8 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
               <div className="flex items-center gap-1.5 shrink-0">
@@ -411,13 +415,13 @@ export const LessonViewPage: React.FC = () => {
             PHASE 2: INTEGRATED YOUTUBE VIDEO LESSON PLAYER
             ═══════════════════════════════════════════════════════════════ */}
         {foundLesson.videoUrl && (
-          <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <div className="p-3 rounded-2xl bg-rose-50/70 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 flex items-center justify-between gap-3 text-xs font-mono">
-              <span className="flex items-center gap-2 text-rose-700 dark:text-rose-300 font-bold">
+          <div className="space-y-4 pt-5 border-t-2 border-slate-200 dark:border-slate-800">
+            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/80 border-2 border-rose-300 dark:border-rose-800 flex items-center justify-between gap-3 text-xs font-mono shadow-xs">
+              <span className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-bold">
                 <Play className="w-4 h-4 fill-rose-600 dark:fill-rose-400 text-rose-600 dark:text-rose-400" />
                 <span>Phase 2: Video Tutorial Stream</span>
               </span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">
                 Full-screen & HD playback supported
               </span>
             </div>
@@ -433,13 +437,13 @@ export const LessonViewPage: React.FC = () => {
             PHASE 3: MULTI-FORMAT AI QUIZZES & PRACTICAL CODING RUNNER
             ═══════════════════════════════════════════════════════════════ */}
         {foundLesson.quizQuestions && foundLesson.quizQuestions.length > 0 && (
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-            <div className="p-3 rounded-2xl bg-[#005F02]/10 border border-[#005F02]/30 flex items-center justify-between gap-3 text-xs font-mono">
-              <span className="flex items-center gap-2 text-[#005F02] font-bold">
-                <Zap className="w-4 h-4 text-[#005F02]" />
+          <div className="pt-5 border-t-2 border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-between gap-3 text-xs font-mono shadow-xs">
+              <span className="flex items-center gap-2 text-[#005F02] dark:text-emerald-400 font-bold">
+                <Zap className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
                 <span>Phase 3: Interactive Knowledge Check & Coding</span>
               </span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">
                 Automated offline evaluation
               </span>
             </div>
@@ -452,13 +456,13 @@ export const LessonViewPage: React.FC = () => {
         )}
 
         {/* Quick Practice Prompt */}
-        <div className="p-4 sm:p-5 rounded-2xl border border-[#005F02]/30 bg-[#005F02]/5 dark:bg-[#005F02]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#005F02] text-white shrink-0">
+        <div className="p-5 sm:p-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#005F02] text-white flex items-center justify-center shrink-0 shadow-xs">
               <Code2 className="w-5 h-5" />
             </div>
             <div className="space-y-0.5">
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                 Ready to put this concept into practice?
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -467,17 +471,16 @@ export const LessonViewPage: React.FC = () => {
             </div>
           </div>
           <Link to="/practice/practice-rec-1" className="self-start sm:self-center shrink-0">
-            <Button
-              variant="primary"
-              size="sm"
-              className="font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs text-xs"
-              rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+            <button
+              type="button"
+              className="px-5 py-2.5 rounded-xl font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs text-xs inline-flex items-center gap-2 cursor-pointer active:scale-95 transition-all"
             >
-              Launch Practice
-            </Button>
+              <span>Launch Practice</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </Link>
         </div>
-      </Card>
+      </div>
     </PageContainer>
 
     {foundCourse && (
