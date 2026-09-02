@@ -15,7 +15,6 @@ import {
   Gamepad2,
   Play,
   Cpu,
-  Sparkles,
 } from 'lucide-react'
 
 export const CourseListPage: React.FC = () => {
@@ -70,12 +69,6 @@ export const CourseListPage: React.FC = () => {
         <span className="absolute top-3 right-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
         <span className="absolute bottom-3 left-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
         <span className="absolute bottom-3 right-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
-
-        {/* Floating Model Badge */}
-        <div className="absolute top-5 right-5 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 shadow-3xs select-none">
-          <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
-          <span>LLAMA 3.2 3B</span>
-        </div>
         
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-7">
           <div className="space-y-3.5 max-w-2xl">
@@ -123,20 +116,16 @@ export const CourseListPage: React.FC = () => {
           </div>
 
           {/* Action CTA Button */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 self-start lg:self-center">
             <button
               type="button"
               onClick={() => setIsAiModalOpen(true)}
               className="px-6 py-4 rounded-2xl bg-[#005F02] hover:bg-[#004e02] active:scale-[0.98] text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2.5 transition-all cursor-pointer group"
             >
-              <Sparkles className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+              <Bot className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
               <span>Prompt AI to Generate Course</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-            <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400 shadow-3xs">
-              <Zap className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
-              <span>0 KB Cloud Network Required</span>
-            </div>
           </div>
         </div>
       </div>
