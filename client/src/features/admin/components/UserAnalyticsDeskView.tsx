@@ -243,12 +243,14 @@ const CustomCourseDropdown: React.FC<CustomCourseDropdownProps> = ({
   }, [isOpen])
 
   const selectedCourse = courses.find((c) => c.title === value)
+  const displayLabel = value === 'ALL' ? 'All Enrolled Courses' : value.replace('Learn to code with ', '')
 
   return (
     <div ref={dropdownRef} className="relative w-full">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        title={value === 'ALL' ? 'All Enrolled Courses' : value}
         className={`w-full h-10 px-3 rounded-xl bg-white dark:bg-[#161B22] border-2 transition-all cursor-pointer flex items-center justify-between shadow-3xs active:scale-95 ${
           isOpen
             ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
@@ -258,7 +260,7 @@ const CustomCourseDropdown: React.FC<CustomCourseDropdownProps> = ({
         <div className="flex items-center gap-1.5 min-w-0">
           <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
           <span className="font-mono font-bold text-slate-900 dark:text-white truncate text-xs">
-            {value === 'ALL' ? 'All Enrolled Courses' : value}
+            {displayLabel}
           </span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
             {value === 'ALL' ? totalCount : selectedCourse?.count || 0}
@@ -1580,7 +1582,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
             {subView === 'users' && (
               <>
                 {/* Search Input */}
-                <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 relative">
+                <div className={restrictedMentorUser ? "sm:col-span-2 md:col-span-3 lg:col-span-3 relative" : "sm:col-span-2 md:col-span-3 lg:col-span-2 relative"}>
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
@@ -1614,7 +1616,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 )}
 
                 {/* Enrolled Course Track Selector */}
-                <div className="sm:col-span-1 md:col-span-2 lg:col-span-2 relative">
+                <div className={restrictedMentorUser ? "sm:col-span-1 md:col-span-3 lg:col-span-3 relative" : "sm:col-span-1 md:col-span-2 lg:col-span-3 relative"}>
                   <CustomCourseDropdown
                     value={selectedCourse}
                     onChange={(val) => setSelectedCourse(val)}
@@ -1633,7 +1635,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 </div>
 
                 {/* Sort By Dropdown */}
-                <div className="sm:col-span-1 md:col-span-1 lg:col-span-2 relative">
+                <div className={restrictedMentorUser ? "sm:col-span-1 md:col-span-1 lg:col-span-2 relative" : "sm:col-span-1 md:col-span-1 lg:col-span-1.5 relative"}>
                   <CustomSortDropdown
                     value={userSortBy}
                     onChange={(val) => setUserSortBy(val)}
@@ -1641,7 +1643,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 </div>
 
                 {/* Activity Status Filter */}
-                <div className="sm:col-span-1 md:col-span-1 lg:col-span-2 relative">
+                <div className={restrictedMentorUser ? "sm:col-span-1 md:col-span-1 lg:col-span-2 relative" : "sm:col-span-1 md:col-span-1 lg:col-span-1.5 relative"}>
                   <CustomStatusDropdown
                     value={selectedStatus}
                     onChange={(val) => setSelectedStatus(val)}
