@@ -1,6 +1,5 @@
 import React, { memo, useState } from 'react'
 import { TopicMastery } from '@/types'
-import { Card, CardHeader, CardTitle, CardContent, Progress } from '@/components/ui'
 import { Code2, Terminal, Cpu, Layers } from 'lucide-react'
 
 export const TopicProgressGrid: React.FC<{ masteries: TopicMastery[] }> = memo(({ masteries }) => {
@@ -42,21 +41,21 @@ export const TopicProgressGrid: React.FC<{ masteries: TopicMastery[] }> = memo((
   }
 
   return (
-    <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-      <CardHeader className="p-3.5 sm:p-4 pb-2.5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80">
+    <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs overflow-hidden">
+      <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
             <Code2 className="w-4 h-4" />
           </div>
           <div>
-            <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
               Topic & Language Mastery
-            </CardTitle>
+            </h3>
           </div>
         </div>
 
-        {/* Compact Language Filter Pills */}
-        <div className="flex items-center gap-1">
+        {/* Language Filter Pills */}
+        <div className="flex items-center gap-1.5 flex-wrap">
           {languages.map((lang) => {
             const isSelected = selectedLanguage === lang
             return (
@@ -64,10 +63,10 @@ export const TopicProgressGrid: React.FC<{ masteries: TopicMastery[] }> = memo((
                 key={lang}
                 type="button"
                 onClick={() => setSelectedLanguage(lang)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold uppercase transition-all cursor-pointer border ${
+                className={`px-3 py-1 rounded-xl text-[11px] font-mono font-black uppercase transition-all cursor-pointer border-2 active:scale-95 shadow-3xs ${
                   isSelected
-                    ? 'bg-[#005F02] text-white border-[#005F02] shadow-3xs'
-                    : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-400'
+                    ? 'bg-[#005F02] text-white border-[#005F02]'
+                    : 'bg-slate-50 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
                 }`}
               >
                 {lang}
@@ -75,44 +74,52 @@ export const TopicProgressGrid: React.FC<{ masteries: TopicMastery[] }> = memo((
             )
           })}
         </div>
-      </CardHeader>
+      </div>
 
-      <CardContent className="p-3 sm:p-4 divide-y divide-slate-100 dark:divide-slate-800/70">
+      <div className="p-4 sm:p-5 space-y-2.5">
         {filteredMasteries.map((topic) => {
           const config = getLanguageBadge(topic.language)
           const Icon = config.icon
+          const barColor =
+            topic.language.toLowerCase() === 'python'
+              ? 'bg-[#005F02]'
+              : topic.language.toLowerCase() === 'javascript'
+              ? 'bg-amber-500'
+              : topic.language.toLowerCase() === 'java'
+              ? 'bg-rose-500'
+              : 'bg-sky-500'
+
           return (
             <div
               key={topic.topic}
-              className="py-2.5 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 px-2 rounded-xl transition-colors"
+              className="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-[#12161A] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-3xs"
             >
               {/* Left: Language Chip + Topic Title */}
               <div className="flex items-center gap-2.5 min-w-0 sm:w-5/12">
                 <span
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] uppercase font-mono font-bold border shrink-0 ${config.bg}`}
+                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] uppercase font-mono font-black border-2 shrink-0 ${config.bg}`}
                 >
-                  <Icon className="w-2.5 h-2.5" />
+                  <Icon className="w-3 h-3" />
                   {topic.language}
                 </span>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white truncate">
                   {topic.topic}
                 </h4>
               </div>
 
               {/* Right: Progress Bar + Solved Count + Mastery % */}
               <div className="flex items-center gap-3 sm:w-7/12 shrink-0">
-                <div className="flex-1 min-w-[100px]">
-                  <Progress
-                    value={topic.masteryPercentage}
-                    variant={config.barVariant}
-                    size="sm"
+                <div className="flex-1 min-w-[100px] h-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                    style={{ width: `${topic.masteryPercentage}%` }}
                   />
                 </div>
                 <div className="flex items-center gap-2 text-right shrink-0 font-mono">
-                  <span className="text-[11px] text-slate-400 font-semibold hidden md:inline">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold hidden md:inline">
                     {topic.problemsSolved}/{topic.totalProblems} Solved
                   </span>
-                  <span className="text-xs font-bold text-slate-900 dark:text-white min-w-[35px] text-right">
+                  <span className="text-xs font-black text-slate-900 dark:text-white min-w-[38px] text-right">
                     {topic.masteryPercentage}%
                   </span>
                 </div>
@@ -120,8 +127,8 @@ export const TopicProgressGrid: React.FC<{ masteries: TopicMastery[] }> = memo((
             </div>
           )
         })}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 })
 

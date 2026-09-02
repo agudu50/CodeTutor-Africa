@@ -1,6 +1,5 @@
 import React, { memo } from 'react'
 import { ActivityItem } from '@/types'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
 import { CheckCircle2, Bot, BookOpen, Bug, Zap } from 'lucide-react'
 
 const activityIcons = {
@@ -24,24 +23,22 @@ const activityIcons = {
 
 export const ActivityFeed: React.FC<{ activities: ActivityItem[] }> = memo(({ activities }) => {
   return (
-    <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-              <Zap className="w-4 h-4" />
-            </div>
-            <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
-              Recent Offline Study Activity
-            </CardTitle>
+    <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs overflow-hidden">
+      <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+            <Zap className="w-4 h-4" />
           </div>
-          <span className="text-[11px] font-mono text-slate-400 font-semibold">
-            {activities.length} Recorded Events
-          </span>
+          <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+            Recent Offline Study Activity
+          </h3>
         </div>
-      </CardHeader>
+        <span className="text-xs font-mono text-slate-700 dark:text-slate-300 font-black border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] px-3 py-1 rounded-xl shadow-3xs">
+          {activities.length} Recorded Events
+        </span>
+      </div>
 
-      <CardContent className="p-4 sm:p-5 space-y-3">
+      <div className="p-4 sm:p-5 space-y-3">
         {activities.map((act) => {
           const cfg = activityIcons[act.type] || activityIcons.practice_solved
           const Icon = cfg.icon
@@ -49,9 +46,9 @@ export const ActivityFeed: React.FC<{ activities: ActivityItem[] }> = memo(({ ac
           return (
             <div
               key={act.id}
-              className="flex items-start gap-3.5 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-900 shadow-2xs"
+              className="flex items-start gap-3.5 p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-[#12161A] transition-colors hover:border-slate-300 dark:hover:border-slate-700 shadow-3xs"
             >
-              <div className={`p-2 rounded-xl border shrink-0 ${cfg.badgeClass}`}>
+              <div className={`p-2.5 rounded-xl border-2 shrink-0 ${cfg.badgeClass}`}>
                 <Icon className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -59,19 +56,19 @@ export const ActivityFeed: React.FC<{ activities: ActivityItem[] }> = memo(({ ac
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
                     {act.title}
                   </h4>
-                  <span className="text-[10px] text-slate-400 font-mono shrink-0">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono font-bold shrink-0">
                     {act.timestamp}
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed font-medium">
                   {act.description}
                 </p>
               </div>
             </div>
           )
         })}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 })
 
