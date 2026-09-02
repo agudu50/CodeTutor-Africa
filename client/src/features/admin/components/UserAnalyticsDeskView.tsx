@@ -2561,10 +2561,10 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                           <div className="flex items-center gap-1 text-xs font-bold font-mono text-[#005F02] dark:text-emerald-400">
                                             <Users className="w-3.5 h-3.5" />
                                             <span>{enrolledInThisCourse.toLocaleString()}</span>
+                                            </div>
+                                            <span className="text-[9px] font-mono text-slate-400">enrolled</span>
                                           </div>
-                                          <span className="text-[9px] font-mono text-slate-400">enrolled</span>
                                         </div>
-                                      </div>
                                     )
                                   })}
                                 </div>
@@ -2572,27 +2572,27 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                             </div>
 
                             {/* Middle row: Activity & Telemetry */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 space-y-1">
+                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1.5">
                                   <Clock className="w-3.5 h-3.5 text-slate-400" />
                                   <span>Activity &amp; Device:</span>
                                 </div>
-                                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                <div className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
                                   Last seen: {getHumanRelativeTime(mentor.lastActive)}
                                 </div>
                                 <div>{getDeviceIcon(mentor.deviceMode)}</div>
                               </div>
 
-                              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
-                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1">
+                              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 space-y-1">
+                                <div className="text-[11px] font-mono text-slate-500 font-bold uppercase flex items-center gap-1.5">
                                   <Zap className="w-3.5 h-3.5 text-amber-500" />
                                   <span>Contribution Telemetry:</span>
                                 </div>
                                 <div className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
                                   {mentor.totalXp.toLocaleString()} XP • {mentor.problemsSolved} Drills Curated
                                 </div>
-                                <div className="text-[10px] text-slate-500 font-mono">
+                                <div className="text-[10px] text-slate-500 font-mono font-bold">
                                   {mentor.lessonsCompleted} Published Modules
                                 </div>
                               </div>
@@ -2603,66 +2603,105 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               <button
                                 type="button"
                                 onClick={() => setExpandedMentorId(isExpanded ? null : mentor.id)}
-                                className="w-full py-2 px-3 rounded-xl bg-brand-50/80 dark:bg-brand-950/50 hover:bg-brand-100 dark:hover:bg-brand-900/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80 text-xs font-bold flex items-center justify-between transition-colors cursor-pointer"
+                                className="w-full py-2.5 px-4 rounded-2xl bg-slate-50 dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#1c232c] text-slate-900 dark:text-white border-2 border-slate-300 dark:border-slate-700 text-xs font-mono font-bold flex items-center justify-between transition-all cursor-pointer shadow-3xs active:scale-98"
                               >
-                                <span className="flex items-center gap-2">
-                                  <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                                  <span>View Enrolled Learners for {mentor.name} ({mentorLearners.length} verified learners)</span>
+                                <span className="flex items-center gap-2.5">
+                                  <div className="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+                                    <Users className="w-3.5 h-3.5" />
+                                  </div>
+                                  <span className="font-bold">View Enrolled Learners for {mentor.name}</span>
+                                  <span className="px-2 py-0.5 rounded-md bg-[#005F02] text-white text-[10px] font-mono font-black shadow-3xs">
+                                    {mentorLearners.length} verified learners
+                                  </span>
                                 </span>
                                 {isExpanded ? (
-                                  <ChevronUp className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                                  <ChevronUp className="w-4 h-4 text-slate-500 transition-transform" />
                                 ) : (
-                                  <ChevronDown className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                                  <ChevronDown className="w-4 h-4 text-slate-500 transition-transform" />
                                 )}
                               </button>
 
                               {isExpanded && (
-                                <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-inner overflow-hidden animate-in fade-in duration-200">
+                                <div className="mt-3 rounded-2xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-3xs overflow-hidden animate-in fade-in duration-200">
                                   {mentorLearners.length === 0 ? (
-                                    <p className="text-xs text-slate-400 py-3 text-center">
-                                      No direct learner profile records found for this mentor.
-                                    </p>
+                                    <div className="p-6 text-center text-xs font-mono font-bold text-slate-400 space-y-1">
+                                      <Users className="w-6 h-6 mx-auto text-slate-400" />
+                                      <p>No direct learner profile records found for this mentor.</p>
+                                    </div>
                                   ) : (
                                     <div className="overflow-x-auto">
                                       <table className="w-full text-left text-xs">
                                         <thead>
-                                          <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-mono text-slate-400 uppercase">
-                                            <th className="py-2 px-3">Student Name</th>
-                                            <th className="py-2 px-3">Country</th>
-                                            <th className="py-2 px-3">Active Course</th>
-                                            <th className="py-2 px-3">XP &amp; Streak</th>
-                                            <th className="py-2 px-3">Status</th>
+                                          <tr className="border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] text-[10px] font-mono text-slate-600 dark:text-slate-300 uppercase font-black tracking-wider">
+                                            <th className="py-2.5 px-3.5 w-12 text-center">#</th>
+                                            <th className="py-2.5 px-3">Student Name</th>
+                                            <th className="py-2.5 px-3">Country</th>
+                                            <th className="py-2.5 px-3">Active Course</th>
+                                            <th className="py-2.5 px-3">XP &amp; Streak</th>
+                                            <th className="py-2.5 px-3.5 text-right">Status</th>
                                           </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                                          {mentorLearners.map((learner) => (
-                                            <tr key={learner.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                                              <td className="py-2 px-3 font-semibold text-slate-900 dark:text-white">
-                                                <div className="flex items-center gap-2">
-                                                  <div className="w-6 h-6 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold">
-                                                    {learner.name.charAt(0)}
+                                        <tbody className="divide-y-2 divide-slate-100 dark:divide-slate-800/80 font-mono">
+                                          {mentorLearners.map((learner, lIdx) => (
+                                            <tr key={learner.id} className="hover:bg-slate-50 dark:hover:bg-[#161B22]/60 transition-colors">
+                                              <td className="py-2.5 px-3.5 text-center">
+                                                <span className="w-6 h-6 rounded-md bg-slate-100 dark:bg-[#161B22] border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-black text-slate-600 dark:text-slate-400 inline-flex items-center justify-center shadow-3xs">
+                                                  {String(lIdx + 1).padStart(2, '0')}
+                                                </span>
+                                              </td>
+                                              <td className="py-2.5 px-3">
+                                                <div className="flex items-center gap-2.5">
+                                                  <div className="relative shrink-0">
+                                                    <div className="w-9 h-9 rounded-xl bg-[#005F02] text-white font-mono font-black flex items-center justify-center text-xs shadow-3xs shrink-0 overflow-hidden border-2 border-[#005F02]">
+                                                      {learner.avatarUrl ? (
+                                                        <img src={learner.avatarUrl} alt={learner.name} className="w-full h-full object-cover" />
+                                                      ) : (
+                                                        learner.name.charAt(0)
+                                                      )}
+                                                    </div>
+                                                    {learner.status === 'active_now' ? (
+                                                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0E1318] animate-pulse shadow-3xs" />
+                                                    ) : learner.status === 'active_today' ? (
+                                                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0E1318] shadow-3xs" />
+                                                    ) : null}
                                                   </div>
                                                   <div>
-                                                    <div>{learner.name}</div>
-                                                    <div className="text-[10px] text-slate-400 font-mono">@{learner.username}</div>
+                                                    <div className="font-mono font-black text-xs text-slate-900 dark:text-white leading-tight">
+                                                      {learner.name}
+                                                    </div>
+                                                    <div className="text-[10px] text-slate-400 font-mono font-medium">@{learner.username}</div>
                                                   </div>
                                                 </div>
                                               </td>
-                                              <td className="py-2 px-3 font-mono text-slate-600 dark:text-slate-300">
-                                                {learner.countryName} ({learner.countryCode})
+                                              <td className="py-2.5 px-3">
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-[#161B22] font-mono text-[10px] font-black text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                                                  <Globe className="w-2.5 h-2.5 text-[#005F02] dark:text-emerald-400" />
+                                                  {learner.countryName} ({learner.countryCode})
+                                                </span>
                                               </td>
-                                              <td className="py-2 px-3 font-mono text-brand-600 dark:text-brand-400">
-                                                {learner.activeCourseTitle || learner.enrolledCourseTitles?.[0] || 'Enrolled'}
+                                              <td className="py-2.5 px-3">
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 font-mono text-[11px] font-bold text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                                                  <BookOpen className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
+                                                  {learner.activeCourseTitle || learner.enrolledCourseTitles?.[0] || 'Enrolled'}
+                                                </span>
                                               </td>
-                                              <td className="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">
-                                                {learner.totalXp.toLocaleString()} XP • 🔥 {learner.streakDays}d
+                                              <td className="py-2.5 px-3">
+                                                <span className="px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-mono font-black shadow-3xs inline-flex items-center gap-1.5">
+                                                  <Zap className="w-3 h-3 text-amber-500" />
+                                                  {learner.totalXp.toLocaleString()} XP • 🔥 {learner.streakDays}d
+                                                </span>
                                               </td>
-                                              <td className="py-2 px-3">
-                                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
+                                              <td className="py-2.5 px-3.5 text-right">
+                                                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-black border-2 shadow-3xs ${
                                                   learner.status === 'active_now' || learner.status === 'active_today'
-                                                    ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                                                    ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
+                                                    : learner.status === 'active_this_week'
+                                                    ? 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-800'
+                                                    : 'bg-slate-100 dark:bg-[#161B22] text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-700'
                                                 }`}>
+                                                  {(learner.status === 'active_now' || learner.status === 'active_today') && (
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                  )}
                                                   {learner.status.replace('_', ' ').toUpperCase()}
                                                 </span>
                                               </td>
@@ -2676,62 +2715,62 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               )}
                             </div>
 
-                              {/* Bottom row: Profile Links */}
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                                {/* Profiles Links */}
-                                <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
-                                  {associatedApp?.githubUrl ? (
-                                    <a
-                                      href={associatedApp.githubUrl.startsWith('http') ? associatedApp.githubUrl : `https://${associatedApp.githubUrl}`}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
-                                    >
-                                      <Code2 className="w-3.5 h-3.5 text-slate-500" />
-                                      <span>GitHub Profile ↗</span>
-                                    </a>
-                                  ) : (
-                                    <a
-                                      href={`https://github.com/${mentor.username}`}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
-                                    >
-                                      <Code2 className="w-3.5 h-3.5 text-slate-500" />
-                                      <span>GitHub Profile ↗</span>
-                                    </a>
-                                  )}
+                            {/* Bottom row: Profile Links */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+                              {/* Profiles Links */}
+                              <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                                {associatedApp?.githubUrl ? (
+                                  <a
+                                    href={associatedApp.githubUrl.startsWith('http') ? associatedApp.githubUrl : `https://${associatedApp.githubUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318] text-slate-700 dark:text-slate-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
+                                  >
+                                    <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                    <span>GitHub Profile ↗</span>
+                                  </a>
+                                ) : (
+                                  <a
+                                    href={`https://github.com/${mentor.username}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318] text-slate-700 dark:text-slate-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
+                                  >
+                                    <Code2 className="w-3.5 h-3.5 text-slate-500" />
+                                    <span>GitHub Profile ↗</span>
+                                  </a>
+                                )}
 
-                                  {associatedApp?.linkedinUrl && (
-                                    <a
-                                      href={associatedApp.linkedinUrl.startsWith('http') ? associatedApp.linkedinUrl : `https://${associatedApp.linkedinUrl}`}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
-                                    >
-                                      <Globe className="w-3.5 h-3.5 text-indigo-500" />
-                                      <span>LinkedIn Profile ↗</span>
-                                    </a>
-                                  )}
+                                {associatedApp?.linkedinUrl && (
+                                  <a
+                                    href={associatedApp.linkedinUrl.startsWith('http') ? associatedApp.linkedinUrl : `https://${associatedApp.linkedinUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-indigo-300 dark:border-indigo-800 bg-indigo-50/60 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
+                                  >
+                                    <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                                    <span>LinkedIn Profile ↗</span>
+                                  </a>
+                                )}
 
-                                  {associatedApp?.portfolioUrl && (
-                                    <a
-                                      href={associatedApp.portfolioUrl.startsWith('http') ? associatedApp.portfolioUrl : `https://${associatedApp.portfolioUrl}`}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
-                                    >
-                                      <Laptop className="w-3.5 h-3.5 text-emerald-500" />
-                                      <span>Portfolio Website ↗</span>
-                                    </a>
-                                  )}
-                                </div>
+                                {associatedApp?.portfolioUrl && (
+                                  <a
+                                    href={associatedApp.portfolioUrl.startsWith('http') ? associatedApp.portfolioUrl : `https://${associatedApp.portfolioUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-[#005F02] dark:text-emerald-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
+                                  >
+                                    <Laptop className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                                    <span>Portfolio Website ↗</span>
+                                  </a>
+                                )}
                               </div>
                             </div>
-                          )}
-                        </div>
-                      )
-                      })}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                     </div>
                   )}
                 </div>
