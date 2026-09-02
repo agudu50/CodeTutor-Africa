@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { LessonQuizSection } from '../components/LessonQuizSection'
-import { Button, Dropdown } from '@/components/ui'
+import { Dropdown } from '@/components/ui'
 import {
   HelpCircle,
   CheckCircle2,
@@ -12,6 +12,8 @@ import {
   Code2,
   Cpu,
   Layers,
+  BookOpen,
+  ArrowLeft,
 } from 'lucide-react'
 import { ProgrammingLanguage, Lesson } from '@/types'
 
@@ -59,22 +61,22 @@ export const QuizzesPage: React.FC = () => {
         python: {
           label: 'Python Programming',
           desc: 'Core Algorithms & Data Structures',
-          icon: <Terminal className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />,
+          icon: <Terminal className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />,
         },
         javascript: {
           label: 'JavaScript Web Engine',
           desc: 'DOM, Async & Web Fundamentals',
-          icon: <Code2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />,
+          icon: <Code2 className="w-4 h-4 text-amber-500 shrink-0" />,
         },
         java: {
           label: 'Java Software Architecture',
           desc: 'OOP, Classes & Design Patterns',
-          icon: <Cpu className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />,
+          icon: <Cpu className="w-4 h-4 text-rose-500 shrink-0" />,
         },
         typescript: {
           label: 'TypeScript Foundations',
           desc: 'Static Typing & Modern Interfaces',
-          icon: <Layers className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />,
+          icon: <Layers className="w-4 h-4 text-blue-500 shrink-0" />,
         },
       }
 
@@ -96,22 +98,22 @@ export const QuizzesPage: React.FC = () => {
   const languageBadges: { lang: ProgrammingLanguage; icon: React.ReactNode; name: string }[] = [
     {
       lang: 'python',
-      icon: <Terminal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />,
+      icon: <Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />,
       name: 'Python',
     },
     {
       lang: 'javascript',
-      icon: <Code2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />,
+      icon: <Code2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />,
       name: 'JavaScript',
     },
     {
       lang: 'java',
-      icon: <Cpu className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />,
+      icon: <Cpu className="w-3.5 h-3.5 text-rose-500 shrink-0" />,
       name: 'Java',
     },
     {
       lang: 'typescript',
-      icon: <Layers className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />,
+      icon: <Layers className="w-3.5 h-3.5 text-blue-500 shrink-0" />,
       name: 'TypeScript',
     },
   ]
@@ -129,23 +131,23 @@ export const QuizzesPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80">
-              <HelpCircle className="w-4 h-4" />
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 p-6 sm:p-7 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <HelpCircle className="w-5 h-5" />
             </div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               Knowledge Quizzes & Assessments
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl font-medium">
             Test your conceptual understanding and algorithmic mastery across Python, JavaScript, and Java with instant offline evaluations.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 border border-[#005F02]/30">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-black text-[#005F02] dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
             <Shield className="w-3.5 h-3.5" /> 100% Offline
           </span>
           <div className="w-full sm:w-80">
@@ -165,8 +167,8 @@ export const QuizzesPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           LANGUAGE SWITCHER TABS / PILLS
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        <span className="text-[11px] font-mono font-bold uppercase text-slate-400 dark:text-slate-500 pl-2 pr-1">
+      <div className="flex flex-wrap items-center gap-2.5 p-3.5 sm:p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
+        <span className="text-xs font-mono font-black uppercase text-slate-500 dark:text-slate-400 pl-2 pr-1">
           Select Track:
         </span>
         {languageBadges.map(({ lang, icon, name }) => {
@@ -178,16 +180,16 @@ export const QuizzesPage: React.FC = () => {
               key={lang}
               type="button"
               onClick={() => handleSelectLanguage(lang)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
                 isSelected
-                  ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
-                  : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-500'
+                  ? 'bg-[#005F02] text-white border-[#005F02]'
+                  : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
               }`}
             >
               <span className="shrink-0">{icon}</span>
               <span>{name}</span>
               {isSelected && (
-                <span className="text-[10px] font-mono px-1.5 py-0.2 bg-white/20 rounded font-normal">
+                <span className="text-[10px] font-mono px-2 py-0.5 bg-white/20 border border-white/40 rounded-md font-black">
                   {quizModules.length} Modules
                 </span>
               )}
@@ -200,24 +202,24 @@ export const QuizzesPage: React.FC = () => {
           ACTIVE QUIZ VIEW OR QUIZ BROWSER
           ═══════════════════════════════════════════════════════════════ */}
       {activeQuizLesson ? (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-            <div className="space-y-0.5">
-              <span className="text-[11px] font-mono font-bold uppercase text-[#005F02] dark:text-emerald-400">
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-black uppercase text-[#005F02] dark:text-emerald-400 block">
                 {activeQuizLesson.courseTitle} • {activeQuizLesson.moduleTitle}
               </span>
               <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
                 {activeQuizLesson.lesson.title} — Quiz
               </h2>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={() => setActiveQuizLesson(null)}
-              className="text-xs font-bold"
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border-2 border-slate-300 dark:border-slate-700 hover:border-[#005F02] dark:hover:border-emerald-500 bg-white dark:bg-[#161B22] text-xs font-bold text-slate-800 dark:text-slate-200 shadow-3xs cursor-pointer active:scale-95 transition-all self-start sm:self-center"
             >
-              Back to All Quizzes
-            </Button>
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to All Quizzes</span>
+            </button>
           </div>
 
           <LessonQuizSection
@@ -226,54 +228,77 @@ export const QuizzesPage: React.FC = () => {
           />
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Quick Stats Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-3xs">
-              <span className="text-[11px] font-mono text-slate-400 block">Total Quizzes</span>
-              <span className="text-lg font-black text-slate-900 dark:text-white">
-                {totalCourseQuizzes} Questions
-              </span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 shadow-3xs">
+                <HelpCircle className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />
+              </div>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Total Quizzes
+                </span>
+                <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                  {totalCourseQuizzes} Questions
+                </span>
+              </div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-3xs">
-              <span className="text-[11px] font-mono text-slate-400 block">Modules Covered</span>
-              <span className="text-lg font-black text-[#005F02] dark:text-emerald-400">
-                {quizModules.length} Modules
-              </span>
+
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-3xs">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Modules Covered
+                </span>
+                <span className="text-xl sm:text-2xl font-black text-[#005F02] dark:text-emerald-400">
+                  {quizModules.length} Modules
+                </span>
+              </div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-3xs col-span-2 sm:col-span-1">
-              <span className="text-[11px] font-mono text-slate-400 block">Course Language</span>
-              <span className="text-lg font-black uppercase text-slate-900 dark:text-white font-mono">
-                {activeCourse?.language || 'Python'}
-              </span>
+
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 shadow-3xs">
+                <Code2 className="w-5 h-5 text-amber-500" />
+              </div>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Course Language
+                </span>
+                <span className="text-xl sm:text-2xl font-black uppercase text-slate-900 dark:text-white font-mono">
+                  {activeCourse?.language || 'Python'}
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Module Quizzes List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {quizModules.map(({ module: mod, lessonsWithQuizzes, totalQuestions }) => (
               <div
                 key={mod.id}
-                className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/50 transition-all flex flex-col justify-between space-y-3"
+                className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs hover:border-[#005F02] dark:hover:border-emerald-500 transition-all flex flex-col justify-between space-y-4"
               >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-[10.5px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono font-black uppercase px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
                       Module {mod.order || 1}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-400 font-semibold">
+                    <span className="text-xs font-mono text-slate-700 dark:text-slate-300 font-bold border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] px-2.5 py-1 rounded-xl shadow-3xs">
                       {totalQuestions} questions
                     </span>
                   </div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-snug">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
                     {mod.title}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                  <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 line-clamp-2 font-medium leading-relaxed">
                     {mod.description || 'Master key concepts with verified interactive knowledge checks.'}
                   </p>
                 </div>
 
-                <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="space-y-2 pt-3 border-t-2 border-slate-200 dark:border-slate-800">
                   {lessonsWithQuizzes.map((lesson) => (
                     <button
                       key={lesson.id}
@@ -286,15 +311,17 @@ export const QuizzesPage: React.FC = () => {
                           language: activeCourse?.language || 'python',
                         })
                       }
-                      className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors group cursor-pointer"
+                      className="w-full flex items-center justify-between p-3 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-[#005F02] dark:hover:text-emerald-400 transition-all cursor-pointer shadow-3xs group active:scale-[0.98]"
                     >
-                      <div className="flex items-center gap-2 truncate">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <div className="flex items-center gap-2.5 truncate">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         <span className="truncate">{lesson.title}</span>
                       </div>
-                      <div className="flex items-center gap-1 text-[11px] font-mono text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 shrink-0">
-                        <span>{lesson.quizQuestions?.length} Qs</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-xs font-mono text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] px-2 py-0.5 rounded-lg group-hover:border-[#005F02] group-hover:text-[#005F02] dark:group-hover:text-emerald-400 font-bold">
+                          {lesson.quizQuestions?.length} Qs
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400" />
                       </div>
                     </button>
                   ))}
