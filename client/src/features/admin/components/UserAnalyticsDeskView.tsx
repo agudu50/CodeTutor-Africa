@@ -1164,45 +1164,87 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     setIsExportModalOpen(false)
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active_now':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs whitespace-nowrap shrink-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            Active Now
-          </span>
-        )
-      case 'active_today':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-emerald-50 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs whitespace-nowrap shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-            Active Today
-          </span>
-        )
-      case 'active_this_week':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border-2 border-sky-300 dark:border-sky-800 shadow-3xs whitespace-nowrap shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-            Active this Week
-          </span>
-        )
-      case 'idle':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 shadow-3xs whitespace-nowrap shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-            Idle (&gt;7d)
-          </span>
-        )
-      case 'inactive':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400 border-2 border-slate-300 dark:border-slate-700 shadow-3xs whitespace-nowrap shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
-            Inactive (&gt;30d)
-          </span>
-        )
+  const renderActivityAndLastSeen = (user: AdminUserRecord) => {
+    const rawDate = user.lastActive ? new Date(user.lastActive) : null
+    const isValid = rawDate && !isNaN(rawDate.getTime())
+
+    const dayName = isValid ? rawDate.toLocaleDateString([], { weekday: 'short' }) : ''
+    const dateFormatted = isValid ? rawDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : ''
+    const timeFormatted = isValid ? rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+
+    const now = Date.now()
+    const diffMs = isValid ? now - rawDate.getTime() : Infinity
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    let relativeLabel = ''
+    if (diffMins < 5) relativeLabel = 'Just now'
+    else if (diffMins < 60) relativeLabel = `${diffMins}m ago`
+    else if (diffHours < 24) relativeLabel = `${diffHours}h ago`
+    else if (diffDays === 1) relativeLabel = 'Yesterday'
+    else if (diffDays < 7) relativeLabel = `${diffDays}d ago`
+    else if (diffDays < 30) relativeLabel = `${Math.floor(diffDays / 7)}w ago`
+    else relativeLabel = '> 1mo ago'
+
+    const isNow = user.status === 'active_now' || diffMins < 15
+    const isToday = user.status === 'active_today' || (diffHours < 24 && diffDays === 0)
+    const isThisWeek = user.status === 'active_this_week' || diffDays < 7
+    const isIdle = user.status === 'idle' || (diffDays >= 7 && diffDays < 30)
+
+    let badgeText = 'Offline'
+    let badgeStyle = 'bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
+    let dotStyle = 'bg-slate-400'
+
+    if (isNow) {
+      badgeText = 'Active Now'
+      badgeStyle = 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+      dotStyle = 'bg-emerald-500 animate-pulse'
+    } else if (isToday) {
+      badgeText = 'Active Today'
+      badgeStyle = 'bg-emerald-50 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
+      dotStyle = 'bg-emerald-500'
+    } else if (isThisWeek) {
+      badgeText = 'Active This Week'
+      badgeStyle = 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border-sky-300 dark:border-sky-800'
+      dotStyle = 'bg-sky-500'
+    } else if (isIdle) {
+      badgeText = 'Offline / Idle'
+      badgeStyle = 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-800'
+      dotStyle = 'bg-amber-500'
     }
+
+    return (
+      <div className="space-y-1 font-mono text-left">
+        <div className="flex items-center gap-1.5">
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xl text-[10px] font-black border-2 shadow-3xs whitespace-nowrap shrink-0 ${badgeStyle}`}>
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotStyle}`} />
+            {badgeText}
+          </span>
+          {isNow && (
+            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+              Online
+            </span>
+          )}
+        </div>
+
+        {isValid ? (
+          <>
+            <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1 whitespace-nowrap">
+              <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+              <span>{dayName}, {dateFormatted}</span>
+            </div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+              Last seen: <span className="font-semibold text-slate-700 dark:text-slate-300">{timeFormatted}</span> ({relativeLabel})
+            </div>
+          </>
+        ) : (
+          <div className="text-[10px] text-slate-400 font-medium">
+            No session recorded
+          </div>
+        )}
+      </div>
+    )
   }
 
   const getDeviceIcon = (mode: string) => {
@@ -1825,19 +1867,21 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <th className="py-3.5 pl-4 pr-1 w-12 text-center">#</th>
                     <th className="py-3.5 px-4 min-w-[220px]">Learner Profile</th>
                     <th className="py-3.5 px-4 min-w-[140px]">Nation / Region</th>
-                    <th className="py-3.5 px-4 min-w-[150px] whitespace-nowrap">Activity Status</th>
+                    <th className="py-3.5 px-4 min-w-[190px] whitespace-nowrap">Activity &amp; Last Seen</th>
                     <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">XP &amp; Streak</th>
                     <th className="py-3.5 px-4 min-w-[150px] whitespace-nowrap">Progress Metrics</th>
                     <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Client Engine</th>
-                    <th className="py-3.5 px-4 text-right min-w-[150px] whitespace-nowrap">
-                      {restrictedMentorUser ? 'Mentorship Nudge' : 'Admin Action'}
-                    </th>
+                    {!restrictedMentorUser && (
+                      <th className="py-3.5 px-4 text-right min-w-[150px] whitespace-nowrap">
+                        Admin Action
+                      </th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y-2 divide-slate-200 dark:divide-slate-800/80">
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-slate-500 dark:text-slate-400 text-xs font-mono font-bold">
+                      <td colSpan={restrictedMentorUser ? 7 : 8} className="py-12 text-center text-slate-500 dark:text-slate-400 text-xs font-mono font-bold">
                         No learners matched your filter criteria.
                       </td>
                     </tr>
@@ -1906,8 +1950,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                           </span>
                         </td>
 
-                        {/* Status */}
-                        <td className="py-4 px-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
+                        {/* Activity & Last Seen */}
+                        <td className="py-4 px-4 whitespace-nowrap">{renderActivityAndLastSeen(user)}</td>
 
                         {/* XP & Streak */}
                         <td className="py-4 px-4 font-mono whitespace-nowrap">
@@ -1939,36 +1983,11 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         {/* Engine Mode */}
                         <td className="py-4 px-4 whitespace-nowrap">{getDeviceIcon(user.deviceMode)}</td>
 
-                        {/* Action */}
-                        <td className="py-4 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-2 flex-nowrap">
-                            {restrictedMentorUser ? (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  adminAnalyticsService.logAction({
-                                    actorName: restrictedMentorUser.name,
-                                    actorRole: 'mentor',
-                                    action: 'COURSE_ENROLLED',
-                                    category: 'enrollment',
-                                    target: user.name,
-                                    details: `Sent direct mentorship study nudge to ${user.name} for course ${user.activeCourseTitle || 'General Track'}.`,
-                                    status: 'success',
-                                    ipAddress: '127.0.0.1',
-                                    userAgent: 'CodeTutor Mentor Desk',
-                                  })
-                                  onDataChanged()
-                                  setActionSuccessMsg(`Sent study encouragement nudge to ${user.name}!`)
-                                  setTimeout(() => setActionSuccessMsg(null), 3000)
-                                }}
-                                className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/80 border-2 border-emerald-300 dark:border-emerald-800 active:scale-95 shadow-3xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
-                                title={`Send study nudge to ${user.name}`}
-                              >
-                                <Zap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
-                                <span>Nudge Student</span>
-                              </button>
-                            ) : (
-                              user.role !== 'admin' && (
+                        {/* Admin Action (Admin only) */}
+                        {!restrictedMentorUser && (
+                          <td className="py-4 px-4 text-right whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-2 flex-nowrap">
+                              {user.role !== 'admin' && (
                                 <>
                                   {user.role === 'instructor' ? (
                                     <button
@@ -1992,10 +2011,10 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                     </button>
                                   )}
                                 </>
-                              )
-                            )}
-                          </div>
-                        </td>
+                              )}
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     ))
                   )}
