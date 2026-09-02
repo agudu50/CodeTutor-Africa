@@ -162,7 +162,9 @@ class AiCourseGeneratorService {
       csharp: 'C#',
       php: 'PHP',
       sql: 'SQL',
-      html: 'HTML5 & CSS3',
+      html: 'HTML5',
+      css: 'CSS3',
+      git: 'Git & GitHub',
     }
     return map[lang] || (lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : 'Programming')
   }

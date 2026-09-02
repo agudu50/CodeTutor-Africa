@@ -321,7 +321,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
   onSaved,
 }) => {
   const [language, setLanguage] = useState<GameLanguage | ''>(
-    editingModule ? editingModule.language : ''
+    editingModule ? editingModule.language : (initialLanguage || '')
   )
   const [moduleNumber, setModuleNumber] = useState<number>(1)
   const [title, setTitle] = useState<string>('')
@@ -336,7 +336,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
       setDescription(editingModule.description || '')
       setDrills(editingModule.drills ? [...editingModule.drills] : [])
     } else {
-      setLanguage('')
+      setLanguage(initialLanguage || '')
       setModuleNumber(1)
       setTitle('')
       setDescription('')
@@ -345,7 +345,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
         { gameId: '' as any, title: '', difficulty: '' as any, estimatedMins: 2 },
       ])
     }
-  }, [editingModule, isOpen])
+  }, [editingModule, isOpen, initialLanguage])
 
   if (!isOpen) return null
 
