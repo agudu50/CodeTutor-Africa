@@ -58,20 +58,20 @@ export const Modal: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         className={cn(
-          'relative w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl z-10 transition-all max-h-[90vh] overflow-y-auto',
+          'relative w-full rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 p-6 sm:p-7 shadow-2xl z-10 transition-all max-h-[90vh] overflow-y-auto',
           sizeClasses[size],
           className
         )}
       >
-        <div className="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-start justify-between pb-4 border-b-2 border-slate-200 dark:border-slate-800">
           <div>
-            {title && <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>}
-            {description && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{description}</p>}
+            {title && <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{title}</h2>}
+            {description && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">{description}</p>}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="rounded-xl p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#161B22] border border-transparent hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
