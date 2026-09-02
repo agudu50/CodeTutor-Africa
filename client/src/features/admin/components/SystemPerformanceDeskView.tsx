@@ -926,186 +926,177 @@ export const SystemPerformanceDeskView: React.FC = () => {
       {activeSubTab === 'security' && (
         <div className="space-y-6">
           {/* Security KPI Top Header */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 sm:gap-4">
             {/* Card 1: Total Attacks Received */}
-            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl">
-              <CardHeader className="p-4 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                    Total Attacks Intercepted
-                  </span>
-                  <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                    <Flame className="w-4 h-4 animate-pulse text-rose-500" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">
-                    {securityData?.totalAttacksReceived || 142}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">
-                    Live Feed Active
-                  </span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                  <div className="h-full bg-rose-500 rounded-full w-full animate-pulse" />
-                </div>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-mono">
-                  Rate: {securityData?.attackRatePerMin || 0.4} req/min • Prompt & WASM Probes
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-2.5 hover:border-rose-500 transition-colors overflow-hidden flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-slate-500 dark:text-slate-400 truncate min-w-0">
+                  Total Attacks Intercepted
                 </span>
-              </CardContent>
-            </Card>
+                <div className="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800 flex items-center justify-center shrink-0 shadow-3xs">
+                  <Flame className="w-3.5 h-3.5 animate-pulse text-rose-500" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-2 flex-wrap min-w-0">
+                <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                  {securityData?.totalAttacksReceived || 142}
+                </span>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border-2 border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-3xs whitespace-nowrap">
+                  Live Feed Active
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-[#161B22] border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="h-full bg-rose-500 rounded-full w-full animate-pulse" />
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold leading-tight break-words">
+                Rate: {securityData?.attackRatePerMin || 0.4} req/min • Prompt &amp; WASM Probes
+              </p>
+            </div>
 
             {/* Card 2: Attacks Blocked Rate */}
-            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl">
-              <CardHeader className="p-4 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                    Attacks Blocked & Mitigated
-                  </span>
-                  <div className="p-1.5 rounded-lg bg-emerald-500/10 text-[#005F02] dark:text-emerald-400">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">
-                    {securityData?.attacksBlocked || 141}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                    {securityData?.mitigationRatePercent || 99.3}% Rate
-                  </span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                  <div
-                    className="h-full bg-[#005F02] dark:bg-emerald-500 rounded-full"
-                    style={{ width: `${securityData?.mitigationRatePercent || 99.3}%` }}
-                  />
-                </div>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-mono">
-                  Zero critical data breaches • Tamper verification active
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-2.5 hover:border-emerald-500 transition-colors overflow-hidden flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-slate-500 dark:text-slate-400 truncate min-w-0">
+                  Attacks Blocked &amp; Mitigated
                 </span>
-              </CardContent>
-            </Card>
+                <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-2 flex-wrap min-w-0">
+                <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                  {securityData?.attacksBlocked || 141}
+                </span>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border-2 border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400 shadow-3xs whitespace-nowrap">
+                  {securityData?.mitigationRatePercent || 99.3}% Rate
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-[#161B22] border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div
+                  className="h-full bg-[#005F02] dark:bg-emerald-500 rounded-full"
+                  style={{ width: `${securityData?.mitigationRatePercent || 99.3}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold leading-tight break-words">
+                Zero critical data breaches • Tamper verification active
+              </p>
+            </div>
 
             {/* Card 3: Vulnerabilities Inventory */}
-            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl">
-              <CardHeader className="p-4 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                    Vulnerability Posture
-                  </span>
-                  <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                    <AlertTriangle className="w-4 h-4" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">
-                    {securityData?.openVulnerabilitiesCount || 1}{' '}
-                    <span className="text-xs font-sans text-amber-600 dark:text-amber-400 font-bold">
-                      Open / {securityData?.vulnerabilities.length || 5} Total
-                    </span>
-                  </span>
-                  <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">
-                    {securityData?.patchedVulnerabilitiesCount || 4} Patched
-                  </span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                  <div
-                    className="h-full bg-amber-500 rounded-full"
-                    style={{ width: '80%' }}
-                  />
-                </div>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-mono">
-                  CWE & CVE Matrix • 1-Click Auto-Mitigation available
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-2.5 hover:border-amber-500 transition-colors overflow-hidden flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-slate-500 dark:text-slate-400 truncate min-w-0">
+                  Vulnerability Posture
                 </span>
-              </CardContent>
-            </Card>
+                <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-2 flex-wrap min-w-0">
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                    {securityData?.openVulnerabilitiesCount || 1}
+                  </span>
+                  <span className="text-[11px] font-mono text-amber-600 dark:text-amber-400 font-bold">
+                    Open / {securityData?.vulnerabilities.length || 5} Total
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border-2 border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 shadow-3xs whitespace-nowrap">
+                  {securityData?.patchedVulnerabilitiesCount || 4} Patched
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-[#161B22] border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div
+                  className="h-full bg-amber-500 rounded-full"
+                  style={{ width: '80%' }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold leading-tight break-words">
+                CWE &amp; CVE Matrix • 1-Click Auto-Mitigation available
+              </p>
+            </div>
 
             {/* Card 4: Defense Shields Status */}
-            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl">
-              <CardHeader className="p-4 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                    Defense Modules
-                  </span>
-                  <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                    <Lock className="w-4 h-4" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-black text-slate-900 dark:text-white font-mono">
-                    5/5 <span className="text-xs font-sans text-slate-400">Active</span>
-                  </span>
-                  <span className="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">
-                    Zero-Trust Mode
-                  </span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full w-full" />
-                </div>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-mono">
-                  WAF + AST Sanitizer + Storage AES-GCM + Token Bucket
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-2.5 hover:border-purple-500 transition-colors overflow-hidden flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-slate-500 dark:text-slate-400 truncate min-w-0">
+                  Defense Modules
                 </span>
-              </CardContent>
-            </Card>
+                <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 border-2 border-purple-300 dark:border-purple-800 flex items-center justify-center shrink-0 shadow-3xs">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-2 flex-wrap min-w-0">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                    5/5
+                  </span>
+                  <span className="text-xs font-mono text-slate-400 font-bold">Active</span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border-2 border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 shadow-3xs whitespace-nowrap">
+                  Zero-Trust Mode
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-[#161B22] border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="h-full bg-purple-600 rounded-full w-full" />
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold leading-tight break-words">
+                WAF + AST Sanitizer + Storage AES-GCM + Token Bucket
+              </p>
+            </div>
           </div>
 
           {/* Action Bar for Security Simulation & Quick Fixes */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-rose-500 shrink-0" />
-              <span className="text-xs font-bold text-slate-900 dark:text-white">
-                Live Security Test Simulator:
-              </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
-                Test how the system blocks fake attacks and suspicious code in real time.
-              </span>
+          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex flex-wrap items-center justify-between gap-3.5">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800 shadow-3xs flex items-center justify-center shrink-0">
+                <Target className="w-4 h-4 text-rose-500 shrink-0" />
+              </div>
+              <div>
+                <span className="text-xs font-mono font-black text-slate-900 dark:text-white block">
+                  Live Security Test Simulator
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Test how the system blocks fake attacks and suspicious code in real time.
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <button
+                type="button"
                 onClick={handleSimulateAttack}
                 disabled={isSimulatingAttack}
-                className="h-8 text-xs font-bold border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
-                leftIcon={<Flame className={`w-3.5 h-3.5 text-rose-500 ${isSimulatingAttack ? 'animate-bounce' : ''}`} />}
+                className="h-9 px-4 rounded-xl text-xs font-mono font-bold border-2 border-slate-300 dark:border-slate-700 hover:border-rose-400 text-rose-700 dark:text-rose-400 bg-white dark:bg-[#161B22] hover:bg-rose-50 dark:hover:bg-rose-950/80 active:scale-95 shadow-3xs transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
-                {isSimulatingAttack ? 'Sending Test Attack...' : 'Run Test Attack (Check Defense)'}
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
+                <Flame className={`w-3.5 h-3.5 text-rose-500 ${isSimulatingAttack ? 'animate-bounce' : ''}`} />
+                <span>{isSimulatingAttack ? 'Sending Test Attack...' : 'Run Test Attack (Check Defense)'}</span>
+              </button>
+              <button
+                type="button"
                 onClick={() => handleRunAction('ENFORCE_WAF_PROMPT_SHIELD')}
                 disabled={isExecutingAction === 'ENFORCE_WAF_PROMPT_SHIELD'}
-                className="h-8 text-xs font-bold"
-                leftIcon={<ShieldCheck className="w-3.5 h-3.5" />}
+                className="h-9 px-4 rounded-xl text-xs font-mono font-bold text-white bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] active:scale-95 shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
-                Turn On All Protections
-              </Button>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-200" />
+                <span>Turn On All Protections</span>
+              </button>
             </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
               SECTION 1: SYSTEM SECURITY RISKS & VULNERABILITIES
               ═══════════════════════════════════════════════════════════════ */}
-          <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl overflow-hidden">
-            <CardHeader className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs overflow-hidden">
+            <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-[#161B22]/50">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 shadow-3xs flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
-                  <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                    System Security Risks & Vulnerabilities
-                  </CardTitle>
+                  <h3 className="text-sm sm:text-base font-mono font-black text-slate-900 dark:text-white">
+                    System Security Risks &amp; Vulnerabilities
+                  </h3>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   List of security weak spots, what an attacker could do, and 1-click buttons to fix them.
@@ -1114,23 +1105,22 @@ export const SystemPerformanceDeskView: React.FC = () => {
 
               {/* Action Controls & Category Filter */}
               <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                <Button
-                  variant="primary"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={handleAutoResolveAll}
                   disabled={isAutoResolvingAll}
-                  className="h-8 text-xs font-bold shadow-xs"
-                  leftIcon={<ShieldCheck className={`w-3.5 h-3.5 ${isAutoResolvingAll ? 'animate-spin' : ''}`} />}
+                  className="h-9 px-4 rounded-xl text-xs font-mono font-bold text-white bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] active:scale-95 shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
-                  {isAutoResolvingAll ? 'AI is Auto-Fixing...' : 'AI Auto-Fix All Issues'}
-                </Button>
+                  <ShieldCheck className={`w-3.5 h-3.5 text-emerald-200 ${isAutoResolvingAll ? 'animate-spin' : ''}`} />
+                  <span>{isAutoResolvingAll ? 'AI is Auto-Fixing...' : 'AI Auto-Fix All Issues'}</span>
+                </button>
 
-                <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200 dark:border-slate-800">
-                  <span className="text-xs font-medium text-slate-500">Filter:</span>
+                <div className="flex items-center gap-2 pl-2 border-l-2 border-slate-200 dark:border-slate-800">
+                  <span className="text-xs font-mono font-bold text-slate-500">Filter:</span>
                   <select
                     value={vulnCategoryFilter}
                     onChange={(e) => setVulnCategoryFilter(e.target.value)}
-                    className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none"
+                    className="h-9 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-xs font-mono font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none focus:border-[#005F02] shadow-3xs"
                   >
                     <option value="all">All Areas ({securityData?.vulnerabilities.length || 6})</option>
                     <option value="AI Tutor Safety">AI Tutor Safety</option>
@@ -1140,9 +1130,9 @@ export const SystemPerformanceDeskView: React.FC = () => {
                   </select>
                 </div>
               </div>
-            </CardHeader>
+            </div>
 
-            <CardContent className="p-4 sm:p-5 space-y-3">
+            <div className="p-4 sm:p-5 space-y-3.5">
               {filteredVulnerabilities.map((vuln, idx) => {
                 const isMitigated = vuln.status === 'mitigated'
                 const isActivePatch = vuln.status === 'active_patch'
@@ -1151,68 +1141,68 @@ export const SystemPerformanceDeskView: React.FC = () => {
                 return (
                   <div
                     key={vuln.id}
-                    className={`p-3.5 sm:p-4 rounded-2xl border transition-all ${
+                    className={`p-4 sm:p-5 rounded-2xl border-2 transition-all ${
                       isUnmitigated
-                        ? 'border-rose-200 dark:border-rose-900/50 bg-rose-50/30 dark:bg-rose-950/20'
+                        ? 'border-rose-300 dark:border-rose-900/80 bg-rose-50/40 dark:bg-rose-950/30'
                         : isActivePatch
-                        ? 'border-amber-200 dark:border-amber-900/50 bg-amber-50/30 dark:bg-amber-950/20'
-                        : 'border-emerald-200/60 dark:border-emerald-900/30 bg-emerald-50/20 dark:bg-emerald-950/10'
+                        ? 'border-amber-300 dark:border-amber-900/80 bg-amber-50/40 dark:bg-amber-950/30'
+                        : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22]'
                     }`}
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3.5">
                       {/* Left: Index + Metadata & Exploit details */}
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="flex items-start gap-3.5 flex-1 min-w-0">
                         {/* Numbering Badge */}
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px] font-extrabold border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs mt-0.5">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 font-mono text-xs font-black border-2 border-slate-300 dark:border-slate-700 shrink-0 shadow-3xs mt-0.5">
                           {String(idx + 1).padStart(2, '0')}
                         </span>
 
-                        <div className="space-y-2.5 flex-1 min-w-0">
+                        <div className="space-y-3 flex-1 min-w-0">
                           {/* Metadata row */}
-                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                            <span className="font-mono text-[11px] font-black px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-mono text-[11px] font-black px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 border-2 border-slate-900 dark:border-slate-100 shadow-3xs">
                               {vuln.cveId}
                             </span>
-                            <span className="text-xs font-bold text-slate-900 dark:text-white">
+                            <span className="text-sm font-mono font-black text-slate-900 dark:text-white">
                               {vuln.title}
                             </span>
-                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">
+                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 font-bold border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
                               {vuln.category}
                             </span>
                             <span
-                              className={`text-[10px] font-mono font-black px-2 py-0.5 rounded ${
+                              className={`text-[10px] font-mono font-black px-2 py-0.5 rounded-lg border-2 shadow-3xs uppercase tracking-wider ${
                                 vuln.cvssScore >= 7.0
-                                  ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
+                                  ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800'
                                   : vuln.cvssScore >= 5.0
-                                  ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                                  : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                                  ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800'
+                                  : 'bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                               }`}
                             >
                               Risk Level: {vuln.severity.toUpperCase()}
                             </span>
 
                             <span
-                              className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-xl border-2 shadow-3xs ${
                                 isMitigated
-                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400'
+                                  ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
                                   : isActivePatch
-                                  ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
-                                  : 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300'
+                                  ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
+                                  : 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800'
                               }`}
                             >
                               {isMitigated ? (
                                 <>
-                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                  Protected & Safe
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                                  Protected &amp; Safe
                                 </>
                               ) : isActivePatch ? (
                                 <>
-                                  <CheckCircle2 className="w-3 h-3 text-amber-500" />
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                                   Temporary Fix Active
                                 </>
                               ) : (
                                 <>
-                                  <Flame className="w-3 h-3 text-rose-500" />
+                                  <Flame className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                                   Needs Immediate Fix
                                 </>
                               )}
@@ -1220,8 +1210,8 @@ export const SystemPerformanceDeskView: React.FC = () => {
                           </div>
 
                           {/* What the Threat Can Exploit */}
-                          <div className="p-2.5 sm:p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-1">
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-rose-700 dark:text-rose-400">
+                          <div className="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-800 space-y-1 shadow-3xs">
+                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-rose-700 dark:text-rose-400">
                               <Target className="w-3.5 h-3.5 shrink-0" />
                               <span>What Could Go Wrong (Risk):</span>
                             </div>
@@ -1231,9 +1221,9 @@ export const SystemPerformanceDeskView: React.FC = () => {
                           </div>
 
                           {/* Affected component */}
-                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-mono flex-wrap">
-                            <span className="font-bold text-slate-600 dark:text-slate-300">Where in the System:</span>
-                            <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 break-all">
+                          <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                            <span className="font-bold text-slate-600 dark:text-slate-400">Where in the System:</span>
+                            <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0E1318] text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold break-all shadow-3xs">
                               {vuln.affectedComponent}
                             </span>
                           </div>
@@ -1243,48 +1233,45 @@ export const SystemPerformanceDeskView: React.FC = () => {
                       {/* Right: 1-Click Remediation Action */}
                       <div className="flex lg:flex-col items-end justify-center shrink-0 self-end lg:self-center">
                         {vuln.remediationActionId && (
-                          <Button
-                            variant={isMitigated ? 'outline' : 'primary'}
-                            size="sm"
+                          <button
+                            type="button"
                             onClick={() => handleRunAction(vuln.remediationActionId!)}
                             disabled={isExecutingAction === vuln.remediationActionId}
-                            className={`text-xs h-8 px-3.5 font-bold ${
+                            className={`h-8.5 px-3.5 rounded-xl text-xs font-mono font-black transition-all inline-flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-3xs disabled:opacity-50 ${
                               isMitigated
-                                ? 'border-slate-200 dark:border-slate-700 hover:border-brand-500'
-                                : 'shadow-xs'
+                                ? 'border-2 border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318]'
+                                : 'border-2 border-[#005F02] bg-[#005F02] hover:bg-emerald-700 text-white shadow-xs'
                             }`}
-                            leftIcon={
-                              isMitigated ? (
-                                <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
-                              ) : (
-                                <Lock className="w-3.5 h-3.5" />
-                              )
-                            }
                           >
-                            {isMitigated ? 'Re-Check Protection' : 'Fix Now (1-Click)'}
-                          </Button>
+                            {isMitigated ? (
+                              <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
+                            ) : (
+                              <Lock className="w-3.5 h-3.5 text-emerald-200" />
+                            )}
+                            <span>{isMitigated ? 'Re-Check Protection' : 'Fix Now (1-Click)'}</span>
+                          </button>
                         )}
                       </div>
                     </div>
                   </div>
                 )
               })}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* ═══════════════════════════════════════════════════════════════
               SECTION 2: RECENT ATTACKS & WHERE THEY CAME FROM
               ═══════════════════════════════════════════════════════════════ */}
-          <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl overflow-hidden">
-            <CardHeader className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs overflow-hidden">
+            <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-[#161B22]/50">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800 shadow-3xs flex items-center justify-center shrink-0">
                     <Flame className="w-4 h-4 text-rose-500" />
                   </div>
-                  <CardTitle className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                    Recent Attacks & Where They Came From
-                  </CardTitle>
+                  <h3 className="text-sm sm:text-base font-mono font-black text-slate-900 dark:text-white">
+                    Recent Attacks &amp; Where They Came From
+                  </h3>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Live log of blocked attacks, showing sender location, attack type, and how it was stopped.
@@ -1292,22 +1279,22 @@ export const SystemPerformanceDeskView: React.FC = () => {
               </div>
 
               {/* Search and Filters */}
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                 <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     placeholder="Search IP, origin, vector..."
                     value={searchThreatQuery}
                     onChange={(e) => setSearchThreatQuery(e.target.value)}
-                    className="pl-8 pr-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500 w-44 sm:w-56"
+                    className="h-9 pl-9 pr-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#005F02] shadow-3xs w-48 sm:w-60"
                   />
                 </div>
 
                 <select
                   value={threatSeverityFilter}
                   onChange={(e) => setThreatSeverityFilter(e.target.value as any)}
-                  className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none"
+                  className="h-9 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-xs font-mono font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none focus:border-[#005F02] shadow-3xs"
                 >
                   <option value="all">All Severities</option>
                   <option value="critical">Critical Only</option>
@@ -1316,26 +1303,26 @@ export const SystemPerformanceDeskView: React.FC = () => {
                   <option value="low">Low Only</option>
                 </select>
               </div>
-            </CardHeader>
+            </div>
 
-            <CardContent className="p-0">
+            <div className="p-0">
               <div className="w-full overflow-hidden">
-                <table className="w-full table-fixed text-left text-xs border-collapse">
-                  <thead className="bg-slate-50/90 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">
+                <table className="w-full table-fixed text-left text-xs border-collapse font-mono">
+                  <thead className="bg-slate-100 dark:bg-[#161B22] border-b-2 border-slate-300 dark:border-slate-700 text-[11px] font-mono font-black uppercase text-slate-700 dark:text-slate-300 tracking-wider">
                     <tr>
-                      <th className="py-3 px-2 w-10 text-center">#</th>
-                      <th className="py-3 px-2.5 w-20">Timestamp</th>
-                      <th className="py-3 px-3 w-[18%]">Threat Origin ("From")</th>
-                      <th className="py-3 px-3 w-[20%]">Attack Vector & Target</th>
-                      <th className="py-3 px-2.5 w-[10%]">Severity</th>
-                      <th className="py-3 px-3 w-[20%]">Status & Mitigation</th>
-                      <th className="py-3 px-3 pr-4 w-[28%]">Payload Sample</th>
+                      <th className="py-3.5 px-2 w-12 text-center">#</th>
+                      <th className="py-3.5 px-2.5 w-24">Timestamp</th>
+                      <th className="py-3.5 px-3 w-[18%]">Threat Origin ("From")</th>
+                      <th className="py-3.5 px-3 w-[20%]">Attack Vector &amp; Target</th>
+                      <th className="py-3.5 px-2.5 w-[11%]">Severity</th>
+                      <th className="py-3.5 px-3 w-[20%]">Status &amp; Mitigation</th>
+                      <th className="py-3.5 px-3 pr-4 w-[28%]">Payload Sample</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800/80">
+                  <tbody className="divide-y-2 divide-slate-200 dark:divide-slate-800/80">
                     {filteredThreats.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="text-center py-10 text-slate-400 text-xs">
+                        <td colSpan={7} className="text-center py-12 text-slate-400 text-xs font-mono font-bold">
                           No threats match the current search or severity filter.
                         </td>
                       </tr>
@@ -1347,59 +1334,59 @@ export const SystemPerformanceDeskView: React.FC = () => {
                         return (
                           <tr
                             key={threat.id}
-                            className="hover:bg-slate-50/80 dark:hover:bg-slate-950/50 transition-colors"
+                            className="hover:bg-slate-50/80 dark:hover:bg-[#161B22]/60 transition-colors border-b-2 border-slate-200 dark:border-slate-800/80"
                           >
                             {/* Row Numbering */}
-                            <td className="py-3 px-2 align-top text-center">
-                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-extrabold border border-slate-200 dark:border-slate-700">
+                            <td className="py-3.5 px-2 align-top text-center">
+                              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 font-mono text-[11px] font-black border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
                                 {String(idx + 1).padStart(2, '0')}
                               </span>
                             </td>
 
                             {/* Timestamp */}
-                            <td className="py-3 px-2.5 font-mono text-[11px] text-slate-600 dark:text-slate-400 align-top">
-                              <div className="mt-0.5 font-medium leading-tight">
+                            <td className="py-3.5 px-2.5 font-mono text-xs text-slate-700 dark:text-slate-300 align-top">
+                              <div className="mt-0.5 font-bold leading-tight">
                                 {new Date(threat.timestamp).toLocaleTimeString()}
                               </div>
                             </td>
 
                             {/* Origin / From */}
-                            <td className="py-3 px-3 align-top">
-                              <div className="space-y-1">
-                                <div className="inline-flex items-center gap-1 font-mono font-bold text-slate-900 dark:text-white px-1.5 py-0.5 rounded bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/40 text-[11px]">
+                            <td className="py-3.5 px-3 align-top">
+                              <div className="space-y-1.5">
+                                <div className="inline-flex items-center gap-1.5 font-mono font-black text-slate-900 dark:text-white px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border-2 border-blue-300 dark:border-blue-800 text-[11px] shadow-3xs">
                                   <Globe className="w-3 h-3 text-blue-500 shrink-0" />
                                   <span className="truncate">{threat.originIp}</span>
                                 </div>
-                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug break-words">
+                                <p className="text-[11px] font-mono font-semibold text-slate-600 dark:text-slate-400 leading-snug break-words">
                                   {threat.originLocation}
                                 </p>
                               </div>
                             </td>
 
                             {/* Attack Vector & Target */}
-                            <td className="py-3 px-3 align-top">
-                              <div className="space-y-1">
-                                <span className="font-mono font-bold text-slate-900 dark:text-white block text-[11px] leading-tight break-words">
+                            <td className="py-3.5 px-3 align-top">
+                              <div className="space-y-1.5">
+                                <span className="font-mono font-black text-slate-900 dark:text-white block text-xs leading-tight break-words">
                                   {threat.attackVector}
                                 </span>
-                                <div className="inline-block text-[10px] font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-200/60 dark:border-slate-700/60 break-all leading-tight">
+                                <div className="inline-block text-[10px] font-mono font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-[#0E1318] px-2 py-0.5 rounded-md border border-slate-300 dark:border-slate-700 break-all leading-tight shadow-3xs">
                                   Target: {threat.targetComponent}
                                 </div>
                               </div>
                             </td>
 
                             {/* Severity */}
-                            <td className="py-3 px-2.5 align-top">
+                            <td className="py-3.5 px-2.5 align-top">
                               <div className="mt-0.5">
                                 <span
-                                  className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-black border ${
+                                  className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-mono font-black border-2 shadow-3xs uppercase tracking-wider ${
                                     threat.severity === 'critical'
-                                      ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900/60'
+                                      ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800'
                                       : threat.severity === 'high'
-                                      ? 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-900/60'
+                                      ? 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border-orange-300 dark:border-orange-800'
                                       : threat.severity === 'medium'
-                                      ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900/60'
-                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                      ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800'
+                                      : 'bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                                   }`}
                                 >
                                   {threat.severity.toUpperCase()}
@@ -1408,29 +1395,29 @@ export const SystemPerformanceDeskView: React.FC = () => {
                             </td>
 
                             {/* Status & Mitigation */}
-                            <td className="py-3 px-3 align-top">
-                              <div className="space-y-1">
+                            <td className="py-3.5 px-3 align-top">
+                              <div className="space-y-1.5">
                                 <span
-                                  className={`inline-flex items-center gap-1 px-2 py-0.2 rounded-full text-[10px] font-bold border ${
+                                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black border-2 shadow-3xs uppercase tracking-wider ${
                                     isBlocked
-                                      ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/50'
+                                      ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
                                       : isMitigated
-                                      ? 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900/50'
-                                      : 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-900/50'
+                                      ? 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-800'
+                                      : 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-400 border-purple-300 dark:border-purple-800'
                                   }`}
                                 >
-                                  <ShieldCheck className="w-3 h-3 shrink-0" />
+                                  <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                                   {threat.status.toUpperCase()}
                                 </span>
-                                <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-snug break-words">
+                                <p className="text-[11px] font-mono text-slate-600 dark:text-slate-400 leading-snug break-words">
                                   {threat.mitigationAction}
                                 </p>
                               </div>
                             </td>
 
                             {/* Payload sample - fitted, word-wrapped, clean padding */}
-                            <td className="py-3 px-3 pr-4 align-top">
-                              <div className="p-2 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 break-words whitespace-pre-wrap font-mono leading-relaxed select-all text-[10px] text-slate-800 dark:text-slate-200">
+                            <td className="py-3.5 px-3 pr-4 align-top">
+                              <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 break-words whitespace-pre-wrap font-mono leading-relaxed select-all text-[11px] text-slate-800 dark:text-slate-200 shadow-3xs">
                                 {threat.payloadSample}
                               </div>
                             </td>
@@ -1441,8 +1428,8 @@ export const SystemPerformanceDeskView: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
 
