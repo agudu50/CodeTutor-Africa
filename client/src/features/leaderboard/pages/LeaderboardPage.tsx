@@ -87,27 +87,27 @@ export const LeaderboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80">
+            <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 shadow-3xs">
               <Trophy className="w-4 h-4" />
             </div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               Pan-African Leaderboard
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
             Compete, climb tiers, and celebrate continuous coding consistency with learners across Africa.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-[#005F02] bg-[#005F02]/10 border border-[#005F02]/30">
+        <div className="flex items-center gap-2.5 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-mono font-black text-[#005F02] dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
             <Shield className="w-3.5 h-3.5" /> 100% Offline Synced
           </span>
-          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-slate-400">
-            <Clock className="w-3 h-3" /> Live
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 shadow-3xs">
+            <Clock className="w-3 h-3 text-emerald-500" /> Live
           </span>
         </div>
       </div>
@@ -115,9 +115,9 @@ export const LeaderboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           CONTROLS TOOLBAR: COMPACT TIMEFRAME + METRIC PILLS + SEARCH
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5 p-3 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
         {/* Compact Timeframe Segmented Control */}
-        <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 shrink-0 self-start lg:self-auto">
+        <div className="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 shrink-0 self-start lg:self-auto">
           {timeframeTabs.map((tab) => {
             const isActive = timeframe === tab.id
             return (
@@ -125,10 +125,10 @@ export const LeaderboardPage: React.FC = () => {
                 key={tab.id}
                 type="button"
                 onClick={() => setTimeframe(tab.id)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-mono transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
                   isActive
-                    ? 'bg-[#005F02] text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white border-[#005F02]'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
                 }`}
               >
                 {tab.label}
@@ -138,9 +138,9 @@ export const LeaderboardPage: React.FC = () => {
         </div>
 
         {/* Right side: Metric Selector & Search */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Metric Selector Pills */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             {metricTabs.map((m) => {
               const isSelected = metric === m.id
               return (
@@ -148,10 +148,10 @@ export const LeaderboardPage: React.FC = () => {
                   key={m.id}
                   type="button"
                   onClick={() => setMetric(m.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
                     isSelected
-                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
-                      : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-400'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white'
+                      : 'bg-slate-50 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-400'
                   }`}
                 >
                   {m.icon}
@@ -169,7 +169,7 @@ export const LeaderboardPage: React.FC = () => {
               <select
                 value={countryFilter}
                 onChange={(e) => setCountryFilter(e.target.value)}
-                className="pl-7 pr-3 py-1.5 text-xs font-mono font-bold rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-3xs hover:border-slate-400 transition-colors"
+                className="pl-7 pr-3 py-1.5 text-xs font-mono font-black rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#005F02] cursor-pointer shadow-3xs hover:border-slate-400 transition-colors"
               >
                 {WEST_AFRICAN_COUNTRIES.map((c) => (
                   <option key={c.code} value={c.code}>
@@ -181,13 +181,13 @@ export const LeaderboardPage: React.FC = () => {
 
             {/* Learner Search Input */}
             <div className="relative w-full sm:w-44">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter learner..."
-                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full pl-8 pr-3 py-1.5 text-xs font-mono rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#005F02]"
               />
             </div>
           </div>

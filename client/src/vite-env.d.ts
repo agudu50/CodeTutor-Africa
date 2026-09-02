@@ -72,6 +72,12 @@ declare module 'lucide-react' {
   export const LineChart: LucideIcon
   export const Calendar: LucideIcon
   export const Keyboard: LucideIcon
+  export const Crown: LucideIcon
+  export const Medal: LucideIcon
+  export const Award: LucideIcon
+  export const ArrowUp: LucideIcon
+  export const ArrowDown: LucideIcon
+  export const Globe: LucideIcon
 
   const anyIcon: LucideIcon
   export default anyIcon
