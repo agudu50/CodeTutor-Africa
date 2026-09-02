@@ -64,6 +64,7 @@ declare module 'lucide-react' {
   export const Info: LucideIcon
   export const Send: LucideIcon
   export const SendHorizontal: LucideIcon
+  export const User: LucideIcon
 
   const anyIcon: LucideIcon
   export default anyIcon

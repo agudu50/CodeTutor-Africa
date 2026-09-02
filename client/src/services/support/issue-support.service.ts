@@ -12,6 +12,15 @@ export type IssuePriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export type IssueStatus = 'open' | 'in_review' | 'resolved' | 'closed'
 
+export interface IssueMessage {
+  id: string
+  senderRole: 'learner' | 'mentor' | 'admin'
+  senderName: string
+  message: string
+  codeSnippet?: string
+  createdAt: string
+}
+
 export interface IssueReport {
   id: string
   userName: string
@@ -32,6 +41,8 @@ export interface IssueReport {
   courseName?: string
   /** Who submitted: learner from a course page, or admin raising a request */
   submittedByRole?: 'learner' | 'admin'
+  /** Multi-turn conversation messages */
+  messages?: IssueMessage[]
   createdAt: string
   resolvedAt?: string
 }
@@ -148,6 +159,19 @@ class IssueSupportService {
     const isReplying = adminReply !== undefined && adminReply.trim().length > 0
     const author = instructorName || 'Course Mentor / Lead Instructor'
 
+    let updatedMessages = this.issues[idx].messages
+    if (isReplying) {
+      const replyMsg: IssueMessage = {
+        id: `msg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        senderRole: 'mentor',
+        senderName: author,
+        message: adminReply!.trim(),
+        codeSnippet: updatedCodeSnippet,
+        createdAt: new Date().toISOString(),
+      }
+      updatedMessages = [...(updatedMessages || []), replyMsg]
+    }
+
     this.issues[idx] = {
       ...this.issues[idx],
       status,
@@ -155,6 +179,7 @@ class IssueSupportService {
       updatedCodeSnippet: updatedCodeSnippet !== undefined ? updatedCodeSnippet : this.issues[idx].updatedCodeSnippet,
       instructorName: author,
       resolvedAt: status === 'resolved' ? new Date().toISOString() : undefined,
+      messages: updatedMessages,
     }
     this.save()
 
@@ -177,6 +202,57 @@ class IssueSupportService {
       }
     } catch {
       // safe fallback if dynamic log happens during initialization
+    }
+
+    return this.issues[idx]
+  }
+
+  addMessage(
+    id: string,
+    messageData: Omit<IssueMessage, 'id' | 'createdAt'>
+  ): IssueReport | undefined {
+    const idx = this.issues.findIndex((i) => i.id === id)
+    if (idx === -1) return undefined
+
+    const newMsg: IssueMessage = {
+      ...messageData,
+      id: `msg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: new Date().toISOString(),
+    }
+
+    const currentMessages = this.issues[idx].messages || []
+
+    // Reopen/move to in_review if learner is following up on a closed/resolved ticket
+    const newStatus: IssueStatus =
+      messageData.senderRole === 'learner' &&
+      (this.issues[idx].status === 'resolved' || this.issues[idx].status === 'closed')
+        ? 'in_review'
+        : this.issues[idx].status
+
+    this.issues[idx] = {
+      ...this.issues[idx],
+      status: newStatus,
+      messages: [...currentMessages, newMsg],
+    }
+    this.save()
+
+    // Cross-sync: Notify and log to Admin Operations Audit Trail
+    try {
+      if (adminAnalyticsService && typeof adminAnalyticsService.logAction === 'function') {
+        adminAnalyticsService.logAction({
+          actorName: messageData.senderName,
+          actorRole: messageData.senderRole,
+          action: 'STUDENT_REPLIED_TO_SUPPORT_TICKET',
+          category: 'tutor',
+          target: `#${id} (${this.issues[idx].subject})`,
+          details: `${messageData.senderName} (${messageData.senderRole}) posted a follow-up reply: "${messageData.message.slice(0, 70)}..."`,
+          status: 'info',
+          ipAddress: '127.0.0.1',
+          userAgent: 'CodeTutor Desk',
+        })
+      }
+    } catch {
+      // safe fallback
     }
 
     return this.issues[idx]

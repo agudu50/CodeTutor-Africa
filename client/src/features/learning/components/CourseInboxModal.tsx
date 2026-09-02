@@ -12,6 +12,9 @@ import {
   AlertCircle,
   MessageSquare,
   RefreshCw,
+  User,
+  Code2,
+  SendHorizontal,
 } from 'lucide-react'
 
 interface CourseInboxModalProps {
@@ -79,9 +82,35 @@ function timeAgo(isoString: string): string {
 /* ─── Single report card ─── */
 const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
   const [expanded, setExpanded] = useState(false)
+  const [replyText, setReplyText] = useState('')
+  const [replyCode, setReplyCode] = useState('')
+  const [isCodeOpen, setIsCodeOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [replySuccess, setReplySuccess] = useState(false)
+
   const cfg = STATUS_CONFIG[report.status]
   const StatusIcon = cfg.icon
-  const hasReply = !!report.adminReply
+  const hasReply = !!report.adminReply || !!(report.messages && report.messages.some((m) => m.senderRole === 'mentor'))
+
+  const handleSendReply = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!replyText.trim() || isSubmitting) return
+
+    setIsSubmitting(true)
+    issueSupportService.addMessage(report.id, {
+      senderRole: 'learner',
+      senderName: report.userName || 'Learner',
+      message: replyText.trim(),
+      codeSnippet: replyCode.trim() || undefined,
+    })
+
+    setReplyText('')
+    setReplyCode('')
+    setIsCodeOpen(false)
+    setIsSubmitting(false)
+    setReplySuccess(true)
+    setTimeout(() => setReplySuccess(false), 3000)
+  }
 
   return (
     <div
@@ -145,10 +174,11 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
         <div className="px-4 pb-4 space-y-4 border-t border-slate-100 dark:border-slate-800 pt-3 animate-in fade-in duration-150">
           {/* Original report */}
           <div className="space-y-1.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Your Report
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <User className="w-3 h-3 text-brand-500" />
+              <span>Your Original Report</span>
             </span>
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line pl-4 border-l-2 border-slate-200 dark:border-slate-700">
               {report.description}
             </p>
           </div>
@@ -170,8 +200,8 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
             </div>
           )}
 
-          {/* ── Mentor Reply ── */}
-          {hasReply ? (
+          {/* ── Initial Mentor Reply (if present) ── */}
+          {report.adminReply && (
             <div className="rounded-2xl border-2 border-brand-200 dark:border-brand-800 bg-brand-50/60 dark:bg-brand-950/30 p-4 space-y-2">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-xl bg-brand-100 dark:bg-brand-900 border border-brand-200 dark:border-brand-700 flex items-center justify-center shrink-0">
@@ -179,7 +209,7 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-900 dark:text-white">
-                    {report.instructorName || 'Course Mentor'}
+                    {report.instructorName || 'Course Mentor / Lead Instructor'}
                   </p>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                     {report.resolvedAt ? timeAgo(report.resolvedAt) : 'Mentor response'}
@@ -200,14 +230,125 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
                 </div>
               )}
             </div>
-          ) : (
+          )}
+
+          {/* ── Follow-up Conversation Messages (Multi-turn Thread) ── */}
+          {report.messages && report.messages.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                Conversation Thread ({report.messages.length}):
+              </span>
+              {report.messages.map((msg) => {
+                const isLearner = msg.senderRole === 'learner'
+                return (
+                  <div
+                    key={msg.id}
+                    className={`rounded-2xl border-2 p-3.5 space-y-1.5 ${
+                      isLearner
+                        ? 'border-brand-300 dark:border-brand-700 bg-brand-50/50 dark:bg-brand-950/40 ml-3 sm:ml-5'
+                        : 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/30 mr-3 sm:mr-5'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                            isLearner ? 'bg-brand-600 text-white' : 'bg-emerald-600 text-white'
+                          }`}
+                        >
+                          {isLearner ? <User className="w-3.5 h-3.5" /> : <GraduationCap className="w-3.5 h-3.5" />}
+                        </div>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          {msg.senderName}{' '}
+                          {isLearner && <span className="text-[10px] font-normal text-slate-500">(You)</span>}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        {timeAgo(msg.createdAt)}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line pl-8">
+                      {msg.message}
+                    </p>
+
+                    {msg.codeSnippet && (
+                      <div className="ml-8 rounded-xl bg-slate-950 border border-slate-800 p-2.5 mt-1">
+                        <pre className="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap">
+                          {msg.codeSnippet}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {!hasReply && (!report.messages || report.messages.length === 0) && (
             <div className="flex items-center gap-2.5 p-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-700">
               <Clock className="w-4 h-4 text-slate-400 shrink-0" />
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Awaiting mentor response. You will be notified when a reply is posted.
+                Awaiting mentor response. You can post a follow-up or additional details below.
               </p>
             </div>
           )}
+
+          {/* ── Interactive Reply-Back Composer ── */}
+          <div className="pt-3 border-t-2 border-slate-100 dark:border-slate-800 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <SendHorizontal className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                <span>Reply to Mentor / Add Details:</span>
+              </span>
+              {replySuccess && (
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 animate-in fade-in">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Reply sent to mentor!</span>
+                </span>
+              )}
+            </div>
+
+            <form onSubmit={handleSendReply} className="space-y-2">
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Type your response, follow-up question, or confirmation..."
+                rows={2}
+                className="w-full px-3 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 focus:border-brand-500 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-colors resize-none"
+              />
+
+              {isCodeOpen && (
+                <textarea
+                  value={replyCode}
+                  onChange={(e) => setReplyCode(e.target.value)}
+                  placeholder="Paste revised code snippet here..."
+                  rows={3}
+                  className="w-full px-3 py-2 rounded-xl border-2 border-slate-700 focus:border-brand-500 bg-slate-950 text-xs text-emerald-300 placeholder-slate-600 font-mono focus:outline-none transition-colors resize-none"
+                />
+              )}
+
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCodeOpen(!isCodeOpen)}
+                  className="text-xs font-semibold text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 cursor-pointer"
+                >
+                  <Code2 className="w-3.5 h-3.5" />
+                  <span>{isCodeOpen ? 'Remove code' : '+ Attach code'}</span>
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={!replyText.trim() || isSubmitting}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#005F02] hover:bg-[#004e02] disabled:opacity-40 text-white font-bold text-xs transition-all cursor-pointer shadow-xs active:scale-95"
+                >
+                  <SendHorizontal className="w-3 h-3" />
+                  <span>{isSubmitting ? 'Sending...' : 'Send Reply'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
@@ -236,7 +377,9 @@ export const CourseInboxModal: React.FC<CourseInboxModalProps> = ({
 
   if (!isOpen) return null
 
-  const repliedCount = reports.filter((r) => r.adminReply).length
+  const repliedCount = reports.filter(
+    (r) => r.adminReply || (r.messages && r.messages.some((m) => m.senderRole === 'mentor'))
+  ).length
 
   return (
     <div

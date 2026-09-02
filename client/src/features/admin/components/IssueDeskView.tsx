@@ -24,6 +24,7 @@ import {
   Bot,
   Lightbulb,
   Code2,
+  User,
 } from 'lucide-react'
 
 interface IssueDeskViewProps {
@@ -673,6 +674,74 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         />
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* ═══════════════════════════════════════════════════════════
+                    FOLLOW-UP CONVERSATION DIALOGUE THREAD
+                    ═══════════════════════════════════════════════════════════ */}
+                {selectedIssue.messages && selectedIssue.messages.length > 0 && (
+                  <div className="space-y-2.5 pt-2">
+                    <span className="font-mono font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                      <span>Follow-up Dialogue History ({selectedIssue.messages.length}):</span>
+                    </span>
+
+                    <div className="space-y-2">
+                      {selectedIssue.messages.map((msg) => {
+                        const isLearner = msg.senderRole === 'learner'
+                        return (
+                          <div
+                            key={msg.id}
+                            className={`p-3.5 rounded-2xl border text-xs space-y-1.5 shadow-2xs ${
+                              isLearner
+                                ? 'bg-white dark:bg-slate-900 border-brand-200 dark:border-brand-800/80 ml-2 sm:ml-4'
+                                : 'bg-brand-50/80 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 mr-2 sm:mr-4'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span
+                                className={`font-mono font-bold uppercase flex items-center gap-1.5 ${
+                                  isLearner
+                                    ? 'text-brand-700 dark:text-brand-300'
+                                    : 'text-emerald-700 dark:text-emerald-300'
+                                }`}
+                              >
+                                {isLearner ? (
+                                  <User className="w-3.5 h-3.5" />
+                                ) : (
+                                  <GraduationCap className="w-3.5 h-3.5" />
+                                )}
+                                <span>
+                                  {msg.senderName} {isLearner ? '(Student Follow-up)' : '(Instructor Response)'}
+                                </span>
+                              </span>
+                              <span className="text-[10px] font-mono text-slate-400">
+                                {new Date(msg.createdAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}{' '}
+                                • {new Date(msg.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                              </span>
+                            </div>
+
+                            <p className="font-sans leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap pl-5">
+                              {msg.message}
+                            </p>
+
+                            {msg.codeSnippet && (
+                              <div className="pl-5 pt-1">
+                                <CodeBlock
+                                  code={msg.codeSnippet}
+                                  language={detectLanguage(msg.codeSnippet, selectedIssue.subject)}
+                                  caption="Attached Code"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
