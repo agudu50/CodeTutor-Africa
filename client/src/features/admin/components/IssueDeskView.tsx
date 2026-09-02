@@ -26,6 +26,7 @@ import {
   User,
   AlertCircle,
   RotateCcw,
+  Trash2,
 } from 'lucide-react'
 
 interface IssueDeskViewProps {
@@ -46,6 +47,8 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
   const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false)
   const [isAnalyzingTicket, setIsAnalyzingTicket] = useState(false)
   const [aiDiagnosis, setAiDiagnosis] = useState<AnalyzeTicketResponse | null>(null)
+  const [ticketToDelete, setTicketToDelete] = useState<IssueReport | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   const filteredIssues = issues.filter((i) => {
     if (statusFilter !== 'all' && i.status !== statusFilter) return false
@@ -156,9 +159,18 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
     onUpdated()
   }
 
-  const handleDeleteIssue = (id: string) => {
-    issueSupportService.deleteIssue(id)
-    onUpdated()
+  const handleInitiateDelete = (issue: IssueReport) => {
+    setTicketToDelete(issue)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = () => {
+    if (ticketToDelete) {
+      issueSupportService.deleteIssue(ticketToDelete.id)
+      setIsDeleteModalOpen(false)
+      setTicketToDelete(null)
+      onUpdated()
+    }
   }
 
   const getCategoryLabel = (cat: IssueCategory) => {
@@ -543,11 +555,11 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
 
                   <button
                     type="button"
-                    onClick={() => handleDeleteIssue(selectedIssue.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 border-2 border-transparent hover:border-rose-300 transition-colors cursor-pointer shrink-0"
+                    onClick={() => handleInitiateDelete(selectedIssue)}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 border-2 border-transparent hover:border-rose-300 dark:hover:border-rose-800 transition-colors cursor-pointer shrink-0"
                     title="Delete ticket"
                   >
-                    <X className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -1070,6 +1082,61 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           )}
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          CONFIRM TICKET DELETION PROMPT MODAL
+          ═══════════════════════════════════════════════════════════════ */}
+      {isDeleteModalOpen && ticketToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white dark:bg-[#0E1318] border-2 border-rose-300 dark:border-rose-800/80 rounded-3xl shadow-2xl p-5 sm:p-6 space-y-4 animate-in zoom-in-95 duration-150 font-mono">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800 flex items-center justify-center shrink-0 shadow-3xs">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div className="space-y-1 min-w-0">
+                <h3 className="text-base font-black text-slate-900 dark:text-white leading-snug">
+                  Delete Support Ticket?
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
+                  Are you sure you want to permanently delete ticket{' '}
+                  <strong className="text-slate-900 dark:text-white font-mono">#{ticketToDelete.id.slice(0, 12)}</strong>{' '}
+                  from <strong className="text-slate-900 dark:text-white font-sans">{ticketToDelete.userName}</strong>?
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 text-xs space-y-1">
+              <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate">
+                {ticketToDelete.subject}
+              </div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                {ticketToDelete.courseName || getCategoryLabel(ticketToDelete.category)} • {ticketToDelete.userEmail}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDeleteModalOpen(false)
+                  setTicketToDelete(null)
+                }}
+                className="h-9 px-4 rounded-xl text-xs font-mono font-bold bg-white dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-400 active:scale-95 shadow-3xs cursor-pointer transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="h-9 px-4 rounded-xl text-xs font-mono font-black bg-rose-600 hover:bg-rose-700 text-white border-2 border-rose-600 active:scale-95 shadow-xs cursor-pointer transition-all inline-flex items-center gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Yes, Delete Ticket</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 })
