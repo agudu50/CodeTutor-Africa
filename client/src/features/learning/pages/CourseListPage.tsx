@@ -14,6 +14,8 @@ import {
   Code2,
   Gamepad2,
   Play,
+  Cpu,
+  Sparkles,
 } from 'lucide-react'
 
 export const CourseListPage: React.FC = () => {
@@ -49,68 +51,92 @@ export const CourseListPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           AI COURSE GENERATOR PROMPT HERO BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xs">
-        {/* Ambient Radial Accent */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#005F02]/10 dark:bg-[#005F02]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] p-6 sm:p-9 shadow-md dark:shadow-2xl">
+        {/* Technical Blueprint Grid Pattern (Visible in Light & Dark Mode) */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.065] dark:opacity-[0.05]"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern id="architect-hero-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#architect-hero-grid)" />
+        </svg>
+
+        {/* Blueprint Corner Crosshairs (+) */}
+        <span className="absolute top-3 left-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-3 right-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
+        <span className="absolute bottom-3 left-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
+        <span className="absolute bottom-3 right-3 text-slate-400 dark:text-slate-600 font-mono text-xs select-none pointer-events-none">+</span>
+
+        {/* Floating Model Badge */}
+        <div className="absolute top-5 right-5 hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 shadow-3xs select-none">
+          <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+          <span>LLAMA 3.2 3B</span>
+        </div>
         
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-2.5 max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#005F02]/15 text-[#005F02] border border-[#005F02]/30 text-[10px] font-mono font-black">
-                <Zap className="w-3.5 h-3.5" />
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-7">
+          <div className="space-y-3.5 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 text-xs font-mono font-black shadow-3xs">
+                <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                 <span>OFFLINE LLAMA COURSE ARCHITECT</span>
-              </span>
-              <span className="text-[10px] font-mono text-slate-400 font-semibold">
-                Available to all learners
-              </span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E1318] border border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-700 dark:text-slate-300 shadow-3xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                <span>Available to all learners</span>
+              </div>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-              Prompt AI to Build Your <span className="text-[#005F02]">Custom Curriculum</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+              Prompt AI to Build Your <span className="text-[#005F02] dark:text-emerald-400">Custom Curriculum</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
               Don't see the specific topic you need? Prompt our offline AI mentor to synthesize complete multi-module courses with deep lesson notes, video masterclasses, 3D arcade games, and compiler exercises.
             </p>
 
-            {/* Feature Pills */}
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono font-medium text-slate-500 dark:text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-[#005F02]" />
+            {/* Discrete Feature Chips */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E1318] border border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-800 dark:text-slate-200 shadow-3xs hover:border-slate-400 transition-colors">
+                <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                 <span>Markdown Notes</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <Play className="w-3.5 h-3.5 text-rose-500" />
+              </div>
+
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E1318] border border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-800 dark:text-slate-200 shadow-3xs hover:border-slate-400 transition-colors">
+                <Play className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                 <span>Offline Videos</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <Code2 className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E1318] border border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-800 dark:text-slate-200 shadow-3xs hover:border-slate-400 transition-colors">
+                <Code2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 <span>Compiler Drills</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <Gamepad2 className="w-3.5 h-3.5 text-indigo-500" />
+              </div>
+
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#0E1318] border border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-800 dark:text-slate-200 shadow-3xs hover:border-slate-400 transition-colors">
+                <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                 <span>3D Arcade Battles</span>
-              </span>
+              </div>
             </div>
           </div>
 
           {/* Action CTA Button */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0">
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setIsAiModalOpen(true)}
-              className="px-6 py-3.5 rounded-2xl bg-[#005F02] hover:bg-[#004e02] active:scale-[0.99] text-white font-black text-xs sm:text-sm shadow-lg shadow-[#005F02]/30 flex items-center justify-center gap-2.5 transition-all cursor-pointer group"
+              className="px-6 py-4 rounded-2xl bg-[#005F02] hover:bg-[#004e02] active:scale-[0.98] text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2.5 transition-all cursor-pointer group"
             >
-              <Zap className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+              <Sparkles className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
               <span>Prompt AI to Generate Course</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-            <span className="text-[10px] font-mono text-center text-slate-400">
-              0 KB Cloud Network Required
-            </span>
+            <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400 shadow-3xs">
+              <Zap className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
+              <span>0 KB Cloud Network Required</span>
+            </div>
           </div>
         </div>
       </div>
