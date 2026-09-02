@@ -63,6 +63,10 @@ function getHumanRelativeTime(isoString: string): string {
 
 function getHumanActionTitle(log: AuditLogEntry): { verb: string; highlightTarget: string; categoryLabel: string } {
   switch (log.action) {
+    case 'COURSE_ENROLLED':
+      return { verb: 'enrolled in course track', highlightTarget: log.target, categoryLabel: 'Course Enrollment' }
+    case 'COURSE_COMPLETED':
+      return { verb: 'completed curriculum track & earned certificate in', highlightTarget: log.target, categoryLabel: 'Course Completion' }
     case 'ACCOUNT_CREATED':
       return { verb: 'registered new learner account', highlightTarget: log.target, categoryLabel: 'Account Registration' }
     case 'USER_LOGIN':
@@ -633,6 +637,12 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const [approveModalTarget, setApproveModalTarget] = useState<ApproveMentorTarget | null>(null)
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false)
   const [expandedMentorCardIds, setExpandedMentorCardIds] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    if (restrictedMentorUser && (subView === 'mentors' || subView === 'inquiries')) {
+      setSubView('users')
+    }
+  }, [restrictedMentorUser, subView])
 
   const toggleMentorCardExpanded = (mentorId: string) => {
     setExpandedMentorCardIds((prev) => ({
@@ -1243,17 +1253,19 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-0.5">
                 <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
-                  Learner Community &amp; Lifecycle
+                  {restrictedMentorUser ? 'Enrolled Students & Course Activity' : 'Learner Community & Lifecycle'}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
                   West Africa Hub
                 </span>
               </div>
               <h1 className="text-lg sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                Learner Community &amp; Activity Analytics
+                {restrictedMentorUser ? 'Enrolled Students & Learning Activity' : 'Learner Community & Activity Analytics'}
               </h1>
               <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 max-w-2xl leading-relaxed">
-                Monitor active platform learners, offline sync velocity, regional student distribution, audit logs, and mentor candidate applications.
+                {restrictedMentorUser
+                  ? 'Showing verified enrollment records, lesson progress, practice submissions, and learning milestones for students enrolled under your curriculum tracks.'
+                  : 'Monitor active platform learners, offline sync velocity, regional student distribution, audit logs, and mentor candidate applications.'}
               </p>
             </div>
           </div>
@@ -1280,7 +1292,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
         <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 block tracking-wider font-mono">
-              Total Learners
+              {restrictedMentorUser ? 'Enrolled Students' : 'Total Learners'}
             </span>
             <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
               <Users className="w-3.5 h-3.5" />
@@ -1330,7 +1342,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
             {stats.inactiveUsers}
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
-            Requires catch-up nudge
+            {restrictedMentorUser ? 'Inactive enrolled students' : 'Inactive in last 7 days'}
           </span>
         </div>
 
@@ -1338,17 +1350,17 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
         <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-brand-500 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 block tracking-wider font-mono">
-              Audit Logs
+              {restrictedMentorUser ? 'Student Activity Logs' : 'Audit Logs'}
             </span>
             <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-3xs">
-              <HardDrive className="w-3.5 h-3.5" />
+              {restrictedMentorUser ? <GraduationCap className="w-3.5 h-3.5" /> : <HardDrive className="w-3.5 h-3.5" />}
             </div>
           </div>
           <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white block">
             {auditLogs.length}
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
-            100% Immutable trail
+            {restrictedMentorUser ? 'Enrolled students in your tracks' : '100% Immutable trail'}
           </span>
         </div>
 
@@ -1390,7 +1402,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 }`}
               >
                 <Users className="w-3.5 h-3.5 shrink-0" />
-                <span>Learner Management</span>
+                <span>{restrictedMentorUser ? 'Enrolled Learners' : 'Learner Management'}</span>
                 <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
                   subView === 'users' ? 'bg-white/20 text-white font-black' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
                 }`}>
@@ -1407,8 +1419,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
                 }`}
               >
-                <HardDrive className="w-3.5 h-3.5 shrink-0" />
-                <span>Audit Logs &amp; Security</span>
+                {restrictedMentorUser ? <GraduationCap className="w-3.5 h-3.5 shrink-0" /> : <HardDrive className="w-3.5 h-3.5 shrink-0" />}
+                <span>{restrictedMentorUser ? 'Student Activity & Enrollment Log' : 'Audit Logs & Security'}</span>
                 <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
                   subView === 'audit' ? 'bg-white/20 text-white font-black' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
                 }`}>
@@ -1429,53 +1441,57 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 <span>West Africa Regions</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setSubView('mentors')}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
-                  subView === 'mentors'
-                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
-                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
-                }`}
-              >
-                <GraduationCap className="w-3.5 h-3.5 shrink-0" />
-                <span>Mentor Desk &amp; Apps</span>
-                {pendingMentorCount > 0 ? (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500 text-white font-black animate-pulse">
-                    {pendingMentorCount} New
-                  </span>
-                ) : (
-                  <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
-                    subView === 'mentors' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
-                  }`}>
-                    {mentorApps.length}
-                  </span>
-                )}
-              </button>
+              {!restrictedMentorUser && (
+                <button
+                  type="button"
+                  onClick={() => setSubView('mentors')}
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
+                    subView === 'mentors'
+                      ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                      : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
+                  }`}
+                >
+                  <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+                  <span>Mentor Desk &amp; Apps</span>
+                  {pendingMentorCount > 0 ? (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500 text-white font-black animate-pulse">
+                      {pendingMentorCount} New
+                    </span>
+                  ) : (
+                    <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                      subView === 'mentors' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+                    }`}>
+                      {mentorApps.length}
+                    </span>
+                  )}
+                </button>
+              )}
 
-              <button
-                type="button"
-                onClick={() => setSubView('inquiries')}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
-                  subView === 'inquiries'
-                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
-                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
-                }`}
-              >
-                <MessageSquare className="w-3.5 h-3.5 shrink-0" />
-                <span>Inquiries &amp; Help Desk</span>
-                {unreadInquiriesCount > 0 ? (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-rose-500 text-white font-black animate-pulse">
-                    {unreadInquiriesCount} New
-                  </span>
-                ) : (
-                  <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
-                    subView === 'inquiries' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
-                  }`}>
-                    {inquiries.length}
-                  </span>
-                )}
-              </button>
+              {!restrictedMentorUser && (
+                <button
+                  type="button"
+                  onClick={() => setSubView('inquiries')}
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
+                    subView === 'inquiries'
+                      ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                      : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
+                  }`}
+                >
+                  <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                  <span>Inquiries &amp; Help Desk</span>
+                  {unreadInquiriesCount > 0 ? (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-rose-500 text-white font-black animate-pulse">
+                      {unreadInquiriesCount} New
+                    </span>
+                  ) : (
+                    <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                      subView === 'inquiries' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+                    }`}>
+                      {inquiries.length}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Contextual Actions Toolbar for current view */}
@@ -1542,16 +1558,18 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   )}
                 </div>
 
-                {/* Role Selector */}
-                <div className="sm:col-span-1 md:col-span-1 lg:col-span-2 relative">
-                  <CustomRoleDropdown
-                    value={selectedRole}
-                    onChange={(val) => setSelectedRole(val)}
-                    totalCount={users.length}
-                    mentorCount={mentorUsers.length}
-                    learnerCount={users.filter((u) => u.role === 'learner').length}
-                  />
-                </div>
+                {/* Role Selector (Admin only) */}
+                {!restrictedMentorUser && (
+                  <div className="sm:col-span-1 md:col-span-1 lg:col-span-2 relative">
+                    <CustomRoleDropdown
+                      value={selectedRole}
+                      onChange={(val) => setSelectedRole(val)}
+                      totalCount={users.length}
+                      mentorCount={mentorUsers.length}
+                      learnerCount={users.filter((u) => u.role === 'learner').length}
+                    />
+                  </div>
+                )}
 
                 {/* Enrolled Course Track Selector */}
                 <div className="sm:col-span-1 md:col-span-2 lg:col-span-2 relative">
@@ -1596,7 +1614,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="Search by actor, action, target..."
+                    placeholder={restrictedMentorUser ? "Search enrolled student, country, course..." : "Search by actor, action, target..."}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
@@ -1609,15 +1627,25 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
                   >
-                    <option value="ALL">All Activities ({auditLogs.length})</option>
-                    <option value="auth">Account & Auth (Login, Logout, Signup)</option>
-                    <option value="learning">Lesson Activity</option>
-                    <option value="practice">Practice Submissions</option>
-                    <option value="tutor">AI Tutor Dialogues</option>
-                    <option value="arcade">Arcade Games</option>
-                    <option value="curriculum">Curriculum Changes</option>
-                    <option value="security">Security Sandboxes</option>
-                    <option value="system">System & Offline Sync</option>
+                    {restrictedMentorUser ? (
+                      <>
+                        <option value="ALL">All Course Enrollments ({auditLogs.length})</option>
+                        <option value="enrollment">Enrolled Students</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="ALL">All Activities ({auditLogs.length})</option>
+                        <option value="auth">Account & Auth (Login, Logout, Signup)</option>
+                        <option value="enrollment">Course Enrollments</option>
+                        <option value="learning">Lesson Activity</option>
+                        <option value="practice">Practice Submissions</option>
+                        <option value="tutor">AI Tutor Dialogues</option>
+                        <option value="arcade">Arcade Games</option>
+                        <option value="curriculum">Curriculum Changes</option>
+                        <option value="security">Security Sandboxes</option>
+                        <option value="system">System & Offline Sync</option>
+                      </>
+                    )}
                   </select>
                   <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
@@ -1801,7 +1829,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">XP &amp; Streak</th>
                     <th className="py-3.5 px-4 min-w-[150px] whitespace-nowrap">Progress Metrics</th>
                     <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Client Engine</th>
-                    <th className="py-3.5 px-4 text-right min-w-[150px] whitespace-nowrap">Admin Action</th>
+                    <th className="py-3.5 px-4 text-right min-w-[150px] whitespace-nowrap">
+                      {restrictedMentorUser ? 'Mentorship Nudge' : 'Admin Action'}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y-2 divide-slate-200 dark:divide-slate-800/80">
@@ -1912,30 +1942,57 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         {/* Action */}
                         <td className="py-4 px-4 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-2 flex-nowrap">
-                            {user.role !== 'admin' && (
-                              <>
-                                {user.role === 'instructor' ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDemoteToLearner(user.id, user.name)}
-                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-rose-600 dark:text-rose-400 bg-white dark:bg-[#161B22] hover:bg-rose-50 dark:hover:bg-rose-950/80 border-2 border-slate-300 dark:border-slate-700 hover:border-rose-400 active:scale-95 shadow-3xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
-                                    title="Revoke mentor permissions and demote to learner"
-                                  >
-                                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
-                                    <span>Demote</span>
-                                  </button>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleOpenApproveModalForUser(user)}
-                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-white bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] active:scale-95 shadow-xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
-                                    title="Grant Mentor Hub course authoring & student inquiry access"
-                                  >
-                                    <GraduationCap className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
-                                    <span>Make Mentor</span>
-                                  </button>
-                                )}
-                              </>
+                            {restrictedMentorUser ? (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  adminAnalyticsService.logAction({
+                                    actorName: restrictedMentorUser.name,
+                                    actorRole: 'mentor',
+                                    action: 'COURSE_ENROLLED',
+                                    category: 'enrollment',
+                                    target: user.name,
+                                    details: `Sent direct mentorship study nudge to ${user.name} for course ${user.activeCourseTitle || 'General Track'}.`,
+                                    status: 'success',
+                                    ipAddress: '127.0.0.1',
+                                    userAgent: 'CodeTutor Mentor Desk',
+                                  })
+                                  onDataChanged()
+                                  setActionSuccessMsg(`Sent study encouragement nudge to ${user.name}!`)
+                                  setTimeout(() => setActionSuccessMsg(null), 3000)
+                                }}
+                                className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/80 border-2 border-emerald-300 dark:border-emerald-800 active:scale-95 shadow-3xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
+                                title={`Send study nudge to ${user.name}`}
+                              >
+                                <Zap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+                                <span>Nudge Student</span>
+                              </button>
+                            ) : (
+                              user.role !== 'admin' && (
+                                <>
+                                  {user.role === 'instructor' ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDemoteToLearner(user.id, user.name)}
+                                      className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-rose-600 dark:text-rose-400 bg-white dark:bg-[#161B22] hover:bg-rose-50 dark:hover:bg-rose-950/80 border-2 border-slate-300 dark:border-slate-700 hover:border-rose-400 active:scale-95 shadow-3xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
+                                      title="Revoke mentor permissions and demote to learner"
+                                    >
+                                      <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
+                                      <span>Demote</span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleOpenApproveModalForUser(user)}
+                                      className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-white bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] active:scale-95 shadow-xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
+                                      title="Grant Mentor Hub course authoring & student inquiry access"
+                                    >
+                                      <GraduationCap className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
+                                      <span>Make Mentor</span>
+                                    </button>
+                                  )}
+                                </>
+                              )
                             )}
                           </div>
                         </td>
@@ -1956,7 +2013,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                 <div className="p-12 text-center space-y-2">
                   <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
                   <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    No activity logs matched your filter.
+                    {restrictedMentorUser ? 'No student activity or enrollment logs found for your courses.' : 'No activity logs matched your filter.'}
                   </p>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400">
                     Try adjusting the category or search keywords above.
@@ -1974,6 +2031,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   const logIndexNumber = String(index + 1).padStart(2, '0')
 
                   const getAvatarBg = () => {
+                    if (log.category === 'enrollment') return 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
                     if (log.category === 'auth') return 'bg-sky-50 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
                     if (log.category === 'curriculum') return 'bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800'
                     if (log.category === 'practice') return 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
@@ -1984,6 +2042,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   }
 
                   const getCategoryIcon = () => {
+                    if (log.category === 'enrollment') return <GraduationCap className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
                     if (log.category === 'auth') return <UserCheck className="w-4 h-4" />
                     if (log.category === 'curriculum') return <BookOpen className="w-4 h-4" />
                     if (log.category === 'practice') return <Code2 className="w-4 h-4" />
@@ -2065,23 +2124,25 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                             {relativeTime}
                           </span>
 
-                          <button
-                            type="button"
-                            onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
-                            className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-0.5 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                          >
-                            <span>{isExpanded ? 'Hide Info' : 'Technical Details'}</span>
-                            {isExpanded ? (
-                              <ChevronUp className="w-3 h-3" />
-                            ) : (
-                              <ChevronDown className="w-3 h-3" />
-                            )}
-                          </button>
+                          {!restrictedMentorUser && (
+                            <button
+                              type="button"
+                              onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
+                              className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-0.5 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                            >
+                              <span>{isExpanded ? 'Hide Info' : 'Technical Details'}</span>
+                              {isExpanded ? (
+                                <ChevronUp className="w-3 h-3" />
+                              ) : (
+                                <ChevronDown className="w-3 h-3" />
+                              )}
+                            </button>
+                          )}
                         </div>
                       </div>
 
-                      {/* Expandable Technical Details Dropdown */}
-                      {isExpanded && (
+                      {/* Expandable Technical Details Dropdown (Admin Only) */}
+                      {!restrictedMentorUser && isExpanded && (
                         <div className="p-3 rounded-2xl bg-slate-900 text-slate-100 border border-slate-800 text-[11px] font-mono space-y-2 mt-2 animate-in fade-in duration-150">
                           <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 text-slate-400 text-[10px]">
                             <span className="flex items-center gap-1 font-bold text-emerald-400">

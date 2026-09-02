@@ -190,7 +190,7 @@ class IssueSupportService {
           actorName: author,
           actorRole: 'mentor',
           action: isReplying ? 'MENTOR_REPLIED_TO_INQUIRY' : 'MENTOR_UPDATED_TICKET_STAGE',
-          category: 'tutor',
+          category: 'support',
           target: `#${id} (${this.issues[idx].userName} - ${this.issues[idx].subject})`,
           details: isReplying
             ? `Delivered instructor solution note & resolution to student ${this.issues[idx].userName}. Stage: ${status.toUpperCase()}`
@@ -243,7 +243,7 @@ class IssueSupportService {
           actorName: messageData.senderName,
           actorRole: messageData.senderRole,
           action: 'STUDENT_REPLIED_TO_SUPPORT_TICKET',
-          category: 'tutor',
+          category: 'support',
           target: `#${id} (${this.issues[idx].subject})`,
           details: `${messageData.senderName} (${messageData.senderRole}) posted a follow-up reply: "${messageData.message.slice(0, 70)}..."`,
           status: 'info',

@@ -48,10 +48,14 @@ export const MentorDashboardPage: React.FC = () => {
     setIssues(issueSupportService.getAllIssues())
     const allUsers = adminAnalyticsService.getAllUsers()
     setAdminUsers(allUsers)
-    setAuditLogs(adminAnalyticsService.getAllAuditLogs())
-
     const active = adminAnalyticsService.getActiveUserSession()
     setCurrentUser(active)
+
+    if (active.role === 'instructor') {
+      setAuditLogs(adminAnalyticsService.getStudentAuditLogsForMentor(active))
+    } else {
+      setAuditLogs(adminAnalyticsService.getAllAuditLogs())
+    }
   }
 
   useEffect(() => {
@@ -61,14 +65,29 @@ export const MentorDashboardPage: React.FC = () => {
     const handleIssuesUpdated = () => setIssues(issueSupportService.getAllIssues())
     const handleUsersUpdated = () => {
       setAdminUsers(adminAnalyticsService.getAllUsers())
-      setCurrentUser(adminAnalyticsService.getActiveUserSession())
-    }
-    const handleAuditUpdated = () => setAuditLogs(adminAnalyticsService.getAllAuditLogs())
-    const handleSessionChanged = (e: any) => {
-      if (e.detail) {
-        setCurrentUser(e.detail)
+      const active = adminAnalyticsService.getActiveUserSession()
+      setCurrentUser(active)
+      if (active.role === 'instructor') {
+        setAuditLogs(adminAnalyticsService.getStudentAuditLogsForMentor(active))
       } else {
-        setCurrentUser(adminAnalyticsService.getActiveUserSession())
+        setAuditLogs(adminAnalyticsService.getAllAuditLogs())
+      }
+    }
+    const handleAuditUpdated = () => {
+      const active = adminAnalyticsService.getActiveUserSession()
+      if (active.role === 'instructor') {
+        setAuditLogs(adminAnalyticsService.getStudentAuditLogsForMentor(active))
+      } else {
+        setAuditLogs(adminAnalyticsService.getAllAuditLogs())
+      }
+    }
+    const handleSessionChanged = (e: any) => {
+      const active = e.detail || adminAnalyticsService.getActiveUserSession()
+      setCurrentUser(active)
+      if (active.role === 'instructor') {
+        setAuditLogs(adminAnalyticsService.getStudentAuditLogsForMentor(active))
+      } else {
+        setAuditLogs(adminAnalyticsService.getAllAuditLogs())
       }
     }
 
