@@ -15,7 +15,6 @@ import {
   Moon,
   ShieldCheck,
   BookOpen,
-  Code2,
   GraduationCap,
   Eye,
   EyeOff,
@@ -141,23 +140,14 @@ export const SignUpPage: React.FC = () => {
           LEFT SIDE: DASHBOARD BLUEPRINT BRANDING PANEL
           ═══════════════════════════════════════════════════════════════ */}
       <div className="hidden lg:flex relative lg:w-1/2 min-h-screen bg-[#090D12] text-white overflow-hidden flex-col justify-between p-6 sm:p-10 lg:p-14 border-r-2 border-slate-300 dark:border-slate-800">
-        {/* Background Image with Crisp High-Contrast Overlay */}
+        {/* Brightened Background Image with High-Contrast Text Legibility */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src="/images/terminal_student_offline.jpg"
             alt="Student Learning Code Offline"
-            className="w-full h-full object-cover object-center opacity-50 dark:opacity-45 filter saturate-110"
+            className="w-full h-full object-cover object-center opacity-50 filter brightness-110 saturate-110"
           />
-          <div className="absolute inset-0 bg-[#090D12]/70" />
-          {/* Blueprint SVG Grid Pattern */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.08] text-white" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="signup-left-blueprint-grid" width="24" height="24" patternUnits="userSpaceOnUse">
-                <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#signup-left-blueprint-grid)" />
-          </svg>
+          <div className="absolute inset-0 bg-[#090D12]/50" />
         </div>
 
         {/* Top: Brand Header */}
@@ -183,8 +173,8 @@ export const SignUpPage: React.FC = () => {
         {/* Center: Hero Statement & Value Proposition */}
         <div className="relative z-10 my-auto py-8 lg:py-0 space-y-5 max-w-lg text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold shadow-3xs">
-            <Code2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
-            <span>Python • JavaScript • Java OOP</span>
+            <GraduationCap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+            <span>For All African Students • Practical Coding</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
