@@ -28,6 +28,7 @@ import {
   Zap,
   HelpCircle,
   Shuffle,
+  ChevronDown,
 } from 'lucide-react'
 
 const STATS_STORAGE_KEY = 'codetutor_arcade_stats'
@@ -37,6 +38,17 @@ const GAME_ICON_MAP: Record<GameId, React.FC<{ className?: string }>> = {
   bughunt: Bug,
   predictor: HelpCircle,
   shuffle: Shuffle,
+}
+
+const TRACK_BADGE_STYLE: Record<string, string> = {
+  python: 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800',
+  javascript: 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800',
+  java: 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800',
+  typescript: 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-400 border-2 border-blue-300 dark:border-blue-800',
+  html: 'bg-orange-100 dark:bg-orange-950/80 text-orange-800 dark:text-orange-400 border-2 border-orange-300 dark:border-orange-800',
+  css: 'bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-400 border-2 border-sky-300 dark:border-sky-800',
+  git: 'bg-red-100 dark:bg-red-950/80 text-red-800 dark:text-red-400 border-2 border-red-300 dark:border-red-800',
+  sql: 'bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-400 border-2 border-purple-300 dark:border-purple-800',
 }
 
 export const GamesHubPage: React.FC = () => {
@@ -171,125 +183,140 @@ export const GamesHubPage: React.FC = () => {
       ) : (
         <>
           {/* ═══════════════════════════════════════════════════════════════
-              HERO BANNER (COMPACT STANDALONE 3D CODE ARCADE)
+              HERO BANNER (3D CODE ARCADE)
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 dark:border-slate-800/90 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 text-white shadow-xl">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-600/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="p-6 sm:p-7 md:p-8 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-3.5 text-center md:text-left flex-1 max-w-xl">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                  <Gamepad2 className="w-3.5 h-3.5" />
+                  3D Code Arcade
+                </span>
 
-            <div className="relative p-5 sm:p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 z-10">
-              <div className="space-y-3 text-center md:text-left flex-1 max-w-xl">
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-brand-500/20 text-brand-300 border border-brand-500/30 shadow-xs">
-                    <Gamepad2 className="w-3.5 h-3.5 text-brand-400" />
-                    3D Code Arcade
-                  </span>
-
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-xs">
-                    {isOffline ? <WifiOff className="w-3.5 h-3.5 text-amber-400" /> : <Wifi className="w-3.5 h-3.5 text-emerald-400" />}
-                    100% Offline Capable
-                  </span>
-                </div>
-
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight">
-                  Gamified Coding Arcade
-                </h1>
-
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Interactive mini-game coding drills structured under each language course track. Level up your syntax, bug squashing, mental execution, and algorithm logic.
-                </p>
-
-                {/* Sound FX Toggle Button */}
-                <div className="pt-1 flex items-center justify-center md:justify-start">
-                  <button
-                    type="button"
-                    onClick={handleToggleSound}
-                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 hover:text-white border border-slate-700/80 transition-colors shadow-3xs cursor-pointer"
-                  >
-                    {soundEnabled ? (
-                      <>
-                        <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Audio FX: ON</span>
-                      </>
-                    ) : (
-                      <>
-                        <VolumeX className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Audio FX: OFF</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-black uppercase tracking-wider bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                  {isOffline ? <WifiOff className="w-3.5 h-3.5 text-amber-500" /> : <Wifi className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
+                  100% Offline Capable
+                </span>
               </div>
 
-              {/* Compact 3D Scene */}
-              <div className="w-full md:w-64 lg:w-72 h-40 sm:h-44 md:h-48 relative rounded-2xl overflow-hidden flex items-center justify-center shrink-0">
-                <Arcade3DHero />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                Gamified Coding Arcade
+              </h1>
+
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                Interactive mini-game coding drills structured under each language course track. Level up your syntax, bug squashing, mental execution, and algorithm logic.
+              </p>
+
+              {/* Sound FX Toggle Button */}
+              <div className="pt-1 flex items-center justify-center md:justify-start">
+                <button
+                  type="button"
+                  onClick={handleToggleSound}
+                  className="inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-mono font-bold bg-slate-50 dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#1f252e] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs active:scale-95 transition-all cursor-pointer"
+                >
+                  {soundEnabled ? (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                      <span>Audio FX: ON</span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Audio FX: OFF</span>
+                    </>
+                  )}
+                </button>
               </div>
+            </div>
+
+            {/* Compact 3D Scene */}
+            <div className="w-full md:w-64 lg:w-72 h-44 sm:h-48 relative rounded-2xl overflow-hidden flex items-center justify-center shrink-0 border-2 border-slate-300 dark:border-slate-700 bg-slate-950 shadow-inner">
+              <Arcade3DHero />
             </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
               METRICS & STATS BAR
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
-              <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-                <Trophy className="w-4 h-4 text-amber-500" />
-                <span className="font-semibold text-[11px] uppercase font-mono">Arcade Points</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-amber-100 dark:bg-amber-950/80 border-2 border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-3xs">
+                <Trophy className="w-5 h-5" />
               </div>
-              <p className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
-                {stats.totalScore.toLocaleString()}
-              </p>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Arcade Points
+                </span>
+                <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
+                  {stats.totalScore.toLocaleString()}
+                </span>
+              </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
-              <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-                <Gamepad2 className="w-4 h-4 text-brand-500" />
-                <span className="font-semibold text-[11px] uppercase font-mono">Drills Played</span>
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-3xs">
+                <Gamepad2 className="w-5 h-5" />
               </div>
-              <p className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
-                {stats.gamesPlayed}
-              </p>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Drills Played
+                </span>
+                <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
+                  {stats.gamesPlayed}
+                </span>
+              </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
-              <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-                <Flame className="w-4 h-4 text-rose-500" />
-                <span className="font-semibold text-[11px] uppercase font-mono">Best Speedrun</span>
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-950/80 border-2 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-400 flex items-center justify-center shrink-0 shadow-3xs">
+                <Flame className="w-5 h-5" />
               </div>
-              <p className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
-                {stats.highScores.speedrun || 0} pts
-              </p>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Best Speedrun
+                </span>
+                <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
+                  {stats.highScores.speedrun || 0} pts
+                </span>
+              </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
-              <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-                <Bug className="w-4 h-4 text-emerald-500" />
-                <span className="font-semibold text-[11px] uppercase font-mono">Bugs Squashed</span>
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-3xs">
+                <Bug className="w-5 h-5" />
               </div>
-              <p className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
-                {stats.highScores.bughunt || 0} pts
-              </p>
+              <div>
+                <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Bugs Squashed
+                </span>
+                <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
+                  {stats.highScores.bughunt || 0} pts
+                </span>
+              </div>
             </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
-              ARCADE GAME MODES SHOWCASE (WITH IMAGES)
+              ARCADE GAME MODES SHOWCASE
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                  Arcade Game Modes
-                </h2>
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 border-2 border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-3xs">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                    Arcade Game Modes
+                  </h2>
+                </div>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono font-black border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 px-3 py-1 rounded-xl shadow-3xs">
                 4 Interactive Modes
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {GAMES_METADATA.map((game) => {
                 const IconComponent = GAME_ICON_MAP[game.id] || Zap
                 const highScore = stats.highScores[game.id] || 0
@@ -297,58 +324,41 @@ export const GamesHubPage: React.FC = () => {
                 return (
                   <div
                     key={game.id}
-                    className="group relative rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-xs hover:shadow-md hover:border-emerald-500/50 transition-all flex flex-col justify-between"
+                    className="group relative rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 overflow-hidden shadow-xs hover:border-[#005F02] dark:hover:border-emerald-500 transition-all flex flex-col justify-between"
                   >
-                    {/* Game Artwork Image Thumbnail */}
-                    <div className="relative h-32 w-full overflow-hidden bg-slate-950">
-                      {game.image ? (
-                        <img
-                          src={game.image}
-                          alt={game.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-950 flex items-center justify-center">
-                          <IconComponent className="w-10 h-10 text-slate-500" />
+                    {/* Game Header with Icon & Difficulty Badge */}
+                    <div className="p-4 bg-slate-50 dark:bg-[#161B22] border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-3xs">
+                          <IconComponent className="w-4 h-4" />
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-
-                      {/* Difficulty & Time Badge */}
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-black/60 backdrop-blur-md text-white border border-white/20">
-                          {game.difficulty}
-                        </span>
-                      </div>
-
-                      {/* Floating Game Icon & Title Over Artwork */}
-                      <div className="absolute bottom-2 left-3 right-3 flex items-center gap-2">
-                        <div className={`p-1.5 rounded-lg ${game.color.bg} text-white shrink-0 shadow-xs`}>
-                          <IconComponent className="w-4 h-4 text-emerald-400" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="text-sm font-extrabold text-white truncate leading-tight">
+                        <div>
+                          <h3 className="text-sm font-black text-slate-900 dark:text-white truncate">
                             {game.title}
                           </h3>
-                          <p className="text-[10px] text-slate-300 font-mono truncate">
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                             {game.category}
                           </p>
                         </div>
                       </div>
+
+                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-mono font-black uppercase bg-white dark:bg-[#0E1318] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                        {game.difficulty}
+                      </span>
                     </div>
 
                     {/* Card Content */}
-                    <div className="p-3.5 space-y-3 flex-1 flex flex-col justify-between">
-                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    <div className="p-4 space-y-3.5 flex-1 flex flex-col justify-between">
+                      <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed font-medium">
                         {game.description}
                       </p>
 
-                      <div className="pt-1 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80">
-                        <div className="flex items-center gap-1 text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                          <Clock className="w-3 h-3 text-slate-400" />
+                      <div className="pt-2 flex items-center justify-between border-t-2 border-slate-200 dark:border-slate-800">
+                        <div className="flex items-center gap-1.5 text-xs font-mono text-slate-600 dark:text-slate-400 font-bold">
+                          <Clock className="w-3.5 h-3.5 text-slate-400" />
                           <span>~{game.estimatedMins} min</span>
                           {highScore > 0 && (
-                            <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-bold">
+                            <span className="ml-1 text-[#005F02] dark:text-emerald-400 font-black">
                               • {highScore} pts
                             </span>
                           )}
@@ -357,10 +367,10 @@ export const GamesHubPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleLaunchGameDirect(game.id)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-black bg-[#005F02] hover:bg-[#004e02] border-2 border-[#005F02] text-white shadow-xs active:scale-95 transition-all cursor-pointer"
                         >
                           <span>Play</span>
-                          <ArrowRight className="w-3 h-3" />
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -373,60 +383,56 @@ export const GamesHubPage: React.FC = () => {
           {/* ═══════════════════════════════════════════════════════════════
               LANGUAGE TRACKS — CLICK TO EXPAND / COLLAPSE MODULES
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="space-y-0">
+          <div className="space-y-4">
             {/* Section Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0 shadow-3xs">
-                  <Code2 className="w-4 h-4" />
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                    Course Tracks & Game Modules
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Click any language to expand or collapse its structured game modules below.
-                  </p>
-                </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+                <Code2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                  Course Tracks & Game Modules
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                  Click any language to expand or collapse its structured game modules below.
+                </p>
               </div>
             </div>
 
-            {/* Language Track Cards — each one is toggleable */}
-            <div className="space-y-3">
+            {/* Language Track Cards */}
+            <div className="space-y-3.5">
               {LANGUAGE_TRACKS.filter((t) => t.id !== 'all').map((track) => {
                 const isSelected = selectedLanguage === track.id
                 const trackModules = gameStoreService.getModulesForLanguage(track.id)
+                const badgeClass = TRACK_BADGE_STYLE[track.id] || 'bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700'
 
                 return (
                   <div key={track.id} className="transition-all duration-200">
-                    {/* Clickable Language Card Header (Toggles Open/Close) */}
                     <button
                       type="button"
                       onClick={() => handleToggleTrack(track.id)}
-                      className={`w-full p-4 sm:p-5 border text-left transition-all cursor-pointer relative overflow-hidden ${
+                      className={`w-full p-4 sm:p-5 border-2 text-left transition-all cursor-pointer rounded-3xl shadow-xs active:scale-[0.99] ${
                         isSelected
-                          ? 'bg-gradient-to-r from-emerald-50/80 via-white to-white dark:from-emerald-950/30 dark:via-slate-900 dark:to-slate-900 border-emerald-500 ring-2 ring-emerald-500/20 shadow-md rounded-t-2xl rounded-b-none'
-                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-slate-700 shadow-2xs hover:shadow-xs rounded-2xl'
+                          ? 'bg-emerald-50/70 dark:bg-[#0D1E13] border-[#005F02] dark:border-emerald-500'
+                          : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 hover:border-[#005F02] dark:hover:border-emerald-500'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-4">
                         {/* Left: Badge + Title + Description */}
                         <div className="flex items-center gap-3.5 min-w-0">
-                          <div className={`p-2.5 rounded-xl ${track.bgLight} border shrink-0 shadow-3xs ${
-                            isSelected ? 'border-emerald-300 dark:border-emerald-700' : 'border-transparent'
-                          }`}>
-                            <span className="text-xs font-mono font-black">{track.badge}</span>
+                          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-3xs font-mono font-black text-xs ${badgeClass}`}>
+                            <span>{track.badge}</span>
                           </div>
 
                           <div className="min-w-0">
-                            <h3 className={`text-sm sm:text-base font-extrabold tracking-tight truncate transition-colors ${
+                            <h3 className={`text-sm sm:text-base font-black truncate transition-colors ${
                               isSelected
-                                ? 'text-emerald-700 dark:text-emerald-400'
+                                ? 'text-[#005F02] dark:text-emerald-400'
                                 : 'text-slate-900 dark:text-white'
                             }`}>
                               {track.title}
                             </h3>
-                            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                            <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 truncate mt-0.5 font-medium">
                               {track.subtitle} — {track.description}
                             </p>
                           </div>
@@ -434,28 +440,25 @@ export const GamesHubPage: React.FC = () => {
 
                         {/* Right: Module Count + Expand Indicator */}
                         <div className="flex items-center gap-3 shrink-0">
-                          <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-slate-500 dark:text-slate-400">
-                            <Gamepad2 className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="font-bold">{trackModules.length}</span>
+                          <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] px-2.5 py-1 rounded-xl shadow-3xs font-bold">
+                            <Gamepad2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                            <span>{trackModules.length}</span>
                             <span>Modules</span>
                           </div>
-                          <div className={`p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 transition-transform duration-200 ${isSelected ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
+                          <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all ${
+                            isSelected
+                              ? 'border-[#005F02] bg-[#005F02] text-white rotate-180'
+                              : 'border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-[#161B22] text-slate-500'
+                          }`}>
+                            <ChevronDown className="w-4 h-4" />
                           </div>
                         </div>
                       </div>
-
-                      {/* Active indicator bar */}
-                      {isSelected && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-500" />
-                      )}
                     </button>
 
-                    {/* Expanded Modules Panel — appears directly under the language card */}
+                    {/* Expanded Modules Panel */}
                     {isSelected && (
-                      <div className="border border-t-0 border-emerald-500/40 dark:border-emerald-500/30 rounded-b-2xl bg-slate-50/80 dark:bg-slate-950/60 p-4 sm:p-5 shadow-inner animate-in fade-in duration-200">
+                      <div className="mt-3 border-2 border-[#005F02] dark:border-emerald-500 rounded-3xl bg-slate-50 dark:bg-[#0E1318] p-5 sm:p-6 shadow-xs animate-in fade-in duration-200">
                         <GameModulesRoadmap
                           modules={trackModules}
                           selectedLanguage={track.id}
