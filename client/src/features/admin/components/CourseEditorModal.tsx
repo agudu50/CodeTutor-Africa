@@ -16,6 +16,8 @@ import {
   Zap,
   HelpCircle,
   Trash2,
+  Lock,
+  Calendar,
 } from 'lucide-react'
 
 // Preset Curated Cover Images (SVGs and gradients that work 100% offline)
@@ -67,6 +69,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   const [difficulty, setDifficulty] = useState<DifficultyLevel | ''>('')
   const [category, setCategory] = useState('')
   const [estimatedHours, setEstimatedHours] = useState<number | ''>('')
+  const [estimatedWeeks, setEstimatedWeeks] = useState<number | ''>('')
   const [description, setDescription] = useState('')
   const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [mentorId, setMentorId] = useState('')
@@ -122,6 +125,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setDifficulty(courseToEdit.difficulty)
       setCategory(courseToEdit.category)
       setEstimatedHours(courseToEdit.estimatedHours)
+      setEstimatedWeeks(courseToEdit.estimatedWeeks || (courseToEdit.estimatedHours ? Math.ceil(courseToEdit.estimatedHours / 2.5) : 8))
       setDescription(courseToEdit.description)
       setThumbnailUrl(courseToEdit.thumbnailUrl || '')
       setMentorId(courseToEdit.mentorId || '')
@@ -151,6 +155,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setDifficulty('')
       setCategory('')
       setEstimatedHours('')
+      setEstimatedWeeks(8)
       setDescription('')
       setThumbnailUrl('')
       setMentorId('')
@@ -300,12 +305,16 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 
     const totalLessons = modules.reduce((acc, m) => acc + m.lessons.length, 0)
 
+    const finalEstimatedHours = typeof estimatedHours === 'number' && estimatedHours > 0 ? estimatedHours : 16
+    const finalEstimatedWeeks = typeof estimatedWeeks === 'number' && estimatedWeeks > 0 ? estimatedWeeks : Math.max(4, Math.ceil(finalEstimatedHours / 2.5))
+
     const finalModules: Module[] = modules.map((m, mIdx) => ({
       id: m.id || `mod-${Date.now()}-${mIdx}`,
       courseId: courseToEdit ? courseToEdit.id : `course-${Date.now()}`,
       title: m.title,
       description: m.description,
       order: mIdx + 1,
+      weekNumber: Math.min(finalEstimatedWeeks, Math.floor(mIdx / 2) + 1),
       createdAt: new Date().toISOString(),
       lessons: m.lessons.map((l, lIdx) => ({
         id: l.id || `les-${Date.now()}-${lIdx}`,
@@ -326,7 +335,6 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
     const finalLanguage = (language || 'python') as ProgrammingLanguage
     const finalDifficulty = (difficulty || 'beginner') as DifficultyLevel
     const finalCategory = category.trim() || 'General'
-    const finalEstimatedHours = typeof estimatedHours === 'number' && estimatedHours > 0 ? estimatedHours : 16
 
     let saved: Course
     if (courseToEdit) {
@@ -337,6 +345,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         difficulty: finalDifficulty,
         category: finalCategory,
         estimatedHours: finalEstimatedHours,
+        estimatedWeeks: finalEstimatedWeeks,
         description,
         mentorId: mentorId || undefined,
         mentorName: mentorName || undefined,
@@ -353,6 +362,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         difficulty: finalDifficulty,
         category: finalCategory,
         estimatedHours: finalEstimatedHours,
+        estimatedWeeks: finalEstimatedWeeks,
         description,
         mentorId: mentorId || undefined,
         mentorName: mentorName || undefined,
@@ -518,20 +528,39 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
               />
             </div>
 
-            {/* Estimated Hours */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                Estimated Hours
-              </label>
-              <Input
-                type="number"
-                min={1}
-                max={200}
-                placeholder="e.g. 16"
-                value={estimatedHours}
-                onChange={(e) => setEstimatedHours(e.target.value === '' ? '' : Number(e.target.value))}
-                className="text-xs border-slate-300 dark:border-slate-700 font-mono"
-              />
+            {/* Estimated Hours & Estimated Weeks */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-slate-500" />
+                  <span>Est. Hours</span>
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={200}
+                  placeholder="e.g. 20"
+                  value={estimatedHours}
+                  onChange={(e) => setEstimatedHours(e.target.value === '' ? '' : Number(e.target.value))}
+                  className="text-xs border-slate-300 dark:border-slate-700 font-mono"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-amber-500" />
+                  <span>Est. Weeks</span>
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={52}
+                  placeholder="e.g. 8"
+                  value={estimatedWeeks}
+                  onChange={(e) => setEstimatedWeeks(e.target.value === '' ? '' : Number(e.target.value))}
+                  className="text-xs border-slate-300 dark:border-slate-700 font-mono"
+                />
+              </div>
             </div>
 
             {/* Assigned Mentor */}
@@ -684,14 +713,26 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
           </div>
 
           {/* ═══════════════════════════════════════════════════════════════
-              MODULE & LESSON BUILDER WITH AI QUIZ & THEORY SYNTHESIZER
+              MODULE & LESSON BUILDER WITH SEQUENTIAL PROGRESSION LOCKING
               ═══════════════════════════════════════════════════════════════ */}
           <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div className="p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 flex items-start gap-2.5">
+              <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-xs space-y-0.5">
+                <span className="font-bold text-slate-900 dark:text-slate-100">
+                  Sequential Module Locking Enabled
+                </span>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                  Each module is locked automatically until the learner completes 100% of the preceding module lessons.
+                </p>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2">
                 <Database className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 font-mono">
-                  Modules &amp; Lessons ({modules.length} Modules)
+                  Modules &amp; Lessons ({modules.length} Modules • {typeof estimatedWeeks === 'number' ? estimatedWeeks : 8} Weeks)
                 </h4>
               </div>
 
@@ -709,27 +750,40 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 
             {/* Module Cards */}
             <div className="space-y-3.5 sm:space-y-4">
-              {modules.map((mod, modIdx) => (
+              {modules.map((mod, modIdx) => {
+                const assignedWeek = Math.min(Number(estimatedWeeks) || 8, Math.floor(modIdx / 2) + 1)
+
+                return (
                 <div
                   key={mod.id}
                   className="p-3 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 space-y-3"
                 >
                   {/* Module Header */}
                   <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <input
-                      type="text"
-                      value={mod.title}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        setModules((prev) => {
-                          const copy = [...prev]
-                          copy[modIdx].title = val
-                          return copy
-                        })
-                      }}
-                      placeholder="Module Title (e.g. Module 1: Core Syntax)"
-                      className="font-bold text-xs sm:text-sm bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white flex-1 py-0.5 min-w-[180px]"
-                    />
+                    <div className="flex items-center gap-2 flex-1 min-w-[220px]">
+                      <span className="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 text-[10px] font-mono font-bold border border-amber-300 dark:border-amber-800 shrink-0">
+                        Week {assignedWeek}
+                      </span>
+                      {modIdx > 0 && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-slate-500 shrink-0">
+                          <Lock className="w-2.5 h-2.5" /> Requires Module {modIdx}
+                        </span>
+                      )}
+                      <input
+                        type="text"
+                        value={mod.title}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          setModules((prev) => {
+                            const copy = [...prev]
+                            copy[modIdx].title = val
+                            return copy
+                          })
+                        }}
+                        placeholder="Module Title (e.g. Module 1: Core Syntax)"
+                        className="font-bold text-xs sm:text-sm bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white flex-1 py-0.5 min-w-[150px]"
+                      />
+                    </div>
 
                     <div className="flex items-center gap-2 shrink-0">
                       <Button
@@ -912,7 +966,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                     })}
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
 

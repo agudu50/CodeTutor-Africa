@@ -37,6 +37,7 @@ export interface Lesson extends BaseEntity {
   learningObjectives?: string[]
   technicalTerms?: TechnicalTerm[]
   isCompleted?: boolean
+  isLocked?: boolean
 }
 
 export interface Module extends BaseEntity {
@@ -44,6 +45,8 @@ export interface Module extends BaseEntity {
   title: string
   description: string
   order: number
+  weekNumber?: number
+  isLocked?: boolean
   progressPercentage?: number
   learningObjectives?: string[]
   technicalTerms?: TechnicalTerm[]
@@ -67,6 +70,7 @@ export interface Course extends BaseEntity {
   thumbnailUrl?: string
   totalLessons: number
   estimatedHours: number
+  estimatedWeeks?: number
   enrolledCount?: number
   progressPercentage?: number
   modules: Module[]

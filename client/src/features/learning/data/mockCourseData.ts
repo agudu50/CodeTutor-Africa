@@ -1646,12 +1646,15 @@ function generateCourseModules(courseId: string, language: string): Module[] {
       }
     })
 
+    const weekNumber = Math.min(8, Math.floor(idx / 2) + 1)
+
     return {
       id: moduleId,
       courseId,
       title: blueprint.title,
       description: moduleDesc,
       order: idx + 1,
+      weekNumber,
       progressPercentage: 0,
       learningObjectives: objectives,
       technicalTerms: terms,
@@ -1673,6 +1676,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 20,
+    estimatedWeeks: 8,
     enrolledCount: 540,
     progressPercentage: 0,
     mentorId: 'usr-mentor-3',
@@ -1694,6 +1698,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 22,
+    estimatedWeeks: 8,
     enrolledCount: 680,
     progressPercentage: 0,
     mentorId: 'usr-mentor-2',
@@ -1715,6 +1720,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 26,
+    estimatedWeeks: 10,
     enrolledCount: 420,
     progressPercentage: 0,
     mentorId: 'usr-mentor-1',
@@ -1736,6 +1742,7 @@ export const MOCK_COURSES: Course[] = [
     difficulty: 'beginner',
     totalLessons: 24,
     estimatedHours: 24,
+    estimatedWeeks: 8,
     enrolledCount: 310,
     progressPercentage: 0,
     mentorId: 'usr-mentor-4',

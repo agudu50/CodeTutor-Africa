@@ -19,6 +19,8 @@ import {
   Globe,
   MessageSquare,
   Inbox,
+  Lock,
+  Calendar,
 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
@@ -71,6 +73,23 @@ export const CourseDetailPage: React.FC = () => {
   }
 
   // Find first uncompleted lesson for the primary CTA button
+  const isModuleLocked = (moduleIdx: number) => {
+    if (moduleIdx === 0) return false
+    const prevMod = course.modules[moduleIdx - 1]
+    if (!prevMod) return false
+    const isPrevComplete =
+      (prevMod.progressPercentage ?? 0) === 100 ||
+      (prevMod.lessons.length > 0 && prevMod.lessons.every((l) => l.isCompleted))
+    return !isPrevComplete
+  }
+
+  const isLessonLocked = (moduleIdx: number, lessonIdx: number) => {
+    if (isModuleLocked(moduleIdx)) return true
+    if (lessonIdx === 0) return false
+    const prevLesson = course.modules[moduleIdx]?.lessons[lessonIdx - 1]
+    return !prevLesson?.isCompleted
+  }
+
   const firstUncompletedLesson = course.modules
     .flatMap((m) => m.lessons)
     .find((l) => !l.isCompleted) || course.modules[0]?.lessons[0]
@@ -129,6 +148,11 @@ export const CourseDetailPage: React.FC = () => {
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono text-xs font-bold border-2 border-slate-300 dark:border-slate-700 shadow-2xs">
               <BookOpen className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               <span>{course.modules.length} modules</span>
+            </span>
+            <span className="text-slate-400 dark:text-slate-600">•</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 font-mono text-xs font-bold border-2 border-amber-300 dark:border-amber-800 shadow-2xs">
+              <Calendar className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>{course.estimatedWeeks || Math.max(4, Math.ceil((course.estimatedHours || 16) / 2.5))} Weeks Duration</span>
             </span>
             <span className="text-slate-400 dark:text-slate-600">•</span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 font-mono text-xs font-bold border-2 border-blue-300 dark:border-blue-800 shadow-2xs">
@@ -279,13 +303,17 @@ export const CourseDetailPage: React.FC = () => {
               const isExpanded = expandedModuleId === mod.id
               const progress = mod.progressPercentage ?? 0
               const color = getProgressColor(progress)
+              const locked = isModuleLocked(idx)
+              const assignedWeek = mod.weekNumber || Math.min(course.estimatedWeeks || 8, Math.floor(idx / 2) + 1)
 
               return (
                 <div key={mod.id} className="relative group">
                   <div
                     onClick={() => toggleExpand(mod.id)}
                     className={`flex flex-col rounded-2xl border-2 transition-all cursor-pointer overflow-hidden ${
-                      isExpanded
+                      locked
+                        ? 'bg-slate-50/80 dark:bg-[#0A0D11] border-slate-300 dark:border-slate-800 opacity-90'
+                        : isExpanded
                         ? 'bg-white dark:bg-[#0E1318] border-[#005F02] dark:border-emerald-500 shadow-md ring-2 ring-emerald-500/10'
                         : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 shadow-2xs hover:shadow-xs'
                     }`}
@@ -293,13 +321,19 @@ export const CourseDetailPage: React.FC = () => {
                     {/* Module Item Header Row */}
                     <div className="flex items-center justify-between p-4 sm:p-5 gap-3.5">
                       <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-                        {/* Circular Progress Badge */}
+                        {/* Circular Progress Badge or Lock Icon */}
                         <div className="relative shrink-0 flex items-center justify-center">
-                          <div
-                            className={`w-12 h-12 rounded-2xl border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-2xs transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
-                          >
-                            {progress}%
-                          </div>
+                          {locked ? (
+                            <div className="w-12 h-12 rounded-2xl border-2 border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-500 dark:text-slate-400 shadow-2xs">
+                              <Lock className="w-5 h-5" />
+                            </div>
+                          ) : (
+                            <div
+                              className={`w-12 h-12 rounded-2xl border-2 flex items-center justify-center font-mono font-bold text-xs sm:text-[13px] shadow-2xs transition-transform group-hover:scale-105 ${color.ring} ${color.text}`}
+                            >
+                              {progress}%
+                            </div>
+                          )}
                         </div>
 
                         {/* Title & Index */}
@@ -308,13 +342,25 @@ export const CourseDetailPage: React.FC = () => {
                             <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                               Module {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                             </span>
-                            {progress === 100 && (
+                            <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
+                              Week {assignedWeek}
+                            </span>
+                            {locked && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+                                <Lock className="w-2.5 h-2.5" /> Locked (Finish Module {idx})
+                              </span>
+                            )}
+                            {!locked && progress === 100 && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
                                 <CheckCircle2 className="w-3 h-3" /> Done
                               </span>
                             )}
                           </div>
-                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                          <h3 className={`text-sm sm:text-base font-extrabold tracking-tight leading-snug transition-colors ${
+                            locked
+                              ? 'text-slate-600 dark:text-slate-400'
+                              : 'text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400'
+                          }`}>
                             {mod.title}
                           </h3>
                           <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 leading-relaxed">
@@ -346,6 +392,15 @@ export const CourseDetailPage: React.FC = () => {
                     {/* Expanded Lessons Drawer */}
                     {isExpanded && (
                       <div className="px-4 sm:px-6 pb-5 pt-3 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 space-y-3 animate-in fade-in duration-150">
+                        {locked && (
+                          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 flex items-center gap-2.5 text-xs text-amber-900 dark:text-amber-200">
+                            <Lock className="w-4 h-4 text-amber-600 shrink-0" />
+                            <span>
+                              <strong>Module Locked:</strong> Complete 100% of all lessons in <strong>Module {idx}</strong> to unlock this week&apos;s curriculum.
+                            </span>
+                          </div>
+                        )}
+
                         <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
                           <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px] font-mono">
                             <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
@@ -354,53 +409,84 @@ export const CourseDetailPage: React.FC = () => {
                         </div>
 
                         <div className="space-y-2">
-                          {mod.lessons.map((lesson, lIdx) => (
-                            <div
-                              key={lesson.id}
-                              className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 flex items-center justify-between gap-3 shadow-2xs transition-colors group/item"
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono text-xs font-bold flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-700">
-                                  {lIdx + 1}
-                                </div>
-                                <div className="min-w-0">
-                                  <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block truncate">
-                                    {lesson.title}
-                                  </span>
-                                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-2.5 mt-0.5">
-                                    <span className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3 text-amber-500" />
-                                      {lesson.durationMinutes}m
+                          {mod.lessons.map((lesson, lIdx) => {
+                            const lessonLocked = isLessonLocked(idx, lIdx)
+
+                            return (
+                              <div
+                                key={lesson.id}
+                                className={`p-3.5 rounded-xl border-2 flex items-center justify-between gap-3 shadow-2xs transition-colors group/item ${
+                                  lessonLocked
+                                    ? 'bg-slate-100/60 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 opacity-75'
+                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500'
+                                }`}
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className={`w-7 h-7 rounded-lg font-mono text-xs font-bold flex items-center justify-center shrink-0 border ${
+                                    lessonLocked
+                                      ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                  }`}>
+                                    {lessonLocked ? <Lock className="w-3 h-3" /> : lIdx + 1}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <span className={`text-xs sm:text-sm font-bold block truncate ${
+                                      lessonLocked ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-white'
+                                    }`}>
+                                      {lesson.title}
                                     </span>
-                                    {lesson.isCompleted && (
-                                      <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-0.5">
-                                        <CheckCircle2 className="w-3 h-3" /> Completed
+                                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-2.5 mt-0.5">
+                                      <span className="flex items-center gap-1">
+                                        <Clock className="w-3 h-3 text-amber-500" />
+                                        {lesson.durationMinutes}m
                                       </span>
-                                    )}
+                                      {lesson.isCompleted && (
+                                        <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-0.5">
+                                          <CheckCircle2 className="w-3 h-3" /> Completed
+                                        </span>
+                                      )}
+                                      {lessonLocked && (
+                                        <span className="text-slate-400 font-bold flex items-center gap-0.5">
+                                          <Lock className="w-2.5 h-2.5" /> Locked
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              <Link
-                                to={`/learning/lessons/${lesson.id}`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="shrink-0"
-                              >
-                                <Button
-                                  variant={lesson.isCompleted ? 'secondary' : 'primary'}
-                                  size="sm"
-                                  className={
-                                    lesson.isCompleted
-                                      ? 'h-8 px-3 text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
-                                      : 'h-8 px-3.5 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs'
-                                  }
-                                  leftIcon={<Play className="w-3 h-3" />}
-                                >
-                                  {lesson.isCompleted ? 'Review' : 'Start'}
-                                </Button>
-                              </Link>
-                            </div>
-                          ))}
+                                {lessonLocked ? (
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    disabled
+                                    className="h-8 px-3 text-xs font-bold opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-300 dark:border-slate-700 shrink-0"
+                                    leftIcon={<Lock className="w-3 h-3" />}
+                                  >
+                                    Locked
+                                  </Button>
+                                ) : (
+                                  <Link
+                                    to={`/learning/lessons/${lesson.id}`}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="shrink-0"
+                                  >
+                                    <Button
+                                      variant={lesson.isCompleted ? 'secondary' : 'primary'}
+                                      size="sm"
+                                      className={
+                                        lesson.isCompleted
+                                          ? 'h-8 px-3 text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
+                                          : 'h-8 px-3.5 text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs'
+                                      }
+                                      leftIcon={<Play className="w-3 h-3" />}
+                                    >
+                                      {lesson.isCompleted ? 'Review' : 'Start'}
+                                    </Button>
+                                  </Link>
+                                )}
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                     )}

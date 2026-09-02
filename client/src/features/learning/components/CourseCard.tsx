@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Course } from '@/types'
 import { Card, CardTitle } from '@/components/ui'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
-import { BookOpen, Clock, ArrowRight, Shield, Users, GraduationCap } from 'lucide-react'
+import { BookOpen, ArrowRight, Shield, Users, GraduationCap, Calendar } from 'lucide-react'
 
 export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
   const difficultyBadge =
@@ -12,6 +12,8 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
       : course.difficulty === 'intermediate'
       ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-2 border-amber-300 dark:border-amber-800'
       : 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800'
+
+  const weeksDuration = course.estimatedWeeks || Math.max(4, Math.ceil((course.estimatedHours || 16) / 2.5))
 
   return (
     <Card
@@ -28,40 +30,27 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
             />
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-              <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md ${difficultyBadge}`}>
-                {course.difficulty}
-              </span>
-              <span className="uppercase font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 border border-slate-700 dark:border-slate-300 shadow-xs">
-                {course.language}
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <span className={`text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-lg ${difficultyBadge}`}>
-                {course.difficulty}
-              </span>
-              {course.isAiGenerated && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
-                  <span>AI Synthesized</span>
-                </span>
-              )}
-            </div>
-            <span className="uppercase font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700">
+            <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-slate-950/80 backdrop-blur-xs text-[10px] font-mono font-black text-white border border-white/20 uppercase tracking-wider">
               {course.language}
-            </span>
+            </div>
           </div>
-        )}
+        ) : null}
 
-        <div className="space-y-1">
-          {course.category && (
-            <span className="inline-block text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-              {course.category}
-            </span>
-          )}
-          <CardTitle className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug">
+        {/* Header Badges */}
+        <div className="flex items-center justify-between gap-2">
+          <span
+            className={`px-3 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider shadow-3xs ${difficultyBadge}`}
+          >
+            {course.difficulty}
+          </span>
+          <span className="text-[11px] font-mono font-black text-[#005F02] dark:text-emerald-400 flex items-center gap-1">
+            <Shield className="w-3.5 h-3.5" /> Offline
+          </span>
+        </div>
+
+        {/* Title */}
+        <div>
+          <CardTitle className="text-base font-black text-slate-900 dark:text-white leading-snug line-clamp-2">
             {course.title}
           </CardTitle>
         </div>
@@ -72,17 +61,17 @@ export const CourseCard: React.FC<{ course: Course }> = memo(({ course }) => {
 
         {/* Structured Stat Pills Row */}
         <div className="flex items-center gap-2 text-xs pt-0.5 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 font-mono text-[11px] font-bold border border-blue-200 dark:border-blue-800 shadow-2xs">
-            <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>{(course.enrolledCount || 420).toLocaleString()} Learners</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 font-mono text-[11px] font-bold border border-amber-200 dark:border-amber-800 shadow-2xs">
+            <Calendar className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>{weeksDuration} Weeks</span>
           </span>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono text-[11px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs">
             <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
             <span>{course.totalLessons} Lessons</span>
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 font-mono text-[11px] font-bold border border-amber-200 dark:border-amber-800 shadow-2xs">
-            <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            <span>~{course.estimatedHours}h</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 font-mono text-[11px] font-bold border border-blue-200 dark:border-blue-800 shadow-2xs">
+            <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span>{(course.enrolledCount || 420).toLocaleString()} Learners</span>
           </span>
         </div>
 
