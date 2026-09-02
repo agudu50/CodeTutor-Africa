@@ -7,7 +7,7 @@ import {
 } from '../data/mockDebuggerData'
 import { aiService } from '@/services/ai/ai.service'
 import { FixSuggestionCard } from '../components/FixSuggestionCard'
-import { Button, Dropdown } from '@/components/ui'
+import { Dropdown } from '@/components/ui'
 import {
   Bug,
   Zap,
@@ -24,6 +24,7 @@ import {
   Check,
   Plus,
   Clock,
+  Search,
 } from 'lucide-react'
 import { ProgrammingLanguage, DebugResult, DebugSession } from '@/types'
 import { renderVSCodeSyntax, renderTerminalStackTrace } from '@/utils/syntaxHighlight'
@@ -362,74 +363,74 @@ export const DebuggerPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           HEADER BANNER & DEBUG SESSIONS CONTROLS
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80">
-              <Bug className="w-4 h-4" />
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 p-6 sm:p-7 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-400 border-2 border-rose-300 dark:border-rose-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Bug className="w-5 h-5" />
             </div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               Offline Socratic Debugger
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl font-medium">
             Inspect, trace, and diagnose runtime exceptions and logic traps across Python, JavaScript, and Java without cloud connection.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Debug Sessions Dropdown / History Selector */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowSessionMenu((v) => !v)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500 transition-colors cursor-pointer shadow-3xs"
+              className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] text-xs font-bold text-slate-800 dark:text-slate-200 hover:border-[#005F02] dark:hover:border-emerald-500 transition-colors cursor-pointer shadow-3xs"
             >
               <Clock className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
               <span className="max-w-[150px] truncate">{currentSession.title}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
+              <span className="text-[10px] px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-mono font-black border border-slate-300 dark:border-slate-700">
                 {sessions.length}
               </span>
             </button>
 
             {/* Sessions Dropdown Menu */}
             {showSessionMenu && (
-              <div className="absolute right-0 mt-1.5 w-72 sm:w-80 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl z-50 p-2 space-y-1 animate-in fade-in zoom-in-95">
-                <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200">
+              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white dark:bg-[#0E1318] rounded-3xl border-2 border-slate-300 dark:border-slate-700 shadow-2xl z-50 p-2.5 space-y-1.5 animate-in fade-in zoom-in-95">
+                <div className="flex items-center justify-between px-3 py-2 border-b-2 border-slate-200 dark:border-slate-800 text-xs font-black text-slate-900 dark:text-white">
                   <span>Debug Sessions ({sessions.length})</span>
                   <button
                     type="button"
                     onClick={createNewDebugSession}
                     className="flex items-center gap-1 text-[11px] font-bold text-[#005F02] dark:text-emerald-400 hover:underline cursor-pointer"
                   >
-                    <Plus className="w-3 h-3" /> New
+                    <Plus className="w-3.5 h-3.5" /> New Session
                   </button>
                 </div>
-                <div className="max-h-56 overflow-y-auto space-y-1 p-1">
+                <div className="max-h-56 overflow-y-auto space-y-1.5 p-1">
                   {sessions.map((sess) => {
                     const isSessActive = sess.id === activeSessionId
                     return (
                       <div
                         key={sess.id}
                         onClick={() => switchSession(sess.id)}
-                        className={`flex items-center justify-between gap-2 p-2 rounded-xl text-xs cursor-pointer transition-colors ${
+                        className={`flex items-center justify-between gap-2 p-2.5 rounded-2xl text-xs cursor-pointer transition-all border-2 ${
                           isSessActive
-                            ? 'bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/80 text-slate-900 dark:text-white font-semibold'
-                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800 text-slate-900 dark:text-white shadow-3xs'
+                            : 'hover:bg-slate-50 dark:hover:bg-[#161B22] border-transparent text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <div className="min-w-0 flex-1">
-                          <div className="truncate font-bold text-[11.5px]">{sess.title}</div>
-                          <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
-                            <span className="uppercase">{sess.language}</span>
+                          <div className="truncate font-black text-xs">{sess.title}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
+                            <span className="uppercase font-bold">{sess.language}</span>
                             <span>•</span>
-                            <span>{sess.result ? 'Diagnosed' : 'Draft'}</span>
+                            <span className="font-medium">{sess.result ? 'Diagnosed' : 'Draft'}</span>
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={(e) => deleteSession(sess.id, e)}
-                          className="p-1 text-slate-400 hover:text-rose-500 rounded hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors cursor-pointer"
                           title="Delete session"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -443,15 +444,14 @@ export const DebuggerPage: React.FC = () => {
           </div>
 
           {/* New Session Button */}
-          <Button
-            size="sm"
-            variant="outline"
+          <button
+            type="button"
             onClick={createNewDebugSession}
-            leftIcon={<Plus className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
-            className="h-9 text-xs font-bold px-3 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-emerald-500 cursor-pointer shadow-3xs"
+            className="inline-flex items-center gap-1.5 h-10 px-3.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 hover:border-[#005F02] dark:hover:border-emerald-500 bg-slate-50 dark:bg-[#161B22] text-xs font-bold text-slate-800 dark:text-slate-200 shadow-3xs cursor-pointer active:scale-95 transition-all"
           >
-            New Session
-          </Button>
+            <Plus className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+            <span>New Session</span>
+          </button>
 
           {/* Language Selector */}
           <div className="w-36 sm:w-40">
@@ -473,61 +473,61 @@ export const DebuggerPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           MULTI-LANGUAGE PRESET CHIPS
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs shadow-xs">
-        <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider pl-1">
+      <div className="flex flex-wrap items-center gap-2.5 p-3.5 sm:p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-xs shadow-xs">
+        <span className="font-mono text-xs text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider pl-1">
           Sample Bugs:
         </span>
         <button
           type="button"
           onClick={() => handleSelectPreset('javascript')}
-          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
+          className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
             language === 'javascript'
-              ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
+              ? 'bg-[#005F02] text-white border-[#005F02]'
+              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
           }`}
         >
-          <span className="text-[#ffd700] mr-1">JS:</span> Async Race Condition
+          <span className="text-amber-500 mr-1 font-black">JS:</span> Async Race Condition
         </button>
         <button
           type="button"
           onClick={() => handleSelectPreset('java')}
-          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
+          className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
             language === 'java'
-              ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
+              ? 'bg-[#005F02] text-white border-[#005F02]'
+              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
           }`}
         >
-          <span className="text-[#e06c75] mr-1">Java:</span> Array Bounds Exceeded
+          <span className="text-rose-500 mr-1 font-black">Java:</span> Array Bounds Exceeded
         </button>
         <button
           type="button"
           onClick={() => handleSelectPreset('python')}
-          className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
+          className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
             language === 'python'
-              ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
+              ? 'bg-[#005F02] text-white border-[#005F02]'
+              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
           }`}
         >
-          <span className="text-[#4ec9b0] mr-1">Python:</span> Off-by-One Loop Error
+          <span className="text-emerald-500 mr-1 font-black">Python:</span> Off-by-One Loop Error
         </button>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           VS CODE DEBUGGER IDE & TERMINAL WORKSPACE
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="rounded-3xl border border-slate-700/80 bg-[#1E1E1E] shadow-2xl overflow-hidden text-slate-200 font-mono text-xs flex flex-col select-none">
+      <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-[#1E1E1E] shadow-2xl overflow-hidden text-slate-200 font-mono text-xs flex flex-col select-none">
         {/* VS Code Window Titlebar */}
-        <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-1.5 shrink-0">
+        <div className="h-10 px-4 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block shadow-xs" />
             <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block shadow-xs" />
             <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block shadow-xs" />
           </div>
 
-          <div className="flex-1 max-w-sm mx-auto flex items-center justify-center">
-            <div className="w-full h-6 px-3 rounded-md bg-[#2A2A2A] border border-[#3A3A3A] text-[11px] text-slate-400 flex items-center justify-center gap-2 truncate shadow-inner">
-              <span className="text-slate-500">🔍</span>
-              <span className="truncate text-slate-300">debug-workspace — bug_sample.{fileExt} (CodeTutor IDE)</span>
+          <div className="flex-1 max-w-md mx-auto flex items-center justify-center">
+            <div className="w-full h-7 px-3 rounded-xl bg-[#2A2A2A] border border-[#3A3A3A] text-[11px] text-slate-400 flex items-center justify-center gap-2 truncate shadow-inner">
+              <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="truncate text-slate-300 font-medium">debug-workspace — bug_sample.{fileExt} (CodeTutor IDE)</span>
             </div>
           </div>
 
@@ -538,7 +538,7 @@ export const DebuggerPage: React.FC = () => {
                 setCode('')
                 setErrorMessage('')
               }}
-              className="text-[10px] font-mono text-slate-400 hover:text-white px-2 py-0.5 rounded hover:bg-[#333333] transition-colors cursor-pointer"
+              className="text-[11px] font-mono text-slate-400 hover:text-white px-2.5 py-1 rounded-lg border border-[#3A3A3A] hover:border-slate-500 bg-[#252526] transition-colors cursor-pointer"
             >
               Clear Workspace
             </button>
@@ -548,46 +548,46 @@ export const DebuggerPage: React.FC = () => {
         {/* IDE Split Body (Activity Bar + Code Editor + Integrated Terminal) */}
         <div className="flex flex-1 min-h-[380px] overflow-hidden">
           {/* Left: Activity Bar */}
-          <div className="w-10 bg-[#181818] border-r border-[#2D2D2D] flex flex-col items-center justify-between py-2 shrink-0 text-slate-400">
-            <div className="flex flex-col items-center gap-3 w-full">
-              <div className="p-1.5 hover:text-white cursor-pointer" title="Explorer">
-                <BookOpen className="w-3.5 h-3.5" />
+          <div className="w-11 bg-[#181818] border-r border-[#2D2D2D] flex flex-col items-center justify-between py-3 shrink-0 text-slate-400">
+            <div className="flex flex-col items-center gap-3.5 w-full">
+              <div className="p-2 hover:text-white cursor-pointer rounded-lg hover:bg-[#252526] transition-colors" title="Explorer">
+                <BookOpen className="w-4 h-4" />
               </div>
-              <div className="p-1.5 hover:text-white cursor-pointer" title="Search">
-                <Code2 className="w-3.5 h-3.5" />
+              <div className="p-2 hover:text-white cursor-pointer rounded-lg hover:bg-[#252526] transition-colors" title="Search">
+                <Code2 className="w-4 h-4" />
               </div>
-              <div className="relative p-1.5 text-white border-l-2 border-[#005F02] w-full flex justify-center cursor-pointer" title="Run & Debug">
-                <Bug className="w-3.5 h-3.5 text-rose-400" />
+              <div className="p-2 text-white bg-[#252526] rounded-xl flex justify-center cursor-pointer shadow-3xs" title="Run & Debug">
+                <Bug className="w-4 h-4 text-rose-400" />
               </div>
-              <div className="p-1.5 hover:text-white cursor-pointer" title="Arcade Drills">
-                <Gamepad2 className="w-3.5 h-3.5" />
+              <div className="p-2 hover:text-white cursor-pointer rounded-lg hover:bg-[#252526] transition-colors" title="Arcade Drills">
+                <Gamepad2 className="w-4 h-4" />
               </div>
             </div>
 
-            <div className="p-1.5 text-slate-500 hover:text-slate-300 cursor-pointer">
-              <Cpu className="w-3.5 h-3.5 text-[#005F02]" />
+            <div className="p-2 text-slate-500 hover:text-slate-300 cursor-pointer">
+              <Cpu className="w-4 h-4 text-[#005F02]" />
             </div>
           </div>
 
           {/* Right: Code Canvas & Terminal Stack */}
           <div className="flex flex-col flex-1 min-w-0 bg-[#1E1E1E]">
             {/* Tab Bar */}
-            <div className="h-9 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0">
+            <div className="h-10 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0">
               <div className="flex items-center h-full">
-                <div className="h-full px-3 bg-[#1E1E1E] border-t-2 border-t-[#005F02] text-xs font-mono font-medium text-slate-100 flex items-center gap-2 border-r border-[#252526]">
+                <div className="h-full px-3.5 bg-[#1E1E1E] text-xs font-mono font-bold text-slate-100 flex items-center gap-2 border-r border-[#252526]">
                   <Code2 className="w-3.5 h-3.5 text-[#005F02] shrink-0" />
-                  <span className="font-semibold truncate">bug_sample.{fileExt}</span>
-                  <span className="text-[10px] text-slate-500 hover:text-white ml-1">×</span>
+                  <span className="truncate">bug_sample.{fileExt}</span>
+                  <span className="text-[11px] text-slate-500 hover:text-white ml-1 cursor-pointer">×</span>
                 </div>
               </div>
 
               {/* Editor View Modes (Editable vs Syntax Highlighted) */}
               <div className="flex items-center gap-2 pr-2">
-                <div className="flex items-center rounded-lg bg-[#252526] p-0.5 border border-[#333333]">
+                <div className="flex items-center rounded-xl bg-[#252526] p-1 border border-[#333333]">
                   <button
                     type="button"
                     onClick={() => setActiveEditorTab('editor')}
-                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                       activeEditorTab === 'editor'
                         ? 'bg-[#005F02] text-white shadow-xs'
                         : 'text-slate-400 hover:text-white'
@@ -599,7 +599,7 @@ export const DebuggerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveEditorTab('preview')}
-                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                       activeEditorTab === 'preview'
                         ? 'bg-[#005F02] text-white shadow-xs'
                         : 'text-slate-400 hover:text-white'
@@ -609,23 +609,23 @@ export const DebuggerPage: React.FC = () => {
                     <span>Syntax View</span>
                   </button>
                 </div>
-                <span className="text-[10px] font-mono text-slate-500">{lineCount} lines</span>
+                <span className="text-[11px] font-mono text-slate-500">{lineCount} lines</span>
               </div>
             </div>
 
             {/* Breadcrumb Bar */}
-            <div className="h-6 px-3 bg-[#1E1E1E] border-b border-[#252526] flex items-center gap-1.5 text-[11px] text-slate-500 font-mono shrink-0">
+            <div className="h-6 px-3.5 bg-[#1E1E1E] border-b border-[#252526] flex items-center gap-1.5 text-[11px] text-slate-500 font-mono shrink-0">
               <span>workspace</span>
               <ChevronRight className="w-3 h-3 text-slate-600" />
               <span>src</span>
               <ChevronRight className="w-3 h-3 text-slate-600" />
-              <span className="text-slate-300 font-semibold">bug_sample.{fileExt}</span>
+              <span className="text-slate-300 font-bold">bug_sample.{fileExt}</span>
             </div>
 
             {/* Editor Canvas (Gutter + Code) */}
             <div className="flex-1 min-h-[180px] flex overflow-hidden relative bg-[#1E1E1E]">
               {/* Line Numbers Gutter */}
-              <div className="w-9 sm:w-11 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 sm:pr-2.5 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
+              <div className="w-10 sm:w-12 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2.5 sm:pr-3 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
                 {Array.from({ length: Math.max(lineCount, 8) }).map((_, i) => (
                   <div key={i}>{i + 1}</div>
                 ))}
@@ -650,9 +650,9 @@ export const DebuggerPage: React.FC = () => {
                 INTEGRATED VS CODE COLORIZED TERMINAL & STACK TRACE
                 ═══════════════════════════════════════════════════════════ */}
             <div className="border-t border-[#2D2D2D] bg-[#141414] flex flex-col shrink-0">
-              <div className="h-8 px-3 bg-[#1F1F1F] border-b border-[#282828] flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <div className="h-9 px-3.5 bg-[#1F1F1F] border-b border-[#282828] flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <div className="flex items-center gap-3">
-                  <span className="text-white font-bold flex items-center gap-1.5 border-b-2 border-[#005F02] pb-0.5">
+                  <span className="text-white font-bold flex items-center gap-1.5">
                     <Terminal className="w-3.5 h-3.5 text-emerald-400" />
                     <span>TERMINAL / STACK TRACE</span>
                   </span>
@@ -662,11 +662,11 @@ export const DebuggerPage: React.FC = () => {
 
                 {/* Terminal Mode & Action Controls */}
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center rounded-lg bg-[#252526] p-0.5 border border-[#333333]">
+                  <div className="flex items-center rounded-xl bg-[#252526] p-1 border border-[#333333]">
                     <button
                       type="button"
                       onClick={() => setActiveTerminalTab('terminal')}
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
                         activeTerminalTab === 'terminal'
                           ? 'bg-[#005F02] text-white shadow-xs'
                           : 'text-slate-400 hover:text-white'
@@ -677,7 +677,7 @@ export const DebuggerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActiveTerminalTab('edit')}
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
                         activeTerminalTab === 'edit'
                           ? 'bg-[#005F02] text-white shadow-xs'
                           : 'text-slate-400 hover:text-white'
@@ -691,7 +691,7 @@ export const DebuggerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleCopyTerminal}
-                    className="p-1 rounded text-slate-400 hover:text-white hover:bg-[#333333] transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#333333] transition-colors cursor-pointer"
                     title="Copy terminal error log"
                   >
                     {terminalCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -699,7 +699,7 @@ export const DebuggerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleErrorMessageChange('')}
-                    className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-[#333333] transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-[#333333] transition-colors cursor-pointer"
                     title="Clear terminal"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -735,18 +735,18 @@ export const DebuggerPage: React.FC = () => {
         </div>
 
         {/* VS Code Bottom Status Bar (#005F02) */}
-        <div className="h-6 px-3 bg-[#005F02] text-white flex items-center justify-between text-[10px] font-mono shrink-0 select-none">
+        <div className="h-7 px-4 bg-[#005F02] text-white flex items-center justify-between text-[11px] font-mono shrink-0 select-none">
           <div className="flex items-center gap-3">
             <span className="font-bold">main*</span>
             <span>0 ⨂ 0 ⚠</span>
-            <span className="hidden sm:inline">Offline Debugger Ready</span>
+            <span className="hidden sm:inline font-medium">Offline Debugger Ready</span>
           </div>
 
           <div className="flex items-center gap-3">
             <span>Spaces: 4</span>
             <span>UTF-8</span>
-            <span className="font-bold uppercase">{language}</span>
-            <span className="bg-white/20 px-1.5 py-0.2 rounded font-bold">100% OFFLINE</span>
+            <span className="font-black uppercase">{language}</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded-md font-bold text-[10px]">100% OFFLINE</span>
           </div>
         </div>
       </div>
@@ -755,17 +755,15 @@ export const DebuggerPage: React.FC = () => {
           ANALYZE ACTION BUTTON
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex justify-end">
-        <Button
-          variant="primary"
-          size="lg"
+        <button
+          type="button"
           onClick={handleAnalyze}
-          isLoading={isAnalyzing}
-          disabled={!code.trim()}
-          className="font-bold text-sm bg-[#005F02] hover:bg-[#004e02] text-white shadow-md shadow-[#005F02]/20 px-8 py-3 rounded-2xl cursor-pointer"
-          leftIcon={<Zap className="w-4 h-4 text-white" />}
+          disabled={!code.trim() || isAnalyzing}
+          className="h-12 px-8 rounded-2xl bg-[#005F02] hover:bg-[#004e02] border-2 border-[#005F02] text-white font-black text-sm shadow-xs cursor-pointer active:scale-95 transition-all inline-flex items-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isAnalyzing ? 'Analyzing Root Cause Offline...' : 'Diagnose & Suggest Fix with AI'}
-        </Button>
+          <Zap className={`w-4 h-4 text-white ${isAnalyzing ? 'animate-spin' : ''}`} />
+          <span>{isAnalyzing ? 'Analyzing Root Cause Offline...' : 'Diagnose & Suggest Fix with AI'}</span>
+        </button>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
