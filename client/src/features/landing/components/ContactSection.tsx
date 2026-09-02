@@ -142,60 +142,60 @@ export const ContactSection: React.FC = memo(() => {
   }
 
   return (
-    <section id="contact" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
+    <section id="contact" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative z-10">
       {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#005F02]/10 dark:bg-emerald-950/60 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 text-xs font-bold font-mono uppercase tracking-wider shadow-2xs">
-          <MessageSquare className="w-3.5 h-3.5" />
-          <span>Get in Touch • Contact Us</span>
+      <div className="text-center max-w-3xl mx-auto mb-10 space-y-2.5">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 text-xs font-mono font-bold shadow-3xs">
+          <MessageSquare className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+          <span>DIRECT COMMUNICATION CHANNELS</span>
         </span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          We&apos;d Love to Hear From You
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          We&apos;d Love to Hear <span className="text-[#005F02] dark:text-emerald-400">From You</span>
         </h2>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto font-medium">
           Have questions about zero-internet learning, university partnerships, educator mentoring, or offline school rollouts across Africa? Our team is here to support you.
         </p>
       </div>
 
-      {/* Main Content Grid with Equal Heights */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+      {/* Main Content Grid with Equal Heights - Dashboard Card System */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
         {/* Left Column: Direct Communication Channels & Regional Hubs (5 Cols) */}
-        <div className="lg:col-span-5 flex flex-col justify-between gap-6 text-left h-full">
+        <div className="lg:col-span-5 flex flex-col justify-between gap-5 text-left h-full">
           {/* Card 1: Direct Channels */}
-          <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/90 shadow-xl flex flex-col justify-between flex-1 space-y-5">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex flex-col justify-between flex-1 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
                 <span>Direct Communication Channels</span>
               </h3>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 shadow-3xs">
                 Active
               </span>
             </div>
 
             <div className="space-y-3 text-xs sm:text-sm flex-1 flex flex-col justify-center">
               {/* Channel 1: Support */}
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800/70 hover:border-[#005F02] dark:hover:border-emerald-500/80 transition-all group space-y-2">
+              <div className="p-3.5 rounded-xl bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all space-y-2.5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#005F02]/10 dark:bg-emerald-500/15 border border-[#005F02]/20 dark:border-emerald-500/30 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shrink-0 shadow-3xs">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
+                      <div className="font-black text-slate-900 dark:text-white text-xs sm:text-sm leading-tight">
                         General Inquiries &amp; Help Desk
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                         Student questions, platform support, and feedback
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/50 dark:border-slate-800/50">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
                   <a
                     href="mailto:support@codetutor.africa"
-                    className="font-mono text-xs font-semibold text-[#005F02] dark:text-emerald-400 hover:underline flex items-center gap-1"
+                    className="font-mono text-xs font-bold text-[#005F02] dark:text-emerald-400 hover:underline flex items-center gap-1"
                   >
                     <span>support@codetutor.africa</span>
                     <ExternalLinkIcon className="w-3 h-3 opacity-70" />
@@ -203,7 +203,7 @@ export const ContactSection: React.FC = memo(() => {
                   <button
                     type="button"
                     onClick={(e) => handleCopyEmail(e, 'support@codetutor.africa')}
-                    className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                    className="p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-600 dark:text-slate-300 hover:text-[#005F02] shadow-3xs transition-all cursor-pointer"
                     title="Copy email address"
                   >
                     {copiedEmail === 'support@codetutor.africa' ? (
@@ -216,27 +216,27 @@ export const ContactSection: React.FC = memo(() => {
               </div>
 
               {/* Channel 2: Partnerships */}
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800/70 hover:border-brand-500 transition-all group space-y-2">
+              <div className="p-3.5 rounded-xl bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all space-y-2.5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 flex items-center justify-center text-brand-600 dark:text-brand-400 shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shrink-0 shadow-3xs">
                       <BuildingIcon className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
+                      <div className="font-black text-slate-900 dark:text-white text-xs sm:text-sm leading-tight">
                         Universities &amp; School Partnerships
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                         Campus computer labs, curriculum integration, and licensing
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/50 dark:border-slate-800/50">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
                   <a
                     href="mailto:partnerships@codetutor.africa"
-                    className="font-mono text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+                    className="font-mono text-xs font-bold text-[#005F02] dark:text-emerald-400 hover:underline flex items-center gap-1"
                   >
                     <span>partnerships@codetutor.africa</span>
                     <ExternalLinkIcon className="w-3 h-3 opacity-70" />
@@ -244,11 +244,11 @@ export const ContactSection: React.FC = memo(() => {
                   <button
                     type="button"
                     onClick={(e) => handleCopyEmail(e, 'partnerships@codetutor.africa')}
-                    className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                    className="p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-600 dark:text-slate-300 hover:text-[#005F02] shadow-3xs transition-all cursor-pointer"
                     title="Copy email address"
                   >
                     {copiedEmail === 'partnerships@codetutor.africa' ? (
-                      <Check className="w-3.5 h-3.5 text-brand-500" />
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
@@ -257,27 +257,27 @@ export const ContactSection: React.FC = memo(() => {
               </div>
 
               {/* Channel 3: Mentors */}
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800/70 hover:border-indigo-500 transition-all group space-y-2">
+              <div className="p-3.5 rounded-xl bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all space-y-2.5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shrink-0 shadow-3xs">
                       <GraduationCap className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
+                      <div className="font-black text-slate-900 dark:text-white text-xs sm:text-sm leading-tight">
                         Educator &amp; Mentor Network
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                         Course track authoring, lecturer verification, and teaching
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/50 dark:border-slate-800/50">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
                   <a
                     href="mailto:mentors@codetutor.africa"
-                    className="font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                    className="font-mono text-xs font-bold text-[#005F02] dark:text-emerald-400 hover:underline flex items-center gap-1"
                   >
                     <span>mentors@codetutor.africa</span>
                     <ExternalLinkIcon className="w-3 h-3 opacity-70" />
@@ -285,11 +285,11 @@ export const ContactSection: React.FC = memo(() => {
                   <button
                     type="button"
                     onClick={(e) => handleCopyEmail(e, 'mentors@codetutor.africa')}
-                    className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                    className="p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-600 dark:text-slate-300 hover:text-[#005F02] shadow-3xs transition-all cursor-pointer"
                     title="Copy email address"
                   >
                     {copiedEmail === 'mentors@codetutor.africa' ? (
-                      <Check className="w-3.5 h-3.5 text-indigo-500" />
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
@@ -299,25 +299,25 @@ export const ContactSection: React.FC = memo(() => {
             </div>
 
             {/* Quick Metrics Info */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-3 text-xs">
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200/60 dark:border-slate-800/60 text-slate-600 dark:text-slate-400">
-                <Clock className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />
-                <span className="font-semibold">Response &lt; 24 hrs</span>
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-2 text-xs">
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono font-bold shadow-3xs">
+                <Clock className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+                <span>Response &lt; 24h</span>
               </div>
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200/60 dark:border-slate-800/60 text-slate-600 dark:text-slate-400">
-                <Globe className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
-                <span className="font-semibold">Pan-African Reach</span>
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono font-bold shadow-3xs">
+                <Globe className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+                <span>Pan-African</span>
               </div>
             </div>
           </div>
 
           {/* Card 2: Regional Campus Hubs */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 space-y-3.5 shrink-0">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-              <MapPinIcon className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
+          <div className="p-5 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] space-y-3 shadow-xs shrink-0">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#005F02] dark:text-emerald-400">
+              <MapPinIcon className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
               <span>Campus &amp; Community Focal Points</span>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               Serving educators, coding club leads, and student communities across university hubs:
             </p>
 
@@ -326,9 +326,9 @@ export const ContactSection: React.FC = memo(() => {
               {REGIONAL_HUBS.map((hub) => (
                 <div
                   key={hub.country}
-                  className="p-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200/90 dark:border-slate-800/90 shadow-3xs text-left"
+                  className="p-2.5 rounded-xl bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-800 shadow-3xs text-left"
                 >
-                  <div className="font-bold text-slate-900 dark:text-white text-xs">
+                  <div className="font-black text-slate-900 dark:text-white text-xs">
                     {hub.country}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
@@ -340,24 +340,24 @@ export const ContactSection: React.FC = memo(() => {
           </div>
         </div>
 
-        {/* Right Column: Enhanced Contact Form Card (7 Cols) */}
+        {/* Right Column: Contact Form Card (7 Cols) */}
         <div className="lg:col-span-7 h-full">
-          <div className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800/90 shadow-2xl text-left relative h-full flex flex-col justify-between">
+          <div className="p-6 sm:p-8 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs text-left relative h-full flex flex-col justify-between">
             {isSubmitted ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="py-12 text-center space-y-5"
               >
-                <div className="w-16 h-16 rounded-3xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-[#005F02] dark:text-emerald-400 mx-auto shadow-md">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-400 dark:border-emerald-600 flex items-center justify-center text-[#005F02] dark:text-emerald-400 mx-auto shadow-xs">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <div className="space-y-2 max-w-md mx-auto">
-                  <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                     Message Sent Successfully!
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Thank you for reaching out, <strong className="text-slate-900 dark:text-white">{fullName}</strong>. A CodeTutor Africa team member will review your inquiry and get back to you at <span className="font-mono font-semibold text-brand-600 dark:text-brand-400">{email}</span> within 24 hours.
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                    Thank you for reaching out, <strong className="text-slate-900 dark:text-white">{fullName}</strong>. A CodeTutor Africa team member will review your inquiry and get back to you at <span className="font-mono font-bold text-[#005F02] dark:text-emerald-400">{email}</span> within 24 hours.
                   </p>
                 </div>
 
@@ -365,32 +365,32 @@ export const ContactSection: React.FC = memo(() => {
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="px-6 py-3 rounded-2xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-all cursor-pointer shadow-2xs"
+                    className="px-6 py-3 rounded-xl text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white transition-all cursor-pointer shadow-xs"
                   >
                     Send Another Message
                   </button>
                 </div>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Form Card Header */}
-                <div className="space-y-1.5 pb-2 border-b border-slate-100 dark:border-slate-800/80">
+                <div className="space-y-1 pb-3 border-b border-slate-200 dark:border-slate-800">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
+                    <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
                       Send Us a Message
                     </h3>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     Fill out the form below and we will respond to your inquiry promptly.
                   </p>
                 </div>
 
                 {/* Full Name & Email Address */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {/* Full Name */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
                       Your Full Name <span className="text-[#005F02] dark:text-emerald-400 font-bold">*</span>
                     </label>
                     <div className="relative">
@@ -403,14 +403,14 @@ export const ContactSection: React.FC = memo(() => {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="e.g. Kwame Mensah"
-                        className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 text-xs font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[#005F02]/30 dark:focus:ring-emerald-500/30 transition-all"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-normal focus:bg-white dark:focus:bg-[#0E1318] focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 shadow-3xs transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Email Address */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
                       Email Address <span className="text-[#005F02] dark:text-emerald-400 font-bold">*</span>
                     </label>
                     <div className="relative">
@@ -423,17 +423,17 @@ export const ContactSection: React.FC = memo(() => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="e.g. kwame@university.edu"
-                        className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 text-xs font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[#005F02]/30 dark:focus:ring-emerald-500/30 transition-all"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-normal focus:bg-white dark:focus:bg-[#0E1318] focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 shadow-3xs transition-all"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Country & Inquiry Category */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {/* Nation / Country */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
                       Nation / Country
                     </label>
                     <div className="relative">
@@ -443,7 +443,7 @@ export const ContactSection: React.FC = memo(() => {
                       <select
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
-                        className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#005F02]/30 appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-9 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] text-xs font-bold text-slate-900 dark:text-white shadow-3xs focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 appearance-none cursor-pointer"
                       >
                         {WEST_AFRICAN_COUNTRIES.filter((c) => c.code !== 'ALL').map((c) => (
                           <option key={c.code} value={c.code}>
@@ -461,7 +461,7 @@ export const ContactSection: React.FC = memo(() => {
 
                   {/* Inquiry Category */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
                       Inquiry Category
                     </label>
                     <div className="relative">
@@ -471,7 +471,7 @@ export const ContactSection: React.FC = memo(() => {
                       <select
                         value={inquiryType}
                         onChange={(e) => setInquiryType(e.target.value)}
-                        className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#005F02]/30 appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-9 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] text-xs font-bold text-slate-900 dark:text-white shadow-3xs focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 appearance-none cursor-pointer"
                       >
                         {INQUIRY_TYPES.map((t) => (
                           <option key={t.id} value={t.id}>
@@ -489,7 +489,7 @@ export const ContactSection: React.FC = memo(() => {
                 {/* Subject */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
                       Subject
                     </label>
                     <span className="text-[10px] text-slate-400 font-mono">Optional</span>
@@ -499,14 +499,14 @@ export const ContactSection: React.FC = memo(() => {
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     placeholder="e.g. Deploying CodeTutor in our University Computer Lab"
-                    className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 text-xs font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[#005F02]/30 dark:focus:ring-emerald-500/30 transition-all"
+                    className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-normal focus:bg-white dark:focus:bg-[#0E1318] focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 shadow-3xs transition-all"
                   />
                 </div>
 
                 {/* Message */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 font-mono uppercase tracking-wider">
                       Your Message <span className="text-[#005F02] dark:text-emerald-400 font-bold">*</span>
                     </label>
                     <span className="text-[10px] text-slate-400 font-mono">
@@ -519,22 +519,22 @@ export const ContactSection: React.FC = memo(() => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tell us about your learning goals, university lab, school club, or inquiry..."
-                    className="w-full p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 text-xs font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[#005F02]/30 dark:focus:ring-emerald-500/30 transition-all"
+                    className="w-full p-3.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-normal focus:bg-white dark:focus:bg-[#0E1318] focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 shadow-3xs transition-all"
                   />
                 </div>
 
                 {/* Submit Action */}
-                <div className="pt-2 space-y-3">
+                <div className="pt-2 space-y-2.5">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-6 rounded-2xl text-xs font-extrabold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xl hover:shadow-[0_8px_24px_rgba(0,95,2,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.99]"
+                    className="w-full py-3 px-6 rounded-xl text-xs font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs border-2 border-[#005F02] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
                   >
                     <SendIcon className="w-4 h-4" />
                     <span>{isSubmitting ? 'Sending Message...' : 'Send Message'}</span>
                   </button>
 
-                  <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 text-center font-medium">
                     <Shield className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                     <span>Your privacy is protected. Inquiries are stored securely.</span>
                   </div>
