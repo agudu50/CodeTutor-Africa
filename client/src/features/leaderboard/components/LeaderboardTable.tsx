@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { LeaderboardUser, LeaderboardTimeframe, LeaderboardMetric } from '@/types'
-import { Flame, ArrowUp, ArrowDown } from 'lucide-react'
+import { Flame, ArrowUp, ArrowDown, GraduationCap } from 'lucide-react'
 
 interface LeaderboardTableProps {
   users: LeaderboardUser[]
@@ -111,7 +111,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
           <thead>
             <tr className="border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-[#12161A] text-[11px] font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
               <th className="py-3.5 px-4 text-center w-16">Rank</th>
-              <th className="py-3.5 px-4">Learner</th>
+              <th className="py-3.5 px-4">Member Profile</th>
               <th className="py-3.5 px-4 hidden sm:table-cell">Tier</th>
               <th className="py-3.5 px-4 text-center">Streak</th>
               <th className="py-3.5 px-4 hidden md:table-cell text-center">Solved</th>
@@ -163,6 +163,12 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                           <span className="font-extrabold text-slate-900 dark:text-white truncate">
                             {user.name}
                           </span>
+                          {user.role === 'mentor' && (
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 text-[9px] font-mono font-black border border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                              <GraduationCap className="w-2.5 h-2.5" />
+                              MENTOR
+                            </span>
+                          )}
                           {isCurrentUser && (
                             <span className="px-1.5 py-0.2 rounded-md bg-[#005F02] text-white text-[9px] font-mono font-black border border-[#005F02]">
                               YOU
@@ -172,10 +178,10 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                             {user.countryCode}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate">
                           <span>@{user.username}</span>
                           <span>•</span>
-                          <span className="capitalize">{user.favoriteLanguage}</span>
+                          <span className="capitalize">{user.specialization || user.favoriteLanguage}</span>
                         </div>
                       </div>
                     </div>

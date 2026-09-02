@@ -4,7 +4,7 @@ import { MOCK_LEADERBOARD_USERS, WEST_AFRICAN_COUNTRIES } from '../data/mockLead
 import { LeaderboardPodium } from '../components/LeaderboardPodium'
 import { LeaderboardTable } from '../components/LeaderboardTable'
 import { UserRankCard } from '../components/UserRankCard'
-import { LeaderboardTimeframe, LeaderboardMetric, LeaderboardUser } from '@/types'
+import { LeaderboardTimeframe, LeaderboardMetric, LeaderboardUser, LeaderboardRoleFilter } from '@/types'
 import {
   Trophy,
   Flame,
@@ -14,17 +14,25 @@ import {
   Shield,
   Clock,
   Globe,
+  GraduationCap,
+  Users,
+  UserCheck,
 } from 'lucide-react'
 
 export const LeaderboardPage: React.FC = () => {
   const [timeframe, setTimeframe] = useState<LeaderboardTimeframe>('weekly')
   const [metric, setMetric] = useState<LeaderboardMetric>('points')
+  const [roleFilter, setRoleFilter] = useState<LeaderboardRoleFilter>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [countryFilter, setCountryFilter] = useState('ALL')
 
-  // Calculate and sort rankings dynamically based on selected timeframe & metric
+  // Calculate and sort rankings dynamically based on selected timeframe, metric & role filter
   const sortedUsers = useMemo(() => {
-    const raw = [...MOCK_LEADERBOARD_USERS]
+    let raw = [...MOCK_LEADERBOARD_USERS]
+
+    if (roleFilter !== 'all') {
+      raw = raw.filter((u) => u.role === roleFilter)
+    }
 
     const getScore = (u: LeaderboardUser) => {
       if (metric === 'streak') return u.streakDays
@@ -42,7 +50,7 @@ export const LeaderboardPage: React.FC = () => {
       ...u,
       rank: idx + 1,
     }))
-  }, [timeframe, metric])
+  }, [timeframe, metric, roleFilter])
 
   // Filter by search and country
   const filteredUsers = useMemo(() => {
@@ -82,6 +90,12 @@ export const LeaderboardPage: React.FC = () => {
     { id: 'problems', label: 'Solved', icon: <Target className="w-3.5 h-3.5 text-emerald-500" /> },
   ]
 
+  const roleTabs: { id: LeaderboardRoleFilter; label: string; icon: React.ReactNode }[] = [
+    { id: 'all', label: 'All Ranks', icon: <Users className="w-3.5 h-3.5" /> },
+    { id: 'learner', label: 'Learners', icon: <UserCheck className="w-3.5 h-3.5" /> },
+    { id: 'mentor', label: 'Mentors', icon: <GraduationCap className="w-3.5 h-3.5" /> },
+  ]
+
   return (
     <PageContainer maxWidth="2xl" className="space-y-5">
       {/* ═══════════════════════════════════════════════════════════════
@@ -98,7 +112,7 @@ export const LeaderboardPage: React.FC = () => {
             </h1>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-            Compete, climb tiers, and celebrate continuous coding consistency with learners across Africa.
+            Compete, climb tiers, and celebrate continuous coding consistency with learners and mentors across Africa.
           </p>
         </div>
 
@@ -113,28 +127,53 @@ export const LeaderboardPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          CONTROLS TOOLBAR: COMPACT TIMEFRAME + METRIC PILLS + SEARCH
+          CONTROLS TOOLBAR: COMPACT TIMEFRAME + ROLE TABS + METRIC PILLS + SEARCH
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5 p-3 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
-        {/* Compact Timeframe Segmented Control */}
-        <div className="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 shrink-0 self-start lg:self-auto">
-          {timeframeTabs.map((tab) => {
-            const isActive = timeframe === tab.id
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setTimeframe(tab.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-mono transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
-                  isActive
-                    ? 'bg-[#005F02] text-white border-[#005F02]'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
-                }`}
-              >
-                {tab.label}
-              </button>
-            )
-          })}
+        {/* Left Controls: Timeframe & Role Segmented Controls */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Timeframe Segmented Control */}
+          <div className="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 shrink-0">
+            {timeframeTabs.map((tab) => {
+              const isActive = timeframe === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setTimeframe(tab.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black font-mono transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
+                    isActive
+                      ? 'bg-[#005F02] text-white border-[#005F02]'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Role Filter Segmented Control (All / Learners / Mentors) */}
+          <div className="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 shrink-0">
+            {roleTabs.map((tab) => {
+              const isActive = roleFilter === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setRoleFilter(tab.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black font-mono transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
+                    isActive
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
+                  }`}
+                >
+                  {tab.icon}
+                  <span>{tab.label}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         {/* Right side: Metric Selector & Search */}
@@ -150,7 +189,7 @@ export const LeaderboardPage: React.FC = () => {
                   onClick={() => setMetric(m.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
                     isSelected
-                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white'
+                      ? 'bg-[#005F02] text-white border-[#005F02]'
                       : 'bg-slate-50 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-400'
                   }`}
                 >
@@ -179,14 +218,14 @@ export const LeaderboardPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Learner Search Input */}
+            {/* Learner/Mentor Search Input */}
             <div className="relative w-full sm:w-44">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Filter learner..."
+                placeholder="Search member..."
                 className="w-full pl-8 pr-3 py-1.5 text-xs font-mono rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#005F02]"
               />
             </div>

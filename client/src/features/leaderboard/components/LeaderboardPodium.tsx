@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { LeaderboardUser, LeaderboardTimeframe, LeaderboardMetric } from '@/types'
-import { Flame, Trophy, Medal, Award, Crown } from 'lucide-react'
+import { Flame, Trophy, Medal, Award, Crown, GraduationCap } from 'lucide-react'
 
 interface LeaderboardPodiumProps {
   topUsers: LeaderboardUser[]
@@ -89,11 +89,17 @@ export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
             </div>
           </div>
 
-          <div className="mt-3.5 text-center space-y-0.5 w-full">
-            <div className="flex items-center justify-center gap-1.5">
+          <div className="mt-3.5 text-center space-y-1 w-full">
+            <div className="flex items-center justify-center gap-1.5 flex-wrap">
               <h3 className="text-sm font-black text-slate-900 dark:text-white truncate max-w-[150px]">
                 {second.name}
               </h3>
+              {second.role === 'mentor' && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 text-[9px] font-mono font-black border border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                  <GraduationCap className="w-2.5 h-2.5" />
+                  MENTOR
+                </span>
+              )}
               <span className="px-1.5 py-0.2 rounded-md border-2 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[10px] font-mono text-slate-700 dark:text-slate-300 font-bold">
                 {second.countryCode}
               </span>
@@ -132,11 +138,17 @@ export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
             </div>
           </div>
 
-          <div className="mt-3.5 text-center space-y-0.5 w-full">
-            <div className="flex items-center justify-center gap-1.5">
+          <div className="mt-3.5 text-center space-y-1 w-full">
+            <div className="flex items-center justify-center gap-1.5 flex-wrap">
               <h3 className="text-base font-black text-slate-900 dark:text-white truncate max-w-[180px]">
                 {first.name}
               </h3>
+              {first.role === 'mentor' && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 text-[9px] font-mono font-black border border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                  <GraduationCap className="w-2.5 h-2.5" />
+                  MENTOR
+                </span>
+              )}
               <span className="px-1.5 py-0.2 rounded-md border-2 border-amber-300 dark:border-amber-700 bg-amber-100 dark:bg-amber-950 text-[10px] font-mono text-amber-900 dark:text-amber-300 font-black">
                 {first.countryCode}
               </span>
@@ -175,11 +187,17 @@ export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
             </div>
           </div>
 
-          <div className="mt-3.5 text-center space-y-0.5 w-full">
-            <div className="flex items-center justify-center gap-1.5">
+          <div className="mt-3.5 text-center space-y-1 w-full">
+            <div className="flex items-center justify-center gap-1.5 flex-wrap">
               <h3 className="text-sm font-black text-slate-900 dark:text-white truncate max-w-[150px]">
                 {third.name}
               </h3>
+              {third.role === 'mentor' && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 text-[9px] font-mono font-black border border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                  <GraduationCap className="w-2.5 h-2.5" />
+                  MENTOR
+                </span>
+              )}
               <span className="px-1.5 py-0.2 rounded-md border-2 border-amber-300 dark:border-amber-800 bg-amber-100 dark:bg-amber-950 text-[10px] font-mono text-amber-900 dark:text-amber-300 font-bold">
                 {third.countryCode}
               </span>
