@@ -43,7 +43,7 @@ const LANGUAGE_SHARES: LanguageShare[] = [
   {
     name: 'Python',
     key: 'python',
-    percent: 48,
+    percent: 42,
     solved: 24,
     xp: 1180,
     color: 'bg-[#005F02] text-white',
@@ -54,7 +54,7 @@ const LANGUAGE_SHARES: LanguageShare[] = [
   {
     name: 'JavaScript',
     key: 'javascript',
-    percent: 28,
+    percent: 24,
     solved: 8,
     xp: 680,
     color: 'bg-amber-500 text-white',
@@ -65,7 +65,7 @@ const LANGUAGE_SHARES: LanguageShare[] = [
   {
     name: 'Java',
     key: 'java',
-    percent: 16,
+    percent: 14,
     solved: 4,
     xp: 390,
     color: 'bg-rose-500 text-white',
@@ -74,15 +74,37 @@ const LANGUAGE_SHARES: LanguageShare[] = [
     icon: Cpu,
   },
   {
-    name: 'SQL & DB',
+    name: 'TypeScript',
+    key: 'typescript',
+    percent: 10,
+    solved: 3,
+    xp: 260,
+    color: 'bg-blue-600 text-white',
+    border: 'border-blue-300 dark:border-blue-800',
+    bg: 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-400',
+    icon: Code2,
+  },
+  {
+    name: 'SQL & Database',
     key: 'sql',
-    percent: 8,
+    percent: 6,
     solved: 2,
-    xp: 200,
-    color: 'bg-purple-500 text-white',
+    xp: 180,
+    color: 'bg-purple-600 text-white',
     border: 'border-purple-300 dark:border-purple-800',
     bg: 'bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-400',
     icon: Database,
+  },
+  {
+    name: 'HTML & CSS',
+    key: 'web',
+    percent: 4,
+    solved: 1,
+    xp: 90,
+    color: 'bg-orange-500 text-white',
+    border: 'border-orange-300 dark:border-orange-800',
+    bg: 'bg-orange-100 dark:bg-orange-950/80 text-orange-800 dark:text-orange-400',
+    icon: Layers,
   },
 ]
 
@@ -290,15 +312,20 @@ export const LearningAnalyticsCharts: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         {/* Graph 2A: Language Competency Share */}
-        <div className="p-5 sm:p-6 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs flex flex-col justify-between h-full space-y-5">
+        <div className="p-5 sm:p-6 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs flex flex-col justify-between h-full space-y-4">
           <div className="space-y-1 pb-3 border-b-2 border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
-                <Layers className="w-4 h-4" />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-black text-slate-900 dark:text-white">
+                  Track Mastery Distribution
+                </h3>
               </div>
-              <h3 className="text-base font-black text-slate-900 dark:text-white">
-                Track Mastery Distribution
-              </h3>
+              <span className="px-2.5 py-0.5 rounded-lg border-2 border-amber-300 dark:border-amber-800 bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-mono text-[11px] font-black shadow-3xs shrink-0">
+                {LANGUAGE_SHARES.length} Tracks
+              </span>
             </div>
             <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
               Proportion of solved coding drills across curriculum language tracks.
@@ -312,8 +339,8 @@ export const LearningAnalyticsCharts: React.FC = () => {
                 <div
                   key={item.key}
                   style={{ width: `${item.percent}%` }}
-                  title={`${item.name}: ${item.percent}%`}
-                  className={`${item.color} h-full transition-all`}
+                  title={`${item.name}: ${item.percent}% (${item.solved} Solved)`}
+                  className={`${item.color} h-full transition-all hover:opacity-90`}
                 />
               ))}
             </div>
@@ -325,16 +352,16 @@ export const LearningAnalyticsCharts: React.FC = () => {
             </div>
           </div>
 
-          {/* Language Metric Cards Grid */}
-          <div className="grid grid-cols-2 gap-3 pt-1">
+          {/* Scrollable Language List with Auto-Scaling Container */}
+          <div className="max-h-[220px] sm:max-h-[235px] overflow-y-auto pr-1 space-y-2 select-none">
             {LANGUAGE_SHARES.map((item) => {
               const IconComp = item.icon
               return (
                 <div
                   key={item.key}
-                  className="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] flex items-center justify-between gap-2 shadow-3xs"
+                  className="p-2.5 sm:p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-[#12161A] flex items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-3xs"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <div className={`w-8 h-8 rounded-xl border-2 ${item.border} ${item.bg} flex items-center justify-center shrink-0`}>
                       <IconComp className="w-4 h-4" />
                     </div>
@@ -342,14 +369,23 @@ export const LearningAnalyticsCharts: React.FC = () => {
                       <span className="text-xs font-black text-slate-900 dark:text-white block truncate">
                         {item.name}
                       </span>
-                      <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
-                        {item.solved} Solved
+                      <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 font-bold block">
+                        {item.solved} Solved • {item.xp} XP
                       </span>
                     </div>
                   </div>
-                  <span className="text-xs font-mono font-black text-slate-900 dark:text-white shrink-0">
-                    {item.percent}%
-                  </span>
+
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <div className="w-16 sm:w-20 h-2 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 overflow-hidden hidden sm:block">
+                      <div
+                        className={`h-full rounded-full ${item.color.split(' ')[0]}`}
+                        style={{ width: `${item.percent}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-mono font-black text-slate-900 dark:text-white min-w-[36px] text-right">
+                      {item.percent}%
+                    </span>
+                  </div>
                 </div>
               )
             })}
