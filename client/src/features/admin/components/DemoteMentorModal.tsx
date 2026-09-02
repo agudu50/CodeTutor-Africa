@@ -339,12 +339,12 @@ export const DemoteMentorModal: React.FC<DemoteMentorModalProps> = ({
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="p-4 sm:p-5 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0E1318] flex items-center justify-end gap-2.5">
+        <div className="p-4 sm:p-5 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0E1318] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-2.5">
           <button
             type="button"
             onClick={onClose}
             disabled={isProcessing}
-            className="h-10 px-4 rounded-xl text-xs font-mono font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 hover:border-slate-400 active:scale-95 shadow-3xs cursor-pointer transition-all disabled:opacity-50"
+            className="w-full sm:w-auto h-10 px-4 rounded-xl text-xs font-mono font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 hover:border-slate-400 active:scale-95 shadow-3xs cursor-pointer transition-all disabled:opacity-50 text-center justify-center flex items-center"
           >
             Cancel
           </button>
@@ -353,7 +353,7 @@ export const DemoteMentorModal: React.FC<DemoteMentorModalProps> = ({
             type="button"
             onClick={handleConfirm}
             disabled={isProcessing}
-            className="h-10 px-5 rounded-xl text-xs font-mono font-black bg-rose-600 hover:bg-rose-700 text-white border-2 border-rose-600 active:scale-95 shadow-xs cursor-pointer transition-all inline-flex items-center gap-2 disabled:opacity-50"
+            className="w-full sm:w-auto h-10 px-5 rounded-xl text-xs font-mono font-black bg-rose-600 hover:bg-rose-700 text-white border-2 border-rose-600 active:scale-95 shadow-xs cursor-pointer transition-all inline-flex items-center justify-center gap-2 disabled:opacity-50 text-center"
           >
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>{isProcessing ? 'Demoting...' : 'Confirm Demote to Learner'}</span>
