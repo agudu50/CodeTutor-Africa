@@ -7,7 +7,6 @@ import { GameLanguageSelector } from './GameLanguageSelector'
 import { GameAnimation3DRenderer } from './3d/GameAnimation3DRenderer'
 import { VictoryBurst3D } from './3d/VictoryBurst3D'
 import { WarpSpeed3D } from './3d/WarpSpeed3D'
-import { Button } from '@/components/ui'
 import {
   Timer,
   Zap,
@@ -22,6 +21,7 @@ import {
   Code2,
   ChevronRight,
   ArrowLeft,
+  Terminal,
 } from 'lucide-react'
 import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 
@@ -282,76 +282,76 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
   return (
     <div className="w-full space-y-4 sm:space-y-5">
       {/* Game Header Bar (Ultra-Compact Single-Row HUD) */}
-      <div className="sticky top-2 z-30 px-3 sm:px-4 py-2 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800/90 shadow-md flex items-center justify-between gap-3 flex-wrap">
+      <div className="sticky top-2 z-30 px-3.5 sm:px-5 py-3 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex items-center justify-between gap-3 flex-wrap">
         {/* Left: Back Button + Lesson & Challenge Title */}
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/80 cursor-pointer transition-all shadow-xs shrink-0"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-mono font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-[#161B22] hover:bg-slate-200 dark:hover:bg-[#1f252e] border-2 border-slate-300 dark:border-slate-700 cursor-pointer transition-all shadow-3xs active:scale-95 shrink-0"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Back</span>
           </button>
 
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 shrink-0" />
+          <div className="h-5 w-px bg-slate-300 dark:border-slate-700 shrink-0" />
 
           <div className="flex items-center gap-2 min-w-0 flex-wrap">
-            <span className="inline-flex items-center text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 shrink-0">
+            <span className="inline-flex items-center text-[10px] font-mono font-black uppercase tracking-wider px-2.5 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 shadow-3xs shrink-0">
               Speedrun
             </span>
-            <span className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-tight truncate">
               {currentSnippet?.title || 'Syntax Speedrun'}
             </span>
             {currentSnippet?.lessonTitle && (
-              <span className="hidden sm:inline text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
+              <span className="hidden md:inline text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-[#161B22] px-2.5 py-0.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 truncate max-w-[200px]">
                 {currentSnippet.lessonTitle}
               </span>
             )}
             {isOffline && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
-                <WifiOff className="w-2.5 h-2.5" /> Offline
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs shrink-0">
+                <WifiOff className="w-3 h-3" /> Offline
               </span>
             )}
           </div>
         </div>
 
         {/* Right: Live Metrics HUD */}
-        <div className="flex items-center gap-1.5 sm:gap-2 text-xs font-mono font-bold ml-auto shrink-0">
+        <div className="flex items-center gap-2 text-xs font-mono font-bold ml-auto shrink-0">
           {/* Prominent Live Timer */}
-          <div className={`flex items-center gap-1 px-2.5 py-1 rounded-xl border shadow-xs transition-all ${
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 shadow-3xs transition-all ${
             timeLeft <= 5 && isPlaying
               ? 'bg-rose-500 text-white border-rose-600 animate-pulse ring-2 ring-rose-500/40'
-              : 'bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-700/80'
+              : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-amber-300 dark:border-amber-800'
           }`}>
-            <Timer className={`w-3.5 h-3.5 ${timeLeft <= 5 && isPlaying ? 'text-white' : 'text-amber-600 dark:text-amber-400'}`} />
+            <Timer className={`w-3.5 h-3.5 ${timeLeft <= 5 && isPlaying ? 'text-white' : 'text-amber-700 dark:text-amber-400'}`} />
             <span className="text-xs font-black tracking-tight">{timeLeft}s</span>
           </div>
 
-          <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700/80 shadow-xs">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
             <Flame className="w-3.5 h-3.5 text-amber-500 fill-current" />
-            <span>{streak}x</span>
+            <span className="font-black">{streak}x</span>
           </div>
 
-          <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 shadow-xs">
-            <Trophy className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+            <Trophy className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
             <span className="font-black">{score}<span className="text-[10px] font-bold ml-0.5">pts</span></span>
           </div>
 
           <button
             type="button"
             onClick={handleToggleSound}
-            className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 cursor-pointer shadow-xs transition-colors"
+            className="h-9 w-9 rounded-xl text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-50 dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#1f252e] border-2 border-slate-300 dark:border-slate-700 cursor-pointer shadow-3xs transition-colors flex items-center justify-center active:scale-95"
             title={soundEnabled ? 'Mute sound' : 'Unmute sound'}
           >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-[#005F02] dark:text-emerald-400" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
           </button>
         </div>
       </div>
 
       {/* Language Selector (Visible only before round starts in global mode) */}
       {!isPlaying && !isGameOver && !initialChallengeTitle && (
-        <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-3xs">
+        <div className="p-3.5 sm:p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
           <GameLanguageSelector
             selectedLanguage={selectedLanguage}
             onSelectLanguage={handleLanguageChange}
@@ -361,140 +361,139 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
       {/* Main Game Surface */}
       {!isPlaying && !isGameOver ? (
-        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-slate-950 border border-slate-800 shadow-xl space-y-4">
-          <div className="relative h-44 sm:h-52 rounded-2xl overflow-hidden shadow-inner ring-1 ring-slate-800">
+        <div className="p-6 sm:p-8 md:p-10 text-center rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-6">
+          <div className="relative h-48 sm:h-56 rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 bg-slate-950 shadow-inner">
             <WarpSpeed3D />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/40 shadow-lg backdrop-blur-sm mb-2">
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-slate-950/40 pointer-events-none">
+              <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 flex items-center justify-center border-2 border-amber-300 dark:border-amber-800 shadow-3xs mb-2">
                 <Zap className="w-6 h-6" />
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Ready for the Speedrun?</h2>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed mt-1">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed mt-1 font-medium">
                 Type the exact code snippets in the VS Code editor as fast and accurately as you can before time expires.
               </p>
             </div>
           </div>
-          <div className="pt-1">
-            <Button variant="primary" size="lg" onClick={startGame} className="font-bold px-8 bg-[#005F02] hover:bg-[#004e02] text-white shadow-lg scale-105 transition-transform">
-              Start Speedrun Blitz
-            </Button>
+          <div>
+            <button
+              type="button"
+              onClick={startGame}
+              className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-2xl font-black text-sm bg-[#005F02] hover:bg-[#004e02] border-2 border-[#005F02] text-white shadow-xs active:scale-95 cursor-pointer transition-all"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Start Speedrun Blitz</span>
+            </button>
           </div>
         </div>
       ) : isGameOver ? (
-        <div className="relative overflow-hidden p-6 sm:p-10 text-center rounded-3xl bg-gradient-to-b from-white via-slate-50 to-white dark:from-slate-900 dark:via-slate-900/95 dark:to-slate-950 border border-slate-200/90 dark:border-slate-800/90 shadow-xl space-y-6 animate-in zoom-in-95 duration-200">
-          {/* Ambient Glows */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-amber-500/10 dark:bg-emerald-500/10 blur-3xl pointer-events-none rounded-full" />
-
+        <div className="p-6 sm:p-10 text-center rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-6 animate-in zoom-in-95 duration-200">
           <VictoryBurst3D />
 
           {/* Header & Badges */}
           <div className="relative z-10 space-y-2 max-w-lg mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-extrabold uppercase tracking-wider shadow-xs">
-              <Trophy className="w-3.5 h-3.5 text-amber-500" />
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 text-xs font-mono font-black uppercase tracking-wider shadow-3xs">
+              <Trophy className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span>Speedrun Run Complete</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
               {currentSnippet?.title || 'Challenge Finished!'}
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
               {score > 0
                 ? 'Great precision and speed! Your coding muscle memory is getting sharper.'
                 : 'Session ended. Review the syntax structure and try again to beat the clock!'}
             </p>
           </div>
 
-          {/* XP & Score Highlight Banner (Enhanced for High-Contrast Light & Dark Mode) */}
-          <div className="relative z-10 max-w-lg mx-auto grid grid-cols-2 gap-3 sm:gap-4">
+          {/* XP & Score Highlight Banner */}
+          <div className="relative z-10 max-w-lg mx-auto grid grid-cols-2 gap-3.5 sm:gap-4">
             {/* Points Card */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-emerald-50 via-emerald-100/60 to-white dark:from-emerald-950/60 dark:via-emerald-900/30 dark:to-slate-950 border-2 border-emerald-300 dark:border-emerald-700/60 shadow-sm flex flex-col items-center justify-center text-center">
-              <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-900 dark:text-emerald-300 mb-1">
-                <Trophy className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <div className="p-4 rounded-3xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-[#005F02] dark:text-emerald-400 mb-1">
+                <Trophy className="w-3.5 h-3.5" />
                 <span>Points Scored</span>
               </div>
-              <div className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-emerald-300 tracking-tight">
-                +{score} <span className="text-xs font-bold text-emerald-800/80 dark:text-emerald-400/80">PTS</span>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-[#005F02] dark:text-emerald-400 tracking-tight">
+                +{score} <span className="text-xs font-bold">PTS</span>
               </div>
             </div>
 
             {/* Accuracy Rating Card */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100/60 to-white dark:from-sky-950/60 dark:via-sky-900/30 dark:to-slate-950 border-2 border-sky-300 dark:border-sky-700/60 shadow-sm flex flex-col items-center justify-center text-center">
-              <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-sky-900 dark:text-sky-300 mb-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+            <div className="p-4 rounded-3xl bg-sky-100 dark:bg-sky-950/80 border-2 border-sky-300 dark:border-sky-800 shadow-3xs flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-sky-800 dark:text-sky-400 mb-1">
+                <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Accuracy Rating</span>
               </div>
-              <div className={`text-2xl sm:text-3xl font-black tracking-tight ${accuracy >= 90 ? 'text-sky-700 dark:text-sky-300' : 'text-amber-700 dark:text-amber-300'}`}>
+              <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight ${accuracy >= 90 ? 'text-sky-800 dark:text-sky-400' : 'text-amber-800 dark:text-amber-400'}`}>
                 {accuracy}%
               </div>
             </div>
           </div>
 
           {/* 4 Performance Metric Cards */}
-          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto font-mono text-center">
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
-                <Trophy className="w-3 h-3 text-emerald-600 dark:text-emerald-500" />
+          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3.5 max-w-xl mx-auto font-mono text-center">
+            <div className="p-4 rounded-3xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold mb-1">
+                <Trophy className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
                 <span>Final Score</span>
               </div>
               <span className="text-xl font-black text-slate-900 dark:text-white">{score}</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
+            <div className="p-4 rounded-3xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold mb-1">
                 <Flame className="w-3 h-3 text-amber-500 fill-current" />
                 <span>Max Streak</span>
               </div>
-              <span className="text-xl font-black text-amber-600 dark:text-amber-400">{streak}x</span>
+              <span className="text-xl font-black text-amber-800 dark:text-amber-400">{streak}x</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
-                <Zap className="w-3 h-3 text-emerald-600 dark:text-emerald-500" />
+            <div className="p-4 rounded-3xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold mb-1">
+                <Zap className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
                 <span>Speed</span>
               </div>
-              <span className="text-xl font-black text-emerald-700 dark:text-emerald-400">{wpm} WPM</span>
+              <span className="text-xl font-black text-[#005F02] dark:text-emerald-400">{wpm} WPM</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-sans font-bold mb-1">
-                <CheckCircle2 className="w-3 h-3 text-sky-600 dark:text-sky-500" />
+            <div className="p-4 rounded-3xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+              <div className="flex items-center justify-center gap-1 text-[10px] uppercase text-slate-500 dark:text-slate-400 font-bold mb-1">
+                <CheckCircle2 className="w-3 h-3 text-sky-600 dark:text-sky-400" />
                 <span>Accuracy</span>
               </div>
-              <span className="text-xl font-black text-sky-700 dark:text-sky-400">{accuracy}%</span>
+              <span className="text-xl font-black text-sky-800 dark:text-sky-400">{accuracy}%</span>
             </div>
           </div>
 
           {/* Action CTAs */}
-          <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-3">
-            <Button
-              variant="outline"
-              size="md"
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
               onClick={onBack}
-              className="font-bold text-xs px-5 rounded-xl border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="inline-flex items-center justify-center h-10 px-5 rounded-xl font-bold text-xs bg-slate-50 dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#1f252e] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs active:scale-95 cursor-pointer"
             >
               ← Back to Roadmap
-            </Button>
-            <Button
-              variant="primary"
-              size="md"
+            </button>
+            <button
+              type="button"
               onClick={restartGame}
-              leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
-              className="font-bold text-xs px-6 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white shadow-md hover:shadow-lg transition-all"
+              className="inline-flex items-center justify-center gap-1.5 h-10 px-6 rounded-xl font-black text-xs bg-[#005F02] hover:bg-[#004e02] text-white border-2 border-[#005F02] shadow-xs active:scale-95 cursor-pointer"
             >
-              Play Again
-            </Button>
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Play Again</span>
+            </button>
           </div>
         </div>
       ) : (
-        /* ═══ PLAYING STATE — full-width spacious side-by-side layout (Tablet & Desktop) ═══ */
+        /* ═══ PLAYING STATE — side-by-side layout ═══ */
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5 items-start">
 
-          {/* ── LEFT PANEL: 3D world + VS Code target reference (Sticky on Tablet & Desktop) ── */}
+          {/* ── LEFT PANEL: 3D world + VS Code target reference ── */}
           <div className="md:col-span-5 lg:col-span-5 flex flex-col gap-3.5 md:sticky md:top-24 self-start">
             {/* Expanded 3D canvas with HUD overlay */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-800 h-44 sm:h-48 md:h-52 bg-slate-950">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-slate-700 h-44 sm:h-48 md:h-52 bg-slate-950">
               <GameAnimation3DRenderer
                 animationType={currentSnippet?.animationType}
                 defaultForGame="speedrun"
@@ -510,7 +509,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                     <span className="text-emerald-400">PROGRESS</span>
                     <span className="text-white">{completionPercent}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-800/90 overflow-hidden shadow-inner">
+                  <div className="h-2 rounded-full bg-slate-800 overflow-hidden shadow-inner">
                     <div
                       className="h-full rounded-full transition-all duration-300"
                       style={{
@@ -526,23 +525,23 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 </div>
                 <div className="ml-2 flex items-center gap-2 shrink-0">
                   {/* In-HUD Countdown Badge */}
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-mono text-[10px] font-extrabold ${
-                    timeLeft <= 5 ? 'bg-rose-500 text-white animate-pulse' : 'bg-slate-900/80 text-amber-300 border border-amber-400/40'
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl font-mono text-[10px] font-black border-2 ${
+                    timeLeft <= 5 ? 'bg-rose-500 text-white border-rose-600 animate-pulse' : 'bg-slate-900 text-amber-300 border-amber-400'
                   }`}>
                     <Timer className="w-2.5 h-2.5" />
                     <span>{timeLeft}s</span>
                   </span>
 
                   {isCodeComplete ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold font-mono shadow-xs">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-[#005F02] text-white text-[10px] font-black font-mono border-2 border-[#005F02] shadow-xs">
                       <CheckCircle2 className="w-3 h-3" /> DONE
                     </span>
                   ) : accuracy < 90 && userInput.length > 0 ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-rose-500 text-white text-[10px] font-extrabold font-mono shadow-xs">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-rose-600 text-white text-[10px] font-black font-mono border-2 border-rose-600 shadow-xs">
                       <AlertTriangle className="w-3 h-3" /> ERR
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold font-mono border border-emerald-500/40">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-950 text-emerald-300 text-[10px] font-black font-mono border-2 border-emerald-600">
                       <Zap className="w-3 h-3" /> {wpm} WPM
                     </span>
                   )}
@@ -551,23 +550,23 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
             </div>
 
             {/* Target Code VS Code Reference Window */}
-            <div className="rounded-2xl border border-slate-700/90 bg-[#1e1e1e] overflow-hidden shadow-2xl flex-1 flex flex-col justify-between text-slate-200">
+            <div className="rounded-3xl border-2 border-slate-700 bg-[#1e1e1e] overflow-hidden shadow-2xl flex-1 flex flex-col justify-between text-slate-200">
               <div>
                 {/* VS Code Window Titlebar */}
-                <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
+                <div className="h-9 px-3.5 bg-[#1F1F1F] border-b-2 border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0">
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E] inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29] inline-block shadow-xs" />
                   </div>
 
                   <div className="flex items-center gap-2 truncate">
-                    <span className="text-[11px] font-mono text-slate-300 font-semibold truncate">
+                    <span className="text-[11px] font-mono text-slate-300 font-bold truncate">
                       target.{fileExtension} {initialChallengeTitle ? '(Target Reference)' : `(Snippet ${snippetIndex + 1}/${activeSnippets.length})`}
                     </span>
                   </div>
 
-                  <div className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono text-slate-400 flex items-center gap-1 select-none">
+                  <div className="px-2 py-0.5 rounded-lg bg-slate-800 border border-slate-700 text-[10px] font-mono font-bold text-slate-400 flex items-center gap-1 select-none">
                     <span>Manual Typing</span>
                   </div>
                 </div>
@@ -575,10 +574,10 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 {/* File Tab Bar */}
                 <div className="h-8 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0">
                   <div className="flex items-center h-full">
-                    <div className="h-full px-3 bg-[#1E1E1E] border-t-2 border-t-amber-500 text-xs font-mono font-medium text-slate-100 flex items-center gap-2 border-r border-[#252526]">
+                    <div className="h-full px-3 bg-[#1E1E1E] text-xs font-mono font-bold text-slate-100 flex items-center gap-2 border-r border-[#252526]">
                       <Code2 className={`w-3.5 h-3.5 ${fileIconColor} shrink-0`} />
-                      <span className="font-semibold">target.{fileExtension}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">TARGET</span>
+                      <span>target.{fileExtension}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-amber-950 text-amber-400 border border-amber-700 font-mono font-black">TARGET</span>
                     </div>
                   </div>
                   {currentSnippet.courseTitle && (
@@ -589,15 +588,15 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 </div>
 
                 {/* Step 1 Instructions callout */}
-                <div className="px-3.5 py-2 bg-[#162a1a] border-b border-[#234229] flex items-center gap-2 text-xs text-emerald-300 font-medium">
-                  <span className="font-bold text-xs bg-[#005F02] text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0 text-[10px]">1</span>
+                <div className="px-3.5 py-2.5 bg-[#162a1a] border-b-2 border-[#234229] flex items-center gap-2 text-xs text-emerald-300 font-medium">
+                  <span className="font-mono font-black text-xs bg-[#005F02] text-white rounded-lg w-5 h-5 flex items-center justify-center shrink-0 text-[11px]">1</span>
                   <span><strong>Target Code to Type:</strong> Type this exact snippet into the VS Code arena on the right →</span>
                 </div>
 
                 {/* Code Canvas with Gutter + Syntax Highlight */}
                 <div className="flex overflow-auto max-h-56 bg-[#1E1E1E]">
                   {/* Line numbers */}
-                  <div className="w-9 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
+                  <div className="w-10 py-3 bg-[#1E1E1E] border-r-2 border-[#2d2d2d] text-right pr-2 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0">
                     {Array.from({ length: targetLineCount }).map((_, i) => (
                       <div key={i}>{i + 1}</div>
                     ))}
@@ -610,12 +609,12 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
               </div>
 
               {/* Description & Concept Context */}
-              <div className="px-3.5 py-2.5 text-xs text-slate-400 bg-[#181818] border-t border-[#2D2D2D] space-y-1">
-                <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px]">
-                  <Zap className="w-3 h-3" />
+              <div className="px-4 py-3 text-xs text-slate-400 bg-[#181818] border-t-2 border-[#2D2D2D] space-y-1">
+                <div className="flex items-center gap-1.5 text-amber-400 font-bold text-xs font-mono">
+                  <Zap className="w-3.5 h-3.5" />
                   <span>Drill Focus: {currentSnippet.title}</span>
                 </div>
-                <p className="text-slate-300 leading-relaxed text-[11px]">
+                <p className="text-slate-300 leading-relaxed text-xs font-medium">
                   {currentSnippet.description && !currentSnippet.description.startsWith('Curriculum drill for Module')
                     ? currentSnippet.description
                     : `Practice muscle memory and syntax accuracy for ${currentSnippet.lessonTitle || 'this module'}. Type every token and symbol carefully into the arena on the right.`}
@@ -625,27 +624,27 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
           </div>
 
           {/* ── RIGHT PANEL: VS CODE TYPING ARENA ── */}
-          <div className="md:col-span-7 lg:col-span-7 flex flex-col justify-between gap-3">
-            <div className="space-y-2">
+          <div className="md:col-span-7 lg:col-span-7 flex flex-col justify-between gap-3.5">
+            <div className="space-y-2.5">
               {/* Accuracy / WPM bar & Step 2 Guide + INLINE TIMER */}
               <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-slate-500 px-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-xs bg-[#005F02] text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0 text-[10px]">2</span>
-                  <span className="font-extrabold text-slate-900 dark:text-white">Your Typing Arena</span>
+                  <span className="font-mono font-black text-xs bg-[#005F02] text-white rounded-lg w-5 h-5 flex items-center justify-center shrink-0 text-[11px]">2</span>
+                  <span className="font-black text-slate-900 dark:text-white">Your Typing Arena</span>
                 </div>
 
                 {/* Direct Eye-Level Countdown Timer in Typing Arena */}
                 <div className="flex items-center gap-3">
-                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border font-bold text-xs transition-all ${
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border-2 font-mono font-bold text-xs transition-all shadow-3xs ${
                     timeLeft <= 5
                       ? 'bg-rose-500 text-white border-rose-600 animate-pulse'
-                      : 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border-amber-300/80 dark:border-amber-800/80'
+                      : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-amber-300 dark:border-amber-800'
                   }`}>
                     <Timer className="w-3.5 h-3.5" />
                     <span>{timeLeft}s left</span>
                   </div>
 
-                  <span className={accuracy < 90 && userInput.length > 0 ? 'text-rose-500 font-bold' : 'text-emerald-600 dark:text-emerald-400 font-bold'}>
+                  <span className={`font-mono font-bold ${accuracy < 90 && userInput.length > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-[#005F02] dark:text-emerald-400'}`}>
                     {accuracy}% acc · {wpm} WPM
                   </span>
                 </div>
@@ -656,26 +655,26 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                   ═══════════════════════════════════════════════════════════ */}
               <div
                 onClick={() => inputRef.current?.focus()}
-                className={`rounded-2xl border-2 overflow-hidden shadow-2xl bg-[#1e1e1e] flex flex-col transition-all text-slate-200 cursor-text ${
+                className={`rounded-3xl border-2 overflow-hidden shadow-2xl bg-[#1e1e1e] flex flex-col transition-all text-slate-200 cursor-text ${
                   isCodeComplete
                     ? 'border-emerald-500 ring-2 ring-emerald-500/30'
                     : accuracy < 90 && userInput.length > 0
                     ? 'border-rose-500 ring-2 ring-rose-500/30'
-                    : 'border-slate-700 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20'
+                    : 'border-slate-700 focus-within:border-emerald-500'
                 }`}
               >
                 {/* VS Code Window Titlebar */}
-                <div className="h-9 px-3 bg-[#1F1F1F] border-b border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0 select-none">
+                <div className="h-9 px-3.5 bg-[#1F1F1F] border-b-2 border-[#2D2D2D] flex items-center justify-between gap-3 shrink-0 select-none">
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/60 inline-block shadow-xs" />
-                    <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/60 inline-block shadow-xs" />
-                    <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/60 inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E] inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] inline-block shadow-xs" />
+                    <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29] inline-block shadow-xs" />
                   </div>
 
                   <div className="flex-1 max-w-xs mx-auto flex items-center justify-center">
-                    <div className="w-full h-6 px-2.5 rounded bg-[#2A2A2A] border border-[#3A3A3A] text-[11px] text-slate-400 flex items-center justify-center gap-1.5 truncate shadow-inner">
-                      <span className="text-slate-500 text-[10px]">⌨️</span>
-                      <span className="truncate text-slate-300">speedrun.{fileExtension} — CodeTutor Arena</span>
+                    <div className="w-full h-6 px-2.5 rounded-lg bg-[#2A2A2A] border border-[#3A3A3A] text-[11px] font-mono text-slate-300 flex items-center justify-center gap-1.5 truncate shadow-inner">
+                      <Terminal className="w-3 h-3 text-slate-400" />
+                      <span className="truncate">speedrun.{fileExtension} — CodeTutor Arena</span>
                     </div>
                   </div>
 
@@ -689,7 +688,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                       setValidationError(null)
                       setTimeout(() => inputRef.current?.focus(), 50)
                     }}
-                    className="h-6 px-2 text-[10px] font-mono text-slate-400 hover:text-slate-200 hover:bg-[#333333] rounded transition-colors flex items-center gap-1 cursor-pointer"
+                    className="h-6 px-2.5 text-[10px] font-mono font-bold text-slate-400 hover:text-slate-200 hover:bg-[#333333] rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
                     title="Clear arena"
                   >
                     <RotateCcw className="w-3 h-3" />
@@ -699,7 +698,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
                 {/* Paste warning banner */}
                 {pasteWarning && (
-                  <div className="m-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
+                  <div className="m-3 p-3 rounded-2xl bg-amber-950/80 border-2 border-amber-800 text-amber-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
                     <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                     <span><strong>Pasting is disabled in Speedrun!</strong> Type the snippet manually to build muscle memory.</span>
                   </div>
@@ -707,7 +706,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
 
                 {/* Validation error banner */}
                 {validationError && (
-                  <div className="m-2.5 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
+                  <div className="m-3 p-3 rounded-2xl bg-rose-950/80 border-2 border-rose-800 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
                     <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
                     <span>{validationError}</span>
                   </div>
@@ -716,17 +715,17 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 {/* File Tab Bar & Breadcrumbs */}
                 <div className="h-8 px-2 bg-[#181818] border-b border-[#252526] flex items-center justify-between shrink-0 select-none">
                   <div className="flex items-center h-full">
-                    <div className="h-full px-3 bg-[#1E1E1E] border-t-2 border-t-[#005F02] text-xs font-mono font-medium text-slate-100 flex items-center gap-2 border-r border-[#252526]">
+                    <div className="h-full px-3 bg-[#1E1E1E] text-xs font-mono font-bold text-slate-100 flex items-center gap-2 border-r border-[#252526]">
                       <Code2 className={`w-3.5 h-3.5 ${fileIconColor} shrink-0`} />
-                      <span className="font-semibold">speedrun.{fileExtension}</span>
+                      <span>speedrun.{fileExtension}</span>
                       <span className="text-[10px] text-slate-500">●</span>
                     </div>
                   </div>
 
-                  <div className="hidden sm:flex items-center gap-1 text-[10px] font-mono text-slate-500">
+                  <div className="hidden sm:flex items-center gap-1 text-[10px] font-mono text-slate-400">
                     <span>speedrun</span>
                     <ChevronRight className="w-3 h-3 text-slate-600" />
-                    <span className="text-slate-300">arena</span>
+                    <span className="text-slate-200 font-bold">arena</span>
                   </div>
                 </div>
 
@@ -735,7 +734,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                   {/* Line Numbers Gutter */}
                   <div
                     ref={gutterRef}
-                    className="w-10 sm:w-11 py-3 bg-[#1E1E1E] border-r border-[#2d2d2d] text-right pr-2 sm:pr-2.5 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0 overflow-hidden"
+                    className="w-10 sm:w-11 py-3 bg-[#1E1E1E] border-r-2 border-[#2d2d2d] text-right pr-2 sm:pr-2.5 select-none text-[12px] font-mono text-[#858585] leading-6 shrink-0 overflow-hidden"
                   >
                     {Array.from({ length: displayLineCount }).map((_, i) => (
                       <div
@@ -770,7 +769,7 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                 </div>
 
                 {/* VS Code Bottom Action Bar & Status Bar */}
-                <div className="bg-[#181818] border-t border-[#2D2D2D] p-2.5 sm:px-3 sm:py-2 flex flex-wrap items-center justify-between gap-2.5 select-none">
+                <div className="bg-[#181818] border-t-2 border-[#2D2D2D] p-3 sm:px-4 sm:py-2.5 flex flex-wrap items-center justify-between gap-2.5 select-none">
                   {/* Left: VS Code Status info */}
                   <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
                     <span className="flex items-center gap-1.5 font-bold text-white">
@@ -788,8 +787,8 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                   {/* Right: Submit Button */}
                   <div className="flex items-center gap-2">
                     {isCodeComplete ? (
-                      <span className="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> 100% Match
+                      <span className="text-xs font-mono text-[#005F02] dark:text-emerald-400 font-black flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> 100% Match
                       </span>
                     ) : null}
 
@@ -800,57 +799,46 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
                         handleSubmitCode()
                       }}
                       disabled={userInput.trim().length === 0}
-                      className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed ${
-                        isCodeComplete
-                          ? 'bg-[#005F02] hover:bg-[#004e02] text-white ring-2 ring-emerald-400/40 scale-105'
-                          : 'bg-[#005F02] hover:bg-[#004e02] text-white'
-                      }`}
+                      className="inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-black bg-[#005F02] hover:bg-[#004e02] border-2 border-[#005F02] text-white transition-all cursor-pointer shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <Zap className="w-3.5 h-3.5" />
                       <span>Validate & Submit</span>
                     </button>
                   </div>
                 </div>
-
-                {/* VS Code Bottom Accent Line */}
-                <div className="h-1 bg-[#005F02] w-full" />
               </div>
             </div>
 
             {/* Developer Cheatbar & Keyboard Shortcuts */}
-            <div className={`p-2.5 sm:p-3 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-2xs ${
-              isCodeComplete
-                ? 'bg-emerald-500/10 border-emerald-400/50 dark:border-emerald-500/30 text-emerald-900 dark:text-emerald-300 ring-1 ring-emerald-500/20'
-                : 'bg-white/90 dark:bg-slate-900/90 border-slate-200/90 dark:border-slate-800/90 text-slate-600 dark:text-slate-300'
-            }`}>
+            <div className="p-3 sm:px-4 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
               <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 shrink-0">
-                  <Code2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-[11px] font-bold">Shortcuts:</span>
+                <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200 shrink-0">
+                  <Code2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                  <span className="text-[11px] font-mono font-bold">Shortcuts:</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-[11px]">
                   <span className="inline-flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold shadow-3xs">
+                    <kbd className="px-1.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 font-mono text-[10px] font-black shadow-3xs">
                       Enter ↵
                     </kbd>
-                    <span className="text-slate-500 dark:text-slate-400">New Line</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-medium">New Line</span>
                   </span>
 
                   <span className="text-slate-300 dark:text-slate-700">•</span>
 
                   <span className="inline-flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold shadow-3xs">
+                    <kbd className="px-1.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 font-mono text-[10px] font-black shadow-3xs">
                       Ctrl + Enter
                     </kbd>
-                    <span className="text-slate-500 dark:text-slate-400">Submit Code</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-medium">Submit Code</span>
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
-                <span className={`w-2 h-2 rounded-full ${isCodeComplete ? 'bg-emerald-500 animate-pulse' : 'bg-emerald-400'}`} />
-                <span className="font-mono text-[10.5px] uppercase font-bold text-slate-500 dark:text-slate-400">
+                <span className={`w-2 h-2 rounded-full ${isCodeComplete ? 'bg-[#005F02] dark:bg-emerald-400 animate-pulse' : 'bg-emerald-500'}`} />
+                <span className="font-mono text-[10.5px] uppercase font-black text-slate-600 dark:text-slate-400">
                   VS Code Arena
                 </span>
               </div>
@@ -861,3 +849,5 @@ export const SyntaxSpeedrunGame: React.FC<SyntaxSpeedrunGameProps> = ({
     </div>
   )
 }
+
+

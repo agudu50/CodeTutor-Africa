@@ -21,9 +21,9 @@ export const GameLanguageSelector: React.FC<GameLanguageSelectorProps> = ({
     : GAME_LANGUAGES
 
   return (
-    <div className={`flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full ${className}`}>
-      <div className="flex items-center gap-1 text-slate-400 text-xs font-semibold shrink-0 mr-1 hidden sm:flex">
-        <Code2 className="w-3.5 h-3.5" />
+    <div className={`flex items-center gap-2 overflow-x-auto pb-1 max-w-full ${className}`}>
+      <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 text-xs font-mono font-black shrink-0 mr-1 hidden sm:flex">
+        <Code2 className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
         <span>Language:</span>
       </div>
 
@@ -35,17 +35,17 @@ export const GameLanguageSelector: React.FC<GameLanguageSelectorProps> = ({
             key={lang.id}
             type="button"
             onClick={() => onSelectLanguage(lang.id)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs ${
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl text-xs font-bold transition-all cursor-pointer shrink-0 border-2 active:scale-95 ${
               isSelected
-                ? 'bg-[#005F02] text-white shadow-xs ring-2 ring-emerald-500/20'
-                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+                : 'bg-white dark:bg-[#161B22] border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs'
             }`}
           >
             <span
-              className={`text-[9px] font-mono font-extrabold px-1 py-0.5 rounded ${
+              className={`text-[10px] font-mono font-black px-1.5 py-0.5 rounded-lg border-2 ${
                 isSelected
-                  ? 'bg-white/20 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                  ? 'bg-white/20 border-white/40 text-white'
+                  : 'bg-slate-100 dark:bg-[#0E1318] border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
               }`}
             >
               {lang.iconBadge}
