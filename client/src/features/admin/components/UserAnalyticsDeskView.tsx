@@ -22,7 +22,6 @@ import {
   Zap,
   CheckCircle2,
   Laptop,
-  Cpu,
   HardDrive,
   Database,
   Code2,
@@ -1251,25 +1250,36 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
   const getDeviceIcon = (mode: string) => {
     switch (mode) {
+      case 'mobile':
+      case 'mobile_phone':
       case 'offline_pwa':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs whitespace-nowrap">
-            <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
-            <span>Offline PWA</span>
+            <svg className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+              <path d="M12 18h.01" />
+            </svg>
+            <span>Mobile Phone</span>
           </span>
         )
-      case 'desktop_app':
+      case 'tablet':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-2 border-indigo-300 dark:border-indigo-800 shadow-3xs whitespace-nowrap">
-            <Laptop className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-            <span>Desktop App</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 shadow-3xs whitespace-nowrap">
+            <svg className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="18" height="20" x="3" y="2" rx="2" ry="2" />
+              <path d="M12 18h.01" />
+            </svg>
+            <span>Tablet</span>
           </span>
         )
+      case 'desktop':
+      case 'desktop_app':
+      case 'web_browser':
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 shadow-3xs whitespace-nowrap">
-            <Globe className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-            <span>Web Browser</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-2 border-indigo-300 dark:border-indigo-800 shadow-3xs whitespace-nowrap">
+            <Laptop className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+            <span>Desktop</span>
           </span>
         )
     }
@@ -1872,7 +1882,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     <th className="py-3.5 px-4 min-w-[190px] whitespace-nowrap">Activity &amp; Last Seen</th>
                     <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">XP &amp; Streak</th>
                     <th className="py-3.5 px-4 min-w-[150px] whitespace-nowrap">Progress Metrics</th>
-                    <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Client Engine</th>
+                    <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Device Type</th>
                     {!restrictedMentorUser && (
                       <th className="py-3.5 px-4 text-right min-w-[150px] whitespace-nowrap">
                         Admin Action

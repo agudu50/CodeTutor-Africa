@@ -33,7 +33,7 @@ export interface AdminUserRecord {
   problemsSolved: number
   gamesPlayed: number
   favoriteLanguage: 'python' | 'javascript' | 'java' | 'typescript' | string
-  deviceMode: 'offline_pwa' | 'desktop_app' | 'web_browser'
+  deviceMode: 'desktop' | 'mobile_phone' | 'tablet' | 'offline_pwa' | 'desktop_app' | 'web_browser' | string
   enrolledCourseIds?: string[]
   enrolledCourseTitles?: string[]
   activeCourseTitle?: string
