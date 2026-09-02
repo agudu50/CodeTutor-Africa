@@ -1437,53 +1437,72 @@ export const SystemPerformanceDeskView: React.FC = () => {
           TAB 3: SELF-HEALING & SECURITY ACTION AUDIT TRAIL
           ═══════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'audit' && (
-        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl overflow-hidden">
-          <CardHeader className="p-4 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-emerald-500" />
-              <CardTitle className="text-sm font-bold text-slate-900 dark:text-white">
-                AI Ops, Performance & Security Audit Trail
-              </CardTitle>
+        <div className="rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs overflow-hidden">
+          <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-[#161B22]/50">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs flex items-center justify-center shrink-0">
+                <Terminal className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-mono font-black text-slate-900 dark:text-white">
+                  AI Ops, Performance &amp; Security Audit Trail
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-sans">
+                  Immutable zero-trust activity log of all automated self-healing mitigations and admin actions.
+                </p>
+              </div>
             </div>
-            <span className="text-xs font-mono text-slate-400">
-              {actionHistory.length} actions logged
-            </span>
-          </CardHeader>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono font-black text-xs shadow-3xs inline-flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                <span>{actionHistory.length} actions logged</span>
+              </span>
+            </div>
+          </div>
 
-          <CardContent className="p-4 sm:p-5">
-            <div className="space-y-2.5 font-mono text-xs">
+          <div className="p-4 sm:p-5">
+            <div className="space-y-3 font-mono text-xs">
               {actionHistory.length === 0 ? (
-                <div className="text-center py-6 text-slate-400 text-xs">
-                  No self-healing or security actions recorded yet. Run a remediation above to log activities.
+                <div className="text-center py-12 text-slate-400 text-xs font-mono font-bold space-y-2">
+                  <Terminal className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
+                  <p>No self-healing or security actions recorded yet.</p>
+                  <p className="text-[11px] text-slate-500 font-sans">Run a remediation action in the studio above to test telemetry logging.</p>
                 </div>
               ) : (
                 actionHistory.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 flex items-center justify-between gap-3"
+                    className="p-4 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-3.5"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                          {item.title}
-                        </span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-sans">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs mt-0.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono font-black text-sm text-slate-900 dark:text-white">
+                            {item.title}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 font-mono font-black text-[9px] uppercase shadow-3xs tracking-wider">
+                            EXECUTED
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 font-sans leading-relaxed font-medium">
                           {item.message}
-                        </span>
+                        </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 shrink-0">
-                      <Clock className="w-3 h-3" />
+                    <div className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-mono font-bold text-xs shadow-3xs inline-flex items-center gap-1.5 shrink-0 self-start sm:self-center">
+                      <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span>{new Date(item.timestamp).toLocaleTimeString()}</span>
                     </div>
                   </div>
                 ))
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   )
