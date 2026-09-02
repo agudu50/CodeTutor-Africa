@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { activeLearningService } from '@/services/learning/active-learning.service'
-import { Card, Button, Badge, MarkdownRenderer } from '@/components/ui'
+import { Button, MarkdownRenderer } from '@/components/ui'
+import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 import { VideoLessonPlayer } from '../components/VideoLessonPlayer'
 import { LessonQuizSection } from '../components/LessonQuizSection'
 import { CourseSupportModal } from '../components/CourseSupportModal'
@@ -346,21 +347,32 @@ export const LessonViewPage: React.FC = () => {
                   <span className="text-slate-300 font-semibold">sandbox.{fileExt}</span>
                 </div>
 
-                {/* Editor Textarea */}
+                {/* Editor Textarea with Real-Time Syntax Highlighting */}
                 <div className="flex flex-1 min-h-[120px] bg-[#1E1E1E]">
-                  <div className="w-7 py-2 text-right pr-2 select-none text-[11px] text-[#858585] border-r border-[#2D2D2D] shrink-0 leading-5">
+                  <div className="w-8 py-2 text-right pr-2 select-none text-[11px] text-[#858585] border-r border-[#2D2D2D] shrink-0 leading-5 font-mono">
                     {sandboxCode.split('\n').map((_, i) => (
                       <div key={i}>{i + 1}</div>
                     ))}
                   </div>
 
-                  <textarea
-                    rows={6}
-                    value={sandboxCode}
-                    onChange={(e) => setSandboxCode(e.target.value)}
-                    className="flex-1 p-2 bg-transparent text-[#D4D4D4] font-mono text-xs leading-5 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre selection:bg-[#005F02]/40"
-                    spellCheck={false}
-                  />
+                  <div className="relative flex-1 min-h-[120px] bg-[#1E1E1E] overflow-hidden">
+                    <pre
+                      aria-hidden="true"
+                      className="absolute inset-0 p-2 m-0 bg-transparent font-mono text-xs leading-5 pointer-events-none overflow-hidden whitespace-pre select-none text-[#D4D4D4]"
+                      style={{ tabSize: 2 }}
+                    >
+                      {renderVSCodeSyntax(sandboxCode || ' ')}
+                    </pre>
+
+                    <textarea
+                      rows={Math.max(6, sandboxCode.split('\n').length)}
+                      value={sandboxCode}
+                      onChange={(e) => setSandboxCode(e.target.value)}
+                      className="absolute inset-0 p-2 bg-transparent text-transparent caret-[#27C93F] font-mono text-xs leading-5 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre selection:bg-[#005F02]/40 selection:text-transparent z-10"
+                      style={{ tabSize: 2 }}
+                      spellCheck={false}
+                    />
+                  </div>
                 </div>
 
                 {/* Integrated VS Code Terminal Panel */}

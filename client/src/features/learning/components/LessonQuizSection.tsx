@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react'
 import { QuizQuestion, ProgrammingLanguage } from '@/types'
 import { Button } from '@/components/ui'
+import { renderVSCodeSyntax } from '@/utils/syntaxHighlight'
 import {
   CheckCircle2,
   XCircle,
@@ -293,25 +294,42 @@ export const LessonQuizSection: React.FC<LessonQuizSectionProps> = memo(({
                           <span className="text-slate-300 font-semibold">challenge.{fileExt}</span>
                         </div>
 
-                        {/* Editor Canvas */}
-                        <div className="flex flex-1 min-h-[100px] bg-[#1E1E1E]">
-                          <div className="w-7 py-2 text-right pr-2 select-none text-[11px] text-[#858585] border-r border-[#2D2D2D] shrink-0 leading-5">
-                            <div>1</div>
-                            <div>2</div>
-                            <div>3</div>
-                            <div>4</div>
-                            <div>5</div>
-                          </div>
+                        {/* Editor Canvas with Real-Time Syntax Highlighting */}
+                        {(() => {
+                          const currentCode = codeAnswers[q.id] !== undefined ? codeAnswers[q.id] : q.initialCode || ''
+                          const codeLines = currentCode.split('\n')
+                          return (
+                            <div className="flex flex-1 min-h-[110px] bg-[#1E1E1E]">
+                              {/* Dynamic Line Numbers Gutter */}
+                              <div className="w-8 py-2 text-right pr-2 select-none text-[11px] text-[#858585] border-r border-[#2D2D2D] shrink-0 leading-5 font-mono">
+                                {codeLines.map((_, i) => (
+                                  <div key={i}>{i + 1}</div>
+                                ))}
+                              </div>
 
-                          <textarea
-                            rows={5}
-                            value={codeAnswers[q.id] !== undefined ? codeAnswers[q.id] : q.initialCode || ''}
-                            onChange={(e) => setCodeAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
-                            className="flex-1 p-2 bg-transparent text-[#D4D4D4] font-mono text-xs leading-5 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre selection:bg-[#005F02]/40"
-                            spellCheck={false}
-                            placeholder="# Write your solution function here..."
-                          />
-                        </div>
+                              {/* Overlaid Syntax + Textarea Layer */}
+                              <div className="relative flex-1 min-h-[110px] bg-[#1E1E1E] overflow-hidden">
+                                <pre
+                                  aria-hidden="true"
+                                  className="absolute inset-0 p-2 m-0 bg-transparent font-mono text-xs leading-5 pointer-events-none overflow-hidden whitespace-pre select-none text-[#D4D4D4]"
+                                  style={{ tabSize: 2 }}
+                                >
+                                  {renderVSCodeSyntax(currentCode || ' ')}
+                                </pre>
+
+                                <textarea
+                                  rows={Math.max(5, codeLines.length)}
+                                  value={currentCode}
+                                  onChange={(e) => setCodeAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                                  className="absolute inset-0 p-2 bg-transparent text-transparent caret-[#27C93F] font-mono text-xs leading-5 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre selection:bg-[#005F02]/40 selection:text-transparent z-10"
+                                  style={{ tabSize: 2 }}
+                                  spellCheck={false}
+                                  placeholder="# Write your code below..."
+                                />
+                              </div>
+                            </div>
+                          )
+                        })()}
 
                         {/* VS Code Bottom Integrated Terminal for Test Output */}
                         <div className="border-t border-[#2D2D2D] bg-[#181818] p-2 text-[10px] space-y-1">
