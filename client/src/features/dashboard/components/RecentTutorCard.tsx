@@ -1,6 +1,5 @@
 import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
 import { Bot, MessageSquare, ArrowRight, Plus, Clock, ChevronRight } from 'lucide-react'
 
 interface TutorSessionPreview {
@@ -12,82 +11,83 @@ interface TutorSessionPreview {
 }
 
 export const RecentTutorCard: React.FC<{ sessions: TutorSessionPreview[] }> = memo(({ sessions }) => {
-  // Show top 2 most recent sessions to perfectly align height with ContinueLearningCard
+  // Show top 2 most recent sessions to align height with ContinueLearningCard
   const displaySessions = sessions.slice(0, 2)
 
   return (
-    <Card className="h-full flex flex-col justify-between border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
-      <div>
-        <CardHeader className="p-3.5 sm:p-4 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0 shadow-3xs">
-                <Bot className="w-3.5 h-3.5" />
-              </div>
-              <div className="min-w-0">
-                <CardTitle className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white truncate">
-                  Recent AI Tutor Sessions
-                </CardTitle>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
-                  Socratic dialogues & code reviews
-                </p>
-              </div>
+    <div className="h-full flex flex-col justify-between border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs rounded-3xl p-5 sm:p-6 space-y-4">
+      <div className="space-y-4">
+        {/* Header Row */}
+        <div className="flex items-center justify-between gap-3 pb-3 border-b-2 border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-3xs">
+              <Bot className="w-4 h-4" />
             </div>
-
-            <Link
-              to="/tutor"
-              className="text-[11px] font-bold text-[#005F02] dark:text-emerald-400 hover:text-white hover:bg-[#005F02] dark:hover:bg-emerald-600 flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 transition-all shrink-0 shadow-3xs"
-              title="Start a new AI tutoring dialogue"
-            >
-              <Plus className="w-3 h-3" />
-              <span>New</span>
-            </Link>
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight truncate">
+                Recent AI Tutor Sessions
+              </h2>
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium truncate">
+                Socratic dialogues & code reviews
+              </p>
+            </div>
           </div>
-        </CardHeader>
 
-        <CardContent className="p-3 sm:p-3.5 space-y-2">
+          <Link
+            to="/tutor"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white text-xs font-mono font-bold transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
+            title="Start a new AI tutoring dialogue"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New</span>
+          </Link>
+        </div>
+
+        {/* Sessions List */}
+        <div className="space-y-2.5">
           {displaySessions.map((session) => (
             <Link
               key={session.id}
               to={`/tutor/session/${session.id}`}
-              className="block p-2.5 sm:p-3 rounded-xl border border-slate-200/90 dark:border-slate-800/90 hover:border-emerald-400 dark:hover:border-emerald-600 bg-slate-50/70 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 transition-all duration-150 group shadow-3xs"
+              className="block p-3 sm:p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500 bg-slate-50 dark:bg-[#161B22] hover:bg-white dark:hover:bg-[#1C232B] transition-all duration-150 group shadow-3xs cursor-pointer"
             >
-              <div className="flex items-start justify-between gap-1.5">
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors line-clamp-1">
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors line-clamp-1">
                   {session.title}
                 </span>
-                <span className="font-mono text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0 border border-slate-300/60 dark:border-slate-700/60">
+                <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-[#0E1318] text-slate-800 dark:text-slate-200 shrink-0 border border-slate-300 dark:border-slate-700 shadow-3xs">
                   {session.language}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between mt-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                <span className="flex items-center gap-1">
-                  <MessageSquare className="w-2.5 h-2.5 text-slate-400" />
+              <div className="flex items-center justify-between mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                <span className="flex items-center gap-1.5 font-semibold">
+                  <MessageSquare className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
                   <span>{session.messageCount} msgs</span>
                 </span>
-                <div className="flex items-center gap-1 text-slate-400">
-                  <Clock className="w-2.5 h-2.5" />
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                  <Clock className="w-3 h-3 text-amber-500" />
                   <span>{session.lastUpdated}</span>
-                  <ChevronRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all hidden sm:block text-emerald-500" />
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
                 </div>
               </div>
             </Link>
           ))}
-        </CardContent>
+        </div>
       </div>
 
-      <div className="p-3 sm:p-3.5 pt-0">
+      {/* Footer CTA */}
+      <div className="pt-2">
         <Link
           to="/tutor"
-          className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 bg-slate-50/80 dark:bg-slate-950/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:text-[#005F02] dark:hover:text-emerald-400 transition-all shadow-3xs"
+          className="w-full h-11 px-4 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:border-[#005F02] hover:text-[#005F02] text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 shadow-3xs transition-all cursor-pointer active:scale-95"
         >
-          <Bot className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
+          <Bot className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
           <span>Open Full Tutor Workspace</span>
-          <ArrowRight className="w-3 h-3 ml-0.5" />
+          <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
         </Link>
       </div>
-    </Card>
+    </div>
   )
 })
 

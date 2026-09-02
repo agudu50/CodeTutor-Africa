@@ -1,6 +1,5 @@
 import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
-import { Card, CardHeader, CardTitle, CardContent, Button, Progress } from '@/components/ui'
 import { AlertCircle, ArrowRight, Target } from 'lucide-react'
 
 interface WeakArea {
@@ -12,69 +11,79 @@ interface WeakArea {
 
 export const WeakAreasCard: React.FC<{ weakAreas: WeakArea[] }> = memo(({ weakAreas }) => {
   return (
-    <Card className="h-full flex flex-col justify-between border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
-      <div>
-        <CardHeader className="p-3.5 sm:p-4 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 shrink-0 shadow-3xs">
-                <AlertCircle className="w-3.5 h-3.5" />
-              </div>
-              <CardTitle className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">
-                Focus Areas
-              </CardTitle>
+    <div className="h-full flex flex-col justify-between border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs rounded-3xl p-5 sm:p-6 space-y-4">
+      <div className="space-y-4">
+        {/* Header Row */}
+        <div className="flex items-center justify-between gap-3 pb-3 border-b-2 border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <AlertCircle className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
-              Personalized
-            </span>
+            <h2 className="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight truncate">
+              Focus Areas
+            </h2>
           </div>
-        </CardHeader>
+          <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-300 dark:border-slate-700 shrink-0 shadow-3xs">
+            Personalized
+          </span>
+        </div>
 
-        <CardContent className="p-3 sm:p-3.5 space-y-2.5">
+        {/* Areas List */}
+        <div className="space-y-3">
           {weakAreas.map((area) => (
             <div
               key={area.topic}
-              className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800/90 bg-slate-50/70 dark:bg-slate-950/50 space-y-2 shadow-3xs"
+              className="p-3.5 sm:p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] space-y-2.5 shadow-3xs"
             >
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{area.topic}</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{area.subject}</p>
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-1 truncate">
+                    {area.topic}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                    {area.subject}
+                  </p>
                 </div>
-                <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/70 px-1.5 py-0.2 rounded border border-amber-200 dark:border-amber-800/70 shrink-0">
+                <span className="text-xs font-mono font-bold text-amber-900 dark:text-amber-200 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-800 shrink-0 shadow-3xs">
                   {area.accuracy}% Accuracy
                 </span>
               </div>
 
-              <Progress value={area.accuracy} variant="amber" size="sm" />
+              {/* Progress Bar (Solid Amber) */}
+              <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-300 dark:border-slate-700 p-0.5">
+                <div
+                  className="bg-amber-500 h-full rounded-full transition-all duration-500 shadow-xs"
+                  style={{ width: `${area.accuracy}%` }}
+                />
+              </div>
 
               <div className="flex items-center justify-between pt-0.5">
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                   Recommended review
                 </span>
                 <Link to={`/practice/${area.recommendedPracticeId}`}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-2 text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/60"
-                    rightIcon={<ArrowRight className="w-3 h-3" />}
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:border-[#005F02] hover:text-[#005F02] text-slate-800 dark:text-slate-200 text-xs font-bold shadow-3xs transition-all cursor-pointer active:scale-95"
                   >
-                    Practice Topic
-                  </Button>
+                    <span>Practice Topic</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </Link>
               </div>
             </div>
           ))}
-        </CardContent>
+        </div>
       </div>
 
-      <div className="p-3 sm:p-3.5 pt-0">
-        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-          <Target className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+      {/* Motivational Mastery Footer */}
+      <div className="pt-2">
+        <div className="p-3 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-3xs">
+          <Target className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />
           <span>Practicing focus areas increases mastery by up to 2.4x.</span>
         </div>
       </div>
-    </Card>
+    </div>
   )
 })
 

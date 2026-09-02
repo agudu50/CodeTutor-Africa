@@ -519,53 +519,53 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   <span className="text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider block">
                     Included in your AI-Generated Course:
                   </span>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
                     {/* Lesson Notes (Always Included) */}
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 text-xs font-bold font-mono shadow-3xs">
+                    <div className="flex items-center gap-2 p-2.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 text-xs sm:text-[13px] font-bold shadow-3xs">
                       <BookOpen className="w-4 h-4 shrink-0" />
-                      <span className="truncate">Lesson Notes</span>
+                      <span className="whitespace-normal leading-tight">Lesson Notes</span>
                     </div>
 
                     {/* Video Lessons */}
                     <button
                       type="button"
                       onClick={() => setIncludeVideos(!includeVideos)}
-                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold font-mono transition-colors cursor-pointer shadow-3xs ${
+                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs sm:text-[13px] font-bold transition-colors cursor-pointer shadow-3xs ${
                         includeVideos
                           ? 'border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400'
                           : 'border-slate-300 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900 text-slate-500'
                       }`}
                     >
                       <Play className="w-4 h-4 shrink-0" />
-                      <span className="truncate">Video Lessons</span>
+                      <span className="whitespace-normal leading-tight">Video Lessons</span>
                     </button>
 
                     {/* Coding Drills */}
                     <button
                       type="button"
                       onClick={() => setIncludeExercises(!includeExercises)}
-                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold font-mono transition-colors cursor-pointer shadow-3xs ${
+                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs sm:text-[13px] font-bold transition-colors cursor-pointer shadow-3xs ${
                         includeExercises
                           ? 'border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400'
                           : 'border-slate-300 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900 text-slate-500'
                       }`}
                     >
                       <Code2 className="w-4 h-4 shrink-0" />
-                      <span className="truncate">Coding Drills</span>
+                      <span className="whitespace-normal leading-tight">Coding Drills</span>
                     </button>
 
                     {/* 3D Arcade Games */}
                     <button
                       type="button"
                       onClick={() => setIncludeGames(!includeGames)}
-                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold font-mono transition-colors cursor-pointer shadow-3xs ${
+                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs sm:text-[13px] font-bold transition-colors cursor-pointer shadow-3xs ${
                         includeGames
                           ? 'border-indigo-300 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400'
                           : 'border-slate-300 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900 text-slate-500'
                       }`}
                     >
                       <Gamepad2 className="w-4 h-4 shrink-0" />
-                      <span className="truncate">3D Arcade Games</span>
+                      <span className="whitespace-normal leading-tight">3D Arcade Games</span>
                     </button>
                   </div>
                 </div>
