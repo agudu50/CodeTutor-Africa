@@ -13,7 +13,6 @@ import {
   ShieldCheck,
   BookOpen,
   Code2,
-  ChevronLeft,
   GraduationCap,
   Eye,
   EyeOff,
@@ -173,19 +172,11 @@ export const SignUpPage: React.FC = () => {
         </svg>
 
         {/* Top Navigation & Theme Toggle Bar */}
-        <div className="relative z-10 flex items-center justify-between w-full mb-4 sm:mb-6">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs transition-colors group"
-          >
-            <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back</span>
-          </Link>
-
-          {/* Mobile-Only Brand Center Badge */}
-          <Link to="/" className="lg:hidden inline-flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-white dark:bg-[#0C1015] border-2 border-slate-300 dark:border-slate-700 p-0.5 flex items-center justify-center shrink-0 shadow-3xs overflow-hidden">
-              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-md" />
+        <div className="relative z-10 flex items-center justify-between lg:justify-end w-full mb-4 sm:mb-6">
+          {/* Mobile-Only Logo */}
+          <Link to="/" className="lg:hidden inline-flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#0C1015] border-2 border-slate-300 dark:border-slate-700 p-0.5 flex items-center justify-center shrink-0 shadow-3xs group-hover:border-[#005F02] dark:group-hover:border-emerald-500 transition-colors overflow-hidden">
+              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-lg" />
             </div>
             <span className="font-black text-sm tracking-tight text-slate-900 dark:text-white">
               CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
