@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { AdminUserRecord } from '@/types/admin-analytics'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
-import { Card, CardContent, CardHeader, CardTitle, Dropdown } from '@/components/ui'
+import { Dropdown } from '@/components/ui'
 import {
   GraduationCap,
   Users,
@@ -12,6 +12,7 @@ import {
   ChevronUp,
   Globe,
   Zap,
+  Flame,
 } from 'lucide-react'
 
 interface MentorEnrollmentOverviewTableProps {
@@ -123,66 +124,74 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
   return (
     <div className="space-y-5 w-full min-w-0 max-w-full">
       {/* ═══════════════════════════════════════════════════════════════
-          TOP KPI METRIC CARDS: MENTOR PLATFORM STATS
+          TOP KPI METRIC CARDS: MENTOR PLATFORM STATS (2px borders)
           ═══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-mono">
-        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            Total Appointed Mentors
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
-              {mentorsSummary.length}
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-blue-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              Total Appointed Mentors
             </span>
-            <GraduationCap className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+            <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-400 border-2 border-blue-300 dark:border-blue-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <GraduationCap className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white block">
+            {mentorsSummary.length}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             Across {countriesList.length} African countries
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            Total Enrolled Students
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-extrabold text-[#005F02] dark:text-emerald-400">
-              {totalStudentsAcrossMentors.toLocaleString()}
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              Total Enrolled Students
             </span>
-            <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Users className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
+          <span className="text-2xl sm:text-3xl font-black text-[#005F02] dark:text-emerald-400 block">
+            {totalStudentsAcrossMentors.toLocaleString()}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             Across all mentor curricula
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            Curriculum Courses Assigned
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">
-              {totalAssignedCourses}
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-purple-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              Curriculum Courses Assigned
             </span>
-            <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+            <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-400 border-2 border-purple-300 dark:border-purple-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <BookOpen className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white block">
+            {totalAssignedCourses}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             Assigned to lead educators
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            Active Educators
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              {activeMentorsNowCount} / {mentorsSummary.length}
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-amber-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              Active Educators
             </span>
-            <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Zap className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 font-sans block">
+          <span className="text-2xl sm:text-3xl font-black text-amber-700 dark:text-amber-400 flex items-center gap-1.5 block">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            {activeMentorsNowCount} / {mentorsSummary.length}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             Online today or this week
           </span>
         </div>
@@ -191,24 +200,21 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
       {/* ═══════════════════════════════════════════════════════════════
           MAIN MENTOR ENROLLMENT TABLE CARD
           ═══════════════════════════════════════════════════════════════ */}
-      {/* ═══════════════════════════════════════════════════════════════
-          MAIN MENTOR ENROLLMENT TABLE CARD
-          ═══════════════════════════════════════════════════════════════ */}
-      <Card className="border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
-        <CardHeader className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 space-y-3.5">
+      <div className="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs rounded-3xl overflow-hidden">
+        <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 space-y-3.5 bg-slate-50/50 dark:bg-[#12161A]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />
                 <span>Mentor Directory &amp; Student Enrollment Breakdown</span>
-              </CardTitle>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              </h2>
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
                 Overview of all appointed instructors, courses assigned to each mentor, and the exact count of students enrolled under each mentor.
               </p>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-xl bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+              <span className="text-xs font-mono font-black px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
                 {filteredMentors.length} of {mentorsSummary.length} Mentors Shown
               </span>
             </div>
@@ -297,10 +303,10 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
               />
             </div>
           </div>
-        </CardHeader>
+        </div>
 
         {/* Table / Mobile Content */}
-        <CardContent className="p-0">
+        <div>
           {/* ═══════════════════════════════════════════════════════════════
               MOBILE VIEW: MENTOR CARDS (md:hidden)
               ═══════════════════════════════════════════════════════════════ */}
@@ -704,7 +710,7 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
                                             </td>
 
                                             <td className="py-2.5 px-3 font-mono text-slate-700 dark:text-slate-300">
-                                              {learner.totalXp.toLocaleString()} XP • 🔥 {learner.streakDays}d streak
+                                              {learner.totalXp.toLocaleString()} XP • <Flame className="w-3 h-3 text-amber-500 inline mr-0.5" />{learner.streakDays}d streak
                                             </td>
 
                                             <td className="py-2.5 px-3">
@@ -733,8 +739,8 @@ export const MentorEnrollmentOverviewTable: React.FC<MentorEnrollmentOverviewTab
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

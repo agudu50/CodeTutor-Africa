@@ -9,7 +9,7 @@ import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { mentorApplicationService, MentorApplication } from '@/services/mentor/mentor-application.service'
 import { WEST_AFRICAN_COUNTRIES } from '@/features/leaderboard/data/mockLeaderboardData'
-import { Card, CardHeader, CardContent, Button, Modal } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 import { DemoteMentorModal } from './DemoteMentorModal'
 import { ApproveMentorModal, ApproveMentorTarget } from './ApproveMentorModal'
 import {
@@ -42,6 +42,7 @@ import {
   X,
   Check,
   ArrowDown,
+  RotateCcw,
 } from 'lucide-react'
 
 function getHumanRelativeTime(isoString: string): string {
@@ -148,30 +149,30 @@ const CustomRoleDropdown: React.FC<CustomRoleDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+        className={`w-full h-10 px-3 rounded-xl bg-white dark:bg-[#161B22] border-2 transition-all cursor-pointer flex items-center justify-between shadow-3xs active:scale-95 ${
           isOpen
             ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
-            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+            : 'border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
         }`}
       >
         <div className="flex items-center gap-1.5 min-w-0">
           <Icon className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
-          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+          <span className="font-mono font-bold text-slate-900 dark:text-white truncate text-xs">
             {current.label}
           </span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
             {current.count}
           </span>
         </div>
         <ChevronDown
           className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
-            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+            isOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : 'rotate-0'
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[170px]">
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[170px]">
           {options.map((opt) => {
             const isSelected = opt.id === value
             const OptIcon = opt.icon
@@ -183,10 +184,10 @@ const CustomRoleDropdown: React.FC<CustomRoleDropdownProps> = ({
                   onChange(opt.id)
                   setIsOpen(false)
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
                   isSelected
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#0E1318]'
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -244,40 +245,40 @@ const CustomCourseDropdown: React.FC<CustomCourseDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+        className={`w-full h-10 px-3 rounded-xl bg-white dark:bg-[#161B22] border-2 transition-all cursor-pointer flex items-center justify-between shadow-3xs active:scale-95 ${
           isOpen
             ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
-            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+            : 'border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
         }`}
       >
         <div className="flex items-center gap-1.5 min-w-0">
           <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
-          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+          <span className="font-mono font-bold text-slate-900 dark:text-white truncate text-xs">
             {value === 'ALL' ? 'All Enrolled Courses' : value}
           </span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
             {value === 'ALL' ? totalCount : selectedCourse?.count || 0}
           </span>
         </div>
         <ChevronDown
           className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
-            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+            isOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : 'rotate-0'
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[240px]">
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[240px]">
           <button
             type="button"
             onClick={() => {
               onChange('ALL')
               setIsOpen(false)
             }}
-            className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+            className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
               value === 'ALL'
-                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#0E1318]'
             }`}
           >
             <span className="truncate">All Enrolled Courses</span>
@@ -299,10 +300,10 @@ const CustomCourseDropdown: React.FC<CustomCourseDropdownProps> = ({
                   onChange(c.title)
                   setIsOpen(false)
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
                   isSelected
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#0E1318]'
                 }`}
               >
                 <span className="truncate">{c.title}</span>
@@ -355,30 +356,30 @@ const CustomCountryDropdown: React.FC<CustomCountryDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+        className={`w-full h-10 px-3 rounded-xl bg-white dark:bg-[#161B22] border-2 transition-all cursor-pointer flex items-center justify-between shadow-3xs active:scale-95 ${
           isOpen
             ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
-            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+            : 'border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
         }`}
       >
         <div className="flex items-center gap-1.5 min-w-0">
           <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+          <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
             {current.code}
           </span>
-          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+          <span className="font-mono font-bold text-slate-900 dark:text-white truncate text-xs">
             {current.name}
           </span>
         </div>
         <ChevronDown
           className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
-            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+            isOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : 'rotate-0'
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[200px]">
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[200px]">
           {countries.map((c) => {
             const isSelected = c.code === value
             return (
@@ -389,14 +390,14 @@ const CustomCountryDropdown: React.FC<CustomCountryDropdownProps> = ({
                   onChange(c.code)
                   setIsOpen(false)
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
                   isSelected
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#0E1318]'
                 }`}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                  <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
                     {c.code}
                   </span>
                   <span className="truncate">{c.name}</span>
@@ -450,27 +451,27 @@ const CustomSortDropdown: React.FC<CustomSortDropdownProps> = ({ value, onChange
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full py-2 px-2.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+        className={`w-full h-10 px-2.5 rounded-xl bg-white dark:bg-[#161B22] border-2 transition-all cursor-pointer flex items-center justify-between shadow-3xs active:scale-95 ${
           isOpen
             ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
-            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+            : 'border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
         }`}
       >
         <div className="flex items-center gap-1.5 min-w-0">
           <Icon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-          <span className="font-bold text-slate-900 dark:text-white whitespace-nowrap text-xs">
+          <span className="font-mono font-bold text-slate-900 dark:text-white whitespace-nowrap text-xs">
             {current.shortLabel}
           </span>
         </div>
         <ChevronDown
           className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1 ${
-            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+            isOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : 'rotate-0'
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[170px]">
+        <div className="absolute right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[170px]">
           {SORT_OPTIONS.map((opt) => {
             const isSelected = opt.id === value
             const OptIcon = opt.icon
@@ -482,10 +483,10 @@ const CustomSortDropdown: React.FC<CustomSortDropdownProps> = ({ value, onChange
                   onChange(opt.id)
                   setIsOpen(false)
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
                   isSelected
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#0E1318]'
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -540,29 +541,29 @@ const CustomStatusDropdown: React.FC<CustomStatusDropdownProps> = ({ value, onCh
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full py-2 px-2.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+        className={`w-full h-10 px-2.5 rounded-xl bg-white dark:bg-[#161B22] border-2 transition-all cursor-pointer flex items-center justify-between shadow-3xs active:scale-95 ${
           isOpen
             ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
-            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+            : 'border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
         }`}
       >
         <div className="flex items-center gap-1.5 min-w-0">
           {current.dot && (
             <span className={`w-2 h-2 rounded-full shrink-0 ${current.dot}`} />
           )}
-          <span className="font-bold text-slate-900 dark:text-white whitespace-nowrap text-xs">
+          <span className="font-mono font-bold text-slate-900 dark:text-white whitespace-nowrap text-xs">
             {current.shortLabel}
           </span>
         </div>
         <ChevronDown
           className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1 ${
-            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+            isOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : 'rotate-0'
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[160px]">
+        <div className="absolute right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[160px]">
           {STATUS_OPTIONS.map((opt) => {
             const isSelected = opt.id === value
             return (
@@ -573,10 +574,10 @@ const CustomStatusDropdown: React.FC<CustomStatusDropdownProps> = ({ value, onCh
                   onChange(opt.id)
                   setIsOpen(false)
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-mono font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
                   isSelected
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#0E1318]'
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -1157,28 +1158,28 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     switch (status) {
       case 'active_now':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 shadow-3xs whitespace-nowrap shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs whitespace-nowrap shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             Active Now
           </span>
         )
       case 'active_today':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-emerald-50 dark:bg-emerald-950/50 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs whitespace-nowrap shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
             Active Today
           </span>
         )
       case 'active_this_week':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800 shadow-3xs whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border-2 border-sky-300 dark:border-sky-800 shadow-3xs whitespace-nowrap shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
             Active this Week
           </span>
         )
       case 'idle':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shadow-3xs whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 shadow-3xs whitespace-nowrap shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             Idle (&gt;7d)
           </span>
@@ -1186,7 +1187,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
       case 'inactive':
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-3xs whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-black font-mono bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400 border-2 border-slate-300 dark:border-slate-700 shadow-3xs whitespace-nowrap shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
             Inactive (&gt;30d)
           </span>
@@ -1194,28 +1195,26 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
     }
   }
 
-
-
   const getDeviceIcon = (mode: string) => {
     switch (mode) {
       case 'offline_pwa':
         return (
-          <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-700 dark:text-emerald-400">
-            <Cpu className="w-3 h-3 text-emerald-600" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs whitespace-nowrap">
+            <Cpu className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
             <span>Offline PWA</span>
           </span>
         )
       case 'desktop_app':
         return (
-          <span className="inline-flex items-center gap-1 text-[10px] font-mono text-brand-700 dark:text-brand-400">
-            <Laptop className="w-3 h-3 text-brand-600" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-2 border-indigo-300 dark:border-indigo-800 shadow-3xs whitespace-nowrap">
+            <Laptop className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
             <span>Desktop App</span>
           </span>
         )
       default:
         return (
-          <span className="inline-flex items-center gap-1 text-[10px] font-mono text-slate-600 dark:text-slate-400">
-            <Globe className="w-3 h-3 text-slate-400" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 shadow-3xs whitespace-nowrap">
+            <Globe className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span>Web Browser</span>
           </span>
         )
@@ -1233,72 +1232,141 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANALYTICS KPI HIGHLIGHT ROW
+          LEARNERS STUDIO HEADER BANNER (Matching PracticeStudioView standard)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        {/* Total Users */}
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-mono font-bold text-slate-400 block tracking-wider">
-            Total Learners
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold font-mono text-slate-900 dark:text-white">
-              {stats.totalUsers}
-            </span>
-            <Users className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs shrink-0 flex items-center justify-center">
+              <Users className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                  Learner Community &amp; Lifecycle
+                </span>
+                <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                  West Africa Hub
+                </span>
+              </div>
+              <h1 className="text-lg sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                Learner Community &amp; Activity Analytics
+              </h1>
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 max-w-2xl leading-relaxed">
+                Monitor active platform learners, offline sync velocity, regional student distribution, audit logs, and mentor candidate applications.
+              </p>
+            </div>
           </div>
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
-            {stats.offlinePwaUsersPercent}% Offline Engine ready
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={onDataChanged}
+            className="h-9 px-3.5 rounded-xl text-xs font-mono font-bold justify-center border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-800 dark:text-slate-200 hover:border-[#005F02] transition-all cursor-pointer shadow-3xs active:scale-95 inline-flex items-center gap-1.5 flex-1 sm:flex-initial"
+            title="Refresh learner analytics and audit logs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Sync Data</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          ANALYTICS KPI HIGHLIGHT ROW (5 Cards with 2px borders)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5 font-mono">
+        {/* Total Users */}
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 block tracking-wider font-mono">
+              Total Learners
+            </span>
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Users className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white block">
+            {stats.totalUsers}
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
+            {stats.offlinePwaUsersPercent}% Offline ready
           </span>
         </div>
 
         {/* Active Now & Today */}
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-mono font-bold text-slate-400 block tracking-wider">
-            Active Now / Today
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold font-mono text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              {stats.activeNow}
-              <span className="text-xs font-normal text-slate-400 dark:text-slate-500">/ {stats.activeToday}</span>
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-emerald-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400 block tracking-wider font-mono">
+              Active Today
             </span>
-            <Zap className="w-4 h-4 text-emerald-500" />
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Zap className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-black text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              {stats.activeNow}
+            </span>
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ {stats.activeToday} today</span>
+          </div>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
             {stats.activeThisWeek} active this week
           </span>
         </div>
 
         {/* Inactive / At Risk Users */}
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-mono font-bold text-slate-400 block tracking-wider">
-            Idle / Inactive Learners
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className={`text-xl sm:text-2xl font-bold font-mono ${stats.inactiveUsers > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-white'}`}>
-              {stats.inactiveUsers}
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-amber-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-amber-700 dark:text-amber-400 block tracking-wider font-mono">
+              Idle Learners
             </span>
-            <User className="w-4 h-4 text-amber-500" />
+            <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <User className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
-            Requires study catch-up
+          <span className={`text-2xl sm:text-3xl font-black ${stats.inactiveUsers > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-white'} block`}>
+            {stats.inactiveUsers}
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
+            Requires catch-up nudge
           </span>
         </div>
 
         {/* Audit Trails Count */}
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-1">
-          <span className="text-[10px] uppercase font-mono font-bold text-slate-400 block tracking-wider">
-            Audit Trails Logged
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-bold font-mono text-brand-600 dark:text-brand-400">
-              {auditLogs.length}
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-brand-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-400 block tracking-wider font-mono">
+              Audit Logs
             </span>
-            <HardDrive className="w-4 h-4 text-brand-500" />
+            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-3xs">
+              <HardDrive className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
-            100% Immutable logs
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white block">
+            {auditLogs.length}
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
+            100% Immutable trail
+          </span>
+        </div>
+
+        {/* Regional Reach */}
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs space-y-1.5 hover:border-cyan-500 transition-colors col-span-2 md:col-span-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-cyan-700 dark:text-cyan-400 block tracking-wider font-mono">
+              Regional Reach
+            </span>
+            <div className="w-7 h-7 rounded-lg bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-400 border-2 border-cyan-300 dark:border-cyan-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Globe className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <span className="text-2xl sm:text-3xl font-black text-cyan-700 dark:text-cyan-400 block">
+            {WEST_AFRICAN_COUNTRIES.length} Regions
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold truncate">
+            Ghana, Nigeria &amp; more
           </span>
         </div>
       </div>
@@ -1306,24 +1374,26 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
       {/* ═══════════════════════════════════════════════════════════════
           SUB-VIEW CONTROLS & ACTIONS
           ═══════════════════════════════════════════════════════════════ */}
-      <Card className="border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shadow-xs rounded-2xl sm:rounded-3xl overflow-hidden">
-        <CardHeader className="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 space-y-3.5">
+      <div className="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs rounded-3xl overflow-hidden">
+        <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 space-y-3.5">
           {/* Row 1: Sub-tabs Navigation Bar & Contextual Actions */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
-            {/* Sub-tabs pills - horizontally scrollable with sleek modern pill styling */}
-            <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 overflow-x-auto scrollbar-none w-full xl:w-auto">
+            {/* Sub-tabs pills */}
+            <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 overflow-x-auto scrollbar-none w-full xl:w-auto font-mono text-xs">
               <button
                 type="button"
                 onClick={() => setSubView('users')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
                   subView === 'users'
-                    ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-extrabold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
                 }`}
               >
-                <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                <Users className="w-3.5 h-3.5 shrink-0" />
                 <span>Learner Management</span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                  subView === 'users' ? 'bg-white/20 text-white font-black' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+                }`}>
                   {users.length}
                 </span>
               </button>
@@ -1331,15 +1401,17 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSubView('audit')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
                   subView === 'audit'
-                    ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-xs font-extrabold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
                 }`}
               >
-                <HardDrive className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <HardDrive className="w-3.5 h-3.5 shrink-0" />
                 <span>Audit Logs &amp; Security</span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+                <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                  subView === 'audit' ? 'bg-white/20 text-white font-black' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+                }`}>
                   {auditLogs.length}
                 </span>
               </button>
@@ -1347,33 +1419,35 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSubView('regional')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
                   subView === 'regional'
-                    ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-xs font-extrabold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
                 }`}
               >
-                <Globe className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
+                <Globe className="w-3.5 h-3.5 shrink-0" />
                 <span>West Africa Regions</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSubView('mentors')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
                   subView === 'mentors'
-                    ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs font-extrabold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
                 }`}
               >
-                <GraduationCap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
+                <GraduationCap className="w-3.5 h-3.5 shrink-0" />
                 <span>Mentor Desk &amp; Apps</span>
                 {pendingMentorCount > 0 ? (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500 text-white font-bold animate-pulse">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500 text-white font-black animate-pulse">
                     {pendingMentorCount} New
                   </span>
                 ) : (
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                  <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                    subView === 'mentors' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+                  }`}>
                     {mentorApps.length}
                   </span>
                 )}
@@ -1382,20 +1456,22 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSubView('inquiries')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
                   subView === 'inquiries'
-                    ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-extrabold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                    : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
                 }`}
               >
-                <MessageSquare className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <MessageSquare className="w-3.5 h-3.5 shrink-0" />
                 <span>Inquiries &amp; Help Desk</span>
                 {unreadInquiriesCount > 0 ? (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-600 text-white font-bold animate-pulse">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-rose-500 text-white font-black animate-pulse">
                     {unreadInquiriesCount} New
                   </span>
                 ) : (
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                  <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                    subView === 'inquiries' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+                  }`}>
                     {inquiries.length}
                   </span>
                 )}
@@ -1453,8 +1529,17 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     placeholder="Search by name, email..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#005F02] shadow-xs"
+                    className="w-full pl-9 pr-8 h-10 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-xs font-mono font-bold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#005F02] shadow-3xs"
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
                 {/* Role Selector */}
@@ -1698,31 +1783,31 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               </>
             )}
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="p-0">
+        <div className="p-0">
           {/* ═══════════════════════════════════════════════════════════════
               SUBVIEW 1: USERS & LEARNER MANAGEMENT TABLE
               ═══════════════════════════════════════════════════════════════ */}
           {subView === 'users' && (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full text-left text-xs border-collapse font-mono">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/50 text-[11px] font-mono uppercase text-slate-500 dark:text-slate-400">
-                    <th className="py-3 pl-4 pr-1 w-10 text-center font-semibold">#</th>
-                    <th className="py-3 px-4 font-semibold min-w-[200px]">Learner Profile</th>
-                    <th className="py-3 px-4 font-semibold min-w-[130px]">Nation / Region</th>
-                    <th className="py-3 px-4 font-semibold min-w-[150px] whitespace-nowrap">Activity Status</th>
-                    <th className="py-3 px-4 font-semibold min-w-[120px] whitespace-nowrap">XP &amp; Streak</th>
-                    <th className="py-3 px-4 font-semibold min-w-[140px] whitespace-nowrap">Progress Metrics</th>
-                    <th className="py-3 px-4 font-semibold min-w-[120px] whitespace-nowrap">Client Engine</th>
-                    <th className="py-3 px-4 font-semibold text-right min-w-[145px] whitespace-nowrap">Admin Action</th>
+                  <tr className="border-b-2 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-[#161B22] text-[11px] font-mono font-black uppercase text-slate-700 dark:text-slate-300 tracking-wider">
+                    <th className="py-3.5 pl-4 pr-1 w-12 text-center">#</th>
+                    <th className="py-3.5 px-4 min-w-[220px]">Learner Profile</th>
+                    <th className="py-3.5 px-4 min-w-[140px]">Nation / Region</th>
+                    <th className="py-3.5 px-4 min-w-[150px] whitespace-nowrap">Activity Status</th>
+                    <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">XP &amp; Streak</th>
+                    <th className="py-3.5 px-4 min-w-[150px] whitespace-nowrap">Progress Metrics</th>
+                    <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Client Engine</th>
+                    <th className="py-3.5 px-4 text-right min-w-[150px] whitespace-nowrap">Admin Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-sans">
+                <tbody className="divide-y-2 divide-slate-200 dark:divide-slate-800/80">
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-8 text-center text-slate-500 dark:text-slate-400 text-xs">
+                      <td colSpan={8} className="py-12 text-center text-slate-500 dark:text-slate-400 text-xs font-mono font-bold">
                         No learners matched your filter criteria.
                       </td>
                     </tr>
@@ -1730,17 +1815,19 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                     filteredUsers.map((user, index) => (
                       <tr
                         key={user.id}
-                        className="hover:bg-slate-50/80 dark:hover:bg-slate-950/40 transition-colors"
+                        className="hover:bg-slate-50/80 dark:hover:bg-[#161B22]/60 transition-colors border-b-2 border-slate-200 dark:border-slate-800/80"
                       >
                         {/* Number Index */}
-                        <td className="py-3.5 pl-4 pr-1 text-center font-mono text-[11px] text-slate-400 font-bold">
-                          {String(index + 1).padStart(2, '0')}
+                        <td className="py-4 pl-4 pr-1 text-center">
+                          <span className="inline-flex w-7 h-7 rounded-lg bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 items-center justify-center font-mono text-[11px] font-black text-slate-700 dark:text-slate-300 shadow-3xs">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
                         </td>
 
                         {/* Learner Name & Role */}
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-brand-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-3xs overflow-hidden">
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-2xl bg-[#005F02] text-white font-mono font-black flex items-center justify-center text-xs shrink-0 shadow-3xs overflow-hidden border-2 border-[#005F02]">
                               {user.avatarUrl ? (
                                 <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
                               ) : (
@@ -1748,31 +1835,31 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               )}
                             </div>
                             <div className="min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="font-bold text-slate-900 dark:text-white truncate">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-mono font-black text-slate-900 dark:text-white truncate text-sm">
                                   {user.name}
                                 </span>
                                 {user.role === 'admin' && (
-                                  <span className="px-1.5 py-0.2 rounded bg-brand-100 dark:bg-brand-950 text-brand-800 dark:text-brand-300 font-mono text-[9px] font-bold border border-brand-200 dark:border-brand-800">
+                                  <span className="px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[9px] font-black border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs uppercase tracking-wider">
                                     ADMIN
                                   </span>
                                 )}
                                 {user.role === 'instructor' && (
-                                  <span className="px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 font-mono text-[9px] font-bold border border-indigo-200 dark:border-indigo-800">
+                                  <span className="px-2 py-0.5 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono text-[9px] font-black border-2 border-indigo-300 dark:border-indigo-800 shadow-3xs uppercase tracking-wider">
                                     MENTOR
                                   </span>
                                 )}
                               </div>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
+                              <span className="text-xs text-slate-500 dark:text-slate-400 block font-mono">
                                 {user.email}
                               </span>
-                              <div className="flex items-center gap-1.5 pt-1 flex-wrap">
-                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-mono text-[10px] font-bold whitespace-nowrap shadow-3xs">
+                              <div className="flex items-center gap-1.5 pt-1.5 flex-wrap">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 font-mono text-[10px] font-black shadow-3xs whitespace-nowrap">
                                   <BookOpen className="w-3 h-3 text-[#005F02] dark:text-emerald-400 shrink-0" />
                                   <span>{user.activeCourseTitle || user.enrolledCourseTitles?.[0] || 'General Track'}</span>
                                 </span>
                                 {user.enrolledCourseTitles && user.enrolledCourseTitles.length > 1 && (
-                                  <span className="text-[10px] font-mono text-slate-400 font-semibold">
+                                  <span className="text-[10px] font-mono text-slate-400 font-bold">
                                     +{user.enrolledCourseTitles.length - 1} more
                                   </span>
                                 )}
@@ -1782,23 +1869,23 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         </td>
 
                         {/* Country */}
-                        <td className="py-3.5 px-4 font-mono">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-[10px] whitespace-nowrap">
-                            <Globe className="w-2.5 h-2.5 text-brand-500 shrink-0" />
-                            {user.countryName} ({user.countryCode})
+                        <td className="py-4 px-4 font-mono">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono font-black text-[11px] shadow-3xs whitespace-nowrap">
+                            <Globe className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span>{user.countryName} ({user.countryCode})</span>
                           </span>
                         </td>
 
                         {/* Status */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
+                        <td className="py-4 px-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
 
                         {/* XP & Streak */}
-                        <td className="py-3.5 px-4 font-mono whitespace-nowrap">
+                        <td className="py-4 px-4 font-mono whitespace-nowrap">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900 dark:text-white">
+                            <span className="font-mono font-black text-slate-900 dark:text-white text-sm">
                               {user.totalXp.toLocaleString()} XP
                             </span>
-                            <span className="inline-flex items-center gap-0.5 text-amber-600 dark:text-amber-400 text-[11px] font-bold">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 font-mono font-black text-[11px] shadow-3xs">
                               <Flame className="w-3 h-3 fill-current" />
                               {user.streakDays}d
                             </span>
@@ -1806,13 +1893,13 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         </td>
 
                         {/* Progress Metrics */}
-                        <td className="py-3.5 px-4 font-mono text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                        <td className="py-4 px-4 font-mono text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
                           <div>
-                            <span className="font-semibold text-slate-900 dark:text-white">
+                            <span className="font-mono font-black text-slate-900 dark:text-white">
                               {user.problemsSolved}
                             </span>{' '}
                             drills •{' '}
-                            <span className="font-semibold text-slate-900 dark:text-white">
+                            <span className="font-mono font-black text-slate-900 dark:text-white">
                               {user.lessonsCompleted}
                             </span>{' '}
                             lessons
@@ -1820,18 +1907,18 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         </td>
 
                         {/* Engine Mode */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">{getDeviceIcon(user.deviceMode)}</td>
+                        <td className="py-4 px-4 whitespace-nowrap">{getDeviceIcon(user.deviceMode)}</td>
 
                         {/* Action */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5 flex-nowrap">
+                        <td className="py-4 px-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-2 flex-nowrap">
                             {user.role !== 'admin' && (
                               <>
                                 {user.role === 'instructor' ? (
                                   <button
                                     type="button"
                                     onClick={() => handleDemoteToLearner(user.id, user.name)}
-                                    className="h-8 px-3.5 rounded-xl text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 border border-rose-300 dark:border-rose-800 transition-all whitespace-nowrap inline-flex items-center gap-1.5 shadow-3xs hover:shadow-2xs cursor-pointer"
+                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-rose-600 dark:text-rose-400 bg-white dark:bg-[#161B22] hover:bg-rose-50 dark:hover:bg-rose-950/80 border-2 border-slate-300 dark:border-slate-700 hover:border-rose-400 active:scale-95 shadow-3xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
                                     title="Revoke mentor permissions and demote to learner"
                                   >
                                     <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
@@ -1841,7 +1928,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   <button
                                     type="button"
                                     onClick={() => handleOpenApproveModalForUser(user)}
-                                    className="h-8 px-3.5 rounded-xl text-xs font-bold text-white bg-[#005F02] hover:bg-[#004e02] shadow-xs hover:shadow-sm transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
+                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-white bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] active:scale-95 shadow-xs transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer"
                                     title="Grant Mentor Hub course authoring & student inquiry access"
                                   >
                                     <GraduationCap className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
@@ -3006,8 +3093,8 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           EXPORT WITH DATE & TIME RANGE MODAL

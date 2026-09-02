@@ -394,18 +394,18 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-3xl max-h-[94vh] sm:max-h-[92vh] rounded-2xl sm:rounded-3xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 text-slate-900 dark:text-slate-100">
+      <div className="relative w-full max-w-3xl max-h-[94vh] sm:max-h-[92vh] rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 text-slate-900 dark:text-slate-100">
         {/* Header Bar */}
-        <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 flex items-center justify-between shrink-0">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#12161A] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="p-2 rounded-xl bg-brand-600 text-white shadow-xs shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shadow-3xs shrink-0">
               <GraduationCap className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm sm:text-base font-bold leading-tight text-slate-900 dark:text-white truncate">
+              <h3 className="text-sm sm:text-base font-black leading-tight text-slate-900 dark:text-white truncate">
                 {courseToEdit ? 'Edit Course Curriculum' : 'Create New Course Track'}
               </h3>
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-medium truncate mt-0.5">
                 Admin Course Creator with AI theory, video links &amp; quizzes.
               </p>
             </div>
@@ -414,9 +414,9 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-2"
+            className="p-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-[#005F02] transition-colors cursor-pointer shrink-0 ml-2 shadow-3xs active:scale-95"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -917,32 +917,28 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
           </div>
 
           {/* Action Footer Bar */}
-          <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-800 gap-2">
-            <span className="text-[11px] font-mono font-semibold text-slate-600 dark:text-slate-400">
+          <div className="flex items-center justify-between pt-3.5 border-t-2 border-slate-200 dark:border-slate-800 gap-2">
+            <span className="text-[11px] font-mono font-black text-slate-700 dark:text-slate-300">
               {modules.reduce((acc, m) => acc + m.lessons.length, 0)} Lessons Total
             </span>
 
             <div className="flex items-center gap-2 shrink-0">
-              <Button
+              <button
                 type="button"
-                variant="outline"
-                size="sm"
                 onClick={onClose}
-                className="text-xs font-bold border-slate-300 dark:border-slate-700"
+                className="h-9 px-3.5 rounded-xl text-xs font-mono font-bold border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-800 dark:text-slate-200 hover:border-[#005F02] transition-all cursor-pointer shadow-3xs active:scale-95"
               >
                 Cancel
-              </Button>
+              </button>
 
-              <Button
+              <button
                 type="submit"
-                variant="primary"
-                size="sm"
-                isLoading={isSaving}
-                className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-3.5 sm:px-4"
-                leftIcon={<Check className="w-3.5 h-3.5" />}
+                disabled={isSaving}
+                className="h-9 px-4 rounded-xl text-xs font-mono font-black bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] text-white shadow-xs transition-all cursor-pointer active:scale-95 inline-flex items-center gap-1.5 disabled:opacity-50"
               >
-                {courseToEdit ? 'Save Changes' : 'Publish Course'}
-              </Button>
+                <Check className="w-3.5 h-3.5" />
+                <span>{courseToEdit ? 'Save Changes' : 'Publish Course'}</span>
+              </button>
             </div>
           </div>
         </form>

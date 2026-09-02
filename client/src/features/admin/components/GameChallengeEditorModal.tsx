@@ -10,7 +10,7 @@ import {
 } from '@/features/games/types/games.types'
 import { gameStoreService } from '@/services/games/game-store.service'
 import { courseStoreService } from '@/services/learning/course-store.service'
-import { Button } from '@/components/ui'
+
 import {
   X,
   Zap,
@@ -585,18 +585,18 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in">
-      <div className="relative w-full max-w-3xl rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-3xl rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/60 shrink-0">
+        <div className="px-6 py-4 border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#12161A] shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#005F02] text-white shadow-xs">
-              <Zap className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shadow-3xs shrink-0">
+              <Zap className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
                 {editingChallenge ? 'Edit Game Challenge' : 'Create New Game Challenge'}
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Configure curriculum drills, snippets, bugs, and quizzes across programming tracks.
               </p>
             </div>
@@ -604,9 +604,9 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="p-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-[#005F02] transition-colors cursor-pointer shadow-3xs active:scale-95"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -1048,18 +1048,21 @@ export const GameChallengeEditorModal: React.FC<GameChallengeEditorModalProps> =
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/60 shrink-0">
-          <Button variant="outline" size="sm" onClick={onClose} className="font-semibold">
+        <div className="px-6 py-4 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#12161A] shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-9 px-3.5 rounded-xl text-xs font-mono font-bold border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-700 dark:text-slate-300 hover:border-slate-400 cursor-pointer shadow-3xs active:scale-95"
+          >
             Cancel
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
+          </button>
+          <button
+            type="button"
             onClick={handleSave}
-            className="font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs px-5"
+            className="h-9 px-5 rounded-xl text-xs font-mono font-black bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] text-white shadow-xs cursor-pointer active:scale-95"
           >
             {editingChallenge ? 'Save Changes' : 'Publish Challenge'}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

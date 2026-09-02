@@ -3,7 +3,7 @@ import type { GameLanguage, GameId } from '@/features/games/types/games.types'
 import type { GameModuleItem, GameDrillItem } from '@/features/games/data/gameModulesData'
 import { LANGUAGE_TRACKS } from '@/features/games/data/gameModulesData'
 import { gameStoreService } from '@/services/games/game-store.service'
-import { Button } from '@/components/ui'
+
 import {
   X,
   BookOpen,
@@ -410,19 +410,19 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-[#0E1318] rounded-3xl border-2 border-slate-300 dark:border-slate-700 shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <Layers className="w-5 h-5" />
+        <div className="px-6 py-4 border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#12161A] shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shadow-3xs shrink-0">
+              <Layers className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
                 {editingModule ? `Edit Module ${editingModule.moduleNumber}` : 'Create New Curriculum Module'}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Structure lessons and associated mini-game drills under this language track.
               </p>
             </div>
@@ -431,14 +431,14 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-[#005F02] transition-colors cursor-pointer shadow-3xs active:scale-95"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
           {/* Language & Module Number */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
@@ -454,7 +454,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
                 onChange={(e) => setModuleNumber(Number(e.target.value))}
                 min={1}
                 max={50}
-                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-mono font-bold"
+                className="w-full p-2.5 rounded-xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold"
               />
             </div>
           </div>
@@ -467,7 +467,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Your First Lines of Code or Decision Making with if-else"
-              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
+              className="w-full p-2.5 rounded-xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-bold"
             />
           </div>
 
@@ -481,44 +481,42 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
               placeholder="e.g. Main method signature, print statements, variables, and type casting."
-              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white resize-none"
+              className="w-full p-2.5 rounded-xl bg-white dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white resize-none"
             />
           </div>
 
           {/* Drills Section */}
-          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+          <div className="space-y-2 pt-2 border-t-2 border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
-                <BookOpen className="w-4 h-4 text-emerald-500" />
+                <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Interactive Mini-Game Drills ({drills.length})</span>
               </div>
 
-              <Button
+              <button
                 type="button"
-                variant="outline"
-                size="sm"
                 onClick={handleAddDrill}
-                className="h-7 text-[11px] font-bold"
-                leftIcon={<Plus className="w-3 h-3" />}
+                className="h-8 px-3 rounded-xl text-xs font-mono font-bold border-2 border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 hover:bg-emerald-100 shadow-3xs active:scale-95 inline-flex items-center gap-1"
               >
-                Add Drill
-              </Button>
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Drill</span>
+              </button>
             </div>
 
             <div className="space-y-2">
               {drills.map((drill, idx) => (
                 <div
                   key={idx}
-                  className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 space-y-2"
+                  className="p-3.5 rounded-xl bg-white dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 space-y-2.5 shadow-3xs"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-bold text-[10px] text-slate-400">
+                    <span className="font-mono font-bold text-[10px] text-slate-500 uppercase">
                       Drill #{idx + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemoveDrill(idx)}
-                      className="text-rose-500 hover:text-rose-600 p-1 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer"
+                      className="text-rose-500 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -531,7 +529,7 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
                         value={drill.title}
                         onChange={(e) => handleUpdateDrill(idx, { title: e.target.value })}
                         placeholder="Drill Title (e.g. Variable Declarations)"
-                        className="w-full p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-semibold text-xs"
+                        className="w-full p-2 rounded-xl bg-slate-50 dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold text-xs"
                       />
                     </div>
 
@@ -558,9 +556,9 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
                         onChange={(e) => handleUpdateDrill(idx, { estimatedMins: Number(e.target.value) })}
                         min={1}
                         max={15}
-                        className="w-14 p-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono font-bold text-slate-900 dark:text-white text-center"
+                        className="w-14 p-1.5 rounded-xl bg-slate-50 dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-700 text-[11px] font-mono font-bold text-slate-900 dark:text-white text-center"
                       />
-                      <span className="text-[10px] text-slate-400">mins</span>
+                      <span className="text-[10px] text-slate-400 font-bold font-mono">mins</span>
                     </div>
                   </div>
                 </div>
@@ -569,18 +567,20 @@ export const GameModuleEditorModal: React.FC<GameModuleEditorModalProps> = ({
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+          <div className="pt-4 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-end gap-2.5">
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-9 px-3.5 rounded-xl text-xs font-mono font-bold border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-700 dark:text-slate-300 hover:border-slate-400 cursor-pointer shadow-3xs active:scale-95"
+            >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              variant="primary"
-              size="sm"
-              className="bg-[#005F02] hover:bg-[#004e02] text-white font-bold px-4"
+              className="h-9 px-4 rounded-xl text-xs font-mono font-black bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] text-white shadow-xs cursor-pointer active:scale-95"
             >
               {editingModule ? 'Save Changes' : 'Create Module'}
-            </Button>
+            </button>
           </div>
         </form>
       </div>

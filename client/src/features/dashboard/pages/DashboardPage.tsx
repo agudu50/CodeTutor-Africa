@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { Button, Avatar } from '@/components/ui'
+import { Avatar } from '@/components/ui'
 import { MOCK_DASHBOARD_DATA } from '../data/mockDashboardData'
 import { MOCK_COURSES } from '@/features/learning/data/mockCourseData'
 import { useUserProfile } from '@/app/providers/UserProfileProvider'

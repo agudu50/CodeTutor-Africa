@@ -323,138 +323,153 @@ export const SystemPerformanceDeskView: React.FC = () => {
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-          HERO BANNER: AI SYSTEM OBSERVABILITY & SECURITY
+          AI OPS STUDIO HEADER BANNER (Matching PracticeStudioView standard)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="space-y-1.5">
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              AI Ops, System Health & Security
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
-              Monitor live platform performance, incoming attack origins, and manage security vulnerabilities.
-            </p>
-          </div>
-
-          {/* Quick Action Controls */}
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={refreshTelemetry}
-              disabled={isLoading}
-              className="border-slate-200 dark:border-slate-700 font-bold text-xs h-9"
-              leftIcon={<RotateCcw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />}
-            >
-              Refresh Telemetry
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => handleRunAction('RUN_VULN_SECURITY_AUDIT')}
-              disabled={isExecutingAction === 'RUN_VULN_SECURITY_AUDIT'}
-              className="font-bold text-xs h-9 shadow-xs"
-              leftIcon={<Shield className="w-3.5 h-3.5" />}
-            >
-              Run Security & System Audit
-            </Button>
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs shrink-0 flex items-center justify-center">
+              <Zap className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                  AI Observability Engine
+                </span>
+                <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-mono font-black uppercase tracking-wider bg-slate-100 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                  Zero-Trust Sandbox
+                </span>
+              </div>
+              <h1 className="text-lg sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                AI Ops, Telemetry &amp; Cyber Defense Studio
+              </h1>
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 max-w-2xl leading-relaxed">
+                Monitor live platform performance, browser WebAssembly runtimes, indexedDB offline cache, and real-time threat vectors.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════════════════════════
-            SUB-NAVIGATION TABS: PERFORMANCE vs THREATS & VULNERABILITIES vs AUDIT
-            ═══════════════════════════════════════════════════════════════ */}
-        <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('performance')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeSubTab === 'performance'
-                  ? 'bg-white dark:bg-slate-900 text-brand-700 dark:text-brand-300 shadow-2xs font-extrabold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-              <span>Full-Stack Performance</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                {report?.healthScore || 98}%
-              </span>
-            </button>
+        {/* Quick Action Controls */}
+        <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={refreshTelemetry}
+            disabled={isLoading}
+            className="h-9 px-3.5 rounded-xl text-xs font-mono font-bold justify-center border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-800 dark:text-slate-200 hover:border-[#005F02] transition-all cursor-pointer shadow-3xs active:scale-95 inline-flex items-center gap-1.5 flex-1 sm:flex-initial"
+          >
+            <RotateCcw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Refresh Telemetry</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRunAction('RUN_VULN_SECURITY_AUDIT')}
+            disabled={isExecutingAction === 'RUN_VULN_SECURITY_AUDIT'}
+            className="h-9 px-4 rounded-xl text-xs font-mono font-black bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] text-white shadow-xs justify-center transition-all cursor-pointer active:scale-95 inline-flex items-center gap-1.5 flex-1 sm:flex-initial"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span>Run Security Audit</span>
+          </button>
+        </div>
+      </div>
 
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('security')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeSubTab === 'security'
-                  ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-2xs font-extrabold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Shield className="w-3.5 h-3.5 text-rose-500" />
-              <span>Threats & Real-Time Vulnerabilities</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-bold">
-                {securityData?.totalAttacksReceived || 142} Attacks
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('audit')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeSubTab === 'audit'
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-2xs font-extrabold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Terminal className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Audit & Action History</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                {actionHistory.length}
-              </span>
-            </button>
-          </div>
-
-          {/* Evaluation Schedule & Countdown */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                Auto-Scan:
-              </span>
-            </div>
-
-            <div className="relative inline-block">
-              <select
-                aria-label="Automated AI Evaluation Frequency"
-                value={autoEvalHours}
-                onChange={(e) => handleIntervalChange(Number(e.target.value))}
-                className="appearance-none pl-2.5 pr-7 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-500"
-              >
-                <option value={1}>Every 1h</option>
-                <option value={2}>Every 2h</option>
-                <option value={6}>Every 6h</option>
-                <option value={0}>Manual</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400">
-                <ChevronDown className="w-3 h-3" />
-              </div>
-            </div>
-
-            <label className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={autoRemediate}
-                onChange={handleToggleAutoRemediate}
-                className="w-3.5 h-3.5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
-              />
-              <span>Auto-Remediate</span>
-            </label>
-
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-brand-300 border border-slate-200 dark:border-slate-700">
-              {countdownText || 'Ready'}
+      {/* ═══════════════════════════════════════════════════════════════
+          SUB-NAVIGATION TABS: PERFORMANCE vs THREATS vs AUDIT
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs flex flex-wrap items-center justify-between gap-4 font-mono">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 overflow-x-auto scrollbar-none text-xs">
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('performance')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+              activeSubTab === 'performance'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 shrink-0" />
+            <span>Full-Stack Performance</span>
+            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+              activeSubTab === 'performance' ? 'bg-white/20 text-white font-black' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+            }`}>
+              {report?.healthScore || 98}%
             </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('security')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+              activeSubTab === 'security'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
+            }`}
+          >
+            <Shield className="w-3.5 h-3.5 shrink-0" />
+            <span>Threats &amp; Vulnerabilities</span>
+            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+              activeSubTab === 'security' ? 'bg-white/20 text-white font-black' : 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 font-bold'
+            }`}>
+              {securityData?.totalAttacksReceived || 142} Attacks
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('audit')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+              activeSubTab === 'audit'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black shadow-xs'
+                : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400 font-bold'
+            }`}
+          >
+            <Terminal className="w-3.5 h-3.5 shrink-0" />
+            <span>Audit &amp; Action History</span>
+            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+              activeSubTab === 'audit' ? 'bg-white/20 text-white font-black' : 'bg-slate-100 dark:bg-[#161B22] text-slate-600 dark:text-slate-400'
+            }`}>
+              {actionHistory.length}
+            </span>
+          </button>
+        </div>
+
+        {/* Evaluation Schedule & Countdown */}
+        <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
+          <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold">
+            <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <span>Auto-Scan:</span>
           </div>
+
+          <div className="relative inline-block">
+            <select
+              aria-label="Automated AI Evaluation Frequency"
+              value={autoEvalHours}
+              onChange={(e) => handleIntervalChange(Number(e.target.value))}
+              className="appearance-none pl-2.5 pr-7 py-1 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-xs font-mono font-bold text-slate-900 dark:text-white cursor-pointer focus:outline-none focus:border-[#005F02]"
+            >
+              <option value={1}>Every 1h</option>
+              <option value={2}>Every 2h</option>
+              <option value={6}>Every 6h</option>
+              <option value={0}>Manual</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400">
+              <ChevronDown className="w-3 h-3" />
+            </div>
+          </div>
+
+          <label className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={autoRemediate}
+              onChange={handleToggleAutoRemediate}
+              className="w-3.5 h-3.5 rounded border-slate-300 text-[#005F02] focus:ring-[#005F02] cursor-pointer"
+            />
+            <span>Auto-Remediate</span>
+          </label>
+
+          <span className="text-xs font-mono font-black px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+            {countdownText || 'Ready'}
+          </span>
         </div>
       </div>
 

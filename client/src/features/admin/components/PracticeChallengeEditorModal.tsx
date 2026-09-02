@@ -197,18 +197,18 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in">
-      <div className="relative w-full max-w-3xl rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-3xl rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/60 shrink-0">
+        <div className="px-6 py-4 border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#12161A] shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#005F02] text-white shadow-xs">
-              <Code2 className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shadow-3xs shrink-0">
+              <Code2 className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
                 {editingQuestion ? 'Edit Practice Challenge' : 'Create Practice Challenge'}
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Design interactive coding problems with starter templates, hints, clock timers, and attempt limits.
               </p>
             </div>
@@ -216,9 +216,9 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="p-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-[#005F02] transition-colors cursor-pointer shadow-3xs active:scale-95"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -523,17 +523,17 @@ export const PracticeChallengeEditorModal: React.FC<PracticeChallengeEditorModal
           </div>
 
           {/* Modal Actions */}
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-2.5">
+          <div className="pt-4 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="h-9 px-4 rounded-xl text-xs font-mono font-bold border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-800 dark:text-slate-200 hover:border-[#005F02] transition-all cursor-pointer shadow-3xs active:scale-95"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
+              className="h-9 px-5 rounded-xl bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] text-white font-mono font-black text-xs shadow-xs transition-all cursor-pointer active:scale-95"
             >
               {editingQuestion ? 'Update Challenge' : 'Save Challenge'}
             </button>

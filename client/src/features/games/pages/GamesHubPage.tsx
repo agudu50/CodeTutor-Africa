@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { GameId, PlayerGameStats, GameLanguage } from '../types/games.types'
@@ -62,6 +63,24 @@ export const GamesHubPage: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<GameLanguage | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(gameSound.isEnabled())
   const [, setTick] = useState(0)
+
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const game = searchParams.get('game') as GameId | null
+    const lang = searchParams.get('lang') as GameLanguage | null
+    const drill = searchParams.get('drill')
+    const module = searchParams.get('module')
+    if (game) {
+      setActiveGame(game)
+      if (lang) {
+        setActiveLanguage(lang)
+        setSelectedLanguage(lang)
+      }
+      if (drill) setActiveDrillTitle(drill)
+      if (module) setActiveModuleId(module)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const handler = () => setTick((t) => t + 1)
