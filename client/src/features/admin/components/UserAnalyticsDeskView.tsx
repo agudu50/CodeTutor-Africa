@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import {
   AdminUserRecord,
   AuditLogEntry,
@@ -40,6 +40,8 @@ import {
   MessageSquare,
   AlertTriangle,
   X,
+  Check,
+  ArrowDown,
 } from 'lucide-react'
 
 function getHumanRelativeTime(isoString: string): string {
@@ -99,6 +101,502 @@ function getHumanActionTitle(log: AuditLogEntry): { verb: string; highlightTarge
     default:
       return { verb: 'performed activity on', highlightTarget: log.target, categoryLabel: log.category }
   }
+}
+
+/* ─── CUSTOM ROLE FILTER DROPDOWN ────────────────────────────────────────── */
+interface CustomRoleDropdownProps {
+  value: 'ALL' | 'instructor' | 'learner'
+  onChange: (val: 'ALL' | 'instructor' | 'learner') => void
+  totalCount: number
+  mentorCount: number
+  learnerCount: number
+}
+
+const CustomRoleDropdown: React.FC<CustomRoleDropdownProps> = ({
+  value,
+  onChange,
+  totalCount,
+  mentorCount,
+  learnerCount,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const options: { id: 'ALL' | 'instructor' | 'learner'; label: string; count: number; icon: React.FC<{ className?: string }> }[] = [
+    { id: 'ALL', label: 'All Roles', count: totalCount, icon: Users },
+    { id: 'instructor', label: 'Mentors', count: mentorCount, icon: GraduationCap },
+    { id: 'learner', label: 'Learners', count: learnerCount, icon: UserCheck },
+  ]
+
+  const current = options.find((o) => o.id === value) || options[0]
+  const Icon = current.icon
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Icon className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+            {current.label}
+          </span>
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+            {current.count}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[170px]">
+          {options.map((opt) => {
+            const isSelected = opt.id === value
+            const OptIcon = opt.icon
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => {
+                  onChange(opt.id)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <OptIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="truncate">{opt.label}</span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-200/70 dark:bg-slate-700/70 font-bold">
+                    {opt.count}
+                  </span>
+                  {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM COURSE FILTER DROPDOWN ──────────────────────────────────────── */
+interface CustomCourseDropdownProps {
+  value: string
+  onChange: (val: string) => void
+  totalCount: number
+  courses: { id: string; title: string; count: number }[]
+}
+
+const CustomCourseDropdown: React.FC<CustomCourseDropdownProps> = ({
+  value,
+  onChange,
+  totalCount,
+  courses,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const selectedCourse = courses.find((c) => c.title === value)
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        <div className="flex items-center gap-1.5 min-w-0">
+          <BookOpen className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
+          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+            {value === 'ALL' ? 'All Enrolled Courses' : value}
+          </span>
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+            {value === 'ALL' ? totalCount : selectedCourse?.count || 0}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[240px]">
+          <button
+            type="button"
+            onClick={() => {
+              onChange('ALL')
+              setIsOpen(false)
+            }}
+            className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+              value === 'ALL'
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <span className="truncate">All Enrolled Courses</span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-200/70 dark:bg-slate-700/70 font-bold">
+                {totalCount}
+              </span>
+              {value === 'ALL' && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+            </div>
+          </button>
+
+          {courses.map((c) => {
+            const isSelected = c.title === value
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => {
+                  onChange(c.title)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <span className="truncate">{c.title}</span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-200/70 dark:bg-slate-700/70 font-bold">
+                    {c.count}
+                  </span>
+                  {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM COUNTRY FILTER DROPDOWN ─────────────────────────────────────── */
+interface CustomCountryDropdownProps {
+  value: string
+  onChange: (val: string) => void
+  countries: { code: string; name: string }[]
+}
+
+const CustomCountryDropdown: React.FC<CustomCountryDropdownProps> = ({
+  value,
+  onChange,
+  countries,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const current = countries.find((c) => c.code === value) || countries[0]
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2 px-3 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+          <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+            {current.code}
+          </span>
+          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+            {current.name}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1.5 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl max-h-64 overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[200px]">
+          {countries.map((c) => {
+            const isSelected = c.code === value
+            return (
+              <button
+                key={c.code}
+                type="button"
+                onClick={() => {
+                  onChange(c.code)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="px-1.5 py-0.2 rounded-md font-mono text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                    {c.code}
+                  </span>
+                  <span className="truncate">{c.name}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM SORT DROPDOWN ───────────────────────────────────────────────── */
+interface CustomSortDropdownProps {
+  value: string
+  onChange: (val: any) => void
+}
+
+const SORT_OPTIONS: { id: string; label: string; shortLabel: string; icon: React.FC<{ className?: string }> }[] = [
+  { id: 'default', label: 'Default Order', shortLabel: 'Sort', icon: ArrowDown },
+  { id: 'recent', label: 'Recently Active', shortLabel: 'Recent', icon: Clock },
+  { id: 'xp', label: 'Highest XP', shortLabel: 'XP', icon: Zap },
+  { id: 'streak', label: 'Longest Streak', shortLabel: 'Streak', icon: Flame },
+  { id: 'lessons', label: 'Lessons Completed', shortLabel: 'Lessons', icon: BookOpen },
+  { id: 'name', label: 'Alphabetical (A-Z)', shortLabel: 'Name', icon: User },
+]
+
+const CustomSortDropdown: React.FC<CustomSortDropdownProps> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const current = SORT_OPTIONS.find((s) => s.id === value) || SORT_OPTIONS[0]
+  const Icon = current.icon
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2 px-2.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Icon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+            {current.shortLabel}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[170px]">
+          {SORT_OPTIONS.map((opt) => {
+            const isSelected = opt.id === value
+            const OptIcon = opt.icon
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => {
+                  onChange(opt.id)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <OptIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="truncate">{opt.label}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── CUSTOM STATUS FILTER DROPDOWN ──────────────────────────────────────── */
+interface CustomStatusDropdownProps {
+  value: string
+  onChange: (val: string) => void
+}
+
+const STATUS_OPTIONS: { id: string; label: string; shortLabel: string; dot: string | null }[] = [
+  { id: 'ALL', label: 'All Statuses', shortLabel: 'Status', dot: null },
+  { id: 'active', label: 'Active (< 7d)', shortLabel: 'Active', dot: 'bg-emerald-500' },
+  { id: 'active_now', label: 'Active Now', shortLabel: 'Now', dot: 'bg-emerald-500 animate-pulse' },
+  { id: 'active_today', label: 'Active Today', shortLabel: 'Today', dot: 'bg-emerald-500' },
+  { id: 'active_this_week', label: 'Active This Week', shortLabel: 'Week', dot: 'bg-amber-500' },
+  { id: 'inactive', label: 'Idle (> 7d)', shortLabel: 'Idle', dot: 'bg-slate-400' },
+]
+
+const CustomStatusDropdown: React.FC<CustomStatusDropdownProps> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const current = STATUS_OPTIONS.find((s) => s.id === value) || STATUS_OPTIONS[0]
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full py-2 px-2.5 rounded-xl bg-white dark:bg-slate-900 border-2 transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+          isOpen
+            ? 'border-[#005F02] ring-2 ring-[#005F02]/20'
+            : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
+        }`}
+      >
+        <div className="flex items-center gap-1.5 min-w-0">
+          {current.dot ? (
+            <span className={`w-2 h-2 rounded-full shrink-0 ${current.dot}`} />
+          ) : (
+            <span className="w-2 h-2 rounded-full shrink-0 bg-slate-300 dark:bg-slate-600" />
+          )}
+          <span className="font-bold text-slate-900 dark:text-white truncate text-xs">
+            {current.shortLabel}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ml-1 ${
+            isOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-1.5 z-50 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-xl space-y-1 animate-in fade-in zoom-in-95 duration-150 min-w-[160px]">
+          {STATUS_OPTIONS.map((opt) => {
+            const isSelected = opt.id === value
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => {
+                  onChange(opt.id)
+                  setIsOpen(false)
+                }}
+                className={`w-full px-2.5 py-1.5 rounded-xl text-left text-xs font-bold transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  {opt.dot ? (
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${opt.dot}`} />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full shrink-0 bg-slate-300 dark:bg-slate-600" />
+                  )}
+                  <span className="truncate">{opt.label}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }
 
 interface UserAnalyticsDeskViewProps {
@@ -263,6 +761,23 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
   const courses = useMemo(() => {
     return courseStoreService.getAllCourses()
   }, [])
+
+  const courseFilterOptions = useMemo(() => {
+    return courses.map((c) => {
+      const count = users.filter(
+        (u) =>
+          u.activeCourseTitle === c.title ||
+          u.enrolledCourseTitles?.includes(c.title) ||
+          (u.favoriteLanguage && c.language && u.favoriteLanguage.toLowerCase() === c.language.toLowerCase()) ||
+          u.enrolledCourseTitles?.some((t) => t.toLowerCase().includes(c.language.toLowerCase()))
+      ).length
+      return {
+        id: c.id,
+        title: c.title,
+        count: count || (c.enrolledCount || 420),
+      }
+    })
+  }, [courses, users])
   
   // Date & Time Range States
   const [dateRangePreset, setDateRangePreset] = useState<string>('ALL')
@@ -928,109 +1443,65 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
           </div>
 
           {/* Search and Filters Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-2.5 pt-3">
             {subView === 'users' && (
               <>
                 {/* Search Input */}
-                <div className="sm:col-span-3 relative">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <div className="sm:col-span-2 md:col-span-3 lg:col-span-3 relative">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     placeholder="Search by name, email, track..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#005F02] shadow-xs"
                   />
                 </div>
 
                 {/* Role Selector */}
-                <div className="sm:col-span-2 relative">
-                  <select
+                <div className="sm:col-span-1 md:col-span-1 lg:col-span-2 relative">
+                  <CustomRoleDropdown
                     value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value as any)}
-                    className="w-full py-2 pl-3.5 pr-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                  >
-                    <option value="ALL">All Roles ({users.length})</option>
-                    <option value="instructor">Mentors ({mentorUsers.length})</option>
-                    <option value="learner">Learners ({users.filter((u) => u.role === 'learner').length})</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    onChange={(val) => setSelectedRole(val)}
+                    totalCount={users.length}
+                    mentorCount={mentorUsers.length}
+                    learnerCount={users.filter((u) => u.role === 'learner').length}
+                  />
                 </div>
 
                 {/* Enrolled Course Track Selector */}
-                <div className="sm:col-span-3 relative">
-                  <select
+                <div className="sm:col-span-1 md:col-span-2 lg:col-span-3 relative">
+                  <CustomCourseDropdown
                     value={selectedCourse}
-                    onChange={(e) => setSelectedCourse(e.target.value)}
-                    className="w-full py-2 pl-3.5 pr-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                  >
-                    <option value="ALL">All Enrolled Courses ({users.length})</option>
-                    {courses.map((c) => {
-                      const count = users.filter(
-                        (u) =>
-                          u.activeCourseTitle === c.title ||
-                          u.enrolledCourseTitles?.includes(c.title) ||
-                          (u.favoriteLanguage && c.language && u.favoriteLanguage.toLowerCase() === c.language.toLowerCase()) ||
-                          u.enrolledCourseTitles?.some(t => t.toLowerCase().includes(c.language.toLowerCase()))
-                      ).length
-                      return (
-                        <option key={c.id} value={c.title}>
-                          {c.title} ({count || (c.enrolledCount || 420)})
-                        </option>
-                      )
-                    })}
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    onChange={(val) => setSelectedCourse(val)}
+                    totalCount={users.length}
+                    courses={courseFilterOptions}
+                  />
                 </div>
 
                 {/* Country Filter */}
-                <div className="sm:col-span-2 relative">
-                  <select
+                <div className="sm:col-span-1 md:col-span-1 lg:col-span-2 relative">
+                  <CustomCountryDropdown
                     value={selectedCountry}
-                    onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full py-2 pl-3 pr-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                  >
-                    {WEST_AFRICAN_COUNTRIES.map((c) => (
-                      <option key={c.code} value={c.code}>
-                        {c.name} ({c.code})
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    onChange={(val) => setSelectedCountry(val)}
+                    countries={WEST_AFRICAN_COUNTRIES}
+                  />
                 </div>
 
                 {/* Sort By Dropdown */}
-                <div className="sm:col-span-1 relative">
-                  <select
+                <div className="sm:col-span-1 md:col-span-1 lg:col-span-1 relative">
+                  <CustomSortDropdown
                     value={userSortBy}
-                    onChange={(e) => setUserSortBy(e.target.value as any)}
-                    className="w-full py-2 pl-2 pr-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                  >
-                    <option value="default">Sort</option>
-                    <option value="recent">Recent</option>
-                    <option value="xp">Highest XP</option>
-                    <option value="streak">Streak</option>
-                    <option value="lessons">Lessons</option>
-                    <option value="name">Name</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    onChange={(val) => setUserSortBy(val)}
+                  />
                 </div>
 
                 {/* Activity Status Filter */}
-                <div className="sm:col-span-1 relative">
-                  <select
+                <div className="sm:col-span-1 md:col-span-1 lg:col-span-1 relative">
+                  <CustomStatusDropdown
                     value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full py-2 pl-2 pr-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
-                  >
-                    <option value="ALL">Status</option>
-                    <option value="active">Active</option>
-                    <option value="active_now">Now</option>
-                    <option value="active_today">Today</option>
-                    <option value="active_this_week">Week</option>
-                    <option value="inactive">Idle</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    onChange={(val) => setSelectedStatus(val)}
+                  />
                 </div>
               </>
             )}
