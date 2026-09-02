@@ -276,23 +276,23 @@ export const MentorDashboardPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           MENTOR PORTAL HEADER BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs">
         <div className="space-y-1">
-          <div className="flex items-start sm:items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-brand-600 text-white shadow-xs shrink-0 mt-0.5 sm:mt-0">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs shrink-0 mt-0.5 sm:mt-0">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-lg sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                   Mentor Operations &amp; Community Hub
                 </h1>
-                <span className="px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20">
+                <span className="px-2.5 py-0.5 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-black border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
                   {isInstructor ? `${currentUser.favoriteLanguage?.toUpperCase()} VERIFIED EDUCATOR` : 'PLATFORM ADMINISTRATOR'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Active session: <strong className="text-slate-800 dark:text-slate-200">{currentUser.name}</strong> •{' '}
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
+                Active session: <strong className="text-slate-900 dark:text-white">{currentUser.name}</strong> •{' '}
                 {isInstructor
                   ? `Assigned to ${displayCourses.map(c => c.title).join(', ')} (${totalEnrolledStudents.toLocaleString()} enrolled students).`
                   : 'Platform Admin: Overview of all courses, students, and per-mentor track assignments.'}
@@ -302,117 +302,123 @@ export const MentorDashboardPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             onClick={() => {
               reloadData()
               setToastMessage('Mentor desk data refreshed.')
             }}
-            className="h-9 text-xs font-semibold justify-center border-slate-300 dark:border-slate-700"
-            leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+            className="h-9 px-3.5 rounded-xl text-xs font-mono font-bold justify-center border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-800 dark:text-slate-200 hover:border-[#005F02] transition-all cursor-pointer shadow-3xs active:scale-95 inline-flex items-center gap-1.5"
           >
-            Refresh
-          </Button>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Refresh</span>
+          </button>
 
           {activeTab === 'courses' && (
-            <Button
-              variant="primary"
-              size="sm"
+            <button
+              type="button"
               onClick={handleCreateNewCourse}
-              className="h-9 font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs px-3.5 justify-center"
-              leftIcon={<Plus className="w-4 h-4" />}
+              className="h-9 px-4 rounded-xl text-xs font-mono font-black bg-[#005F02] hover:bg-emerald-700 border-2 border-[#005F02] text-white shadow-xs justify-center transition-all cursor-pointer active:scale-95 inline-flex items-center gap-1.5"
             >
-              Add New Course
-            </Button>
+              <Plus className="w-4 h-4" />
+              <span>Add New Course</span>
+            </button>
           )}
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          HIGH-LEVEL SUMMARY METRICS (4 Equal KPI Cards)
+          HIGH-LEVEL SUMMARY METRICS (4 Equal KPI Cards with 2px borders)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 font-mono">
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            Open Inquiries
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-extrabold text-amber-700 dark:text-amber-400">
-              {openInquiriesCount}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 font-mono">
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-amber-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              Open Inquiries
             </span>
-            <HelpCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-400 border-2 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <HelpCircle className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
+          <span className="text-2xl sm:text-3xl font-black text-amber-700 dark:text-amber-400 block">
+            {openInquiriesCount}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             {resolvedInquiriesCount} resolved tickets
           </span>
         </div>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            {isInstructor ? 'Your Courses' : 'Curriculum Courses'}
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
-              {displayCourses.length}
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-blue-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              {isInstructor ? 'Your Courses' : 'Curriculum Courses'}
             </span>
-            <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+            <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-400 border-2 border-blue-300 dark:border-blue-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <BookOpen className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white block">
+            {displayCourses.length}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             {totalLessons} lessons {isInstructor ? 'authored' : 'online'}
           </span>
         </div>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            {isInstructor ? 'Your Enrolled Students' : 'Total Enrolled'}
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-extrabold text-[#005F02] dark:text-emerald-400">
-              {totalEnrolledStudents.toLocaleString()}
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              {isInstructor ? 'Your Enrolled Students' : 'Total Enrolled'}
             </span>
-            <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Users className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
+          <span className="text-2xl sm:text-3xl font-black text-[#005F02] dark:text-emerald-400 block">
+            {totalEnrolledStudents.toLocaleString()}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             {isInstructor
               ? `Across your ${displayCourses.length} assigned track(s)`
               : `Across ${courses.length} active tracks`}
           </span>
         </div>
 
-        <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs dark:shadow-none space-y-1 hover:border-slate-400 dark:hover:border-slate-700 transition-colors">
-          <span className="text-[10px] uppercase font-sans font-bold text-slate-700 dark:text-slate-300 block tracking-wider">
-            Response Status
-          </span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-xl sm:text-2xl font-extrabold text-sky-700 dark:text-sky-400">
-              &lt; 2h
+        <div className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs space-y-1.5 hover:border-sky-500 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-mono font-bold text-slate-600 dark:text-slate-400 block tracking-wider">
+              Response Status
             </span>
-            <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+            <div className="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-400 border-2 border-sky-300 dark:border-sky-800 flex items-center justify-center shrink-0 shadow-3xs">
+              <Clock className="w-3.5 h-3.5" />
+            </div>
           </div>
-          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-400 block truncate font-sans">
+          <span className="text-2xl sm:text-3xl font-black text-sky-700 dark:text-sky-400 block">
+            &lt; 2h
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 block truncate">
             {isInstructor ? 'Active Mentor Desk' : 'Admin synced real-time'}
           </span>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SUB-NAVIGATION TABS: INQUIRIES vs COURSES vs STUDENTS
+          SUB-NAVIGATION TABS: INQUIRIES vs COURSES vs STUDENTS (2px borders)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 w-fit">
+      <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 w-fit flex-wrap shadow-xs">
         <button
           type="button"
           onClick={() => setActiveTab('inquiries')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
             activeTab === 'inquiries'
-              ? 'bg-white dark:bg-slate-900 text-brand-700 dark:text-brand-300 shadow-2xs font-extrabold'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-[#005F02] text-white border-[#005F02]'
+              : 'text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300 dark:hover:border-slate-700'
           }`}
         >
           <MessageSquare className="w-3.5 h-3.5" />
           <span>Student Inquiries &amp; Help Desk</span>
           {openInquiriesCount > 0 && (
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500 text-white font-bold animate-pulse">
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-amber-500 text-white font-black">
               {openInquiriesCount}
             </span>
           )}
@@ -421,15 +427,15 @@ export const MentorDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('courses')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
             activeTab === 'courses'
-              ? 'bg-white dark:bg-slate-900 text-brand-700 dark:text-brand-300 shadow-2xs font-extrabold'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-[#005F02] text-white border-[#005F02]'
+              : 'text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300 dark:hover:border-slate-700'
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>{isInstructor ? 'Your Mentored Courses' : 'Curriculum & Course Builder'}</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
             {displayCourses.length}
           </span>
         </button>
@@ -437,15 +443,15 @@ export const MentorDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('students')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-black transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
             activeTab === 'students'
-              ? 'bg-white dark:bg-slate-900 text-brand-700 dark:text-brand-300 shadow-2xs font-extrabold'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-[#005F02] text-white border-[#005F02]'
+              : 'text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300 dark:hover:border-slate-700'
           }`}
         >
           <Users className="w-3.5 h-3.5" />
           <span>{isInstructor ? 'Your Enrolled Students' : 'Enrolled Students & Mentors'}</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
             {isInstructor ? mentorLearners.length : adminUsers.length}
           </span>
         </button>

@@ -7,7 +7,7 @@ import {
 } from '@/services/support/issue-support.service'
 import { aiService } from '@/services/ai/ai.service'
 import { AnalyzeTicketResponse } from '@/services/ai/ai.types'
-import { Button, Textarea, Input } from '@/components/ui'
+import { Button, Textarea } from '@/components/ui'
 import { CodeBlock } from '@/features/tutor/components/CodeBlock'
 import {
   CheckCircle2,
@@ -199,16 +199,16 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
 
   return (
     <div className="space-y-4 w-full min-w-0 max-w-full">
-      {/* Top Filter & Status Overview Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <div className="grid grid-cols-2 sm:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs font-semibold w-full sm:w-auto">
+      {/* Top Filter & Status Overview Bar with 2px borders */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-[#0E1318] p-3 sm:p-3.5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 shadow-xs">
+        <div className="grid grid-cols-2 sm:flex items-center gap-1.5 bg-slate-100 dark:bg-[#161B22] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-800 text-xs font-mono font-bold w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer text-center border-2 active:scale-95 shadow-3xs ${
               statusFilter === 'all'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
-                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
             }`}
           >
             All ({issues.length})
@@ -216,10 +216,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           <button
             type="button"
             onClick={() => setStatusFilter('open')}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer text-center border-2 active:scale-95 shadow-3xs ${
               statusFilter === 'open'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
-                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
             }`}
           >
             Open ({issues.filter((i) => i.status === 'open').length})
@@ -227,10 +227,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           <button
             type="button"
             onClick={() => setStatusFilter('in_review')}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer text-center border-2 active:scale-95 shadow-3xs ${
               statusFilter === 'in_review'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
-                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
             }`}
           >
             In Review ({issues.filter((i) => i.status === 'in_review').length})
@@ -238,10 +238,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
           <button
             type="button"
             onClick={() => setStatusFilter('resolved')}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer text-center border-2 active:scale-95 shadow-3xs ${
               statusFilter === 'resolved'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-bold'
-                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#005F02] text-white border-[#005F02] font-black'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border-transparent'
             }`}
           >
             Resolved ({issues.filter((i) => i.status === 'resolved').length})
@@ -249,14 +249,14 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <Input
+          <div className="relative w-full sm:w-72">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <input
               type="text"
               placeholder="Search student, topic, email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 text-xs font-sans h-8 w-full"
+              className="w-full pl-8 pr-3 h-9 text-xs font-mono rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#005F02] shadow-3xs"
             />
           </div>
         </div>
@@ -265,20 +265,20 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
       {/* ═══════════════════════════════════════════════════════════════
           HUMAN-CENTERED BALANCED MASTER-DETAIL SUPPORT SHELL
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 min-h-[520px] lg:min-h-[750px]">
+      <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] overflow-hidden shadow-xs grid grid-cols-1 lg:grid-cols-12 min-h-[550px] lg:min-h-[750px]">
         {/* LEFT COLUMN: TICKET INBOX STREAM (lg:col-span-5) */}
         <div
-          className={`lg:col-span-5 flex flex-col h-full bg-slate-50/70 dark:bg-slate-950/60 lg:border-r border-slate-200 dark:border-slate-800 ${
+          className={`lg:col-span-5 flex flex-col h-full bg-slate-50/70 dark:bg-[#12161A] lg:border-r-2 border-slate-200 dark:border-slate-800 ${
             isMobileDetailOpen ? 'hidden lg:flex' : 'flex'
           }`}
         >
           {/* Inbox Header */}
-          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-100/60 dark:bg-slate-900/60">
-            <span className="text-xs font-mono font-bold uppercase text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <MessageSquare className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+          <div className="px-4 py-3.5 border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-[#0E1318]">
+            <span className="text-xs font-mono font-bold uppercase text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <MessageSquare className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
               <span>Student Inquiries ({filteredIssues.length})</span>
             </span>
-            <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
               Community Desk
             </span>
           </div>
@@ -295,40 +295,40 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 const isSelected = selectedIssue?.id === issue.id
                 const priorityBadge =
                   issue.priority === 'urgent' || issue.priority === 'high'
-                    ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800'
+                    ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border-2 border-rose-300 dark:border-rose-800'
                     : issue.priority === 'medium'
-                    ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                    ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-2 border-amber-300 dark:border-amber-800'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700'
 
                 const statusBadge =
                   issue.status === 'resolved'
-                    ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+                    ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800'
                     : issue.status === 'in_review'
-                    ? 'bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-800'
-                    : 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+                    ? 'bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 border-2 border-sky-300 dark:border-sky-800'
+                    : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-2 border-amber-300 dark:border-amber-800'
 
                 return (
                   <div
                     key={issue.id}
                     onClick={() => handleSelectIssue(issue.id)}
-                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-2 select-none ${
+                    className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer space-y-2 select-none shadow-3xs ${
                       isSelected
-                        ? 'bg-white dark:bg-slate-900 border-brand-500 shadow-sm ring-1 ring-brand-500/30'
-                        : 'bg-white/80 dark:bg-slate-900/80 border-slate-200/90 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700'
+                        ? 'bg-emerald-50/50 dark:bg-[#15241B] border-[#005F02] dark:border-emerald-500'
+                        : 'bg-white dark:bg-[#161B22] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md border bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-lg border-2 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700">
                           {getCategoryLabel(issue.category)}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-1.5 font-mono text-[10px]">
-                        <span className={`px-1.5 py-0.5 rounded-md border font-bold uppercase ${priorityBadge}`}>
+                        <span className={`px-2 py-0.5 rounded-md font-bold uppercase ${priorityBadge}`}>
                           {issue.priority}
                         </span>
-                        <span className={`px-1.5 py-0.5 rounded-md border font-bold uppercase ${statusBadge}`}>
+                        <span className={`px-2 py-0.5 rounded-md font-bold uppercase ${statusBadge}`}>
                           {issue.status.replace('_', ' ')}
                         </span>
                       </div>
@@ -338,12 +338,12 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       {issue.subject}
                     </h5>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono pt-1.5 border-t-2 border-slate-100 dark:border-slate-800">
                       <div className="flex items-center gap-1.5 truncate max-w-[140px]">
-                        <div className="w-4 h-4 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-bold text-[9px] flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-black text-[10px] flex items-center justify-center shrink-0 border border-emerald-300 dark:border-emerald-800">
                           {issue.userName.charAt(0)}
                         </div>
-                        <span className="truncate">{issue.userName}</span>
+                        <span className="truncate font-bold text-slate-700 dark:text-slate-300">{issue.userName}</span>
                       </div>
                       <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
                     </div>
@@ -356,61 +356,59 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
 
         {/* RIGHT COLUMN: HUMAN-CENTERED TICKET INSPECTOR & RESPONSE DESK (lg:col-span-7) */}
         <div
-          className={`lg:col-span-7 flex flex-col h-full bg-white dark:bg-slate-900 ${
+          className={`lg:col-span-7 flex flex-col h-full bg-white dark:bg-[#0E1318] ${
             !isMobileDetailOpen ? 'hidden lg:flex' : 'flex'
           }`}
         >
           {selectedIssue ? (
             <>
               {/* Header Details with Mobile Back Button and AI Analyzer Action */}
-              <div className="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-start justify-between gap-3 shrink-0 bg-slate-50/40 dark:bg-slate-950/40">
+              <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-start justify-between gap-3 shrink-0 bg-slate-50/50 dark:bg-[#12161A]">
                 <div className="space-y-1.5 min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* Mobile Back Button */}
                     <button
                       type="button"
                       onClick={() => setIsMobileDetailOpen(false)}
-                      className="lg:hidden px-2.5 py-1 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 mr-1 text-xs font-bold flex items-center gap-1 cursor-pointer shrink-0"
+                      className="lg:hidden px-2.5 py-1 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-[#161B22] hover:bg-slate-200 dark:hover:bg-slate-700 border-2 border-slate-300 dark:border-slate-700 mr-1 text-xs font-mono font-bold flex items-center gap-1 cursor-pointer shrink-0"
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                       <span>Inbox</span>
                     </button>
 
-                    <span className="font-mono text-xs font-bold text-brand-600 dark:text-brand-400">
+                    <span className="font-mono text-xs font-black text-[#005F02] dark:text-emerald-400">
                       #{selectedIssue.id}
                     </span>
                     <span className="text-slate-300 dark:text-slate-700">|</span>
-                    <span className="text-xs font-mono text-slate-600 dark:text-slate-400 font-semibold">
+                    <span className="text-xs font-mono text-slate-600 dark:text-slate-400 font-bold">
                       {getCategoryLabel(selectedIssue.category)}
                     </span>
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800">
                       {getInstitutionBadge(selectedIssue.userEmail)}
                     </span>
                   </div>
 
-                  <h4 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
+                  <h4 className="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
                     {selectedIssue.subject}
                   </h4>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-start">
                   {/* AI Analyze Ticket Action Button */}
-                  <Button
+                  <button
                     type="button"
-                    variant="outline"
-                    size="sm"
-                    isLoading={isAnalyzingTicket}
+                    disabled={isAnalyzingTicket}
                     onClick={handleAnalyzeTicketWithAI}
-                    className="h-8 text-[11px] font-bold text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 hover:bg-brand-100"
-                    leftIcon={<Bot className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
+                    className="h-8 px-3 rounded-xl text-xs font-mono font-bold text-[#005F02] dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 hover:border-[#005F02] transition-all cursor-pointer shadow-3xs active:scale-95 inline-flex items-center gap-1.5"
                   >
-                    {isAnalyzingTicket ? 'Analyzing...' : 'Analyze with AI'}
-                  </Button>
+                    <Bot className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                    <span>{isAnalyzingTicket ? 'Analyzing...' : 'Analyze with AI'}</span>
+                  </button>
 
                   <button
                     type="button"
                     onClick={() => handleDeleteIssue(selectedIssue.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer shrink-0"
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 border-2 border-transparent hover:border-rose-300 transition-colors cursor-pointer shrink-0"
                     title="Delete ticket"
                   >
                     <X className="w-4 h-4" />
@@ -419,19 +417,19 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
               </div>
 
               {/* Scrollable Inspector Body */}
-              <div className="flex-1 overflow-y-auto p-3.5 sm:p-5 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
                 {/* Human Submitter Bio Card */}
-                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-3xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#005F02] text-white font-black font-mono text-sm flex items-center justify-center shadow-3xs shrink-0 border-2 border-[#005F02]">
                       {selectedIssue.userName.charAt(0)}
                     </div>
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900 dark:text-white text-sm block">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-extrabold text-slate-900 dark:text-white text-sm block">
                           {selectedIssue.userName}
                         </span>
-                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                        <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
                           Verified Student
                         </span>
                       </div>
@@ -439,26 +437,26 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                     </div>
                   </div>
 
-                  <div className="text-[11px] text-slate-500 flex items-center gap-1.5 font-mono shrink-0 sm:self-center">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-mono shrink-0 sm:self-center font-bold">
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>{new Date(selectedIssue.createdAt).toLocaleString()}</span>
                   </div>
                 </div>
 
                 {/* Status Action Switcher with Human State Explanations */}
-                <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between gap-2.5">
+                <div className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between gap-2.5 shadow-3xs">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 uppercase">
+                    <span className="text-xs font-black font-mono text-slate-700 dark:text-slate-300 uppercase">
                       Ticket Stage:
                     </span>
                     <div className="grid grid-cols-2 sm:flex items-center gap-1.5 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'open')}
-                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-black border-2 transition-all cursor-pointer text-center truncate active:scale-95 shadow-3xs ${
                           selectedIssue.status === 'open'
-                            ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-amber-400'
+                            ? 'bg-amber-500 text-white border-amber-500'
+                            : 'bg-white dark:bg-[#12161A] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-amber-400'
                         }`}
                       >
                         Attention
@@ -466,10 +464,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'in_review')}
-                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-black border-2 transition-all cursor-pointer text-center truncate active:scale-95 shadow-3xs ${
                           selectedIssue.status === 'in_review'
-                            ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-sky-400'
+                            ? 'bg-sky-600 text-white border-sky-600'
+                            : 'bg-white dark:bg-[#12161A] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-sky-400'
                         }`}
                       >
                         In Review
@@ -477,21 +475,21 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'resolved')}
-                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-black border-2 transition-all cursor-pointer text-center truncate active:scale-95 shadow-3xs ${
                           selectedIssue.status === 'resolved'
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-emerald-400'
+                            ? 'bg-[#005F02] text-white border-[#005F02]'
+                            : 'bg-white dark:bg-[#12161A] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-emerald-400'
                         }`}
                       >
-                        Resolved ✓
+                        Resolved
                       </button>
                       <button
                         type="button"
                         onClick={() => handleStatusChange(selectedIssue.id, 'closed')}
-                        className={`px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer text-center truncate ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-black border-2 transition-all cursor-pointer text-center truncate active:scale-95 shadow-3xs ${
                           selectedIssue.status === 'closed'
-                            ? 'bg-slate-700 text-white border-slate-700 shadow-2xs'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                            ? 'bg-slate-700 text-white border-slate-700'
+                            : 'bg-white dark:bg-[#12161A] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-slate-400'
                         }`}
                       >
                         Closed
@@ -499,18 +497,18 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-mono text-slate-400 block text-right sm:text-left">
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 font-bold block text-right sm:text-left">
                     {selectedIssue.status === 'resolved' || selectedIssue.status === 'closed' ? 'Archived Ticket' : 'Active Ticket'}
                   </span>
                 </div>
 
                 {/* Human Dialogue Narrative / Student Issue Summary */}
-                <div className="space-y-2 p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 leading-relaxed shadow-2xs">
-                  <div className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400 font-bold text-xs font-mono uppercase tracking-wider">
+                <div className="space-y-2 p-4 rounded-2xl bg-slate-50/90 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white leading-relaxed shadow-3xs">
+                  <div className="flex items-center gap-1.5 text-[#005F02] dark:text-emerald-400 font-black text-xs font-mono uppercase tracking-wider">
                     <Quote className="w-3.5 h-3.5" />
-                    <span>Student Feedback & Context:</span>
+                    <span>Student Feedback &amp; Context:</span>
                   </div>
-                  <p className="text-xs sm:text-sm font-sans pl-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm font-sans pl-1 leading-relaxed text-slate-800 dark:text-slate-200">
                     {selectedIssue.description}
                   </p>
                 </div>
@@ -689,17 +687,17 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 {selectedIssue.messages && selectedIssue.messages.length > 0 && (
                   <div className="space-y-2.5 pt-2">
                     <div className="flex items-center justify-between gap-2 flex-wrap pb-1">
-                      <span className="font-mono font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                      <span className="font-mono font-bold text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                         <span>Follow-up Dialogue History ({selectedIssue.messages.length}):</span>
                       </span>
-                      <div className="flex items-center gap-2 text-[10px] font-mono font-bold">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+                      <div className="flex items-center gap-2 text-[10px] font-mono font-black">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border-2 border-blue-300 dark:border-blue-800 shadow-3xs">
                           <User className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" />
                           Student Reply (Blue)
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-                          <GraduationCap className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs">
+                          <GraduationCap className="w-2.5 h-2.5 text-[#005F02] dark:text-emerald-400" />
                           Mentor Response (Green)
                         </span>
                       </div>
@@ -711,10 +709,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         return (
                           <div
                             key={msg.id}
-                            className={`p-4 rounded-2xl border-2 text-xs space-y-1.5 shadow-2xs ${
+                            className={`p-4 rounded-2xl border-2 text-xs space-y-1.5 shadow-3xs ${
                               isLearner
-                                ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 dark:border-blue-400 ml-2 sm:ml-6'
-                                : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-600 dark:border-emerald-500 mr-2 sm:mr-6'
+                                ? 'bg-blue-50/90 dark:bg-blue-950/40 border-blue-400 dark:border-blue-700 ml-2 sm:ml-6'
+                                : 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-700 mr-2 sm:mr-6'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -728,21 +726,21 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                                 {isLearner ? (
                                   <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                                 ) : (
-                                  <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                  <GraduationCap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                                 )}
-                                <span>{msg.senderName}</span>
+                                <span className="font-extrabold">{msg.senderName}</span>
                                 <span
-                                  className={`text-[10px] px-1.5 py-0.5 rounded-md border font-mono font-bold ${
+                                  className={`text-[10px] px-2 py-0.5 rounded-md border-2 font-mono font-black ${
                                     isLearner
-                                      ? 'bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-300 border-blue-300 dark:border-blue-700'
-                                      : 'bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700'
+                                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-300 border-blue-300 dark:border-blue-700'
+                                      : 'bg-emerald-100 dark:bg-emerald-900 text-[#005F02] dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
                                   }`}
                                 >
                                   {isLearner ? 'Student Reply' : 'Mentor Response'}
                                 </span>
                               </span>
                               <span
-                                className={`text-[10px] font-mono font-semibold ${
+                                className={`text-[10px] font-mono font-bold ${
                                   isLearner
                                     ? 'text-blue-700 dark:text-blue-400'
                                     : 'text-emerald-700 dark:text-emerald-400'
@@ -757,7 +755,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                             </div>
 
                             <p
-                              className={`font-sans leading-relaxed whitespace-pre-wrap pl-5 text-xs sm:text-sm ${
+                              className={`font-sans leading-relaxed whitespace-pre-wrap pl-5 text-xs sm:text-sm font-medium ${
                                 isLearner
                                   ? 'text-blue-950 dark:text-blue-100'
                                   : 'text-emerald-950 dark:text-emerald-100'
@@ -786,21 +784,21 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
               {/* ═══════════════════════════════════════════════════════════
                   PINNED BOTTOM RESOLUTION COMPOSER & UPDATED CODE SECTION
                   ═══════════════════════════════════════════════════════════ */}
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/70 shrink-0 space-y-3">
+              <div className="p-4 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-[#12161A] shrink-0 space-y-3">
                 {/* 1-Click Pedagogical Quick Reply Templates with Full Wrapping */}
                 <div className="space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <span className="text-[10px] font-mono font-black uppercase tracking-wider text-slate-600 dark:text-slate-400">
                       1-Click Pedagogical Quick Replies:
                     </span>
                     {!aiDiagnosis && (
                       <button
                         type="button"
                         onClick={handleAnalyzeTicketWithAI}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-950/70 hover:bg-brand-100 dark:hover:bg-brand-900 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 text-xs font-bold transition-all shadow-2xs cursor-pointer w-fit"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 hover:bg-emerald-200 dark:hover:bg-emerald-900 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-300 text-xs font-mono font-bold transition-all shadow-3xs cursor-pointer w-fit active:scale-95"
                       >
-                        <Zap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                        <span>Ask AI to Draft Reply & Code</span>
+                        <Zap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                        <span>Ask AI to Draft Reply &amp; Code</span>
                       </button>
                     )}
                   </div>
@@ -810,7 +808,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         key={tIdx}
                         type="button"
                         onClick={() => setReplyText(template)}
-                        className="text-[11px] font-sans p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-all text-left cursor-pointer shadow-2xs whitespace-normal break-words leading-relaxed"
+                        className="text-xs font-sans p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22] text-slate-800 dark:text-slate-200 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all text-left cursor-pointer shadow-3xs whitespace-normal break-words leading-relaxed active:scale-98"
                       >
                         {template}
                       </button>
@@ -822,17 +820,17 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                   {/* Resolution Text Note */}
                   <div className="space-y-1.5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                      <label className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                        <Zap className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                      <label className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5 font-mono">
+                        <Zap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                         <span>Send Instructor Solution Note to Student</span>
                       </label>
                       <button
                         type="button"
                         onClick={() => setIsCodeEditorOpen(!isCodeEditorOpen)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold transition-all cursor-pointer w-fit ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 text-xs font-mono font-bold transition-all cursor-pointer w-fit shadow-3xs active:scale-95 ${
                           isCodeEditorOpen
-                            ? 'bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-700 shadow-2xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-400 hover:text-brand-600'
+                            ? 'bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
+                            : 'bg-white dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
                         }`}
                       >
                         <Code2 className="w-3.5 h-3.5" />
@@ -844,7 +842,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Type an empathetic explanation, patch note, or resolution update to the student..."
-                      className="text-xs font-sans resize-none"
+                      className="text-xs font-sans resize-none border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] text-slate-900 dark:text-white rounded-xl focus:border-[#005F02] shadow-3xs"
                     />
                   </div>
 
@@ -852,11 +850,11 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       UPDATED / CORRECTED CODE SNIPPET ATTACHMENT SECTION
                       ═══════════════════════════════════════════════════════════ */}
                   {isCodeEditorOpen && (
-                    <div className="space-y-2 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs animate-in fade-in">
+                    <div className="space-y-2 p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22] shadow-3xs animate-in fade-in">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                          <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                          <label className="text-xs font-bold text-slate-800 dark:text-slate-200 font-mono">
+                          <Code2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                          <label className="text-xs font-black text-slate-900 dark:text-white font-mono">
                             Updated / Corrected Solution Code
                           </label>
                         </div>
@@ -866,7 +864,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                             <button
                               type="button"
                               onClick={() => setUpdatedCodeText(aiDiagnosis.updatedCode || '')}
-                              className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold hover:underline cursor-pointer"
+                              className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:underline cursor-pointer"
                             >
                               Reset to AI Suggestion
                             </button>
@@ -875,7 +873,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                             <button
                               type="button"
                               onClick={() => setUpdatedCodeText('')}
-                              className="text-[10px] font-mono text-rose-500 hover:underline cursor-pointer"
+                              className="text-[10px] font-mono text-rose-500 hover:underline cursor-pointer font-bold"
                             >
                               Clear Code
                             </button>
@@ -888,7 +886,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                         value={updatedCodeText}
                         onChange={(e) => setUpdatedCodeText(e.target.value)}
                         placeholder="# Paste or edit the corrected solution code that will be delivered to the student..."
-                        className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-mono text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500 leading-relaxed resize-y"
+                        className="w-full p-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0E1318] font-mono text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-[#005F02] leading-relaxed resize-y"
                         spellCheck={false}
                       />
 
@@ -910,8 +908,8 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
 
                   {/* Submit Action */}
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[10px] font-mono text-slate-400">
-                      {updatedCodeText.trim() ? 'Code solution attached ✓' : 'Text note only'}
+                    <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400">
+                      {updatedCodeText.trim() ? 'Code solution attached' : 'Text note only'}
                     </span>
 
                     <Button
@@ -919,10 +917,10 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                       size="sm"
                       variant="primary"
                       isLoading={isSendingReply}
-                      className="font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs text-xs px-4"
+                      className="font-mono font-black bg-[#005F02] hover:bg-emerald-700 text-white shadow-xs text-xs px-4 rounded-xl border-2 border-[#005F02] active:scale-95"
                       leftIcon={<Check className="w-3.5 h-3.5" />}
                     >
-                      Post Instructor Reply & Update Status
+                      Post Instructor Reply &amp; Update Status
                     </Button>
                   </div>
                 </form>
