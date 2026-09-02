@@ -750,8 +750,14 @@ class AdminAnalyticsService {
     }
   }
 
-  getAllAuditLogs(): AuditLogEntry[] {
-    return [...this.auditLogs]
+  getAllAuditLogs(logSortBy: 'newest' | 'oldest' | 'actor' | 'category' = 'newest'): AuditLogEntry[] {
+    return [...this.auditLogs].sort((a, b) => {
+      if (logSortBy === 'newest') return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      if (logSortBy === 'oldest') return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      if (logSortBy === 'actor') return a.actorName.localeCompare(b.actorName)
+      if (logSortBy === 'category') return a.category.localeCompare(b.category)
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    })
   }
 
   logAction(entry: Omit<AuditLogEntry, 'id' | 'timestamp'>): AuditLogEntry {

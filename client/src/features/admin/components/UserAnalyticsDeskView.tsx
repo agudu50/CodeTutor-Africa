@@ -947,12 +947,13 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
       return matchesSearch && matchesCategory && matchesStatus
     })
 
-    return list.sort((a, b) => {
+    return [...list].sort((a, b) => {
       if (logSortBy === 'newest') return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       if (logSortBy === 'oldest') return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       if (logSortBy === 'actor') return a.actorName.localeCompare(b.actorName)
       if (logSortBy === 'category') return a.category.localeCompare(b.category)
-      return 0
+      // default: newest first
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     })
   }, [auditLogs, searchQuery, selectedCategory, selectedLogStatus, logSortBy, startDate, endDate])
 
