@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import {
   SAMPLE_BUGGY_SNIPPETS,
@@ -100,33 +100,31 @@ function getInitialSessionsAndActiveId(): { initialSessions: DebugSession[]; ini
     console.warn('Failed to parse debug sessions from localStorage', e)
   }
 
-  // If the first session is already an empty draft, use it
-  const firstSession = stored[0]
-  if (
-    firstSession &&
-    firstSession.code === '' &&
-    (!firstSession.errorMessage || firstSession.errorMessage === '') &&
-    !firstSession.result
-  ) {
+  // Filter out any empty duplicate drafts that may have accumulated
+  const validStored = stored.filter((s, idx) => {
+    if (idx === 0) return true
+    return (s.code && s.code.trim() !== '') || Boolean(s.errorMessage && s.errorMessage.trim() !== '')
+  })
+
+  if (validStored.length > 0) {
+    const savedActiveId = localStorage.getItem(DEBUG_ACTIVE_SESSION_KEY)
+    const matching = validStored.find((s) => s.id === savedActiveId)
+    // If the active one has code or there's a sample session with code, prefer one with code so terminal is colored
+    const activeSession = matching && matching.code.trim() !== ''
+      ? matching
+      : validStored.find((s) => s.code.trim() !== '') || validStored[0]
+
     return {
-      initialSessions: stored,
-      initialActiveId: firstSession.id,
+      initialSessions: validStored,
+      initialActiveId: activeSession.id,
     }
   }
 
-  // Otherwise, create a fresh new debug session and prepend it
-  const fresh = createFreshDebugSession('javascript')
-  const combined = [fresh, ...(stored.length > 0 ? stored : DEFAULT_INITIAL_SESSIONS)]
-  saveStoredDebugSessions(combined)
-  try {
-    localStorage.setItem(DEBUG_ACTIVE_SESSION_KEY, fresh.id)
-  } catch {
-    // ignore
-  }
-
+  // Default to pre-populated sample sessions
+  saveStoredDebugSessions(DEFAULT_INITIAL_SESSIONS)
   return {
-    initialSessions: combined,
-    initialActiveId: fresh.id,
+    initialSessions: DEFAULT_INITIAL_SESSIONS,
+    initialActiveId: DEFAULT_INITIAL_SESSIONS[0].id,
   }
 }
 
@@ -148,6 +146,15 @@ export const DebuggerPage: React.FC = () => {
   const [activeTerminalTab, setActiveTerminalTab] = useState<'terminal' | 'edit'>('terminal')
   const [terminalCopied, setTerminalCopied] = useState(false)
   const [showSessionMenu, setShowSessionMenu] = useState(false)
+  const syntaxViewRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (syntaxViewRef.current) {
+      syntaxViewRef.current.scrollTop = e.currentTarget.scrollTop
+      syntaxViewRef.current.scrollLeft = e.currentTarget.scrollLeft
+    }
+  }
 
   // Sync state whenever activeSession changes
   useEffect(() => {
@@ -278,6 +285,7 @@ export const DebuggerPage: React.FC = () => {
     setCode(sampleCode)
     setErrorMessage(sampleErr)
     setDebugResult(sampleResult)
+    setActiveTerminalTab('terminal')
 
     updateCurrentSession({
       title: titleName,
@@ -357,6 +365,30 @@ export const DebuggerPage: React.FC = () => {
       : language === 'javascript'
       ? '$ node bug_sample.js'
       : '$ javac Main.java && java Main'
+
+  const terminalColorClass =
+    language === 'javascript'
+      ? 'text-[#F7DF1E]'
+      : language === 'java'
+      ? 'text-[#E06C75]'
+      : 'text-[#4EC9B0]'
+
+  const terminalCursorClass =
+    language === 'javascript'
+      ? 'bg-[#F7DF1E]'
+      : language === 'java'
+      ? 'bg-[#E06C75]'
+      : 'bg-[#4EC9B0]'
+
+  const terminalTagLabel =
+    language === 'javascript' ? 'node' : language === 'java' ? 'java' : 'python3'
+
+  const isJSSampleActive =
+    language === 'javascript' && (code === SAMPLE_BUGGY_SNIPPETS.javascript || currentSession.title.includes('JS:'))
+  const isJavaSampleActive =
+    language === 'java' && (code === SAMPLE_BUGGY_SNIPPETS.java || currentSession.title.includes('Java:'))
+  const isPythonSampleActive =
+    language === 'python' && (code === SAMPLE_BUGGY_SNIPPETS.python || currentSession.title.includes('Python:'))
 
   return (
     <PageContainer maxWidth="2xl" className="space-y-6">
@@ -471,44 +503,59 @@ export const DebuggerPage: React.FC = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          MULTI-LANGUAGE PRESET CHIPS
+          MULTI-LANGUAGE PRESET CHIPS (WITH AUTHENTIC TERMINAL COLORS)
           ═══════════════════════════════════════════════════════════════ */}
       <div className="flex flex-wrap items-center gap-2.5 p-3.5 sm:p-4 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-xs shadow-xs">
         <span className="font-mono text-xs text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider pl-1">
           Sample Bugs:
         </span>
+
+        {/* JavaScript Terminal Chip */}
         <button
           type="button"
           onClick={() => handleSelectPreset('javascript')}
-          className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
-            language === 'javascript'
-              ? 'bg-[#005F02] text-white border-[#005F02]'
-              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
+          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
+            isJSSampleActive
+              ? 'bg-amber-100 dark:bg-[#252210] border-amber-400 text-amber-950 dark:text-amber-300 shadow-xs'
+              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-amber-400'
           }`}
         >
-          <span className="text-amber-500 mr-1 font-black">JS:</span> Async Race Condition
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-black bg-[#F7DF1E] text-slate-950 border border-amber-400 shadow-3xs">
+            JS
+          </span>
+          <span className="font-bold">Async Race Condition</span>
         </button>
+
+        {/* Java Terminal Chip */}
         <button
           type="button"
           onClick={() => handleSelectPreset('java')}
-          className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
-            language === 'java'
-              ? 'bg-[#005F02] text-white border-[#005F02]'
-              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
+          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
+            isJavaSampleActive
+              ? 'bg-rose-100 dark:bg-[#251014] border-rose-400 text-rose-950 dark:text-rose-300 shadow-xs'
+              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-rose-400'
           }`}
         >
-          <span className="text-rose-500 mr-1 font-black">Java:</span> Array Bounds Exceeded
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-black bg-[#E06C75] text-white border border-rose-400 shadow-3xs">
+            JAVA
+          </span>
+          <span className="font-bold">Array Bounds Exceeded</span>
         </button>
+
+        {/* Python Terminal Chip */}
         <button
           type="button"
           onClick={() => handleSelectPreset('python')}
-          className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
-            language === 'python'
-              ? 'bg-[#005F02] text-white border-[#005F02]'
-              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500'
+          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border-2 shadow-3xs active:scale-95 ${
+            isPythonSampleActive
+              ? 'bg-emerald-100 dark:bg-[#0D1E13] border-emerald-500 text-emerald-950 dark:text-emerald-300 shadow-xs'
+              : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-emerald-500'
           }`}
         >
-          <span className="text-emerald-500 mr-1 font-black">Python:</span> Off-by-One Loop Error
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-black bg-[#005F02] text-white border border-emerald-400 shadow-3xs">
+            PYTHON
+          </span>
+          <span className="font-bold">Off-by-One Loop Error</span>
         </button>
       </div>
 
@@ -632,15 +679,33 @@ export const DebuggerPage: React.FC = () => {
               </div>
 
               {activeEditorTab === 'editor' ? (
-                <textarea
-                  value={code}
-                  onChange={(e) => handleCodeChange(e.target.value)}
-                  spellCheck={false}
-                  className="flex-1 p-3 bg-transparent text-[#D4D4D4] font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-slate-600 whitespace-pre overflow-y-auto selection:bg-[#005F02]/40"
-                  placeholder="// Paste your buggy code snippet here..."
-                />
+                <div className="flex-1 relative overflow-hidden bg-[#1E1E1E]">
+                  {/* Syntax Highlight Layer */}
+                  <div
+                    ref={syntaxViewRef}
+                    aria-hidden="true"
+                    className="absolute inset-0 p-3 font-mono text-xs sm:text-[13px] leading-6 overflow-auto pointer-events-none select-none bg-transparent whitespace-pre"
+                  >
+                    {code ? (
+                      renderVSCodeSyntax(code)
+                    ) : (
+                      <span className="text-slate-600 italic">// Paste your buggy code snippet here...</span>
+                    )}
+                  </div>
+
+                  {/* Transparent Interactive Input Layer */}
+                  <textarea
+                    ref={textareaRef}
+                    value={code}
+                    onChange={(e) => handleCodeChange(e.target.value)}
+                    onScroll={handleEditorScroll}
+                    spellCheck={false}
+                    className="absolute inset-0 p-3 bg-transparent text-transparent caret-white font-mono text-xs sm:text-[13px] leading-6 resize-none focus:outline-none placeholder:text-transparent whitespace-pre overflow-auto selection:bg-[#264f78]/80 selection:text-white"
+                    placeholder="// Paste your buggy code snippet here..."
+                  />
+                </div>
               ) : (
-                <div className="flex-1 p-3 font-mono text-xs sm:text-[13px] leading-6 overflow-auto select-none bg-[#1E1E1E]">
+                <div className="flex-1 p-3 font-mono text-xs sm:text-[13px] leading-6 overflow-auto select-text bg-[#1E1E1E]">
                   {renderVSCodeSyntax(code || '// No code')}
                 </div>
               )}
@@ -652,9 +717,20 @@ export const DebuggerPage: React.FC = () => {
             <div className="border-t border-[#2D2D2D] bg-[#141414] flex flex-col shrink-0">
               <div className="h-9 px-3.5 bg-[#1F1F1F] border-b border-[#282828] flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <div className="flex items-center gap-3">
-                  <span className="text-white font-bold flex items-center gap-1.5">
-                    <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-white font-bold flex items-center gap-2">
+                    <Terminal className={`w-3.5 h-3.5 ${terminalColorClass}`} />
                     <span>TERMINAL / STACK TRACE</span>
+                    <span
+                      className={`text-[10px] font-mono font-black px-1.5 py-0.5 rounded border uppercase shadow-3xs ${
+                        language === 'javascript'
+                          ? 'border-amber-400/80 bg-amber-400/20 text-amber-300'
+                          : language === 'java'
+                          ? 'border-rose-400/80 bg-rose-400/20 text-rose-300'
+                          : 'border-emerald-400/80 bg-emerald-400/20 text-emerald-300'
+                      }`}
+                    >
+                      {terminalTagLabel}
+                    </span>
                   </span>
                   <span className="text-slate-500 text-[10px] hidden sm:inline">DEBUG CONSOLE</span>
                   <span className="text-slate-500 text-[10px] hidden sm:inline">OUTPUT</span>
@@ -711,8 +787,8 @@ export const DebuggerPage: React.FC = () => {
               <div className="p-3.5 bg-[#121212] font-mono text-xs max-h-48 overflow-y-auto leading-relaxed border-b border-[#202020]">
                 {/* Simulated Terminal Command Invocation */}
                 <div className="flex items-center gap-2 text-slate-400 font-bold mb-2 pb-1.5 border-b border-[#252526] text-[11.5px]">
-                  <span className="text-emerald-400 font-bold">{commandPrompt}</span>
-                  <span className="w-2 h-3 bg-emerald-400/80 animate-pulse inline-block" />
+                  <span className={`font-bold ${terminalColorClass}`}>{commandPrompt}</span>
+                  <span className={`w-2 h-3.5 ${terminalCursorClass} animate-pulse inline-block`} />
                 </div>
 
                 {activeTerminalTab === 'terminal' ? (

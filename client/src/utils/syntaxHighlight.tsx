@@ -92,19 +92,29 @@ export function tokenizeCodeLine(line: string): TokenSpan[] {
     else if (CONSTANTS.has(val)) {
       tokens.push({ text: val, color: '#569cd6', isBold: true })
     }
-    // 7. Types (teal)
-    else if (TYPES.has(val)) {
-      tokens.push({ text: val, color: '#4ec9b0' })
+    // 7. Types & Classes (teal #4ec9b0): known types or PascalCase class/interface names
+    else if (TYPES.has(val) || /^[A-Z][a-zA-Z0-9_]*$/.test(val)) {
+      tokens.push({ text: val, color: '#4ec9b0', isBold: true })
     }
-    // 8. Functions (yellow)
+    // 8. Functions & Methods (yellow #dcdcaa)
     else if (line.substring(match.index + val.length).trimStart().startsWith('(')) {
       tokens.push({ text: val, color: '#dcdcaa' })
     }
-    // 9. Identifiers (light blue)
+    // 9. Identifiers / Variables / Fields (light blue #9cdcfe)
     else if (/^[a-zA-Z_]\w*$/.test(val)) {
       tokens.push({ text: val, color: '#9cdcfe' })
     }
-    // 10. Operators / Punctuation
+    // 10. VS Code Bracket Pair Colorization
+    else if (val === '{' || val === '}') {
+      tokens.push({ text: val, color: '#ffd700' })
+    }
+    else if (val === '[' || val === ']') {
+      tokens.push({ text: val, color: '#da70d6' })
+    }
+    else if (val === '(' || val === ')') {
+      tokens.push({ text: val, color: '#ffd700' })
+    }
+    // 11. Operators / Punctuation
     else {
       tokens.push({ text: val, color: '#d4d4d4' })
     }
@@ -151,31 +161,73 @@ export function renderVSCodeSyntax(code: string): React.ReactNode {
  * - Command Prompts: Emerald
  */
 export function renderTerminalStackTrace(text: string): React.ReactNode {
-  if (!text) return <span className="text-slate-500 italic">// No crash log or stack trace provided</span>
+  if (!text || text.trim() === '') {
+    return (
+      <div className="space-y-1.5 py-1 select-text">
+        <div className="flex items-center gap-2 text-slate-500 font-mono text-xs">
+          <span className="text-emerald-500 font-bold">●</span>
+          <span className="text-slate-400 font-semibold">Terminal ready</span>
+          <span className="text-slate-600">—</span>
+          <span className="text-slate-500 italic">// No crash log or stack trace provided</span>
+        </div>
+        <div className="text-[11px] text-slate-500 font-mono">
+          Click any sample bug above (JS, Java, or Python) to load a reproduction trace.
+        </div>
+      </div>
+    )
+  }
   const lines = text.split('\n')
 
   return lines.map((line, idx) => {
-    // 1. Traceback header / file line (e.g., File "main.py", line 4, in <module>)
-    const fileLineMatch = line.match(/^(\s*)(File\s+"[^"]+",\s+line\s+\d+)(.*)$/)
-    if (fileLineMatch) {
+    // 1. Java Thread Exception header: Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+    const javaThreadMatch = line.match(/^(\s*Exception in thread\s+)(".*?")\s+([A-Za-z0-9_.]+(?:Exception|Error))(?::\s*(.*))?$/)
+    if (javaThreadMatch) {
       return (
-        <div key={idx} className="leading-5 whitespace-pre">
-          <span>{fileLineMatch[1]}</span>
-          <span className="text-[#4ec9b0] font-semibold">{fileLineMatch[2]}</span>
-          <span className="text-[#ffd700]">{fileLineMatch[3]}</span>
+        <div key={idx} className="leading-5 whitespace-pre select-text">
+          <span className="text-[#FF5370] font-black">{javaThreadMatch[1]}</span>
+          <span className="text-[#FFD700] font-bold">{javaThreadMatch[2]}</span>
+          <span className="text-white"> </span>
+          <span className="text-[#FF5370] font-black underline decoration-rose-500/50">{javaThreadMatch[3]}</span>
+          {javaThreadMatch[4] && (
+            <>
+              <span className="text-[#FF5370] font-bold">: </span>
+              <span className="text-[#FCA5A5] font-semibold">{javaThreadMatch[4]}</span>
+            </>
+          )}
         </div>
       )
     }
 
-    // 2. JS / Java Stack frame: at fetchUserData (app.js:6:14) or at com.codetutor.Main.main(Main.java:12)
+    // 2. Python Traceback header
+    if (line.trim().startsWith('Traceback (most recent call last):')) {
+      return (
+        <div key={idx} className="leading-5 whitespace-pre text-[#FF5370] font-black select-text">
+          {line}
+        </div>
+      )
+    }
+
+    // 3. Traceback header / file line (e.g., File "main.py", line 4, in <module>)
+    const fileLineMatch = line.match(/^(\s*)(File\s+"[^"]+",\s+line\s+\d+)(.*)$/)
+    if (fileLineMatch) {
+      return (
+        <div key={idx} className="leading-5 whitespace-pre select-text">
+          <span>{fileLineMatch[1]}</span>
+          <span className="text-[#4EC9B0] font-bold">{fileLineMatch[2]}</span>
+          <span className="text-[#FFD700] font-semibold">{fileLineMatch[3]}</span>
+        </div>
+      )
+    }
+
+    // 4. JS / Java Stack frame: at fetchUserData (app.js:6:14) or at ArraySearch.search(ArraySearch.java:4)
     const atMatch = line.match(/^(\s*at\s+)([\w.$<>]+\s*)(?:\(([^)]+)\)|(.*))$/)
     if (atMatch) {
       return (
-        <div key={idx} className="leading-5 whitespace-pre text-slate-300">
+        <div key={idx} className="leading-5 whitespace-pre text-slate-300 select-text">
           <span className="text-rose-400 font-bold">{atMatch[1]}</span>
-          <span className="text-[#dcdcaa] font-semibold">{atMatch[2]}</span>
+          <span className="text-[#DCDCAA] font-bold">{atMatch[2]}</span>
           {atMatch[3] ? (
-            <span className="text-[#4ec9b0]">({atMatch[3]})</span>
+            <span className="text-[#4EC9B0] font-medium">({atMatch[3]})</span>
           ) : atMatch[4] ? (
             <span className="text-slate-400">{atMatch[4]}</span>
           ) : null}
@@ -183,43 +235,43 @@ export function renderTerminalStackTrace(text: string): React.ReactNode {
       )
     }
 
-    // 3. Exception / Error Name at start of line (TypeError, SyntaxError, NullPointerException, etc.)
+    // 5. Exception / Error Name at start of line (TypeError, SyntaxError, IndexError, etc.)
     const errorMatch = line.match(/^(\s*)([A-Za-z0-9_.]*(?:Error|Exception|Throwable|Failure|Fault|Warning)(?::)?)(.*)$/)
     if (errorMatch) {
       return (
-        <div key={idx} className="leading-5 whitespace-pre">
+        <div key={idx} className="leading-5 whitespace-pre select-text">
           <span>{errorMatch[1]}</span>
-          <span className="text-[#ff5370] font-black tracking-tight">{errorMatch[2]}</span>
-          <span className="text-[#fca5a5] font-medium">{errorMatch[3]}</span>
+          <span className="text-[#FF5370] font-black tracking-tight underline decoration-rose-500/50">{errorMatch[2]}</span>
+          <span className="text-[#FCA5A5] font-semibold">{errorMatch[3]}</span>
         </div>
       )
     }
 
-    // 4. Command line prompts (e.g. $ node app.js or > python test.py)
+    // 6. Command line prompts (e.g. $ node app.js or > python test.py)
     if (line.startsWith('$') || line.startsWith('>') || line.startsWith('>>>')) {
       const splitIdx = line.indexOf(' ')
       const prefix = splitIdx !== -1 ? line.slice(0, splitIdx + 1) : line
       const rest = splitIdx !== -1 ? line.slice(splitIdx + 1) : ''
       return (
-        <div key={idx} className="leading-5 whitespace-pre text-emerald-400 font-bold">
-          <span className="text-[#22c55e] mr-1.5">{prefix}</span>
+        <div key={idx} className="leading-5 whitespace-pre text-emerald-400 font-bold select-text">
+          <span className="text-[#22C55E] mr-1.5">{prefix}</span>
           <span className="text-slate-200">{rest}</span>
         </div>
       )
     }
 
-    // 5. Caret pointers (e.g. ^ or ~~~)
+    // 7. Caret pointers (e.g. ^ or ~~~)
     if (/^\s*[\^~]+\s*$/.test(line)) {
       return (
-        <div key={idx} className="leading-5 whitespace-pre text-[#ffd700] font-bold">
+        <div key={idx} className="leading-5 whitespace-pre text-[#FFD700] font-black select-text">
           {line}
         </div>
       )
     }
 
-    // 6. Generic terminal line with fallback error tinting
+    // 8. Generic terminal line with fallback error tinting
     return (
-      <div key={idx} className="leading-5 whitespace-pre text-[#fca5a5]/90">
+      <div key={idx} className="leading-5 whitespace-pre text-[#FCA5A5]/90 font-medium select-text">
         {line}
       </div>
     )
