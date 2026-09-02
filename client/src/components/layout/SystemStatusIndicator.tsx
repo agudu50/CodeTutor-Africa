@@ -305,10 +305,10 @@ export const SystemStatusIndicator: React.FC<SystemStatusIndicatorProps> = memo(
       <button
         type="button"
         onClick={handleTrigger}
-        className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl border text-xs font-mono font-bold transition-all shadow-2xs cursor-pointer focus:outline-none focus:ring-1 shrink-0 ${
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 text-xs font-mono font-bold transition-all shadow-3xs cursor-pointer focus:outline-none shrink-0 ${
           isOffline
-            ? 'bg-amber-50 dark:bg-amber-950/80 border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/50'
-            : 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50'
+            ? 'bg-amber-100 dark:bg-amber-950/80 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-900'
+            : 'bg-emerald-100 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900'
         }`}
         title={isOffline ? 'Offline Mode (Click for details)' : 'Online (Click to manage sync)'}
       >

@@ -172,43 +172,40 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
 
   return (
     <>
-      <header className="h-14 sm:h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-20 px-3 sm:px-6 flex items-center justify-between shadow-xs select-none w-full box-border transition-colors duration-200">
-        {/* Subtle decorative top accent line */}
-        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-brand-500/40 dark:via-brand-400/30 to-transparent pointer-events-none" />
-
+      <header className="h-14 sm:h-16 border-b-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0C1015] sticky top-0 z-20 px-3 sm:px-6 flex items-center justify-between shadow-xs select-none w-full box-border">
         {/* Left section: Mobile menu + Page context & Breadcrumbs */}
         <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
           <button
             type="button"
             onClick={onOpenMobileNav}
-            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer touch-manipulation active:scale-95"
+            className="md:hidden p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-100 dark:bg-[#161B22] hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors border-2 border-slate-200 dark:border-slate-800 shrink-0 cursor-pointer touch-manipulation active:scale-95 shadow-3xs"
             aria-label="Open navigation menu"
           >
             <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Desktop Page Route Icon & Breadcrumb Context */}
-          <div className="hidden lg:flex items-center justify-center w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700/70 shadow-2xs shrink-0">
+          <div className="hidden lg:flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 shadow-3xs shrink-0">
             {pageInfo.icon}
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate tracking-tight">
+              <h1 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight truncate tracking-tight">
                 {pageInfo.title}
               </h1>
 
               {/* Desktop Workspace Category Badge */}
-              <span className="hidden xl:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/60 shrink-0">
+              <span className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-200 dark:border-slate-800 shrink-0 shadow-3xs">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-500" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                 </span>
                 {pageInfo.badge}
               </span>
             </div>
 
-            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden md:inline-block truncate leading-none pt-0.5">
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium hidden md:inline-block truncate leading-none pt-0.5">
               {pageInfo.subtitle}
             </p>
           </div>
@@ -220,14 +217,14 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs cursor-pointer hover:border-brand-400 dark:hover:border-brand-600 hover:bg-white dark:hover:bg-slate-900 transition-all duration-200 shadow-2xs group focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+            className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 hover:border-[#005F02] dark:hover:border-emerald-500 bg-slate-50 dark:bg-[#161B22] hover:bg-white dark:hover:bg-[#1C232B] text-slate-500 hover:text-slate-900 dark:hover:text-white text-xs cursor-pointer transition-all shadow-3xs group focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
             title="Search courses, lessons, and practice (Ctrl+K)"
           >
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" />
-            <span className="text-slate-500 dark:text-slate-400 font-medium hidden lg:inline text-xs">
+            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors" />
+            <span className="text-slate-600 dark:text-slate-400 font-medium hidden lg:inline text-xs">
               Search courses, drills...
             </span>
-            <span className="inline-flex items-center gap-0.5 text-[10px] bg-slate-200/80 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-1.5 py-0.5 rounded-md text-slate-600 dark:text-slate-300 font-mono font-bold shadow-3xs">
+            <span className="inline-flex items-center gap-0.5 text-[10px] bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-2 py-0.5 rounded-md text-slate-700 dark:text-slate-300 font-mono font-bold shadow-3xs">
               <span className="text-[9px] opacity-70">Ctrl</span>
               <span>K</span>
             </span>
@@ -237,7 +234,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="sm:hidden p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800 shadow-2xs cursor-pointer"
+            className="sm:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-2 border-slate-200 dark:border-slate-800 shadow-3xs cursor-pointer"
             aria-label="Search"
           >
             <Search className="w-4 h-4" />
@@ -247,10 +244,10 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
           {!location.pathname.startsWith('/tutor') && (
             <Link
               to="/tutor"
-              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 hover:border-emerald-400 text-xs font-semibold cursor-pointer transition-all shadow-2xs shrink-0"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 hover:bg-[#005F02] hover:text-white dark:hover:bg-[#005F02] dark:hover:text-white text-xs font-bold cursor-pointer transition-all shadow-3xs shrink-0"
               title="Launch Offline Socratic AI Tutor"
             >
-              <Bot className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <Bot className="w-3.5 h-3.5" />
               <span>Ask AI Tutor</span>
             </Link>
           )}
@@ -259,10 +256,10 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
           <button
             type="button"
             onClick={() => setIsReportModalOpen(true)}
-            className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-400 text-xs font-semibold cursor-pointer transition-all shadow-2xs shrink-0"
+            className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 hover:text-[#005F02] dark:hover:text-emerald-400 hover:border-[#005F02] dark:hover:border-emerald-500 text-xs font-bold cursor-pointer transition-all shadow-3xs shrink-0"
             title="Report an issue or suggest a course"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+            <HelpCircle className="w-3.5 h-3.5" />
             <span>Support</span>
           </button>
 
@@ -275,23 +272,23 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="hidden sm:flex p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border border-slate-200 dark:border-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 cursor-pointer shrink-0"
+            className="hidden sm:flex p-2 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-50 dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-slate-800 transition-all border-2 border-slate-200 dark:border-slate-800 shadow-3xs cursor-pointer shrink-0"
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {isDark ? (
               <Sun className="w-4 h-4 text-amber-400 transition-transform rotate-0 hover:rotate-45" />
             ) : (
-              <Moon className="w-4 h-4 text-slate-700 transition-transform -rotate-12 hover:rotate-0" />
+              <Moon className="w-4 h-4 text-slate-700 dark:text-slate-300 transition-transform -rotate-12 hover:rotate-0" />
             )}
           </button>
 
-          {/* Interactive User Profile Dropdown Button with Integrated Streak Halo */}
+          {/* Interactive User Profile Dropdown Button with Solid Halo */}
           <div className="relative shrink-0" ref={profileMenuRef}>
             <button
               type="button"
               onClick={() => setIsProfileOpen((prev) => !prev)}
-              className="relative flex items-center p-0.5 rounded-full ring-2 ring-amber-400/80 dark:ring-amber-500/60 bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 shadow-sm hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer group"
+              className="relative flex items-center p-0.5 rounded-full ring-2 ring-amber-400 bg-amber-400 shadow-3xs hover:scale-105 active:scale-95 transition-all cursor-pointer group"
               aria-label="User profile and streak menu"
               aria-expanded={isProfileOpen}
               title="7-Day Learning Streak • Click for profile menu"
@@ -303,9 +300,9 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                 className="bg-[#005F02] text-white font-bold w-7 h-7 sm:w-8 sm:h-8 text-xs ring-1 ring-white dark:ring-slate-900"
               />
 
-              {/* Flame Streak Mini Pill pinned to the bottom of the avatar */}
-              <span className="absolute -bottom-1 inset-x-0 mx-auto w-fit flex items-center gap-0.5 px-1 py-0.2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-mono font-black text-[9px] shadow-3xs ring-1.5 ring-white dark:ring-slate-900 z-10">
-                <Flame className="w-2 h-2 fill-white text-white shrink-0 animate-bounce" />
+              {/* Flame Streak Mini Pill pinned to the bottom of the avatar (Solid Amber, NO gradient) */}
+              <span className="absolute -bottom-1 inset-x-0 mx-auto w-fit flex items-center gap-0.5 px-1.5 py-0.2 rounded-full bg-amber-500 border border-amber-300 text-slate-900 font-mono font-black text-[9px] shadow-3xs ring-1.5 ring-white dark:ring-slate-900 z-10">
+                <Flame className="w-2.5 h-2.5 fill-slate-900 text-slate-900 shrink-0" />
                 <span>7d</span>
               </span>
 
@@ -328,7 +325,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
 
             {/* Profile Dropdown Menu */}
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2.5 w-68 sm:w-72 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="absolute right-0 mt-2.5 w-68 sm:w-72 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-2 divide-y divide-slate-200 dark:divide-slate-800">
                 {/* User Info Header with Close Button */}
                 <div className="p-2.5 sm:p-3 space-y-1.5">
                   <div className="flex items-start justify-between gap-2">
@@ -378,50 +375,50 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                       setIsProfileOpen(false)
                       setIsStatusModalOpen(true)
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer border-2 ${
                       isOffline
-                        ? 'bg-amber-50/80 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60'
-                        : 'bg-emerald-50/80 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
+                        ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900'
+                        : 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-200 dark:hover:bg-emerald-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       {isOffline ? (
-                        <WifiOff className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <WifiOff className="w-4 h-4 text-amber-900 dark:text-amber-300 shrink-0" />
                       ) : (
-                        <Wifi className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <Wifi className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />
                       )}
                       <span>{isOffline ? '100% Offline Mode' : 'Online Sync Active'}</span>
                     </div>
-                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 border border-current opacity-90">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-white dark:bg-[#161B22] border border-current shadow-3xs">
                       {isOffline ? 'Details' : 'Active'}
                     </span>
                   </button>
                 </div>
 
                 {/* Quick Navigation Actions */}
-                <div className="pt-1.5 space-y-0.5">
+                <div className="pt-1.5 space-y-1">
                   <Link
                     to="/admin"
                     onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-brand-700 dark:text-brand-300 bg-brand-50/70 dark:bg-brand-950/60 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors border border-brand-200/60 dark:border-brand-800/60"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors border-2 border-emerald-200 dark:border-emerald-800"
                   >
-                    <ShieldCheck className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />
                     <span>Admin Operations Portal</span>
                   </Link>
 
                   <Link
                     to="/tutor"
                     onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:text-slate-900 dark:hover:text-white transition-colors border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-800"
                   >
-                    <Bot className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <Bot className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0" />
                     <span>AI Tutor Workspace</span>
                   </Link>
 
                   <Link
                     to="/settings"
                     onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:text-slate-900 dark:hover:text-white transition-colors border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-800"
                   >
                     <User className="w-4 h-4 text-slate-400 shrink-0" />
                     <span>Edit Profile & Photo</span>
@@ -430,7 +427,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                   <Link
                     to="/progress"
                     onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:text-slate-900 dark:hover:text-white transition-colors border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-800"
                   >
                     <BarChart3 className="w-4 h-4 text-slate-400 shrink-0" />
                     <span>Learning Progress & Analytics</span>
@@ -442,7 +439,7 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                       setIsProfileOpen(false)
                       setIsReportModalOpen(true)
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-800"
                   >
                     <HelpCircle className="w-4 h-4 text-amber-500 shrink-0" />
                     <span>Report Issue / Feedback</span>
@@ -451,17 +448,17 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                   <Link
                     to="/settings"
                     onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:text-slate-900 dark:hover:text-white transition-colors border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-800"
                   >
                     <Settings className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>System Settings & LLM Runtime</span>
+                    <span>System Settings & Architecture</span>
                   </Link>
 
                   {/* Theme Switcher in Dropdown */}
                   <button
                     type="button"
                     onClick={toggleTheme}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-800"
                   >
                     <div className="flex items-center gap-2.5">
                       {isDark ? (
@@ -476,11 +473,11 @@ export const Topbar: React.FC<TopbarProps> = memo(({ onOpenMobileNav }) => {
                 </div>
 
                 {/* Sign Out Action */}
-                <div className="pt-1.5">
+                <div className="pt-2">
                   <button
                     type="button"
                     onClick={handleSignOut}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors cursor-pointer border-2 border-rose-200 dark:border-rose-800 shadow-3xs"
                   >
                     <span>Sign Out</span>
                     <ArrowRight className="w-3.5 h-3.5" />

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useTutorSession } from '../hooks/useTutorSession'
 import { useSystemStatus } from '@/app/providers/SystemStatusProvider'
 import { ChatMessageItem } from '../components/ChatMessageItem'
-import { Button, Dropdown, EmptyState } from '@/components/ui'
+import { Dropdown } from '@/components/ui'
 import {
   Plus,
   Bot,
@@ -92,30 +92,29 @@ export const TutorPage: React.FC = () => {
   const activeSession = sessions.find((s) => s.id === activeSessionId) || sessions[0]
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-4rem)] bg-slate-50 dark:bg-slate-950 w-full">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-4rem)] bg-slate-100/60 dark:bg-[#080B0E] w-full">
       {/* ═══════════════════════════════════════════════════════════════
           MOBILE TOP CONTROL BAR
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="md:hidden px-3 sm:px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between gap-2 shrink-0 shadow-2xs w-full">
+      <div className="md:hidden px-3 sm:px-4 py-2.5 border-b-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0C1015] flex items-center justify-between gap-2 shrink-0 shadow-xs w-full">
         <button
           type="button"
           onClick={() => setMobileDrawerOpen(true)}
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-700 dark:text-slate-200 min-w-0 max-w-[220px] cursor-pointer"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] text-xs font-bold text-slate-800 dark:text-slate-200 min-w-0 max-w-[220px] cursor-pointer shadow-3xs"
         >
           <MessageSquare className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
           <span className="truncate">{activeSession?.title || 'Discussions'}</span>
         </button>
 
         <div className="flex items-center gap-1.5">
-          <Button
-            size="sm"
-            variant="outline"
+          <button
+            type="button"
             onClick={createNewSession}
-            leftIcon={<Plus className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
-            className="h-8 text-xs font-bold px-2.5 border-slate-200 dark:border-slate-700 text-[#005F02] dark:text-emerald-400"
+            className="inline-flex items-center gap-1 h-8 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:border-[#005F02] hover:text-[#005F02] text-slate-800 dark:text-slate-200 text-xs font-bold shadow-3xs cursor-pointer active:scale-95 transition-all"
           >
-            New
-          </Button>
+            <Plus className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+            <span>New</span>
+          </button>
         </div>
       </div>
 
@@ -131,39 +130,38 @@ export const TutorPage: React.FC = () => {
       )}
 
       <div
-        className={`fixed md:static inset-y-0 left-0 z-50 md:z-auto w-72 sm:w-80 border-r border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 flex flex-col shrink-0 transition-transform duration-200 ease-in-out ${
+        className={`fixed md:static inset-y-0 left-0 z-50 md:z-auto w-72 sm:w-80 border-r-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0C1015] flex flex-col shrink-0 transition-transform duration-200 ease-in-out ${
           mobileDrawerOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {/* Discussions Header */}
-        <div className="p-3.5 sm:p-4 border-b border-slate-200/90 dark:border-slate-800/90 flex items-center justify-between gap-2">
+        <div className="p-3.5 sm:p-4 border-b-2 border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 shrink-0 shadow-3xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
               <MessageSquare className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white block leading-tight truncate">
+              <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white block leading-tight truncate">
                 Discussions
               </span>
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-mono font-medium">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono font-bold">
                 {sessions.length} local sessions
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <Button
-              size="sm"
-              variant="outline"
+            <button
+              type="button"
               onClick={() => {
                 createNewSession()
                 setMobileDrawerOpen(false)
               }}
-              leftIcon={<Plus className="w-3.5 h-3.5" />}
-              className="text-xs font-bold h-8 border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:text-[#005F02] dark:hover:text-emerald-400 text-slate-700 dark:text-slate-200 shadow-3xs"
+              className="inline-flex items-center gap-1 h-8 px-2.5 sm:px-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] hover:border-[#005F02] hover:text-[#005F02] text-slate-800 dark:text-slate-200 text-xs font-bold shadow-3xs cursor-pointer active:scale-95 transition-all"
             >
-              New Chat
-            </Button>
+              <Plus className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+              <span>New Chat</span>
+            </button>
             <button
               type="button"
               onClick={() => setMobileDrawerOpen(false)}
@@ -193,10 +191,10 @@ export const TutorPage: React.FC = () => {
                     setMobileDrawerOpen(false)
                   }
                 }}
-                className={`group/session relative w-full text-left p-3 sm:p-3.5 rounded-2xl text-xs transition-all duration-150 border cursor-pointer select-none ${
+                className={`group/session relative w-full text-left p-3 sm:p-3.5 rounded-2xl text-xs transition-all duration-150 border-2 cursor-pointer select-none shadow-3xs ${
                   isActive
-                    ? 'bg-emerald-50/90 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700/80 text-slate-900 dark:text-white font-semibold shadow-3xs'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800 text-slate-900 dark:text-white font-bold'
+                    : 'border-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#161B22] hover:border-slate-200 dark:hover:border-slate-800'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -204,7 +202,7 @@ export const TutorPage: React.FC = () => {
                     {sess.title}
                   </span>
                   <div className="flex items-center gap-1 shrink-0">
-                    <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/60 dark:border-slate-700/60">
+                    <span className="font-mono text-[10px] uppercase font-black px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-3xs">
                       {sess.language}
                     </span>
                     <button
@@ -223,7 +221,7 @@ export const TutorPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <p className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-normal">
                   {sess.lastMessagePreview}
                 </p>
               </div>
@@ -232,17 +230,13 @@ export const TutorPage: React.FC = () => {
         </div>
 
         {/* Local AI Status Footer */}
-        <div className="p-3.5 border-t border-slate-200/90 dark:border-slate-800/90 bg-slate-50 dark:bg-slate-950/80 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-mono">
-          <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
-            <Bot className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+        <div className="p-3.5 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] text-xs text-slate-600 dark:text-slate-400 flex items-center justify-between font-mono">
+          <span className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
+            <Bot className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
             {isOffline ? 'Offline AI Tutor' : 'Online AI Tutor'}
           </span>
-          <span
-            className="inline-flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400"
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full inline-block bg-emerald-500 animate-pulse"
-            />
+          <span className="inline-flex items-center gap-1.5 font-black text-[#005F02] dark:text-emerald-400">
+            <span className="w-2 h-2 rounded-full inline-block bg-emerald-500 animate-pulse" />
             {isOffline ? 'No Internet Needed' : 'Online Synced'}
           </span>
         </div>
@@ -251,9 +245,9 @@ export const TutorPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           MAIN CHAT WORKSPACE
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="flex-1 flex flex-col bg-slate-50 dark:bg-slate-950 overflow-hidden w-full min-w-0">
+      <div className="flex-1 flex flex-col bg-slate-100/40 dark:bg-[#0A0D12] overflow-hidden w-full min-w-0">
         {/* Top Controls Bar: Language & Mode Selectors + Dynamic Mode Feedback */}
-        <div className="px-3 sm:px-6 py-2.5 border-b border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 flex flex-wrap items-center justify-between gap-2.5 shrink-0 shadow-2xs w-full">
+        <div className="px-3 sm:px-6 py-3 border-b-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0C1015] flex flex-wrap items-center justify-between gap-3 shrink-0 shadow-xs w-full">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <div className="w-36 sm:w-44 shrink-0">
               <Dropdown
@@ -274,7 +268,7 @@ export const TutorPage: React.FC = () => {
           {/* Dynamic Human-Centered Mode & Privacy Indicator */}
           <div className="hidden sm:flex items-center gap-2.5 text-xs shrink-0">
             {/* Active Mode Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-semibold text-[11px] shadow-3xs">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-bold text-xs shadow-3xs">
               <Bot className="w-3.5 h-3.5 shrink-0" />
               <span>
                 <strong>Mode:</strong> {currentModeInfo.label}
@@ -282,15 +276,15 @@ export const TutorPage: React.FC = () => {
             </div>
 
             {/* Simple Offline Reassurance */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-medium border border-slate-200 dark:border-slate-700 shadow-3xs">
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 shadow-3xs">
               {isOffline ? (
                 <>
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
                   <span>Works 100% Offline</span>
                 </>
               ) : (
                 <>
-                  <Wifi className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <Wifi className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 shrink-0" />
                   <span>Online Synced</span>
                 </>
               )}
@@ -302,31 +296,43 @@ export const TutorPage: React.FC = () => {
         <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4 w-full">
           <div className="max-w-3xl w-full mx-auto space-y-4">
             {messages.length === 0 ? (
-              <div className="h-full flex items-center justify-center py-8 sm:py-12">
-                <EmptyState
-                  icon={<Bot className="w-9 h-9 sm:w-10 sm:h-10 text-[#005F02] dark:text-emerald-400" />}
-                  title="How can I assist your coding journey today?"
-                  description="Ask any question about algorithms, recursion, data structures, syntax, or debugging in Python, JavaScript, or Java."
-                  action={
-                    <div className="flex flex-wrap gap-2 justify-center max-w-lg mt-4">
-                      {[
-                        'Explain recursion call stack memory in Python',
-                        'Why is Two Sum faster with a Hash Map?',
-                        'How do Promises work under the hood in JS?',
-                        'Explain Java interfaces vs abstract classes',
-                      ].map((sample) => (
-                        <button
-                          key={sample}
-                          type="button"
-                          onClick={() => sendMessage(sample)}
-                          className="text-xs px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-emerald-400 dark:hover:border-emerald-600 hover:text-[#005F02] dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 transition-colors shadow-2xs font-medium cursor-pointer"
-                        >
-                          {sample}
-                        </button>
-                      ))}
-                    </div>
-                  }
-                />
+              <div className="h-full flex items-center justify-center py-6 sm:py-10">
+                <div className="max-w-2xl w-full mx-auto p-6 sm:p-8 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs text-center space-y-4">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs">
+                    <Bot className="w-7 h-7" />
+                  </div>
+
+                  <span className="text-[11px] font-mono font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 inline-block shadow-3xs">
+                    100% OFFLINE AI TUTOR
+                  </span>
+
+                  <div className="space-y-1">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                      How can I assist your coding journey today?
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-normal">
+                      Ask any question about algorithms, recursion, data structures, syntax, or debugging in Python, JavaScript, or Java.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 text-left">
+                    {[
+                      'Explain recursion call stack memory in Python',
+                      'Why is Two Sum faster with a Hash Map?',
+                      'How do Promises work under the hood in JS?',
+                      'Explain Java interfaces vs abstract classes',
+                    ].map((sample) => (
+                      <button
+                        key={sample}
+                        type="button"
+                        onClick={() => sendMessage(sample)}
+                        className="text-xs px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] hover:border-[#005F02] dark:hover:border-emerald-500 hover:text-[#005F02] dark:hover:text-emerald-400 text-slate-800 dark:text-slate-200 font-bold transition-all shadow-3xs cursor-pointer active:scale-95 text-left"
+                      >
+                        {sample}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             ) : (
               messages.map((msg) => (
@@ -340,14 +346,14 @@ export const TutorPage: React.FC = () => {
 
             {/* Thinking / Loading Animated Dots */}
             {isLoading && (
-              <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-2xs max-w-fit animate-in fade-in">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#005F02] text-white flex items-center justify-center border border-emerald-600 shrink-0 shadow-3xs">
+              <div className="flex items-start gap-3 p-4 rounded-2xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs max-w-fit animate-in fade-in">
+                <div className="w-8 h-8 rounded-xl bg-[#005F02] text-white flex items-center justify-center border border-emerald-600 shrink-0 shadow-3xs">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex items-center gap-1.5 py-1 px-1.5 self-center">
-                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce [animation-delay:-0.3s]" />
-                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce [animation-delay:-0.15s]" />
-                  <span className="w-2 h-2 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce [animation-delay:-0.3s]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce [animation-delay:-0.15s]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-bounce" />
                 </div>
               </div>
             )}
@@ -357,31 +363,28 @@ export const TutorPage: React.FC = () => {
         </div>
 
         {/* Input Bar */}
-        <div className="px-3 sm:px-6 py-3 border-t border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 shrink-0 w-full">
+        <div className="px-3 sm:px-6 py-3.5 border-t-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0C1015] shrink-0 w-full shadow-xs">
           <div className="max-w-3xl w-full mx-auto">
-            <form onSubmit={handleSend} className="relative flex items-center gap-2 w-full">
+            <form onSubmit={handleSend} className="relative flex items-center gap-2.5 w-full">
               <input
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder={`Ask your ${selectedLanguage} tutor anything...`}
                 disabled={isLoading}
-                className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all min-w-0"
+                className="flex-1 bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#005F02] dark:focus:border-emerald-500 shadow-3xs transition-all min-w-0 font-medium"
               />
-              <Button
+              <button
                 type="submit"
-                variant="primary"
-                size="md"
                 disabled={!inputVal.trim() || isLoading}
-                isLoading={isLoading}
-                rightIcon={<CornerDownLeft className="w-3.5 h-3.5" />}
-                className="h-10 sm:h-11 px-3.5 sm:px-5 font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs text-xs shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1.5 h-11 sm:h-12 px-5 font-bold bg-[#005F02] hover:bg-[#004e02] disabled:opacity-40 disabled:hover:bg-[#005F02] text-white rounded-2xl shadow-xs text-xs sm:text-sm shrink-0 cursor-pointer active:scale-95 transition-all"
               >
-                Send
-              </Button>
+                <span>Send</span>
+                <CornerDownLeft className="w-4 h-4" />
+              </button>
             </form>
-            <div className="text-center mt-1.5 hidden sm:block">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+            <div className="text-center mt-2 hidden sm:block">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono font-medium">
                 Offline Mode active • Runs on local device memory • Press Enter to submit
               </span>
             </div>
