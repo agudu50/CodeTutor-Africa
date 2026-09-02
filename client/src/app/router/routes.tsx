@@ -5,6 +5,7 @@ import LandingPage from '@/features/landing/pages/LandingPage'
 import SignInPage from '@/features/auth/pages/SignInPage'
 import SignUpPage from '@/features/auth/pages/SignUpPage'
 import OnboardingPage from '@/features/auth/pages/OnboardingPage'
+import ForgotPasswordPage from '@/features/auth/pages/ForgotPasswordPage'
 import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import TutorPage from '@/features/tutor/pages/TutorPage'
 import PracticeListPage from '@/features/practice/pages/PracticeListPage'
@@ -38,6 +39,10 @@ export const routes: RouteObject[] = [
   {
     path: '/onboarding',
     element: <OnboardingPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
   },
 
   // Authenticated / App shell workspace routes

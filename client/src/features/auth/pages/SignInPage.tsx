@@ -214,16 +214,12 @@ export const SignInPage: React.FC = () => {
                   <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                     Password
                   </label>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      alert('Offline password reset is stored in your local settings.')
-                    }}
+                  <Link
+                    to="/forgot-password"
                     className="text-[11px] font-bold text-[#005F02] dark:text-emerald-400 hover:underline"
                   >
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] focus-within:bg-white dark:focus-within:bg-[#0E1318] focus-within:border-[#005F02] dark:focus-within:border-emerald-500 shadow-3xs transition-all flex items-center">
                   <div className="pl-3.5 pr-2 text-slate-400 flex items-center pointer-events-none">
