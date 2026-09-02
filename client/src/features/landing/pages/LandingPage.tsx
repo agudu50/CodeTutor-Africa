@@ -1666,17 +1666,17 @@ export const LandingPage: React.FC = () => {
             >
               {/* Left Column: Portrait Photo Card */}
               <div className="md:col-span-5 lg:col-span-4 flex justify-center md:justify-start">
-                <div className="relative w-full max-w-[260px] md:max-w-none aspect-square sm:h-64 md:h-72 rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 shadow-xs group">
+                <div className="relative w-full max-w-[260px] md:max-w-none aspect-square sm:h-64 md:h-72 rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 shadow-xs group bg-slate-100 dark:bg-slate-900">
                   <img
                     src={studentTestimonials[testimonialSlide].image}
                     alt={studentTestimonials[testimonialSlide].name}
                     className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-slate-950/70 flex flex-col justify-end p-4 text-white">
-                    <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-emerald-400">
+                  <div className="absolute bottom-0 inset-x-0 p-3 bg-slate-950/80 border-t border-slate-800 text-white">
+                    <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-emerald-400 block leading-tight">
                       {studentTestimonials[testimonialSlide].tag}
                     </span>
-                    <span className="text-sm font-black flex items-center gap-1">
+                    <span className="text-xs font-black flex items-center gap-1 mt-0.5">
                       <MapPinIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       {studentTestimonials[testimonialSlide].location}
                     </span>
