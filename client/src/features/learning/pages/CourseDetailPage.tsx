@@ -4,6 +4,8 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
 import { Button } from '@/components/ui'
+import { CourseSupportModal } from '../components/CourseSupportModal'
+import { CourseInboxModal } from '../components/CourseInboxModal'
 import {
   ChevronLeft,
   Play,
@@ -15,11 +17,15 @@ import {
   Users,
   GraduationCap,
   Globe,
+  MessageSquare,
+  Inbox,
 } from 'lucide-react'
 
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
   const [expandedModuleId, setExpandedModuleId] = useState<string | null>(null)
+  const [supportModalOpen, setSupportModalOpen] = useState(false)
+  const [inboxModalOpen, setInboxModalOpen] = useState(false)
 
   const courses = courseStoreService.getAllCourses()
   const course = courses.find((c) => c.id === courseId || c.slug === courseId) || courses[0]
@@ -74,6 +80,7 @@ export const CourseDetailPage: React.FC = () => {
     : `/learning/lessons/${course.modules[0]?.lessons[0]?.id || ''}`
 
   return (
+    <>
     <PageContainer maxWidth="xl" className="space-y-6">
       {/* Back to courses navigation */}
       <div className="flex items-center justify-between">
@@ -126,7 +133,7 @@ export const CourseDetailPage: React.FC = () => {
         </div>
 
         {/* Review / Continue Action Button */}
-        <div className="pt-1">
+        <div className="pt-1 flex items-center gap-3 flex-wrap">
           <Link to={firstLessonUrl} className="inline-block">
             <button
               type="button"
@@ -136,6 +143,22 @@ export const CourseDetailPage: React.FC = () => {
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </Link>
+          <button
+            type="button"
+            onClick={() => setSupportModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-brand-400 dark:hover:border-brand-500 text-slate-700 dark:text-slate-300 font-bold text-xs sm:text-sm inline-flex items-center gap-1.5 cursor-pointer transition-all duration-150 active:scale-95"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Report Issue</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setInboxModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-brand-400 dark:hover:border-brand-500 text-slate-700 dark:text-slate-300 font-bold text-xs sm:text-sm inline-flex items-center gap-1.5 cursor-pointer transition-all duration-150 active:scale-95"
+          >
+            <Inbox className="w-3.5 h-3.5" />
+            <span>My Reports</span>
+          </button>
         </div>
 
         {/* Lead Mentor Profile Card */}
@@ -343,6 +366,19 @@ export const CourseDetailPage: React.FC = () => {
         </div>
       </div>
     </PageContainer>
+
+    <CourseSupportModal
+      isOpen={supportModalOpen}
+      onClose={() => setSupportModalOpen(false)}
+      course={course}
+    />
+    <CourseInboxModal
+      isOpen={inboxModalOpen}
+      onClose={() => setInboxModalOpen(false)}
+      courseId={course.id}
+      courseTitle={course.title}
+    />
+    </>
   )
 }
 

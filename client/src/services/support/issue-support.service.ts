@@ -27,6 +27,11 @@ export interface IssueReport {
   errorMessage?: string
   adminReply?: string
   instructorName?: string
+  /** Course this report is filed against */
+  courseId?: string
+  courseName?: string
+  /** Who submitted: learner from a course page, or admin raising a request */
+  submittedByRole?: 'learner' | 'admin'
   createdAt: string
   resolvedAt?: string
 }

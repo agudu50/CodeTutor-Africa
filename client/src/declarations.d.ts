@@ -47,6 +47,8 @@ declare module 'lucide-react' {
   export const HardDrive: LucideIcon
   export const Heart: LucideIcon
   export const HelpCircle: LucideIcon
+  export const Inbox: LucideIcon
+  export const Info: LucideIcon
   export const Laptop: LucideIcon
   export const LayoutDashboard: LucideIcon
   export const Lightbulb: LucideIcon
@@ -64,6 +66,8 @@ declare module 'lucide-react' {
   export const Save: LucideIcon
   export const School: LucideIcon
   export const Search: LucideIcon
+  export const Send: LucideIcon
+  export const SendHorizontal: LucideIcon
   export const Settings: LucideIcon
   export const Shield: LucideIcon
   export const ShieldCheck: LucideIcon

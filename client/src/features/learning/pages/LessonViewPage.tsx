@@ -6,6 +6,8 @@ import { activeLearningService } from '@/services/learning/active-learning.servi
 import { Card, Button, Badge, MarkdownRenderer } from '@/components/ui'
 import { VideoLessonPlayer } from '../components/VideoLessonPlayer'
 import { LessonQuizSection } from '../components/LessonQuizSection'
+import { CourseSupportModal } from '../components/CourseSupportModal'
+import { CourseInboxModal } from '../components/CourseInboxModal'
 import {
   ChevronLeft,
   CheckCircle2,
@@ -20,11 +22,15 @@ import {
   Terminal,
   Bug,
   ChevronRight,
+  MessageSquare,
+  Inbox,
 } from 'lucide-react'
 
 export const LessonViewPage: React.FC = () => {
   const { lessonId } = useParams<{ lessonId: string }>()
   const [isCompleted, setIsCompleted] = useState(false)
+  const [supportModalOpen, setSupportModalOpen] = useState(false)
+  const [inboxModalOpen, setInboxModalOpen] = useState(false)
 
   const courses = courseStoreService.getAllCourses()
   let foundLesson = courses[0]?.modules[0]?.lessons[0]
@@ -47,6 +53,8 @@ export const LessonViewPage: React.FC = () => {
       }
     }
   }
+
+  const foundCourse = courses.find((c) => c.id === courseId) || courses[0]
 
   // Persist current in-progress lesson so Dashboard always shows the last attempted course
   useEffect(() => {
@@ -92,6 +100,7 @@ export const LessonViewPage: React.FC = () => {
   const fileExt = courseLanguage === 'python' ? 'py' : courseLanguage === 'javascript' ? 'js' : 'java'
 
   return (
+    <>
     <PageContainer maxWidth="lg" className="space-y-6">
       {/* Breadcrumb & Top Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -133,6 +142,22 @@ export const LessonViewPage: React.FC = () => {
           >
             {isCompleted ? 'Completed ✓' : 'Mark as Complete'}
           </Button>
+          <button
+            type="button"
+            onClick={() => setSupportModalOpen(true)}
+            className="h-8 px-3 inline-flex items-center gap-1.5 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer shadow-2xs"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            Report Issue
+          </button>
+          <button
+            type="button"
+            onClick={() => setInboxModalOpen(true)}
+            className="h-8 px-3 inline-flex items-center gap-1.5 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer shadow-2xs"
+          >
+            <Inbox className="w-3.5 h-3.5" />
+            My Reports
+          </button>
         </div>
       </div>
 
@@ -454,6 +479,24 @@ export const LessonViewPage: React.FC = () => {
         </div>
       </Card>
     </PageContainer>
+
+    {foundCourse && (
+      <CourseSupportModal
+        isOpen={supportModalOpen}
+        onClose={() => setSupportModalOpen(false)}
+        course={foundCourse}
+        lessonTitle={foundLesson?.title}
+      />
+    )}
+    {foundCourse && (
+      <CourseInboxModal
+        isOpen={inboxModalOpen}
+        onClose={() => setInboxModalOpen(false)}
+        courseId={foundCourse.id}
+        courseTitle={foundCourse.title}
+      />
+    )}
+    </>
   )
 }
 

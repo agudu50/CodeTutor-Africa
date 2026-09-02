@@ -60,6 +60,10 @@ declare module 'lucide-react' {
   export const MessageSquare: LucideIcon
   export const GraduationCap: LucideIcon
   export const Database: LucideIcon
+  export const Inbox: LucideIcon
+  export const Info: LucideIcon
+  export const Send: LucideIcon
+  export const SendHorizontal: LucideIcon
 
   const anyIcon: LucideIcon
   export default anyIcon
