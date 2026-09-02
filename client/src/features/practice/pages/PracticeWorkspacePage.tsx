@@ -254,11 +254,11 @@ export const PracticeWorkspacePage: React.FC = () => {
 
   if (!problem) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-950">
-        <div className="text-center space-y-3">
-          <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No practice problem available.</p>
+      <div className="flex-1 flex items-center justify-center p-8 bg-slate-100/60 dark:bg-[#080B0E]">
+        <div className="text-center space-y-4 max-w-sm p-8 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs">
+          <p className="text-sm font-black text-slate-800 dark:text-slate-200">No practice problem available.</p>
           <Link to="/practice">
-            <Button size="sm" variant="primary">Return to Practice List</Button>
+            <Button size="sm" variant="primary" className="border-2 border-[#005F02] font-bold">Return to Practice List</Button>
           </Link>
         </div>
       </div>
@@ -267,10 +267,10 @@ export const PracticeWorkspacePage: React.FC = () => {
 
   const difficultyVariant =
     problem.difficulty === 'beginner'
-      ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/80'
+      ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 font-bold'
       : problem.difficulty === 'intermediate'
-      ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/80'
-      : 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/80'
+      ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border-2 border-amber-300 dark:border-amber-800 font-bold'
+      : 'bg-rose-100 dark:bg-rose-950/80 text-rose-900 dark:text-rose-300 border-2 border-rose-300 dark:border-rose-800 font-bold'
 
   const currentIndex = allProblems.findIndex((q) => q.id === problem.id)
   const prevProblem = currentIndex > 0 ? allProblems[currentIndex - 1] : null
@@ -292,32 +292,38 @@ export const PracticeWorkspacePage: React.FC = () => {
   })
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-slate-50 dark:bg-slate-950 w-full relative">
+    <div className="flex-1 flex flex-col min-h-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden bg-slate-100/60 dark:bg-[#080B0E] w-full relative">
       {/* ═══════════════════════════════════════════════════════════════
           FLOATING RUN NOTIFICATION TOAST
           ═══════════════════════════════════════════════════════════════ */}
       {toastMessage && (
-        <div className="fixed top-18 right-4 sm:right-8 z-50 animate-in slide-in-from-top-3 fade-in duration-200 shadow-2xl max-w-sm w-full">
+        <div className="fixed top-20 right-4 sm:right-8 z-50 animate-in slide-in-from-top-3 fade-in duration-200 shadow-2xl max-w-sm w-full">
           <div
-            className={`p-3.5 rounded-2xl border flex items-start gap-3 backdrop-blur-md ${
+            className={`p-4 rounded-2xl border-2 flex items-start gap-3.5 shadow-xl ${
               toastMessage.type === 'success'
-                ? 'bg-emerald-900/95 text-white border-emerald-500 shadow-emerald-950/40'
+                ? 'bg-emerald-950 text-white border-emerald-500'
                 : toastMessage.type === 'error'
-                ? 'bg-rose-900/95 text-white border-rose-500 shadow-rose-950/40'
-                : 'bg-slate-900/95 text-white border-slate-700 shadow-slate-950/40'
+                ? 'bg-rose-950 text-white border-rose-500'
+                : 'bg-slate-900 text-white border-slate-700'
             }`}
           >
             {toastMessage.type === 'success' ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
             ) : toastMessage.type === 'error' ? (
-              <XCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+              <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/40">
+                <XCircle className="w-5 h-5" />
+              </div>
             ) : (
-              <Terminal className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
+              <div className="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center shrink-0 border border-slate-700">
+                <Terminal className="w-5 h-5" />
+              </div>
             )}
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-1">
-                <span className="text-xs font-bold font-mono tracking-tight block">
+                <span className="text-xs font-black font-mono tracking-tight block">
                   {toastMessage.title}
                 </span>
                 <button
@@ -328,7 +334,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <p className="text-[11px] text-slate-200 font-sans mt-0.5 leading-snug">
+              <p className="text-xs text-slate-300 font-sans mt-0.5 leading-snug">
                 {toastMessage.detail}
               </p>
             </div>
@@ -340,16 +346,16 @@ export const PracticeWorkspacePage: React.FC = () => {
           WORKSPACE SUBHEADER BAR
           ═══════════════════════════════════════════════════════════════ */}
       {/* Desktop Bar (sm:flex) */}
-      <div className="hidden sm:flex h-14 px-4 sm:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 items-center justify-between shrink-0 shadow-2xs w-full gap-3">
+      <div className="hidden sm:flex h-16 px-4 sm:px-6 border-b-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0C1015] items-center justify-between shrink-0 shadow-xs w-full gap-3">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <Link
             to="/practice"
-            className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold transition-colors px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
+            className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 hover:text-[#005F02] dark:hover:text-emerald-400 font-bold transition-colors px-3 py-1.5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] hover:border-[#005F02] dark:hover:border-emerald-500 shadow-3xs shrink-0 cursor-pointer active:scale-95"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Catalog</span>
           </Link>
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 shrink-0" />
+          <div className="h-5 w-px bg-slate-300 dark:border-slate-700 shrink-0" />
 
           {/* ═══════════════════════════════════════════════════════════
               ENHANCED PROBLEM SELECTOR & STEPPER
@@ -361,7 +367,7 @@ export const PracticeWorkspacePage: React.FC = () => {
               disabled={!prevProblem}
               onClick={() => prevProblem && navigate(`/practice/${prevProblem.id}`)}
               title={prevProblem ? `Previous: ${prevProblem.title}` : 'First Problem'}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="p-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:text-[#005F02] dark:hover:text-white border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] hover:border-slate-400 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer shadow-3xs active:scale-95"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -370,15 +376,15 @@ export const PracticeWorkspacePage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsSwitcherOpen(!isSwitcherOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 hover:border-emerald-500/80 hover:bg-white dark:hover:bg-slate-900 transition-all text-left shadow-3xs cursor-pointer max-w-sm"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22] hover:border-[#005F02] dark:hover:border-emerald-500 transition-all text-left shadow-3xs cursor-pointer max-w-sm"
             >
-              <span className="font-mono text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 shrink-0">
+              <span className="font-mono text-[10px] font-black uppercase px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-3xs shrink-0">
                 {problem.language}
               </span>
-              <span className="text-xs font-bold text-slate-900 dark:text-white truncate">
+              <span className="text-xs font-black text-slate-900 dark:text-white truncate">
                 {problem.title}
               </span>
-              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isSwitcherOpen ? 'rotate-180 text-emerald-600' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isSwitcherOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : ''}`} />
             </button>
 
             {/* Next Problem Arrow */}
@@ -387,7 +393,7 @@ export const PracticeWorkspacePage: React.FC = () => {
               disabled={!nextProblem}
               onClick={() => nextProblem && navigate(`/practice/${nextProblem.id}`)}
               title={nextProblem ? `Next: ${nextProblem.title}` : 'Last Problem'}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="p-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:text-[#005F02] dark:hover:text-white border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] hover:border-slate-400 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer shadow-3xs active:scale-95"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -396,30 +402,30 @@ export const PracticeWorkspacePage: React.FC = () => {
                 ENHANCED PROBLEM SELECTOR POPOVER
                 ═══════════════════════════════════════════════════════════ */}
             {isSwitcherOpen && (
-              <div className="absolute top-12 left-0 z-50 w-96 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 p-2.5 space-y-2">
+              <div className="absolute top-12 left-0 z-50 w-96 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 p-3 space-y-2.5">
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                   <input
                     type="text"
                     placeholder="Search practice challenges..."
                     value={switcherSearch}
                     onChange={(e) => setSwitcherSearch(e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
+                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#005F02] shadow-3xs"
                   />
                 </div>
 
                 {/* Language Filter Pills */}
-                <div className="flex items-center gap-1 overflow-x-auto pb-1 text-[11px] font-mono select-none">
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono select-none">
                   {['all', 'python', 'javascript', 'java', 'typescript'].map((lang) => (
                     <button
                       key={lang}
                       type="button"
                       onClick={() => setSwitcherLang(lang)}
-                      className={`px-2 py-0.5 rounded-lg font-bold uppercase transition-all shrink-0 cursor-pointer ${
+                      className={`px-2.5 py-1 rounded-lg font-bold uppercase transition-all shrink-0 cursor-pointer shadow-3xs ${
                         switcherLang === lang
-                          ? 'bg-[#005F02] text-white shadow-3xs'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          ? 'bg-[#005F02] text-white border-2 border-[#005F02]'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
                       }`}
                     >
                       {lang === 'all' ? 'All' : lang}
@@ -428,7 +434,7 @@ export const PracticeWorkspacePage: React.FC = () => {
                 </div>
 
                 {/* Challenges List */}
-                <div className="max-h-72 overflow-y-auto space-y-1 pr-1">
+                <div className="max-h-72 overflow-y-auto space-y-1.5 pr-1">
                   {filteredSwitcherProblems.map((p) => {
                     const isSelected = p.id === problem.id
                     return (
@@ -439,35 +445,35 @@ export const PracticeWorkspacePage: React.FC = () => {
                           navigate(`/practice/${p.id}`)
                           setIsSwitcherOpen(false)
                         }}
-                        className={`w-full flex items-start justify-between gap-2 p-2.5 rounded-xl text-left transition-all cursor-pointer ${
+                        className={`w-full flex items-start justify-between gap-2 p-3 rounded-2xl text-left transition-all cursor-pointer border-2 shadow-3xs ${
                           isSelected
-                            ? 'bg-emerald-50/90 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/80 shadow-3xs'
-                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-transparent'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800 text-slate-900 dark:text-white'
+                            : 'hover:bg-slate-50 dark:hover:bg-[#161B22] border-transparent hover:border-slate-200 dark:hover:border-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <div className="space-y-0.5 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-mono text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 shrink-0">
+                            <span className="font-mono text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 shrink-0">
                               {p.language}
                             </span>
                             {p.moduleTitle && (
-                              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono truncate font-medium">
                                 {p.moduleTitle}
                               </span>
                             )}
                           </div>
-                          <p className={`text-xs font-bold truncate ${isSelected ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <p className={`text-xs font-bold truncate ${isSelected ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-900 dark:text-white'}`}>
                             {p.title}
                           </p>
                         </div>
 
                         <span
-                          className={`text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                          className={`text-[9px] font-mono font-black uppercase px-2 py-0.5 rounded-md shrink-0 border ${
                             p.difficulty === 'beginner'
-                              ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60'
+                              ? 'text-[#005F02] bg-emerald-100 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800'
                               : p.difficulty === 'intermediate'
-                              ? 'text-amber-600 bg-amber-50 dark:bg-amber-950/60'
-                              : 'text-rose-600 bg-rose-50 dark:bg-rose-950/60'
+                              ? 'text-amber-900 bg-amber-100 dark:bg-amber-950/80 border-amber-300 dark:border-amber-800'
+                              : 'text-rose-900 bg-rose-100 dark:bg-rose-950/80 border-rose-300 dark:border-rose-800'
                           }`}
                         >
                           {p.difficulty}
@@ -480,7 +486,7 @@ export const PracticeWorkspacePage: React.FC = () => {
             )}
           </div>
 
-          <span className={`inline-flex items-center text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-lg border shrink-0 ${difficultyVariant}`}>
+          <span className={`inline-flex items-center text-[10px] font-mono font-black uppercase px-3 py-1 rounded-xl shadow-3xs shrink-0 ${difficultyVariant}`}>
             {problem.difficulty}
           </span>
         </div>
@@ -489,12 +495,12 @@ export const PracticeWorkspacePage: React.FC = () => {
         <div className="flex items-center gap-2.5 shrink-0">
           {/* Live Countdown Clock */}
           <div
-            className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-xl border shadow-3xs transition-colors ${
+            className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1.5 rounded-xl border-2 shadow-3xs transition-colors ${
               timeLeftSecs === 0
-                ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800'
+                ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-800'
                 : timeLeftSecs < 180
-                ? 'bg-amber-50 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-800 animate-pulse'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800 animate-pulse'
+                : 'bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -504,10 +510,10 @@ export const PracticeWorkspacePage: React.FC = () => {
           {/* Attempts Left Badge */}
           {maxAttempts > 0 && (
             <span
-              className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-2.5 py-1 rounded-xl border shadow-3xs ${
+              className={`inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1.5 rounded-xl border-2 shadow-3xs ${
                 attemptsUsed >= maxAttempts
-                  ? 'bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800'
-                  : 'bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/80'
+                  ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-800'
+                  : 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
               }`}
             >
               <Shield className="w-3.5 h-3.5" />
@@ -518,59 +524,59 @@ export const PracticeWorkspacePage: React.FC = () => {
           )}
 
           {/* Toggle Console Output */}
-          <Button
-            size="sm"
-            variant="outline"
+          <button
+            type="button"
             onClick={() => setIsConsoleOpen(!isConsoleOpen)}
-            className={`h-8 text-xs font-bold border-slate-200 dark:border-slate-700 shadow-3xs px-3 cursor-pointer ${
-              isConsoleOpen ? 'bg-emerald-50 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-emerald-300' : 'text-slate-700 dark:text-slate-300'
+            className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-bold border-2 shadow-3xs cursor-pointer active:scale-95 transition-all ${
+              isConsoleOpen
+                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
+                : 'bg-slate-50 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
             }`}
-            leftIcon={<Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
           >
+            <Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
             <span>Console ({passedCount}/{testResults.length})</span>
-          </Button>
+          </button>
 
           <Link to="/tutor">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:text-[#005F02] dark:hover:text-emerald-400 shadow-3xs px-3 cursor-pointer"
-              leftIcon={<Bot className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-bold border-2 border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 hover:bg-[#005F02] hover:text-white dark:hover:bg-[#005F02] dark:hover:text-white shadow-3xs cursor-pointer active:scale-95 transition-all"
             >
-              Ask Tutor
-            </Button>
+              <Bot className="w-3.5 h-3.5" />
+              <span>Ask Tutor</span>
+            </button>
           </Link>
         </div>
       </div>
 
       {/* Mobile 2-Tier Subheader (sm:hidden) */}
-      <div className="sm:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 space-y-2 shrink-0 shadow-2xs w-full">
+      <div className="sm:hidden border-b-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0C1015] px-3 py-2.5 space-y-2 shrink-0 shadow-xs w-full">
         <div className="flex items-center justify-between gap-2">
           <Link
             to="/practice"
-            className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors py-0.5"
+            className="flex items-center gap-1 text-xs text-slate-800 dark:text-slate-200 font-bold py-1 px-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22]"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>Catalog</span>
           </Link>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+            <span className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/80 border border-amber-300">
               <Clock className="w-3 h-3" />
               {formatTimer(timeLeftSecs)}
             </span>
-            <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${difficultyVariant}`}>
+            <span className={`text-[9px] font-mono font-black uppercase px-2 py-0.5 rounded-md ${difficultyVariant}`}>
               {problem.difficulty}
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+        <div className="grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-[#161B22] p-1.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800">
           <button
             type="button"
             onClick={() => setMobileTab('problem')}
-            className={`py-1 text-center text-xs font-bold rounded-lg transition-all ${
+            className={`py-1.5 text-center text-xs font-bold rounded-xl transition-all ${
               mobileTab === 'problem'
-                ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs'
+                ? 'bg-white dark:bg-[#0E1318] text-[#005F02] dark:text-emerald-400 shadow-xs border border-slate-200 dark:border-slate-700'
                 : 'text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -579,9 +585,9 @@ export const PracticeWorkspacePage: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileTab('editor')}
-            className={`py-1 text-center text-xs font-bold rounded-lg transition-all ${
+            className={`py-1.5 text-center text-xs font-bold rounded-xl transition-all ${
               mobileTab === 'editor'
-                ? 'bg-white dark:bg-slate-900 text-[#005F02] dark:text-emerald-400 shadow-2xs'
+                ? 'bg-white dark:bg-[#0E1318] text-[#005F02] dark:text-emerald-400 shadow-xs border border-slate-200 dark:border-slate-700'
                 : 'text-slate-600 dark:text-slate-400'
             }`}
           >
@@ -598,20 +604,20 @@ export const PracticeWorkspacePage: React.FC = () => {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 lg:overflow-hidden p-3 sm:p-4 gap-4 w-full max-w-7xl mx-auto pb-6 lg:pb-4">
         {/* Left Column: Problem Description & Progressive Hints */}
         <div
-          className={`lg:col-span-5 flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full overflow-hidden ${
+          className={`lg:col-span-5 flex flex-col rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs h-full overflow-hidden ${
             mobileTab !== 'problem' ? 'hidden lg:flex' : 'flex'
           }`}
         >
           {/* Tab Selector Bar */}
-          <div className="p-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="p-3 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-1.5 bg-white dark:bg-[#0E1318] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setActiveTab('problem')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'problem'
-                    ? 'bg-[#005F02] text-white shadow-3xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
@@ -620,10 +626,10 @@ export const PracticeWorkspacePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('hints')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'hints'
-                    ? 'bg-[#005F02] text-white shadow-3xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#005F02] text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Lightbulb className="w-3.5 h-3.5" />
@@ -631,7 +637,7 @@ export const PracticeWorkspacePage: React.FC = () => {
               </button>
             </div>
 
-            <span className="text-[11px] font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 font-bold uppercase">
+            <span className="text-xs font-mono text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border-2 border-slate-300 dark:border-slate-700 font-black uppercase shadow-3xs">
               {problem.language}
             </span>
           </div>
@@ -643,68 +649,68 @@ export const PracticeWorkspacePage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     {problem.courseTitle && (
-                      <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 flex items-center gap-1">
-                        <BookOpen className="w-2.5 h-2.5" />
+                      <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1 shadow-3xs">
+                        <BookOpen className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
                         <span>{problem.courseTitle}</span>
                       </span>
                     )}
                     {problem.moduleTitle && (
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 shadow-3xs">
                         {problem.moduleTitle}
                       </span>
                     )}
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-[#005F02] dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 shadow-3xs">
                       {problem.category}
                     </span>
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-3xs">
                       {problem.language}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug">
+                  <h3 className="text-base sm:text-xl font-black tracking-tight text-slate-900 dark:text-white leading-snug">
                     {problem.title}
                   </h3>
                 </div>
 
                 {/* Formatted Problem Statement */}
-                <div className="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-3xs">
-                  <span className="font-bold text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5 text-[11px] uppercase font-mono">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="text-xs sm:text-sm leading-relaxed text-slate-800 dark:text-slate-200 space-y-2.5 p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 shadow-3xs">
+                  <span className="font-black text-[#005F02] dark:text-emerald-400 flex items-center gap-1.5 text-xs uppercase font-mono">
+                    <CheckCircle2 className="w-4 h-4" />
                     Instructions & Goal
                   </span>
-                  <p className="leading-relaxed whitespace-pre-line">{problem.description}</p>
+                  <p className="leading-relaxed whitespace-pre-line font-normal">{problem.description}</p>
                 </div>
 
                 {/* Examples & Test Cases */}
-                <div className="space-y-2 pt-1">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
+                <div className="space-y-2.5 pt-1">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
                     Examples & Test Cases
                   </h4>
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     {problem.testCases.map((tc, idx) => (
                       <div
                         key={tc.id}
-                        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5 shadow-3xs"
+                        className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 text-xs space-y-2 shadow-3xs"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-mono text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                          <span className="font-mono text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase">
                             Example {idx + 1}
                           </span>
                           <button
                             type="button"
                             onClick={() => handleCopySample(tc.input)}
-                            className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1 transition-colors cursor-pointer"
+                            className="text-[11px] font-bold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
                           >
-                            {copiedInput ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                            {copiedInput ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                             <span>{copiedInput ? 'Copied' : 'Copy'}</span>
                           </button>
                         </div>
-                        <div className="font-mono text-[11px] bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800/80 space-y-0.5">
-                          <p className="text-slate-600 dark:text-slate-400 truncate">
-                            <span className="text-slate-400 dark:text-slate-500">Input: </span>
-                            {tc.input}
+                        <div className="font-mono text-xs bg-white dark:bg-[#0E1318] p-3 rounded-xl border border-slate-300 dark:border-slate-700 space-y-1 shadow-3xs">
+                          <p className="text-slate-700 dark:text-slate-300 truncate">
+                            <span className="text-slate-500 font-medium">Input: </span>
+                            <span className="font-bold">{tc.input}</span>
                           </p>
-                          <p className="text-slate-900 dark:text-emerald-400 font-bold truncate">
-                            <span className="text-slate-400 dark:text-slate-500 font-normal">Expected Output: </span>
+                          <p className="text-[#005F02] dark:text-emerald-400 font-bold truncate">
+                            <span className="text-slate-500 font-medium">Expected Output: </span>
                             {tc.expectedOutput}
                           </p>
                         </div>
@@ -716,12 +722,12 @@ export const PracticeWorkspacePage: React.FC = () => {
             ) : (
               /* Progressive Hints Tab */
               <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 space-y-1 shadow-3xs">
-                  <div className="flex items-center gap-1.5 font-bold">
-                    <Lightbulb className="w-4 h-4 text-amber-500" />
+                <div className="p-4 rounded-2xl bg-amber-100 dark:bg-amber-950/80 border-2 border-amber-300 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-1 shadow-3xs">
+                  <div className="flex items-center gap-1.5 font-black">
+                    <Lightbulb className="w-4 h-4 text-amber-600" />
                     <span>Socratic Hints</span>
                   </div>
-                  <p className="text-[11px] leading-relaxed text-amber-700 dark:text-amber-400">
+                  <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-300 font-normal">
                     Stuck? Reveal hints step-by-step to guide your problem-solving without giving away the answer.
                   </p>
                 </div>
@@ -732,32 +738,32 @@ export const PracticeWorkspacePage: React.FC = () => {
                     return (
                       <div
                         key={idx}
-                        className={`p-3.5 rounded-xl border transition-all ${
+                        className={`p-4 rounded-2xl border-2 transition-all shadow-3xs ${
                           isRevealed
-                            ? 'bg-white dark:bg-slate-900 border-amber-200 dark:border-amber-800/70 shadow-2xs'
-                            : 'bg-slate-50/70 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 opacity-80'
+                            ? 'bg-white dark:bg-[#0E1318] border-amber-400 dark:border-amber-700'
+                            : 'bg-slate-50 dark:bg-[#161B22] border-slate-200 dark:border-slate-800 opacity-80'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-mono text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase">
+                          <span className="font-mono text-xs font-black text-amber-700 dark:text-amber-400 uppercase">
                             Hint #{idx + 1}
                           </span>
                           {!isRevealed && (
                             <button
                               type="button"
                               onClick={() => setShowHintIndex(idx)}
-                              className="text-[11px] font-bold text-[#005F02] dark:text-emerald-400 hover:underline cursor-pointer"
+                              className="text-xs font-black text-[#005F02] dark:text-emerald-400 hover:underline cursor-pointer"
                             >
                               Unlock Hint
                             </button>
                           )}
                         </div>
                         {isRevealed ? (
-                          <p className="text-xs text-slate-800 dark:text-slate-200 mt-1.5 leading-relaxed">
+                          <p className="text-xs text-slate-800 dark:text-slate-200 mt-2 leading-relaxed font-normal">
                             {hint}
                           </p>
                         ) : (
-                          <p className="text-xs text-slate-400 dark:text-slate-500 italic mt-1">
+                          <p className="text-xs text-slate-500 italic mt-1.5 font-normal">
                             Click 'Unlock Hint' to reveal this clue.
                           </p>
                         )}
@@ -772,7 +778,7 @@ export const PracticeWorkspacePage: React.FC = () => {
 
         {/* Right Column: Code Editor + Inline Test Console */}
         <div
-          className={`lg:col-span-7 flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs h-full overflow-hidden ${
+          className={`lg:col-span-7 flex flex-col rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs h-full overflow-hidden ${
             mobileTab !== 'editor' ? 'hidden lg:flex' : 'flex'
           }`}
         >
@@ -797,18 +803,18 @@ export const PracticeWorkspacePage: React.FC = () => {
               INLINE TEST RESULTS CONSOLE (Opens on "Run Code")
               ═══════════════════════════════════════════════════════════ */}
           {isConsoleOpen && (
-            <div className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 space-y-2.5 max-h-48 overflow-y-auto shrink-0 animate-in slide-in-from-bottom-2">
+            <div className="border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] p-3.5 space-y-3 max-h-48 overflow-y-auto shrink-0 animate-in slide-in-from-bottom-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                    <Terminal className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                  <span className="font-mono font-bold text-xs uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                    <Terminal className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
                     <span>Sample Test Results</span>
                   </span>
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                    className={`text-[11px] font-mono font-black px-2.5 py-0.5 rounded-lg border shadow-3xs ${
                       isPassedAll
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                        : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                        ? 'bg-emerald-100 text-[#005F02] dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                        : 'bg-rose-100 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 dark:border-rose-800'
                     }`}
                   >
                     {passedCount}/{testResults.length} Passed ({runtimeMs || 12}ms)
@@ -818,15 +824,15 @@ export const PracticeWorkspacePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsConsoleOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                   title="Collapse console"
                 >
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <ChevronDown className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Case Tabs */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 {testResults.map((tc, idx) => {
                   const isActive = activeConsoleCaseIdx === idx
                   return (
@@ -834,10 +840,10 @@ export const PracticeWorkspacePage: React.FC = () => {
                       key={tc.id}
                       type="button"
                       onClick={() => setActiveConsoleCaseIdx(idx)}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                      className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border-2 flex items-center gap-1.5 shadow-3xs active:scale-95 ${
                         isActive
                           ? 'bg-[#005F02] text-white border-[#005F02]'
-                          : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'
+                          : 'bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                       }`}
                     >
                       <span>Case {idx + 1}</span>
@@ -849,18 +855,18 @@ export const PracticeWorkspacePage: React.FC = () => {
 
               {/* Active Case Details */}
               {activeConsoleCase && (
-                <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono space-y-1">
-                  <p className="text-slate-500">
+                <div className="p-3 rounded-2xl bg-white dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-800 text-xs font-mono space-y-1.5 shadow-3xs">
+                  <p className="text-slate-600 dark:text-slate-400">
                     <span className="text-slate-400">Input: </span>
-                    <span className="text-slate-800 dark:text-slate-200 font-bold">{activeConsoleCase.input}</span>
+                    <span className="text-slate-900 dark:text-white font-bold">{activeConsoleCase.input}</span>
                   </p>
-                  <p className="text-slate-500">
+                  <p className="text-slate-600 dark:text-slate-400">
                     <span className="text-slate-400">Expected: </span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">{activeConsoleCase.expectedOutput}</span>
+                    <span className="text-[#005F02] dark:text-emerald-400 font-bold">{activeConsoleCase.expectedOutput}</span>
                   </p>
-                  <p className="text-slate-500">
+                  <p className="text-slate-600 dark:text-slate-400">
                     <span className="text-slate-400">Your Output: </span>
-                    <span className={`font-bold ${activeConsoleCase.passed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                    <span className={`font-bold ${activeConsoleCase.passed ? 'text-[#005F02] dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                       {activeConsoleCase.actualOutput || '(No return value)'}
                     </span>
                   </p>
@@ -870,40 +876,38 @@ export const PracticeWorkspacePage: React.FC = () => {
           )}
 
           {/* Editor Bottom Actions Bar (Run vs Submit) */}
-          <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 flex items-center justify-between gap-3 shrink-0">
+          <div className="p-3.5 sm:p-4 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22] flex items-center justify-between gap-3 shrink-0">
             {/* Left: Run Button (Sandbox Test - 0 Attempts) */}
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
+              <button
+                type="button"
                 onClick={handleRun}
                 disabled={isRunning || isSubmitting}
-                className="text-xs font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-3xs cursor-pointer h-9 px-4"
-                leftIcon={<Play className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 fill-current" />}
+                className="inline-flex items-center gap-2 h-10 px-4 sm:px-5 font-bold text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 hover:border-[#005F02] hover:text-[#005F02] dark:hover:border-emerald-500 bg-white dark:bg-[#0E1318] rounded-2xl shadow-3xs cursor-pointer active:scale-95 transition-all text-xs sm:text-sm"
               >
-                {isRunning ? 'Testing...' : 'Run Test Cases'}
-              </Button>
+                <Play className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400 fill-current" />
+                <span>{isRunning ? 'Testing...' : 'Run Test Cases'}</span>
+              </button>
             </div>
 
             {/* Right: Submit Button (Graded - Deducts 1 Attempt) */}
             <div className="flex items-center gap-2">
-              <Button
-                variant="primary"
-                size="sm"
+              <button
+                type="button"
                 onClick={handleSubmit}
                 disabled={isRunning || isSubmitting || (maxAttempts > 0 && attemptsUsed >= maxAttempts)}
                 title={!hasRunTests ? 'Click "Run Test Cases" first to verify your code before submitting' : 'Submit your solution for grading'}
-                className={`text-xs font-bold text-white shadow-xs cursor-pointer h-9 px-5 transition-all ${
+                className={`inline-flex items-center gap-2 h-10 px-5 sm:px-6 font-black text-white rounded-2xl shadow-xs cursor-pointer active:scale-95 transition-all text-xs sm:text-sm ${
                   maxAttempts > 0 && attemptsUsed >= maxAttempts
-                    ? 'bg-slate-400 cursor-not-allowed'
+                    ? 'bg-slate-400 cursor-not-allowed border-2 border-slate-400'
                     : !hasRunTests
-                    ? 'bg-slate-500/80 hover:bg-slate-600 dark:bg-slate-700'
-                    : 'bg-[#005F02] hover:bg-[#004e02]'
+                    ? 'bg-slate-600 hover:bg-slate-700 border-2 border-slate-600'
+                    : 'bg-[#005F02] hover:bg-[#004e02] border-2 border-[#005F02]'
                 }`}
-                rightIcon={<ArrowRight className="w-3.5 h-3.5 ml-1" />}
               >
-                {isSubmitting ? 'Evaluating...' : !hasRunTests ? 'Run Tests to Submit' : 'Submit Solution'}
-              </Button>
+                <span>{isSubmitting ? 'Evaluating...' : !hasRunTests ? 'Run Tests to Submit' : 'Submit Solution'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>
