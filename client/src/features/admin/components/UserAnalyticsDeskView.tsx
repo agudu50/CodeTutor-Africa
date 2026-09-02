@@ -2741,80 +2741,83 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               {mentorRosterSubTab === 'applications' && (
                 <div className="space-y-4">
                   {/* Status filter bar */}
-                  <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {[
-                        { id: 'ALL', label: 'All Applications', count: mentorApps.length },
-                        { id: 'pending', label: 'Pending Review', count: mentorApps.filter((a) => a.status === 'pending').length },
-                        { id: 'approved', label: 'Approved Mentors', count: mentorApps.filter((a) => a.status === 'approved').length },
-                        { id: 'rejected', label: 'Declined', count: mentorApps.filter((a) => a.status === 'rejected').length },
-                      ].map((tab) => (
-                        <button
-                          key={tab.id}
-                          type="button"
-                          onClick={() => setSelectedAppStatus(tab.id as any)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 scrollbar-none font-mono">
+                    {[
+                      { id: 'ALL', label: 'All Applications', count: mentorApps.length },
+                      { id: 'pending', label: 'Pending Review', count: mentorApps.filter((a) => a.status === 'pending').length },
+                      { id: 'approved', label: 'Approved Mentors', count: mentorApps.filter((a) => a.status === 'approved').length },
+                      { id: 'rejected', label: 'Declined', count: mentorApps.filter((a) => a.status === 'rejected').length },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setSelectedAppStatus(tab.id as any)}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border-2 active:scale-95 shadow-3xs shrink-0 ${
+                          selectedAppStatus === tab.id
+                            ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+                            : 'bg-white dark:bg-[#161B22] text-slate-700 dark:text-slate-300 hover:border-[#005F02] border-slate-300 dark:border-slate-700'
+                        }`}
+                      >
+                        <span className="whitespace-nowrap">{tab.label}</span>
+                        <span
+                          className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
                             selectedAppStatus === tab.id
-                              ? 'bg-brand-600 text-white shadow-2xs'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                              ? 'bg-white/20 text-white'
+                              : 'bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                           }`}
                         >
-                          <span>{tab.label}</span>
-                          <span
-                            className={`text-[10px] font-mono px-1.5 py-0.2 rounded ${
-                              selectedAppStatus === tab.id
-                                ? 'bg-white/20 text-white'
-                                : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                            }`}
-                          >
-                            {tab.count}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                          {tab.count}
+                        </span>
+                      </button>
+                    ))}
                   </div>
 
                   {/* Applications List */}
                   {filteredMentorApps.length === 0 ? (
-                    <div className="py-12 text-center space-y-2">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                    <div className="py-12 text-center space-y-2 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center mx-auto text-slate-400 shadow-3xs">
                         <GraduationCap className="w-6 h-6" />
                       </div>
-                      <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                      <h4 className="text-sm font-mono font-bold text-slate-700 dark:text-slate-300">
                         No mentor applications found
                       </h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-sans">
                         New applicant submissions from the landing page will appear here for administrator verification and appointment.
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-3.5">
-                      {filteredMentorApps.map((app) => (
+                    <div className="grid grid-cols-1 gap-4">
+                      {filteredMentorApps.map((app, index) => (
                         <div
                           key={app.id}
-                          className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 space-y-3.5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                          className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] hover:border-[#005F02] dark:hover:border-emerald-500 shadow-xs transition-all space-y-4"
                         >
                           {/* Top row: Applicant Info & Badges */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+                            <div className="flex items-start sm:items-center gap-3 min-w-0">
+                              {/* Numbered Index Pill */}
+                              <span className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center font-mono text-xs font-black text-slate-700 dark:text-slate-300 shadow-3xs shrink-0">
+                                {String(index + 1).padStart(2, '0')}
+                              </span>
+
+                              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#005F02] text-white font-mono font-black flex items-center justify-center text-sm shadow-3xs shrink-0 border-2 border-[#005F02]">
                                 {app.fullName.charAt(0)}
                               </div>
-                              <div>
+                              <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                  <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
                                     {app.fullName}
                                   </span>
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200">
-                                    <Globe className="w-2.5 h-2.5 text-brand-500" />
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-[#161B22] font-mono text-[10px] font-black text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                                    <Globe className="w-2.5 h-2.5 text-[#005F02] dark:text-emerald-400" />
                                     {app.country} ({app.countryCode || 'AF'})
                                   </span>
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-[#161B22] font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
                                     <Laptop className="w-2.5 h-2.5 text-slate-500" />
                                     {app.institutionOrCompany}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-slate-500 font-mono mt-0.5">
+                                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-mono mt-1 flex-wrap font-medium">
                                   <span className="flex items-center gap-1">
                                     <Mail className="w-3 h-3 text-slate-400" />
                                     {app.email}
@@ -2828,20 +2831,20 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                             {/* Status Badge */}
                             <div className="flex items-center gap-2 shrink-0">
                               {app.status === 'pending' && (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-mono text-[10px] font-bold">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/80 border-2 border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 font-mono text-[10px] font-black shadow-3xs uppercase">
+                                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                                   Pending Review
                                 </span>
                               )}
                               {app.status === 'approved' && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] font-bold">
-                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-black shadow-3xs uppercase">
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                                   Appointed Mentor
                                 </span>
                               )}
                               {app.status === 'rejected' && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-[10px] font-bold">
-                                  <X className="w-3 h-3 text-slate-400" />
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-[10px] font-black shadow-3xs uppercase">
+                                  <X className="w-3.5 h-3.5 text-slate-400" />
                                   Declined
                                 </span>
                               )}
@@ -2850,30 +2853,30 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
 
                           {/* Mentorship Tracks & Experience */}
                           <div className="flex items-center gap-2 flex-wrap text-xs">
-                            <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono text-[11px]">
-                              <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                            <span className="font-mono text-xs font-black text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                              <Code2 className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                               <span>Tracks:</span>
                             </span>
                             {app.programmingTracks.map((track) => (
                               <span
                                 key={track}
-                                className="px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-mono text-[10px] font-bold"
+                                className="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border-2 border-emerald-300 dark:border-emerald-800 font-mono text-[10px] font-black shadow-3xs"
                               >
                                 {track}
                               </span>
                             ))}
-                            <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold">
+                            <span className="px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-[#161B22] text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 font-mono text-[10px] font-black shadow-3xs">
                               {app.yearsOfExperience}
                             </span>
                           </div>
 
                           {/* Bio Statement */}
-                          <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300 font-sans italic leading-relaxed">
+                          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 font-sans italic leading-relaxed shadow-3xs">
                             &ldquo;{app.bio}&rdquo;
                           </div>
 
                           {/* Bottom Footer: Links & Action Buttons */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-200 dark:border-slate-800">
                             {/* Links */}
                             <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
                               {app.githubUrl && (
@@ -2881,7 +2884,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   href={app.githubUrl.startsWith('http') ? app.githubUrl : `https://${app.githubUrl}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors shadow-3xs"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318] text-slate-700 dark:text-slate-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
                                 >
                                   <Code2 className="w-3.5 h-3.5 text-slate-500" />
                                   <span>GitHub Profile ↗</span>
@@ -2892,7 +2895,7 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   href={app.linkedinUrl.startsWith('http') ? app.linkedinUrl : `https://${app.linkedinUrl}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold transition-colors shadow-3xs"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-indigo-300 dark:border-indigo-800 bg-indigo-50/60 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
                                 >
                                   <Globe className="w-3.5 h-3.5 text-indigo-500" />
                                   <span>LinkedIn Profile ↗</span>
@@ -2903,9 +2906,9 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                   href={app.portfolioUrl.startsWith('http') ? app.portfolioUrl : `https://${app.portfolioUrl}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold transition-colors shadow-3xs"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-[#005F02] dark:text-emerald-300 font-mono text-xs font-bold transition-all shadow-3xs active:scale-95"
                                 >
-                                  <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+                                  <Laptop className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                                   <span>Portfolio Website ↗</span>
                                 </a>
                               )}
@@ -2915,34 +2918,32 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                             <div className="flex items-center gap-2">
                               {app.status === 'pending' && (
                                 <>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
+                                  <button
+                                    type="button"
                                     onClick={() => handleRejectMentorApp(app.id, app.fullName)}
-                                    className="h-7 px-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-rose-600 dark:text-rose-400 bg-white dark:bg-[#161B22] hover:bg-rose-50 dark:hover:bg-rose-950/80 border-2 border-slate-300 dark:border-slate-700 hover:border-rose-400 active:scale-95 shadow-3xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                                   >
                                     Decline
-                                  </Button>
+                                  </button>
 
-                                  <Button
-                                    variant="primary"
-                                    size="sm"
+                                  <button
+                                    type="button"
                                     onClick={() => handleApproveMentorApp(app.id, app.fullName)}
-                                    className="h-7 px-3 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-2xs"
-                                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-white bg-[#005F02] hover:bg-[#004d01] border-2 border-[#005F02] active:scale-95 shadow-3xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                                   >
-                                    Approve &amp; Appoint Mentor
-                                  </Button>
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    <span>Approve &amp; Appoint Mentor</span>
+                                  </button>
                                 </>
                               )}
                               {app.status === 'approved' && (
-                                <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                <span className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-black shadow-3xs inline-flex items-center gap-1.5">
                                   <CheckCircle2 className="w-3.5 h-3.5" />
                                   Active Mentor • Verified by {app.reviewedBy || 'Admin'}
                                 </span>
                               )}
                               {app.status === 'rejected' && (
-                                <span className="text-[11px] font-mono text-slate-400">
+                                <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-black shadow-3xs inline-flex items-center gap-1.5">
                                   Application Declined
                                 </span>
                               )}
