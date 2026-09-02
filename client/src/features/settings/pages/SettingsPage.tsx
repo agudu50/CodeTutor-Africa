@@ -859,7 +859,7 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
-            05. ON-DEVICE LOCAL AI CONFIGURATION
+            05. OFFLINE AI TUTOR ENGINE
             ═══════════════════════════════════════════════════════════════ */}
         <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs overflow-hidden">
           <div className="p-4 sm:p-5 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#161B22]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -873,17 +873,17 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-mono font-black text-slate-900 dark:text-white">
-                    On-Device Local AI Configuration
+                    Offline AI Tutor Engine
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    CodeTutor Africa uses local quantized neural weights running directly on CPU/iGPU with zero data egress.
+                    Your AI tutor runs directly on your computer without internet, keeping your learning 100% private with zero data costs.
                   </p>
                 </div>
               </div>
             </div>
             <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-black text-[#005F02] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-3 py-1 rounded-xl border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs self-start sm:self-auto">
               <Zap className="w-3.5 h-3.5 text-amber-500" />
-              Target: 8 GB RAM Laptop
+              Works on Everyday Laptops (4GB - 8GB)
             </span>
           </div>
 
@@ -892,35 +892,35 @@ export const SettingsPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-stretch">
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 space-y-1.5 shadow-3xs hover:border-[#005F02] transition-colors">
                 <span className="text-[10px] text-slate-400 uppercase font-mono font-black block tracking-wider">
-                  Model Architecture
+                  AI Mentor Model
                 </span>
                 <span className="text-base font-mono font-black text-slate-900 dark:text-white block">
                   {activeModel.name}
                 </span>
                 <span className="text-[11px] text-slate-500 font-mono font-bold block">
-                  Instruction-Tuned
+                  Built for coding & instant guidance
                 </span>
               </div>
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 space-y-1.5 shadow-3xs hover:border-[#005F02] transition-colors">
                 <span className="text-[10px] text-slate-400 uppercase font-mono font-black block tracking-wider">
-                  Quantization
+                  Laptop Optimization
                 </span>
                 <span className="text-base font-mono font-black text-slate-900 dark:text-white block">
-                  {activeModel.quantization}
+                  Compact Mode ({activeModel.quantization})
                 </span>
                 <span className="text-[11px] text-slate-500 font-mono font-bold block">
-                  4-bit Medium Precision
+                  Low battery & CPU consumption
                 </span>
               </div>
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 space-y-1.5 shadow-3xs hover:border-[#005F02] transition-colors">
                 <span className="text-[10px] text-slate-400 uppercase font-mono font-black block tracking-wider">
-                  Memory Overhead
+                  Memory Used
                 </span>
                 <span className="text-base font-mono font-black text-[#005F02] dark:text-emerald-400 block">
                   {activeModel.memoryUsageMb} MB
                 </span>
                 <span className="text-[11px] text-slate-500 font-mono font-bold block">
-                  ~1.4 GB System RAM
+                  Lightweight on laptop RAM (~1.4 GB)
                 </span>
               </div>
             </div>
@@ -932,7 +932,7 @@ export const SettingsPage: React.FC = () => {
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <span className="font-mono text-xs font-bold leading-relaxed">
-                  Offline RAG vector embeddings and pedagogical tokenizer pre-compiled in browser IndexedDB storage.
+                  All lesson notes, coding hints, and practice exercises are safely stored on your laptop for instant offline access.
                 </span>
               </div>
               <button
@@ -944,17 +944,17 @@ export const SettingsPage: React.FC = () => {
                 {isValidating ? (
                   <>
                     <Cpu className="w-3.5 h-3.5 animate-spin text-[#005F02]" />
-                    <span>Validating...</span>
+                    <span>Checking AI...</span>
                   </>
                 ) : validatedSuccess ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Model Validated ✓</span>
+                    <span>AI Engine Ready ✓</span>
                   </>
                 ) : (
                   <>
                     <Cpu className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Validate Model</span>
+                    <span>Check AI Status</span>
                   </>
                 )}
               </button>
