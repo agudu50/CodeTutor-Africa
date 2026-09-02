@@ -43,42 +43,42 @@ export const OnboardingPage: React.FC = () => {
       name: 'Python Track',
       level: 'Foundations & Data Science',
       description: 'Ideal for beginners and engineering algorithm exams. Focus on clean syntax, recursion, and problem-solving intuition.',
-      icon: <Terminal className="w-5 h-5 text-[#005F02]" />,
+      icon: <Terminal className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />,
     },
     {
       id: 'javascript',
       name: 'JavaScript Track',
       level: 'Async Concurrency & Web Engines',
       description: 'Master the event loop, microtasks, modern ES6+ paradigms, and DOM manipulation locally on your CPU.',
-      icon: <Code2 className="w-5 h-5 text-[#005F02]" />,
+      icon: <Code2 className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />,
     },
     {
       id: 'html',
       name: 'HTML & CSS Track',
       level: 'Web Semantics, Flexbox & Responsive UI',
       description: 'Build responsive interfaces from scratch with semantic markup, CSS layouts, and accessible design principles.',
-      icon: <BookOpen className="w-5 h-5 text-[#005F02]" />,
+      icon: <BookOpen className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />,
     },
     {
       id: 'git',
       name: 'Git & GitHub Track',
       level: 'Version Control & Workflows',
       description: 'Branching, merging, rebasing, pull requests, and collaborative developer workflows.',
-      icon: <ShieldCheck className="w-5 h-5 text-[#005F02]" />,
+      icon: <ShieldCheck className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />,
     },
     {
       id: 'typescript',
       name: 'TypeScript Track',
       level: 'Type Safety & Enterprise Fullstack',
       description: 'Static typing, generics, interfaces, and strict type safety built on top of the JavaScript runtime.',
-      icon: <Code2 className="w-5 h-5 text-[#005F02]" />,
+      icon: <Code2 className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />,
     },
     {
       id: 'java',
       name: 'Java OOP Track',
       level: 'Object-Oriented Design & Memory',
       description: 'Encapsulation, inheritance, polymorphism, and Java bytecode execution aligned with computer science curricula.',
-      icon: <Cpu className="w-5 h-5 text-[#005F02]" />,
+      icon: <Cpu className="w-5 h-5 text-[#005F02] dark:text-emerald-400" />,
     },
   ]
 
@@ -112,17 +112,27 @@ export const OnboardingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-300">
+    <div className="min-h-screen w-full bg-[#FAFAFA] dark:bg-[#0C1015] text-slate-900 dark:text-slate-100 flex flex-col justify-between font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-200 relative">
+      {/* Blueprint SVG Grid Pattern */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.065] dark:opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="onboarding-blueprint-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#onboarding-blueprint-grid)" />
+      </svg>
+
       {/* ═══════════════════════════════════════════════════════════════
           TOP APP HEADER
           ═══════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-50 bg-white/90 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md px-6 py-4">
+      <header className="sticky top-0 z-50 bg-white dark:bg-[#0E1318] border-b-2 border-slate-300 dark:border-slate-700 px-6 py-4 shadow-3xs">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-full bg-white dark:bg-emerald-950/60 border border-emerald-500/30 p-0.5 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform overflow-hidden">
-              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-full" />
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0C1015] border-2 border-slate-300 dark:border-slate-700 p-0.5 flex items-center justify-center shrink-0 shadow-3xs group-hover:border-[#005F02] dark:group-hover:border-emerald-500 transition-colors overflow-hidden">
+              <img src="/logo.jpg" alt="CodeTutor Africa" className="w-full h-full object-cover rounded-lg" />
             </div>
-            <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white">
+            <span className="font-black text-base tracking-tight text-slate-900 dark:text-white">
               CodeTutor <span className="text-[#005F02] dark:text-emerald-400 font-black">Africa</span>
             </span>
           </Link>
@@ -136,12 +146,12 @@ export const OnboardingPage: React.FC = () => {
               {[1, 2, 3].map((s) => (
                 <div
                   key={s}
-                  className={`h-2 rounded-full transition-all ${
+                  className={`h-2 rounded-lg transition-all ${
                     s === step
-                      ? 'w-7 bg-[#005F02]'
+                      ? 'w-7 bg-[#005F02] dark:bg-emerald-400'
                       : s < step
-                      ? 'w-3 bg-[#005F02]/60'
-                      : 'w-3 bg-slate-200 dark:bg-slate-800'
+                      ? 'w-3 bg-[#005F02]/60 dark:bg-emerald-400/60'
+                      : 'w-3 bg-slate-300 dark:bg-slate-700'
                   }`}
                 />
               ))}
@@ -152,10 +162,10 @@ export const OnboardingPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className="p-2 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-[#005F02] transition-colors shadow-xs"
+            className="p-2 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 hover:border-[#005F02] dark:hover:border-emerald-500 transition-colors shadow-3xs cursor-pointer"
             aria-label="Toggle dark/light theme"
           >
-            {isDark ? <Sun className="w-4 h-4 text-[#005F02]" /> : <Moon className="w-4 h-4 text-[#005F02]" />}
+            {isDark ? <Sun className="w-4 h-4 text-[#005F02] dark:text-emerald-400" /> : <Moon className="w-4 h-4 text-[#005F02]" />}
           </button>
         </div>
       </header>
@@ -163,27 +173,27 @@ export const OnboardingPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           MAIN ONBOARDING WIZARD
           ═══════════════════════════════════════════════════════════════ */}
-      <main className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12 my-auto">
+      <main className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12 my-auto relative z-10">
         <AnimatePresence mode="wait">
           {/* STEP 1: INSTITUTION & LEARNING CONTEXT */}
           {step === 1 && (
             <motion.div
               key="step1"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
               className="space-y-6"
             >
               <div className="text-center space-y-2 max-w-xl mx-auto">
-                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[10px] font-mono font-bold text-[#005F02]">
-                  <GraduationCap className="w-3.5 h-3.5 text-[#005F02]" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs font-mono font-bold text-[#005F02] dark:text-emerald-400 shadow-3xs">
+                  <GraduationCap className="w-3.5 h-3.5" />
                   <span>STEP 1 OF 3 • LEARNING CONTEXT</span>
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                   Where are you learning from?
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
                   We tailor practice problem sets and exam syllabi to match your campus curriculum.
                 </p>
               </div>
@@ -196,27 +206,27 @@ export const OnboardingPage: React.FC = () => {
                       key={inst.id}
                       type="button"
                       onClick={() => setInstitution(inst.id)}
-                      className={`p-4 rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+                      className={`p-4 rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between cursor-pointer shadow-xs ${
                         isSelected
-                          ? 'bg-[#005F02]/10 border-[#005F02] shadow-sm ring-1 ring-[#005F02]'
-                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#005F02] dark:border-emerald-500 ring-1 ring-[#005F02] dark:ring-emerald-500'
+                          : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 hover:border-[#005F02] dark:hover:border-emerald-500'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400">
                           {inst.country}
                         </span>
                         {isSelected && (
-                          <span className="w-4 h-4 rounded-full bg-[#005F02] text-white flex items-center justify-center">
+                          <span className="w-4 h-4 rounded-full bg-[#005F02] dark:bg-emerald-500 text-white flex items-center justify-center">
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </span>
                         )}
                       </div>
                       <div>
-                        <div className={`text-xs font-bold ${isSelected ? 'text-[#005F02]' : 'text-slate-900 dark:text-white'}`}>
+                        <div className={`text-xs font-black ${isSelected ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-900 dark:text-white'}`}>
                           {inst.name}
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                           {inst.type}
                         </div>
                       </div>
@@ -229,7 +239,7 @@ export const OnboardingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="px-6 py-3 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs shadow-md shadow-[#005F02]/30 flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-6 py-3 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs shadow-xs border-2 border-[#005F02] flex items-center gap-2 transition-all cursor-pointer active:scale-95"
                 >
                   <span>Continue to Language Track</span>
                   <ArrowRight className="w-4 h-4" />
@@ -242,26 +252,26 @@ export const OnboardingPage: React.FC = () => {
           {step === 2 && (
             <motion.div
               key="step2"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
               className="space-y-6"
             >
               <div className="text-center space-y-2 max-w-xl mx-auto">
-                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[10px] font-mono font-bold text-[#005F02]">
-                  <Code2 className="w-3.5 h-3.5 text-[#005F02]" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs font-mono font-bold text-[#005F02] dark:text-emerald-400 shadow-3xs">
+                  <Code2 className="w-3.5 h-3.5" />
                   <span>STEP 2 OF 3 • CURRICULUM SELECTION</span>
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                   Choose your primary language
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
                   Select where you want to start. You can explore other tracks anytime from your workspace.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-3.5 max-w-xl mx-auto">
+              <div className="grid grid-cols-1 gap-3 max-w-xl mx-auto">
                 {languageTracks.map((lang) => {
                   const isSelected = track === lang.id
                   return (
@@ -269,33 +279,33 @@ export const OnboardingPage: React.FC = () => {
                       key={lang.id}
                       type="button"
                       onClick={() => setTrack(lang.id)}
-                      className={`p-5 rounded-2xl border text-left transition-all relative flex items-start gap-4 cursor-pointer ${
+                      className={`p-4 sm:p-5 rounded-2xl border-2 text-left transition-all relative flex items-start gap-4 cursor-pointer shadow-xs ${
                         isSelected
-                          ? 'bg-[#005F02]/10 border-[#005F02] shadow-sm ring-1 ring-[#005F02]'
-                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#005F02] dark:border-emerald-500 ring-1 ring-[#005F02] dark:ring-emerald-500'
+                          : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 hover:border-[#005F02] dark:hover:border-emerald-500'
                       }`}
                     >
-                      <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-xs">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
                         {lang.icon}
                       </div>
 
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className={`text-sm font-bold ${isSelected ? 'text-[#005F02]' : 'text-slate-900 dark:text-white'}`}>
+                            <span className={`text-sm font-black ${isSelected ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-900 dark:text-white'}`}>
                               {lang.name}
                             </span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#FAFAFA] dark:bg-[#0C1015] border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400">
                               {lang.level}
                             </span>
                           </div>
                           {isSelected && (
-                            <span className="w-4 h-4 rounded-full bg-[#005F02] text-white flex items-center justify-center">
+                            <span className="w-4 h-4 rounded-full bg-[#005F02] dark:bg-emerald-500 text-white flex items-center justify-center">
                               <Check className="w-2.5 h-2.5 stroke-[3]" />
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                           {lang.description}
                         </p>
                       </div>
@@ -308,7 +318,7 @@ export const OnboardingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] hover:border-[#005F02] text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-3xs"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                   <span>Back</span>
@@ -316,7 +326,7 @@ export const OnboardingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="px-6 py-3 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs shadow-md shadow-[#005F02]/30 flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-6 py-3 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-xs shadow-xs border-2 border-[#005F02] flex items-center gap-2 transition-all cursor-pointer active:scale-95"
                 >
                   <span>Continue to Socratic Style</span>
                   <ArrowRight className="w-4 h-4" />
@@ -329,26 +339,26 @@ export const OnboardingPage: React.FC = () => {
           {step === 3 && (
             <motion.div
               key="step3"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
               className="space-y-6"
             >
               <div className="text-center space-y-2 max-w-xl mx-auto">
-                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#005F02]/10 border border-[#005F02]/30 text-[10px] font-mono font-bold text-[#005F02]">
-                  <BookOpen className="w-3.5 h-3.5 text-[#005F02]" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs font-mono font-bold text-[#005F02] dark:text-emerald-400 shadow-3xs">
+                  <BookOpen className="w-3.5 h-3.5" />
                   <span>STEP 3 OF 3 • PEDAGOGICAL AI PERSONA</span>
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                   How would you like the AI to mentor you?
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
                   Select your preferred tutoring personality. You can switch modes on any practice question.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-3.5 max-w-xl mx-auto">
+              <div className="grid grid-cols-1 gap-3 max-w-xl mx-auto">
                 {pedagogyStyles.map((p) => {
                   const isSelected = pedagogyStyle === p.id
                   return (
@@ -356,28 +366,28 @@ export const OnboardingPage: React.FC = () => {
                       key={p.id}
                       type="button"
                       onClick={() => setPedagogyStyle(p.id)}
-                      className={`p-5 rounded-2xl border text-left transition-all relative flex flex-col gap-1.5 cursor-pointer ${
+                      className={`p-4 sm:p-5 rounded-2xl border-2 text-left transition-all relative flex flex-col gap-1.5 cursor-pointer shadow-xs ${
                         isSelected
-                          ? 'bg-[#005F02]/10 border-[#005F02] shadow-sm ring-1 ring-[#005F02]'
-                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#005F02] dark:border-emerald-500 ring-1 ring-[#005F02] dark:ring-emerald-500'
+                          : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 hover:border-[#005F02] dark:hover:border-emerald-500'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={`text-sm font-bold ${isSelected ? 'text-[#005F02]' : 'text-slate-900 dark:text-white'}`}>
+                          <span className={`text-sm font-black ${isSelected ? 'text-[#005F02] dark:text-emerald-400' : 'text-slate-900 dark:text-white'}`}>
                             {p.title}
                           </span>
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#005F02]/15 text-[#005F02]">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 shadow-3xs">
                             {p.badge}
                           </span>
                         </div>
                         {isSelected && (
-                          <span className="w-4 h-4 rounded-full bg-[#005F02] text-white flex items-center justify-center">
+                          <span className="w-4 h-4 rounded-full bg-[#005F02] dark:bg-emerald-500 text-white flex items-center justify-center">
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                         {p.description}
                       </p>
                     </button>
@@ -386,21 +396,23 @@ export const OnboardingPage: React.FC = () => {
               </div>
 
               {/* Ready to Initialize Banner */}
-              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto flex items-center justify-between text-xs">
+              <div className="p-3.5 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs max-w-xl mx-auto flex items-center justify-between text-xs font-mono">
                 <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-[#005F02]" />
-                  <span className="font-medium text-slate-700 dark:text-slate-300">
+                  <ShieldCheck className="w-4 h-4 text-[#005F02] dark:text-emerald-400" />
+                  <span className="font-bold text-slate-700 dark:text-slate-300">
                     Configuration saved to local SQLite database
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-[#005F02] font-bold">100% OFFLINE</span>
+                <span className="text-[10px] text-[#005F02] dark:text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800">
+                  100% OFFLINE
+                </span>
               </div>
 
               <div className="flex items-center justify-between pt-4 max-w-xl mx-auto">
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] hover:border-[#005F02] text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-3xs"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                   <span>Back</span>
@@ -409,7 +421,7 @@ export const OnboardingPage: React.FC = () => {
                   type="button"
                   onClick={handleFinish}
                   disabled={isFinishing}
-                  className="px-7 py-3.5 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-black text-xs shadow-lg shadow-[#005F02]/30 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-75"
+                  className="px-7 py-3 rounded-xl bg-[#005F02] hover:bg-[#004e02] text-white font-black text-xs shadow-xs border-2 border-[#005F02] flex items-center gap-2 transition-all cursor-pointer disabled:opacity-75 active:scale-95"
                 >
                   {isFinishing ? (
                     <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -429,7 +441,7 @@ export const OnboardingPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════
           FOOTER
           ═══════════════════════════════════════════════════════════════ */}
-      <footer className="py-4 text-center text-[11px] text-slate-400 border-t border-slate-200 dark:border-slate-800">
+      <footer className="py-4 text-center text-[11px] text-slate-500 dark:text-slate-400 font-mono border-t-2 border-slate-300 dark:border-slate-800 bg-white dark:bg-[#0E1318] relative z-10 font-bold">
         CodeTutor Africa • 100% Offline Educational Platform
       </footer>
     </div>
