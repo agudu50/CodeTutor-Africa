@@ -5,6 +5,9 @@ import { useTheme } from '@/app/providers/ThemeProvider'
 import { Button } from '@/components/ui'
 import { MentorApplicationModal } from '../components/MentorApplicationModal'
 import { ContactSection } from '../components/ContactSection'
+import { RealitiesSection } from '../components/RealitiesSection'
+import { CurriculumSection } from '../components/CurriculumSection'
+import { LaptopCompatibilityTester } from '../components/LaptopCompatibilityTester'
 import {
   ArrowRight,
   Sun,
@@ -29,6 +32,8 @@ import {
   Lightbulb,
   Quote,
   Bot,
+  Copy,
+  Check,
 } from 'lucide-react'
 
 function StarIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -124,6 +129,11 @@ const codeExamples = [
       ai: 'No internet or servers needed! Browsers can read and run HTML, CSS, and JavaScript directly from your computer files.',
       hint: 'Notice how the click handler updates document.getElementById() with 0 KB data cost!',
     },
+    challengeDialogue: {
+      student: 'How can I change the button background to blue when clicked?',
+      ai: 'Inside your onclick handler, add: document.getElementById("likeBtn").style.backgroundColor = "#0284c7"; — this changes the CSS styling dynamically right in your browser!',
+      hint: 'What other styles could you modify on click? Font size, borders, or text color?',
+    },
   },
   {
     lang: 'python',
@@ -151,6 +161,11 @@ Total for 3 Notebooks is $45
       student: 'What happens if quantity is set to 0?',
       ai: 'If quantity is 0, 15 multiplied by 0 equals 0. The program will safely print "Total for 0 Notebooks is $0" without crashing.',
       hint: 'In a real shop app, what friendly message could you show if someone adds 0 items?',
+    },
+    challengeDialogue: {
+      student: 'How do I give a $5 discount if the total cost is over $40?',
+      ai: 'You can check: if total_cost > 40: total_cost -= 5! This introduces an if-statement to reward your customers with an automatic discount.',
+      hint: 'Where should that if-check go? Inside calculate_total() or right after you calculate total_cost?',
     },
   },
   {
@@ -181,6 +196,11 @@ console.log(getGreeting("Kwame", true));`,
       ai: 'Passing "false" skips the first if-block and immediately runs the second return statement: "Welcome back, Kwame! Ready for today\'s lesson?"',
       hint: 'Notice how the computer picks only one branch based on whether the switch is true or false!',
     },
+    challengeDialogue: {
+      student: 'Can I make the greeting say "Good morning" or "Good evening" based on time?',
+      ai: 'Yes! In JavaScript, new Date().getHours() gives you the current hour (0-23). You can check if hour < 12 to say "Good morning" or "Good evening" otherwise!',
+      hint: 'Notice how JavaScript reads the system clock directly on your laptop without needing an internet connection!',
+    },
   },
   {
     lang: 'java',
@@ -210,6 +230,11 @@ New total savings: $75
       student: 'Can I add a function to withdraw money too?',
       ai: 'Yes! You can create a function called withdrawMoney(int amount) that checks if you have enough savings before subtracting.',
       hint: 'What safety check should we add so someone cannot withdraw more money than they currently have?',
+    },
+    challengeDialogue: {
+      student: 'How can I prevent adding negative amounts like addMoney(-10)?',
+      ai: 'Add an if-check at the top of addMoney: if (amount <= 0) { System.out.println("Amount must be positive!"); return; } — this guards your class against invalid data!',
+      hint: 'This principle is called "Data Validation" and is a core practice in professional software development.',
     },
   },
 ]
@@ -334,6 +359,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
   const [displayedCode, setDisplayedCode] = useState(codeExamples[0].code)
   const [isRunning, setIsRunning] = useState(false)
   const [showOutput, setShowOutput] = useState(true)
+  const [copiedCode, setCopiedCode] = useState(false)
 
   // Typewriter effect on activeTab change
   useEffect(() => {
@@ -362,6 +388,12 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
     }, 300)
   }
 
+  const handleCopyCode = () => {
+    navigator.clipboard?.writeText(displayedCode || codeExamples[activeTab].code)
+    setCopiedCode(true)
+    setTimeout(() => setCopiedCode(false), 2000)
+  }
+
   const getLangDotColor = (lang: string) => {
     switch (lang) {
       case 'html':
@@ -387,7 +419,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
             transition={{ duration: 4.2, ease: 'linear' }}
-            className="h-full bg-gradient-to-r from-[#005F02] via-emerald-400 to-[#005F02]"
+            className="h-full bg-[#005F02] dark:bg-emerald-400"
           />
         </div>
       )}
@@ -435,8 +467,18 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
+            onClick={handleCopyCode}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
+            title="Copy code snippet to clipboard"
+          >
+            {copiedCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400" />}
+            <span>{copiedCode ? 'Copied' : 'Copy'}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={toggleAutoAdvance}
-            className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono flex items-center gap-1 border border-slate-700 transition-colors"
+            className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
             title={isAutoAdvancing ? 'Click to Pause Auto-Switch' : 'Click to Resume Auto-Switch'}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${isAutoAdvancing ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
@@ -447,7 +489,7 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
             type="button"
             onClick={handleRunCode}
             disabled={isRunning}
-            className="px-3 py-1 rounded-lg bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-50"
+            className="px-3 py-1 rounded-lg bg-[#005F02] hover:bg-[#004e02] text-white font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             <Play className={`w-3 h-3 fill-current ${isRunning ? 'animate-spin' : ''}`} />
             <span>{isRunning ? 'Running...' : 'Run Code'}</span>
@@ -501,104 +543,27 @@ const TerminalLivePreview: React.FC<TerminalLivePreviewProps> = memo(({
 TerminalLivePreview.displayName = 'TerminalLivePreview'
 
 /* ═══════════════════════════════════════════════════════════════
-   LIGHT AMBIENT BACKGROUND ANIMATION COMPONENT (GPU ACCELERATED)
+   DASHBOARD BLUEPRINT BACKGROUND (ZERO GRADIENTS • CRISP TECHNICAL GRID)
    ═══════════════════════════════════════════════════════════════ */
-const AmbientLightBackground: React.FC = memo(() => {
-  const particles = [
-    { top: '8%', left: '12%', size: 8, duration: 7, delay: 0 },
-    { top: '18%', left: '84%', size: 10, duration: 9, delay: 1 },
-    { top: '32%', left: '25%', size: 7, duration: 8, delay: 2 },
-    { top: '45%', left: '75%', size: 9, duration: 10, delay: 0.5 },
-    { top: '58%', left: '15%', size: 8, duration: 8.5, delay: 1.5 },
-    { top: '70%', left: '88%', size: 11, duration: 9.5, delay: 2.5 },
-    { top: '82%', left: '35%', size: 7, duration: 7.5, delay: 3 },
-    { top: '90%', left: '68%', size: 10, duration: 11, delay: 1 },
-    { top: '25%', left: '50%', size: 6, duration: 8, delay: 1.8 },
-    { top: '65%', left: '45%', size: 8, duration: 9, delay: 0.8 },
-    { top: '40%', left: '8%', size: 7, duration: 10, delay: 2.2 },
-    { top: '78%', left: '92%', size: 9, duration: 8.2, delay: 1.2 },
-  ]
-
-  const floatingBadges = [
-    { text: '0 KB Internet', top: '12%', left: '6%', delay: 0 },
-    { text: 'def learn_python():', top: '24%', right: '8%', delay: 1.5 },
-    { text: 'RAM <= 1.4 GB', top: '42%', left: '8%', delay: 2 },
-    { text: '✓ 100% Offline AI', top: '55%', right: '6%', delay: 0.8 },
-    { text: 'Fast Local Neural CPU', top: '74%', left: '5%', delay: 2.5 },
-    { text: 'class CodeTutor()', top: '86%', right: '9%', delay: 1.2 },
-  ]
-
+const DashboardBlueprintBackground: React.FC = memo(() => {
   return (
     <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      {/* Vibrant Ambient Glow Orb 1 - Top Left (GPU Accelerated) */}
-      <div
-        className="absolute top-10 left-5 w-[380px] sm:w-[600px] h-[380px] sm:h-[600px] rounded-full bg-gradient-to-br from-[#005F02]/25 via-emerald-500/15 to-transparent dark:from-[#005F02]/40 dark:via-emerald-400/20 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-1 opacity-70"
-      />
-
-      {/* Vibrant Ambient Glow Orb 2 - Middle Right (GPU Accelerated) */}
-      <div
-        className="absolute top-[30%] right-0 w-[400px] sm:w-[650px] h-[400px] sm:h-[650px] rounded-full bg-gradient-to-tl from-emerald-600/20 via-[#005F02]/20 to-transparent dark:from-emerald-400/30 dark:via-[#005F02]/30 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-2 opacity-65"
-      />
-
-      {/* Vibrant Ambient Glow Orb 3 - Lower Left (GPU Accelerated) */}
-      <div
-        className="absolute top-[60%] left-0 w-[380px] sm:w-[620px] h-[380px] sm:h-[620px] rounded-full bg-gradient-to-tr from-[#005F02]/30 via-emerald-600/15 to-transparent dark:from-[#005F02]/45 dark:via-emerald-500/25 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-3 opacity-70"
-      />
-
-      {/* Vibrant Ambient Glow Orb 4 - Bottom Center (GPU Accelerated) */}
-      <div
-        className="absolute bottom-5 right-1/4 w-[360px] sm:w-[580px] h-[360px] sm:h-[580px] rounded-full bg-gradient-to-bl from-[#005F02]/25 via-emerald-500/15 to-transparent dark:from-[#005F02]/35 dark:via-emerald-400/20 dark:to-transparent blur-2xl sm:blur-3xl animate-float-orb-4 opacity-60"
-      />
-
-      {/* Floating Animated Code Badges (GPU Accelerated) */}
-      {floatingBadges.map((badge, idx) => (
-        <div
-          key={idx}
-          style={{
-            top: badge.top,
-            left: badge.left,
-            right: badge.right,
-            animationDelay: `${badge.delay}s`,
-          }}
-          className="absolute hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-[#005F02]/25 dark:border-emerald-500/30 shadow-md backdrop-blur-md text-[11px] font-mono font-bold text-[#005F02] dark:text-emerald-300 animate-float-badge"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-          <span>{badge.text}</span>
-        </div>
-      ))}
-
-      {/* Floating Glowing Particle Matrix (GPU Accelerated) */}
-      {particles.map((p, idx) => (
-        <div
-          key={idx}
-          style={{
-            top: p.top,
-            left: p.left,
-            width: p.size,
-            height: p.size,
-            animationDuration: `${p.duration}s`,
-            animationDelay: `${p.delay}s`,
-          }}
-          className="absolute rounded-full bg-[#005F02] dark:bg-emerald-400 shadow-[0_0_14px_#005F02] dark:shadow-[0_0_16px_#34d399] animate-float-particle"
-        />
-      ))}
-
-      {/* Layer 1: High-Contrast Cyber Grid Lines */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#005f022e_1.5px,transparent_1.5px),linear-gradient(to_bottom,#005f022e_1.5px,transparent_1.5px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_85%_65%_at_50%_50%,#000_75%,transparent_100%)] opacity-90" />
-
-      {/* Layer 2: Dot Mesh Matrix */}
-      <div
-        className="absolute inset-0 opacity-30 dark:opacity-45 [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_65%,transparent_100%)]"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(0,95,2,0.6) 1.5px, transparent 1.5px)',
-          backgroundSize: '28px 28px',
-        }}
-      />
+      {/* Technical Blueprint Grid Pattern matching Dashboard */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.065] dark:opacity-[0.05]"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <pattern id="landing-blueprint-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#landing-blueprint-grid)" />
+      </svg>
     </div>
   )
 })
-AmbientLightBackground.displayName = 'AmbientLightBackground'
+DashboardBlueprintBackground.displayName = 'DashboardBlueprintBackground'
 
 /* ═══════════════════════════════════════════════════════════════
    NAVBAR COMPONENT (ISOLATED STATE FOR INSTANT MOBILE MENU)
@@ -837,6 +802,8 @@ export const LandingPage: React.FC = () => {
   const statModes = useCounter(6, 1400, statsInView)
 
   const navLinks = [
+    { href: '#why-offline', label: 'Why Offline' },
+    { href: '#curriculum', label: 'Curriculum' },
     { href: '#features', label: 'Features' },
     { href: '#demo', label: 'Live Sandbox' },
     { href: '#testimonials', label: 'Student Voices' },
@@ -973,7 +940,7 @@ export const LandingPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0C1015] text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-[#005F02] selection:text-white transition-colors duration-200">
 
       {/* ═══════════════════════════════════════════════════════════════
           HEADER NAVIGATION (ISOLATED PERFORMANCE OPTIMIZED COMPONENT)
@@ -1098,7 +1065,9 @@ export const LandingPage: React.FC = () => {
             className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-tight"
           >
             Learn to Code with AI.{' '}
-            <span className="text-[#005F02]">Simple, Friendly &amp; 100% Offline.</span>
+            <span className="text-[#005F02] dark:text-emerald-400 font-black">
+              Simple, Friendly &amp; 100% Offline.
+            </span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -1153,197 +1122,201 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          MAIN CONTENT WRAPPER WITH LIGHT AMBIENT BACKGROUND ANIMATION
+          MAIN CONTENT WRAPPER WITH DASHBOARD BLUEPRINT BACKGROUND
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative overflow-hidden">
-        <AmbientLightBackground />
+        <DashboardBlueprintBackground />
 
         {/* ═══════════════════════════════════════════════════════════════
-            ANIMATED CONNECTING DATA LINE (HERO TO STATS)
+            SOLID CONNECTOR: HERO TO STATS
             ═══════════════════════════════════════════════════════════════ */}
         <div className="relative flex flex-col items-center justify-center -my-3 z-30 pointer-events-none">
-        <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" />
-        </div>
-        
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-ping" />
-          <span className="font-bold tracking-wider">QUICK OVERVIEW</span>
+          <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+          <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+            <span className="font-black tracking-wider">QUICK OVERVIEW</span>
+          </div>
+          <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
         </div>
 
-        <div className="w-0.5 h-10 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" style={{ animationDelay: '0.9s' }} />
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 2: DASHBOARD-STYLE STATS CARDS
+            ═══════════════════════════════════════════════════════════════ */}
+        <section ref={statsRef} className="pb-12 pt-2 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 items-stretch w-full">
+            {/* Stat Card 1 */}
+            <a
+              href="#specs"
+              className="group block h-full focus:outline-hidden rounded-2xl cursor-pointer"
+            >
+              <div className="p-4 sm:p-5 flex flex-col justify-between h-full bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all duration-200">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5 min-w-0">
+                    <span className="text-[10px] font-mono font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
+                      AIR-GAPPED
+                    </span>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                      100% Offline
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center shrink-0 shadow-3xs">
+                    <Shield className="w-4 h-4 shrink-0" />
+                  </div>
+                </div>
+
+                <div className="my-3 flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white tabular-nums">
+                    {statOffline}%
+                  </span>
+                  <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+                    Offline
+                  </span>
+                </div>
+
+                <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Zero data costs</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0" />
+                </div>
+              </div>
+            </a>
+
+            {/* Stat Card 2 */}
+            <a
+              href="#specs"
+              className="group block h-full focus:outline-hidden rounded-2xl cursor-pointer"
+            >
+              <div className="p-4 sm:p-5 flex flex-col justify-between h-full bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all duration-200">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5 min-w-0">
+                    <span className="text-[10px] font-mono font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
+                      PERFORMANCE
+                    </span>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                      Zero Latency
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-3xs">
+                    <Zap className="w-4 h-4 shrink-0" />
+                  </div>
+                </div>
+
+                <div className="my-3 flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white tabular-nums">
+                    Instant
+                  </span>
+                  <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+                    Speed
+                  </span>
+                </div>
+
+                <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Runs locally</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0" />
+                </div>
+              </div>
+            </a>
+
+            {/* Stat Card 3 */}
+            <a
+              href="#curriculum"
+              className="group block h-full focus:outline-hidden rounded-2xl cursor-pointer"
+            >
+              <div className="p-4 sm:p-5 flex flex-col justify-between h-full bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all duration-200">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5 min-w-0">
+                    <span className="text-[10px] font-mono font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
+                      CURRICULUM
+                    </span>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                      Hands-On Lessons
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-xl bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-800 flex items-center justify-center shrink-0 shadow-3xs">
+                    <Code2 className="w-4 h-4 shrink-0" />
+                  </div>
+                </div>
+
+                <div className="my-3 flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white tabular-nums">
+                    {statExercises}+
+                  </span>
+                  <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+                    Drills
+                  </span>
+                </div>
+
+                <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Python, JS &amp; Java</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0" />
+                </div>
+              </div>
+            </a>
+
+            {/* Stat Card 4 */}
+            <a
+              href="#demo"
+              className="group block h-full focus:outline-hidden rounded-2xl cursor-pointer"
+            >
+              <div className="p-4 sm:p-5 flex flex-col justify-between h-full bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 hover:border-[#005F02] dark:hover:border-emerald-500 transition-all duration-200">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5 min-w-0">
+                    <span className="text-[10px] font-mono font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
+                      SOCRATIC AI
+                    </span>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
+                      AI Mentor Modes
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-300 dark:border-indigo-800 flex items-center justify-center shrink-0 shadow-3xs">
+                    <Bot className="w-4 h-4 shrink-0" />
+                  </div>
+                </div>
+
+                <div className="my-3 flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-900 dark:text-white tabular-nums">
+                    {statModes}
+                  </span>
+                  <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+                    Modes
+                  </span>
+                </div>
+
+                <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Explain, Hint, Challenge</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0" />
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SOLID CONNECTOR: STATS TO REALITIES
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="relative flex flex-col items-center justify-center -my-3 z-30 pointer-events-none">
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">WHY OFFLINE FIRST</span>
         </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 2: INTERCONNECTED LINKED GLASSMORPHISM STATS STRIP
+          SECTION: WHY OFFLINE (AFRICAN REALITIES)
           ═══════════════════════════════════════════════════════════════ */}
-      <section ref={statsRef} className="pb-16 pt-2 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-        <div className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 shadow-xl dark:shadow-[0_10px_35px_rgba(0,0,0,0.5)] overflow-hidden">
-          {/* Top Subtle Ambient Border Light */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y-0 divide-x sm:divide-x divide-slate-200/80 dark:divide-slate-800/80 text-center">
-            
-            {/* Stat Card 1 -> Links to #specs */}
-            <a
-              href="#specs"
-              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
-            >
-              {/* Category Pill Tag */}
-              <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
-                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                  Air-Gapped
-                </span>
-              </div>
-
-              {/* Icon Tile */}
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
-                <Shield className="w-5 h-5" />
-              </div>
-
-              {/* Stat Number */}
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                {statOffline}%
-              </div>
-
-              {/* Label & Action */}
-              <div className="space-y-1">
-                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  100% Offline
-                </div>
-                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                  <span>Zero data costs</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </a>
-
-            {/* Stat Card 2 -> Links to #specs */}
-            <a
-              href="#specs"
-              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
-            >
-              {/* Category Pill Tag */}
-              <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
-                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                  Zero Latency
-                </span>
-              </div>
-
-              {/* Icon Tile */}
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
-                <Zap className="w-5 h-5" />
-              </div>
-
-              {/* Stat Number */}
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                Instant
-              </div>
-
-              {/* Label & Action */}
-              <div className="space-y-1">
-                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  Fast Responses
-                </div>
-                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                  <span>Directly on your laptop</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </a>
-
-            {/* Stat Card 3 -> Links to #features */}
-            <a
-              href="#features"
-              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
-            >
-              {/* Category Pill Tag */}
-              <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
-                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                  Comprehensive
-                </span>
-              </div>
-
-              {/* Icon Tile */}
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
-                <Code2 className="w-5 h-5" />
-              </div>
-
-              {/* Stat Number */}
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                {statExercises}+
-              </div>
-
-              {/* Label & Action */}
-              <div className="space-y-1">
-                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  Hands-On Lessons
-                </div>
-                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                  <span>Python, JS &amp; Java</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </a>
-
-            {/* Stat Card 4 -> Links to #demo */}
-            <a
-              href="#demo"
-              className="p-6 sm:p-7 space-y-3 hover:bg-gradient-to-b hover:from-[#005F02]/[0.05] hover:to-transparent dark:hover:from-[#005F02]/[0.15] transition-all duration-300 group block focus:outline-hidden relative"
-            >
-              {/* Category Pill Tag */}
-              <div className="flex justify-center">
-                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/10 text-[#005F02] dark:text-emerald-400 border border-[#005F02]/20 dark:border-emerald-500/20">
-                  <span className="w-1 h-1 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
-                  Socratic AI
-                </span>
-              </div>
-
-              {/* Icon Tile */}
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005F02]/15 to-emerald-500/10 dark:from-[#005F02]/30 dark:to-emerald-400/10 border border-[#005F02]/30 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_16px_rgba(0,95,2,0.3)] transition-all duration-300">
-                <Bot className="w-5 h-5" />
-              </div>
-
-              {/* Stat Number */}
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white font-mono tracking-tight group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                {statModes}
-              </div>
-
-              {/* Label & Action */}
-              <div className="space-y-1">
-                <div className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  Friendly Modes
-                </div>
-                <div className="inline-flex items-center justify-center gap-1 text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors">
-                  <span>Explain, Hint &amp; Quiz</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </a>
-
-          </div>
-        </div>
-      </section>
+      <RealitiesSection />
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANIMATED CONNECTOR: STATS TO FEATURES
+          SOLID CONNECTOR: REALITIES TO FEATURES
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" />
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">ALL-IN-ONE LEARNING</span>
         </div>
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">ALL-IN-ONE LEARNING</span>
-        </div>
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" style={{ animationDelay: '0.9s' }} />
-        </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -1362,77 +1335,76 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Linked Glassmorphism Features Container */}
-        <div className="relative rounded-3xl bg-white/85 dark:bg-slate-900/70 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden">
-          {/* Top Subtle Ambient Border Light */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/40 dark:via-emerald-400/40 to-transparent" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featureCards.map((card, idx) => (
-              <Link
-                key={idx}
-                to={card.link}
-                className="relative bg-white dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-3xl p-6 sm:p-7 space-y-4 hover:border-[#005F02] dark:hover:border-emerald-500/60 hover:shadow-xl dark:hover:shadow-[0_12px_32px_rgba(0,95,2,0.25)] hover:-translate-y-1 transition-all duration-300 group block overflow-hidden"
-              >
-                {/* Top Subtle Hover Highlight Beam */}
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#005F02] dark:via-emerald-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                {/* Header Row: Floating 3D Icon Tile + Badge */}
+        {/* Dashboard-Style Features Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {featureCards.map((card, idx) => (
+            <Link
+              key={idx}
+              to={card.link}
+              className="p-5 sm:p-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs hover:shadow-md hover:border-[#005F02] dark:hover:border-emerald-500 hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between"
+            >
+              <div className="space-y-3.5">
+                {/* Header: Solid Icon Tile + Pill Badge */}
                 <div className="flex items-center justify-between gap-2">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#005F02]/15 via-emerald-500/10 to-transparent dark:from-[#005F02]/30 dark:via-emerald-400/15 border border-[#005F02]/30 dark:border-emerald-500/30 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shadow-2xs group-hover:scale-110 group-hover:shadow-[0_0_18px_rgba(0,95,2,0.35)] transition-all duration-300">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shadow-3xs group-hover:scale-105 transition-transform">
                     {card.icon}
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold uppercase px-3 py-1 rounded-full border border-[#005F02]/20 dark:border-emerald-500/25 bg-[#005F02]/10 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400 shadow-2xs">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 shadow-3xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400 animate-pulse" />
                     {card.badge}
                   </span>
                 </div>
 
                 {/* Title & Description */}
-                <div className="space-y-2">
-                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors tracking-tight leading-snug">
+                <div className="space-y-1.5">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-[#005F02] dark:group-hover:text-emerald-400 transition-colors tracking-tight leading-snug">
                     {card.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[48px]">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                     {card.description}
                   </p>
                 </div>
+              </div>
 
-                {/* Card Action Link Bar */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-[#005F02] dark:text-emerald-400">
-                  <span>{card.actionLabel}</span>
-                  <div className="w-7 h-7 rounded-xl bg-[#005F02]/10 dark:bg-emerald-500/15 flex items-center justify-center group-hover:bg-[#005F02] group-hover:text-white dark:group-hover:bg-emerald-500 dark:group-hover:text-slate-950 transition-all duration-300">
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
+              {/* Action Bar */}
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-[#005F02] dark:text-emerald-400 mt-4">
+                <span>{card.actionLabel}</span>
+                <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center group-hover:bg-[#005F02] group-hover:text-white transition-colors shadow-3xs">
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANIMATED CONNECTOR: FEATURES TO SANDBOX
+          SOLID CONNECTOR: FEATURES TO CURRICULUM
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">STRUCTURED TRACKS</span>
         </div>
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">TRY IT OUT</span>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SECTION: CURRICULUM & COURSES
+          ═══════════════════════════════════════════════════════════════ */}
+      <CurriculumSection />
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SOLID CONNECTOR: CURRICULUM TO SANDBOX
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">TRY IT OUT</span>
         </div>
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
-        </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -1481,25 +1453,22 @@ export const LandingPage: React.FC = () => {
               <span className="font-mono text-[11px] text-[#005F02] dark:text-emerald-400 font-bold">Mode: Socratic Hint</span>
             </div>
             
-            <div className="h-[520px] sm:h-[550px] relative bg-white/95 dark:bg-slate-900/85 rounded-3xl border border-slate-200/90 dark:border-emerald-500/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_10px_35px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col justify-between">
-              {/* Top Highlight Beam */}
-              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
-
+            <div className="h-[520px] sm:h-[550px] relative bg-white dark:bg-[#0E1318] rounded-2xl border-2 border-slate-300 dark:border-slate-700 shadow-xs overflow-hidden flex flex-col justify-between">
               {/* Chat Header */}
-              <div className="flex items-center justify-between gap-2 px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-100/90 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800 shrink-0">
+              <div className="flex items-center justify-between gap-2 px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-100/90 dark:bg-[#0C1015] border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[#005F02] to-emerald-600 flex items-center justify-center text-white font-bold shadow-sm shrink-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#005F02] flex items-center justify-center text-white font-bold shadow-3xs shrink-0">
                     <Bot className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5 truncate">
+                    <div className="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-1.5 truncate">
                       <span className="truncate">CodeTutor AI Mentor</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                     </div>
                     <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono truncate">100% Offline • 0ms Lag</div>
                   </div>
                 </div>
-                <span className="text-[9px] sm:text-[10px] font-mono px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-[#005F02]/10 dark:bg-emerald-500/15 text-[#005F02] dark:text-emerald-300 border border-[#005F02]/30 dark:border-emerald-500/30 font-bold shrink-0 whitespace-nowrap">
+                <span className="text-[9px] sm:text-[10px] font-mono px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 font-bold shrink-0 whitespace-nowrap shadow-3xs">
                   Zero Data
                 </span>
               </div>
@@ -1510,7 +1479,7 @@ export const LandingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveQuestionTab(0)}
-                  className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 ${
+                  className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 cursor-pointer ${
                     activeQuestionTab === 0
                       ? 'bg-[#005F02] text-white shadow-xs'
                       : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
@@ -1522,13 +1491,26 @@ export const LandingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveQuestionTab(1)}
-                    className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 ${
+                    className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 cursor-pointer ${
                       activeQuestionTab === 1
                         ? 'bg-[#005F02] text-white shadow-xs'
                         : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
                     }`}
                   >
                     Q2: What-If Deep Dive
+                  </button>
+                )}
+                {codeExamples[activeCodeTab].challengeDialogue && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveQuestionTab(2)}
+                    className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all shrink-0 cursor-pointer ${
+                      activeQuestionTab === 2
+                        ? 'bg-[#005F02] text-white shadow-xs'
+                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-[#005F02]'
+                    }`}
+                  >
+                    Q3: Coding Challenge
                   </button>
                 )}
               </div>
@@ -1551,7 +1533,9 @@ export const LandingPage: React.FC = () => {
                         <p className="font-semibold leading-relaxed">
                           {activeQuestionTab === 0
                             ? codeExamples[activeCodeTab].dialogue.student
-                            : codeExamples[activeCodeTab].alternateDialogue?.student}
+                            : activeQuestionTab === 1
+                            ? codeExamples[activeCodeTab].alternateDialogue?.student
+                            : codeExamples[activeCodeTab].challengeDialogue?.student}
                         </p>
                       </div>
                     </div>
@@ -1566,7 +1550,9 @@ export const LandingPage: React.FC = () => {
                         <p className="leading-relaxed text-slate-700 dark:text-slate-300">
                           {activeQuestionTab === 0
                             ? codeExamples[activeCodeTab].dialogue.ai
-                            : codeExamples[activeCodeTab].alternateDialogue?.ai}
+                            : activeQuestionTab === 1
+                            ? codeExamples[activeCodeTab].alternateDialogue?.ai
+                            : codeExamples[activeCodeTab].challengeDialogue?.ai}
                         </p>
                         
                         <div className="p-3.5 rounded-2xl bg-[#005F02]/10 dark:bg-emerald-950/40 border border-[#005F02]/25 dark:border-emerald-500/30 text-slate-800 dark:text-slate-200 text-xs space-y-1">
@@ -1577,7 +1563,9 @@ export const LandingPage: React.FC = () => {
                           <p className="italic text-slate-700 dark:text-slate-300">
                             "{activeQuestionTab === 0
                               ? codeExamples[activeCodeTab].dialogue.hint
-                              : codeExamples[activeCodeTab].alternateDialogue?.hint}"
+                              : activeQuestionTab === 1
+                              ? codeExamples[activeCodeTab].alternateDialogue?.hint
+                              : codeExamples[activeCodeTab].challengeDialogue?.hint}"
                           </p>
                         </div>
                       </div>
@@ -1601,19 +1589,15 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANIMATED CONNECTOR: SANDBOX TO TESTIMONIALS
+          SOLID CONNECTOR: SANDBOX TO TESTIMONIALS
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" />
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">LEARNER STORIES</span>
         </div>
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">LEARNER STORIES</span>
-        </div>
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <div className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02] animate-pulse-beam" style={{ animationDelay: '0.9s' }} />
-        </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -1637,13 +1621,10 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Featured Testimonial Slideshow Box */}
-        <div className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-emerald-500/20 p-5 sm:p-8 lg:p-10 shadow-xl dark:shadow-2xl overflow-hidden min-h-[460px] md:min-h-[400px] flex flex-col justify-between">
-          {/* Top Subtle Accent Beam */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#005F02]/50 dark:via-emerald-400/50 to-transparent" />
-
+        {/* Featured Testimonial Box */}
+        <div className="relative rounded-2xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 p-5 sm:p-8 lg:p-10 shadow-xs overflow-hidden min-h-[460px] md:min-h-[400px] flex flex-col justify-between">
           {/* Top Header: Rating + Prev/Next Controls */}
-          <div className="flex items-center justify-between gap-3 pb-4 shrink-0 border-b border-slate-200/70 dark:border-slate-800/70">
+          <div className="flex items-center justify-between gap-3 pb-4 shrink-0 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1 text-[#005F02] dark:text-emerald-400">
                 {[...Array(5)].map((_, i) => (
@@ -1657,7 +1638,7 @@ export const LandingPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setTestimonialSlide((prev) => (prev === 0 ? studentTestimonials.length - 1 : prev - 1))}
-                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-300 dark:border-slate-700 shadow-3xs cursor-pointer"
                 aria-label="Previous testimonial"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -1665,7 +1646,7 @@ export const LandingPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setTestimonialSlide((prev) => (prev + 1) % studentTestimonials.length)}
-                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-200 dark:border-slate-700"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#005F02] hover:text-white transition-colors border border-slate-300 dark:border-slate-700 shadow-3xs cursor-pointer"
                 aria-label="Next testimonial"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -1673,7 +1654,7 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Animated Testimonial Content (2-Column Grid on Desktop with Large Image / Stacked on Mobile) */}
+          {/* Animated Testimonial Content */}
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonialSlide}
@@ -1683,19 +1664,19 @@ export const LandingPage: React.FC = () => {
               transition={{ duration: 0.22 }}
               className="py-4 sm:py-6 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-center flex-1"
             >
-              {/* Left Column: Prominent Large Portrait Photo Card */}
+              {/* Left Column: Portrait Photo Card */}
               <div className="md:col-span-5 lg:col-span-4 flex justify-center md:justify-start">
-                <div className="relative w-full max-w-[260px] md:max-w-none aspect-square sm:h-64 md:h-72 rounded-3xl overflow-hidden border-2 border-[#005F02]/40 dark:border-emerald-500/40 shadow-xl group">
+                <div className="relative w-full max-w-[260px] md:max-w-none aspect-square sm:h-64 md:h-72 rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 shadow-xs group">
                   <img
                     src={studentTestimonials[testimonialSlide].image}
                     alt={studentTestimonials[testimonialSlide].name}
-                    className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500"
+                    className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent flex flex-col justify-end p-4 text-white">
-                    <span className="text-[10px] font-mono uppercase tracking-wider font-extrabold text-emerald-300">
+                  <div className="absolute inset-0 bg-slate-950/70 flex flex-col justify-end p-4 text-white">
+                    <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-emerald-400">
                       {studentTestimonials[testimonialSlide].tag}
                     </span>
-                    <span className="text-sm font-extrabold flex items-center gap-1">
+                    <span className="text-sm font-black flex items-center gap-1">
                       <MapPinIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       {studentTestimonials[testimonialSlide].location}
                     </span>
@@ -1760,27 +1741,15 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANIMATED CONNECTOR: TESTIMONIALS TO SPECS
+          SOLID CONNECTOR: TESTIMONIALS TO SPECS
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">LIGHT ON YOUR LAPTOP</span>
         </div>
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">LIGHT ON YOUR LAPTOP</span>
-        </div>
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
-        </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -1799,7 +1768,7 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Enhanced 4-Card Performance Grid */}
+        {/* Dashboard 4-Card Performance Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             {
@@ -1847,18 +1816,15 @@ export const LandingPage: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="relative rounded-3xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-emerald-500/20 p-5 sm:p-6 shadow-lg dark:shadow-xl hover:shadow-2xl hover:border-[#005F02]/50 dark:hover:border-emerald-400/50 transition-all duration-300 group flex flex-col justify-between overflow-hidden"
+                className="p-5 sm:p-6 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs hover:shadow-md hover:border-[#005F02] dark:hover:border-emerald-500 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
               >
-                {/* Top Subtle Hover Glow */}
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#005F02]/10 dark:bg-emerald-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
-
                 <div className="space-y-4">
                   {/* Icon & Badge Header */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="w-10 h-10 rounded-2xl bg-[#005F02]/10 dark:bg-emerald-500/15 border border-[#005F02]/30 dark:border-emerald-500/30 flex items-center justify-center text-[#005F02] dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center text-[#005F02] dark:text-emerald-400 shadow-3xs">
+                      <IconComponent className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
                       {spec.badge}
                     </span>
                   </div>
@@ -1904,34 +1870,25 @@ export const LandingPage: React.FC = () => {
             </span>
           </div>
         </div>
+
+        {/* Interactive "Will It Run On My Laptop?" Compatibility Tester */}
+        <LaptopCompatibilityTester />
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANIMATED CONNECTOR: SPECS TO FAQ
+          SOLID CONNECTOR: SPECS TO FAQ
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">QUESTIONS &amp; ANSWERS</span>
         </div>
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">QUESTIONS &amp; ANSWERS</span>
-        </div>
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
-        </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 7: FAQ ACCORDION (HOVER-ENABLED GLASSMORPHISM)
+          SECTION 7: FAQ ACCORDION (DASHBOARD SOLID CARDS)
           ═══════════════════════════════════════════════════════════════ */}
       <section id="faq" className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 relative z-10">
         <div className="text-center space-y-3">
@@ -1953,10 +1910,10 @@ export const LandingPage: React.FC = () => {
               <div
                 key={idx}
                 onMouseEnter={() => setOpenFaq(idx)}
-                className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm ${
+                className={`rounded-2xl border-2 transition-all duration-200 overflow-hidden shadow-3xs ${
                   isOpen
-                    ? 'bg-white dark:bg-slate-900/90 border-[#005F02] dark:border-emerald-400/80 shadow-md ring-1 ring-[#005F02]/20'
-                    : 'bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200/90 dark:border-white/10 hover:border-[#005F02]/50 dark:hover:border-emerald-500/40'
+                    ? 'bg-white dark:bg-[#0E1318] border-[#005F02] dark:border-emerald-500 shadow-xs'
+                    : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 hover:border-[#005F02]'
                 }`}
               >
                 <button
@@ -2021,27 +1978,15 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ANIMATED CONNECTOR: FAQ TO CTA
+          SOLID CONNECTOR: FAQ TO CTA
           ═══════════════════════════════════════════════════════════════ */}
       <div className="relative flex flex-col items-center justify-center -my-4 z-30 pointer-events-none">
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
+        <div className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono font-bold text-[10px] shadow-3xs flex items-center gap-1.5 my-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] dark:bg-emerald-400" />
+          <span className="font-black tracking-wider">GET STARTED</span>
         </div>
-        <div className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-[#005F02] shadow-lg text-[10px] font-mono text-[#005F02] flex items-center gap-1.5 my-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#005F02] animate-pulse" />
-          <span className="font-bold tracking-wider">GET STARTED</span>
-        </div>
-        <div className="w-0.5 h-12 bg-gradient-to-b from-[#005F02] to-[#005F02] relative overflow-hidden">
-          <motion.div
-            animate={{ y: [-10, 48] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'linear', delay: 0.9 }}
-            className="w-1.5 h-3 bg-[#005F02] dark:bg-white rounded-full -left-0.5 absolute shadow-[0_0_8px_#005F02]"
-          />
-        </div>
+        <div className="w-0.5 h-8 bg-slate-300 dark:bg-slate-700" />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -2049,7 +1994,7 @@ export const LandingPage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+          <div className="rounded-2xl p-6 sm:p-8 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] text-slate-900 dark:text-white shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 relative text-left">
             <div className="space-y-2.5 max-w-2xl text-left">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-400/40 text-brand-300 font-mono text-xs font-bold">
                 <GraduationCap className="w-3.5 h-3.5" />
@@ -2083,34 +2028,34 @@ export const LandingPage: React.FC = () => {
       <ContactSection />
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 10: FINAL CTA BANNER
+          SECTION 10: FINAL CTA BANNER (DASHBOARD STYLE)
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[#005F02] rounded-3xl p-6 sm:p-12 text-center text-white shadow-xl space-y-6 relative overflow-hidden">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto shadow-sm">
-              <GraduationCap className="w-7 h-7 text-white" />
+          <div className="rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] p-6 sm:p-10 text-center shadow-xs space-y-6">
+            <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 flex items-center justify-center mx-auto shadow-3xs">
+              <GraduationCap className="w-6 h-6" />
             </div>
 
-            <div className="max-w-2xl mx-auto space-y-3">
-              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+            <div className="max-w-2xl mx-auto space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                 Ready to Start Your Coding Journey?
               </h2>
-              <p className="text-xs sm:text-base text-white/90 leading-relaxed">
-                Join thousands of learners across Africa building real coding skills at their own pace. No internet required, no subscriptions, and completely free forever.
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                Join thousands of learners across Africa building real coding skills at their own pace. No internet required, zero data costs, and 100% free offline.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 w-full max-w-sm sm:max-w-none mx-auto">
               <Link to="/dashboard" className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-bold bg-white text-[#005F02] hover:bg-slate-100 shadow-md transition-colors flex items-center justify-center gap-2">
+                <button className="w-full sm:w-auto px-7 py-3 rounded-xl text-xs sm:text-sm font-bold bg-[#005F02] hover:bg-[#004e02] text-white shadow-xs border-2 border-[#005F02] transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                   <span>Start Learning Free</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
               <Link to="/signup" className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-semibold bg-[#004e02] hover:bg-[#003e02] text-white border border-white/20 transition-colors">
-                  Create Free Account
+                <button className="w-full sm:w-auto px-7 py-3 rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:border-[#005F02] hover:text-[#005F02] shadow-3xs transition-colors cursor-pointer active:scale-95">
+                  Create Offline Account
                 </button>
               </Link>
             </div>
@@ -2220,6 +2165,16 @@ export const LandingPage: React.FC = () => {
                     >
                       Become a Mentor ↗
                     </button>
+                  </li>
+                  <li>
+                    <a href="#why-offline" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Why Offline First
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#curriculum" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5">
+                      Course Curriculum
+                    </a>
                   </li>
                   <li>
                     <a href="#contact" className="hover:text-[#005F02] dark:hover:text-emerald-400 transition-colors block py-0.5 font-bold text-[#005F02] dark:text-emerald-400">
