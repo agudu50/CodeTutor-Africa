@@ -6,6 +6,7 @@ interface LeaderboardTableProps {
   users: LeaderboardUser[]
   timeframe: LeaderboardTimeframe
   metric: LeaderboardMetric
+  roleFilter?: 'learner' | 'mentor'
 }
 
 const TableAvatar: React.FC<{ user: LeaderboardUser }> = ({ user }) => {
@@ -54,6 +55,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   users,
   timeframe,
   metric,
+  roleFilter = 'learner',
 }) => {
   const getMetricLabel = (user: LeaderboardUser) => {
     if (metric === 'streak') return `${user.streakDays} Days`
@@ -111,7 +113,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
           <thead>
             <tr className="border-b-2 border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-[#12161A] text-[11px] font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
               <th className="py-3.5 px-4 text-center w-16">Rank</th>
-              <th className="py-3.5 px-4">Member Profile</th>
+              <th className="py-3.5 px-4">{roleFilter === 'mentor' ? 'Mentor / Educator' : 'Learner'}</th>
               <th className="py-3.5 px-4 hidden sm:table-cell">Tier</th>
               <th className="py-3.5 px-4 text-center">Streak</th>
               <th className="py-3.5 px-4 hidden md:table-cell text-center">Solved</th>

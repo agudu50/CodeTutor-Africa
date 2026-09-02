@@ -3,7 +3,7 @@ export type LeaderboardMetric = 'points' | 'streak' | 'problems'
 
 export type LeagueTier = 'Grandmaster' | 'Diamond' | 'Platinum' | 'Gold' | 'Silver' | 'Bronze'
 
-export type LeaderboardRoleFilter = 'all' | 'learner' | 'mentor'
+export type LeaderboardRoleFilter = 'learner' | 'mentor'
 
 export interface LeaderboardUser {
   id: string
