@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useTheme } from '@/app/providers/ThemeProvider'
@@ -6,6 +6,9 @@ import {
   Lock,
   Mail,
   User,
+  Search,
+  X,
+  ChevronDown,
   ArrowRight,
   CheckCircle2,
   Sun,
@@ -20,11 +23,76 @@ import {
   AlertCircle,
 } from 'lucide-react'
 
+function PhoneIcon({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  )
+}
+
+const COUNTRY_DIAL_CODES = [
+  { code: 'GH', name: 'Ghana', dial: '+233', flag: '🇬🇭' },
+  { code: 'NG', name: 'Nigeria', dial: '+234', flag: '🇳🇬' },
+  { code: 'KE', name: 'Kenya', dial: '+254', flag: '🇰🇪' },
+  { code: 'ZA', name: 'South Africa', dial: '+27', flag: '🇿🇦' },
+  { code: 'SN', name: 'Senegal', dial: '+221', flag: '🇸🇳' },
+  { code: 'CI', name: "Côte d'Ivoire", dial: '+225', flag: '🇨🇮' },
+  { code: 'RW', name: 'Rwanda', dial: '+250', flag: '🇷🇼' },
+  { code: 'UG', name: 'Uganda', dial: '+256', flag: '🇺🇬' },
+  { code: 'TZ', name: 'Tanzania', dial: '+255', flag: '🇹🇿' },
+  { code: 'ET', name: 'Ethiopia', dial: '+251', flag: '🇪🇹' },
+  { code: 'EG', name: 'Egypt', dial: '+20', flag: '🇪🇬' },
+  { code: 'MA', name: 'Morocco', dial: '+212', flag: '🇲🇦' },
+  { code: 'CM', name: 'Cameroon', dial: '+237', flag: '🇨🇲' },
+  { code: 'BJ', name: 'Benin', dial: '+229', flag: '🇧🇯' },
+  { code: 'TG', name: 'Togo', dial: '+228', flag: '🇹🇬' },
+  { code: 'LR', name: 'Liberia', dial: '+231', flag: '🇱🇷' },
+  { code: 'SL', name: 'Sierra Leone', dial: '+232', flag: '🇸🇱' },
+  { code: 'GM', name: 'The Gambia', dial: '+220', flag: '🇬🇲' },
+  { code: 'BF', name: 'Burkina Faso', dial: '+226', flag: '🇧🇫' },
+  { code: 'ML', name: 'Mali', dial: '+223', flag: '🇲🇱' },
+  { code: 'NE', name: 'Niger', dial: '+227', flag: '🇳🇪' },
+  { code: 'GN', name: 'Guinea', dial: '+224', flag: '🇬🇳' },
+  { code: 'CV', name: 'Cabo Verde', dial: '+238', flag: '🇨🇻' },
+  { code: 'GB', name: 'United Kingdom', dial: '+44', flag: '🇬🇧' },
+  { code: 'US', name: 'USA / Canada', dial: '+1', flag: '🇺🇸' },
+]
+
 export const SignUpPage: React.FC = () => {
   const navigate = useNavigate()
   const { isDark, setTheme } = useTheme()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
+  const [countryCode, setCountryCode] = useState('+233')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false)
+  const [countrySearchQuery, setCountrySearchQuery] = useState('')
+  const countryDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+        setIsCountryDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const selectedCountry = COUNTRY_DIAL_CODES.find((c) => c.dial === countryCode) || COUNTRY_DIAL_CODES[0]
+
+  const filteredCountries = COUNTRY_DIAL_CODES.filter((c) => {
+    const q = countrySearchQuery.toLowerCase().trim()
+    if (!q) return true
+    return (
+      c.name.toLowerCase().includes(q) ||
+      c.dial.includes(q) ||
+      c.code.toLowerCase().includes(q)
+    )
+  })
+
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -272,6 +340,124 @@ export const SignUpPage: React.FC = () => {
                     placeholder="e.g. ama.serwaa@gmail.com"
                     className="w-full bg-transparent py-2.5 pr-3.5 text-xs font-bold text-slate-900 dark:text-slate-100 placeholder-slate-400 placeholder:font-normal focus:outline-none"
                   />
+                </div>
+              </div>
+
+              {/* Phone Number with Searchable Country Code */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                    Phone Number
+                  </label>
+                  <span className="text-[10px] text-slate-400 font-mono">Optional SMS Backup</span>
+                </div>
+                <div className="flex gap-2 relative">
+                  {/* Searchable Country Code Dropdown */}
+                  <div ref={countryDropdownRef} className="relative shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCountryDropdownOpen((prev) => !prev)
+                        setCountrySearchQuery('')
+                      }}
+                      className="w-[104px] sm:w-[112px] h-[42px] px-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] hover:bg-white dark:hover:bg-[#0E1318] focus:border-[#005F02] dark:focus:border-emerald-500 shadow-3xs transition-all flex items-center justify-between text-xs font-bold text-slate-900 dark:text-slate-100 cursor-pointer"
+                      aria-haspopup="listbox"
+                      aria-expanded={isCountryDropdownOpen}
+                    >
+                      <span className="flex items-center gap-1.5 truncate">
+                        <span className="text-base leading-none">{selectedCountry.flag}</span>
+                        <span className="font-mono text-xs">{selectedCountry.dial}</span>
+                      </span>
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${
+                          isCountryDropdownOpen ? 'rotate-180 text-[#005F02] dark:text-emerald-400' : ''
+                        }`}
+                      />
+                    </button>
+
+                    {/* Popover Dropdown Menu with Search */}
+                    {isCountryDropdownOpen && (
+                      <div className="absolute left-0 top-full mt-1.5 w-64 sm:w-72 bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
+                        {/* Search Input */}
+                        <div className="p-2 border-b border-slate-200 dark:border-slate-800 bg-[#FAFAFA] dark:bg-[#0C1015]">
+                          <div className="relative flex items-center rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] px-2 py-1.5">
+                            <Search className="w-3.5 h-3.5 text-slate-400 shrink-0 mr-1.5" />
+                            <input
+                              type="text"
+                              autoFocus
+                              value={countrySearchQuery}
+                              onChange={(e) => setCountrySearchQuery(e.target.value)}
+                              placeholder="Search country or code..."
+                              className="w-full bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+                            />
+                            {countrySearchQuery && (
+                              <button
+                                type="button"
+                                onClick={() => setCountrySearchQuery('')}
+                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Country List */}
+                        <div className="max-h-52 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 p-1">
+                          {filteredCountries.length > 0 ? (
+                            filteredCountries.map((c) => {
+                              const isSelected = selectedCountry.code === c.code
+                              return (
+                                <button
+                                  type="button"
+                                  key={c.code}
+                                  onClick={() => {
+                                    setCountryCode(c.dial)
+                                    setIsCountryDropdownOpen(false)
+                                    setCountrySearchQuery('')
+                                  }}
+                                  className={`w-full px-2.5 py-2 rounded-lg text-left flex items-center justify-between text-xs transition-colors cursor-pointer ${
+                                    isSelected
+                                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-[#005F02] dark:text-emerald-400 font-bold'
+                                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                                  }`}
+                                >
+                                  <span className="flex items-center gap-2 truncate pr-2">
+                                    <span className="text-base leading-none shrink-0">{c.flag}</span>
+                                    <span className="truncate">{c.name}</span>
+                                  </span>
+                                  <div className="flex items-center gap-1.5 shrink-0">
+                                    <span className="font-mono text-[11px] font-bold text-slate-400 dark:text-slate-500">
+                                      {c.dial}
+                                    </span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />}
+                                  </div>
+                                </button>
+                              )
+                            })
+                          ) : (
+                            <div className="px-3 py-4 text-center text-xs text-slate-400 font-mono">
+                              No countries found for "{countrySearchQuery}"
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Phone Input */}
+                  <div className="relative flex-1 h-[42px] rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-[#FAFAFA] dark:bg-[#0C1015] focus-within:bg-white dark:focus-within:bg-[#0E1318] focus-within:border-[#005F02] dark:focus-within:border-emerald-500 shadow-3xs transition-all flex items-center">
+                    <div className="pl-3.5 pr-2 text-slate-400 flex items-center pointer-events-none">
+                      <PhoneIcon className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="e.g. 54 123 4567"
+                      className="w-full bg-transparent py-2 pr-3.5 text-xs font-bold text-slate-900 dark:text-slate-100 placeholder-slate-400 placeholder:font-normal focus:outline-none"
+                    />
+                  </div>
                 </div>
               </div>
 
