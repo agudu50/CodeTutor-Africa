@@ -93,10 +93,26 @@ export const CourseDetailPage: React.FC = () => {
         </Link>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          COURSE HERO CARD (Crisp light & dark mode)
-          ═══════════════════════════════════════════════════════════════ */}
-      <div className="rounded-3xl border border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-[#12161A] shadow-xs sm:shadow-sm p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+      <div className="relative overflow-hidden rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0C1015] shadow-md dark:shadow-2xl p-6 sm:p-8 space-y-6 text-slate-900 dark:text-white">
+        {/* Subtle Geometric Background Circuit Grid */}
+        <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.06] pointer-events-none select-none">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="course-hero-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+                <path d="M 28 0 L 0 0 0 28" fill="none" stroke="currentColor" strokeWidth="1" />
+                <circle cx="28" cy="28" r="1.5" fill="currentColor" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#course-hero-grid)" />
+          </svg>
+        </div>
+
+        {/* Floating Language Watermark Badge in Top-Right Corner */}
+        <div className="absolute -top-4 -right-4 w-28 h-28 rounded-3xl border-2 border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/60 flex items-center justify-center pointer-events-none select-none rotate-12 opacity-80">
+          <span className="font-mono font-black text-3xl text-slate-300 dark:text-slate-700 tracking-tighter uppercase">
+            {course.language === 'javascript' ? 'JS' : course.language === 'python' ? 'PY' : course.language.slice(0, 3).toUpperCase()}
+          </span>
+        </div>
         {/* Title Header */}
         <div className="space-y-1">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
@@ -175,7 +191,7 @@ export const CourseDetailPage: React.FC = () => {
           const countryName = mentor?.countryName || 'Ghana'
 
           return (
-            <div className="p-4 sm:p-5 rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3">
+            <div className="p-4 sm:p-5 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/90 shadow-2xs space-y-3">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">
                   Course Author &amp; Lead Educator

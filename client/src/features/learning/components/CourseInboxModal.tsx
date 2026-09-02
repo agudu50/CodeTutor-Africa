@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { issueSupportService, IssueReport, IssueStatus } from '@/services/support/issue-support.service'
 import {
   X,
@@ -92,6 +92,41 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
   const StatusIcon = cfg.icon
   const hasReply = !!report.adminReply || !!(report.messages && report.messages.some((m) => m.senderRole === 'mentor'))
 
+  // De-duplicate conversation thread into a single ordered timeline
+  const conversationMessages = useMemo(() => {
+    const list: {
+      id: string
+      senderRole: 'learner' | 'mentor' | 'admin'
+      senderName: string
+      message: string
+      codeSnippet?: string
+      createdAt: string
+    }[] = []
+
+    // If there is an adminReply and it's not already in messages, include it first
+    if (report.adminReply) {
+      const alreadyInMessages = report.messages?.some(
+        (m) => m.message.trim() === report.adminReply?.trim()
+      )
+      if (!alreadyInMessages) {
+        list.push({
+          id: 'initial-admin-reply',
+          senderRole: 'mentor',
+          senderName: report.instructorName || 'Course Mentor / Lead Instructor',
+          message: report.adminReply,
+          codeSnippet: report.updatedCodeSnippet,
+          createdAt: report.resolvedAt || report.createdAt,
+        })
+      }
+    }
+
+    if (report.messages && report.messages.length > 0) {
+      list.push(...report.messages)
+    }
+
+    return list
+  }, [report.adminReply, report.instructorName, report.updatedCodeSnippet, report.resolvedAt, report.createdAt, report.messages])
+
   const handleSendReply = (e: React.FormEvent) => {
     e.preventDefault()
     if (!replyText.trim() || isSubmitting) return
@@ -173,102 +208,80 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
       {expanded && (
         <div className="px-4 pb-4 space-y-4 border-t border-slate-100 dark:border-slate-800 pt-3 animate-in fade-in duration-150">
           {/* Original report */}
-          <div className="space-y-1.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
-              <User className="w-3 h-3 text-brand-500" />
-              <span>Your Original Report</span>
+          <div className="space-y-1.5 p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5 text-slate-500" />
+              <span>Original Report from {report.userName || 'You'}:</span>
             </span>
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+            <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line pl-5 font-sans">
               {report.description}
             </p>
+
+            {/* Code snippet */}
+            {report.codeSnippet && (
+              <div className="rounded-xl bg-slate-950 border border-slate-800 p-3 mt-2 ml-5">
+                <pre className="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap">
+                  {report.codeSnippet}
+                </pre>
+              </div>
+            )}
+
+            {/* Error message */}
+            {report.errorMessage && (
+              <div className="rounded-xl bg-red-950/40 border border-red-800/50 px-3 py-2 mt-2 ml-5">
+                <span className="text-[10px] font-bold text-red-400 uppercase">Error</span>
+                <p className="text-xs text-red-300 font-mono mt-0.5">{report.errorMessage}</p>
+              </div>
+            )}
           </div>
 
-          {/* Code snippet */}
-          {report.codeSnippet && (
-            <div className="rounded-xl bg-slate-950 border border-slate-800 p-3">
-              <pre className="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap">
-                {report.codeSnippet}
-              </pre>
-            </div>
-          )}
-
-          {/* Error message */}
-          {report.errorMessage && (
-            <div className="rounded-xl bg-red-950/40 border border-red-800/50 px-3 py-2">
-              <span className="text-[10px] font-bold text-red-400 uppercase">Error</span>
-              <p className="text-xs text-red-300 font-mono mt-0.5">{report.errorMessage}</p>
-            </div>
-          )}
-
-          {/* ── Initial Mentor Reply (if present) ── */}
-          {report.adminReply && (
-            <div className="rounded-2xl border-2 border-brand-200 dark:border-brand-800 bg-brand-50/60 dark:bg-brand-950/30 p-4 space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-brand-100 dark:bg-brand-900 border border-brand-200 dark:border-brand-700 flex items-center justify-center shrink-0">
-                  <GraduationCap className="w-4 h-4 text-brand-600 dark:text-brand-400" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 dark:text-white">
-                    {report.instructorName || 'Course Mentor / Lead Instructor'}
-                  </p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                    {report.resolvedAt ? timeAgo(report.resolvedAt) : 'Mentor response'}
-                  </p>
+          {/* ── Unified Conversation Timeline with Distinct Colors ── */}
+          {conversationMessages.length > 0 ? (
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center justify-between gap-2 flex-wrap pb-1">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Dialogue Thread ({conversationMessages.length}):
+                </span>
+                <div className="flex items-center gap-2 text-[10px] font-mono font-bold">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+                    <User className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" />
+                    Student Reply (Blue)
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                    <GraduationCap className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                    Mentor Response (Green)
+                  </span>
                 </div>
               </div>
-              <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line pl-9">
-                {report.adminReply}
-              </p>
 
-              {/* Updated code from mentor */}
-              {report.updatedCodeSnippet && (
-                <div className="ml-9 rounded-xl bg-slate-950 border border-slate-800 p-3 mt-1">
-                  <span className="text-[10px] font-bold text-brand-400 uppercase">Updated Code from Mentor</span>
-                  <pre className="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap mt-1">
-                    {report.updatedCodeSnippet}
-                  </pre>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── Follow-up Conversation Messages (Multi-turn Thread) ── */}
-          {report.messages && report.messages.length > 0 && (
-            <div className="space-y-3 pt-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                Conversation Thread ({report.messages.length}):
-              </span>
-              {report.messages.map((msg) => {
+              {conversationMessages.map((msg) => {
                 const isLearner = msg.senderRole === 'learner'
-                return (
+                return isLearner ? (
+                  /* ═══════════════════════════════════════════════════════════
+                     STUDENT REPLY — SOLID CRISP BLUE CARD (INDENTED RIGHT)
+                     ═══════════════════════════════════════════════════════════ */
                   <div
                     key={msg.id}
-                    className={`rounded-2xl border-2 p-3.5 space-y-1.5 ${
-                      isLearner
-                        ? 'border-brand-300 dark:border-brand-700 bg-brand-50/50 dark:bg-brand-950/40 ml-3 sm:ml-5'
-                        : 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/30 mr-3 sm:mr-5'
-                    }`}
+                    className="ml-3 sm:ml-8 rounded-2xl border-2 border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-950/60 p-4 space-y-2 shadow-2xs"
                   >
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-2">
-                        <div
-                          className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                            isLearner ? 'bg-brand-600 text-white' : 'bg-emerald-600 text-white'
-                          }`}
-                        >
-                          {isLearner ? <User className="w-3.5 h-3.5" /> : <GraduationCap className="w-3.5 h-3.5" />}
+                        <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                          <User className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-xs font-bold text-slate-900 dark:text-white">
-                          {msg.senderName}{' '}
-                          {isLearner && <span className="text-[10px] font-normal text-slate-500">(You)</span>}
+                        <span className="text-xs font-bold text-blue-950 dark:text-blue-200">
+                          {msg.senderName}
+                        </span>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700 uppercase">
+                          Student Reply
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-400">
+                      <span className="text-[10px] font-mono text-blue-700 dark:text-blue-400 font-semibold">
                         {timeAgo(msg.createdAt)}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line pl-8">
+                    <p className="text-xs sm:text-sm text-blue-950 dark:text-blue-100 font-sans leading-relaxed whitespace-pre-line pl-8">
                       {msg.message}
                     </p>
 
@@ -280,12 +293,50 @@ const ReportCard: React.FC<{ report: IssueReport }> = ({ report }) => {
                       </div>
                     )}
                   </div>
+                ) : (
+                  /* ═══════════════════════════════════════════════════════════
+                     MENTOR RESPONSE — SOLID FOREST EMERALD CARD (INDENTED LEFT)
+                     ═══════════════════════════════════════════════════════════ */
+                  <div
+                    key={msg.id}
+                    className="mr-3 sm:mr-8 rounded-2xl border-2 border-emerald-600 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 p-4 space-y-2 shadow-2xs"
+                  >
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-[#005F02] dark:bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                          <GraduationCap className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-bold text-emerald-950 dark:text-emerald-200">
+                          {msg.senderName}
+                        </span>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 uppercase">
+                          Mentor Response
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-semibold">
+                        {timeAgo(msg.createdAt)}
+                      </span>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-emerald-950 dark:text-emerald-100 font-sans leading-relaxed whitespace-pre-line pl-8">
+                      {msg.message}
+                    </p>
+
+                    {msg.codeSnippet && (
+                      <div className="ml-8 rounded-xl bg-slate-950 border border-slate-800 p-2.5 mt-1">
+                        <span className="text-[10px] font-bold text-emerald-400 uppercase block pb-1">
+                          Attached Solution Code from Mentor:
+                        </span>
+                        <pre className="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap">
+                          {msg.codeSnippet}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
                 )
               })}
             </div>
-          )}
-
-          {!hasReply && (!report.messages || report.messages.length === 0) && (
+          ) : (
             <div className="flex items-center gap-2.5 p-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-700">
               <Clock className="w-4 h-4 text-slate-400 shrink-0" />
               <p className="text-xs text-slate-500 dark:text-slate-400">

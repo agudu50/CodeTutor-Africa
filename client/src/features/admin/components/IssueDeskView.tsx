@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   MessageSquare,
   Check,
-  Shield,
   X,
   Search,
   ChevronLeft,
@@ -645,78 +644,110 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                 {/* ═══════════════════════════════════════════════════════════
                     ADMIN PUBLISHED UPDATED CODE & RESPONSE HISTORY
                     ═══════════════════════════════════════════════════════════ */}
-                {selectedIssue.adminReply && (
-                  <div className="p-4 rounded-2xl bg-brand-50/80 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 space-y-2 text-xs shadow-2xs">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-xs text-brand-700 dark:text-brand-300 uppercase flex items-center gap-1.5">
-                        <Shield className="w-3.5 h-3.5" />
-                        <span>Instructor Response & Solution Note:</span>
-                      </span>
-                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800">
-                        Delivered
-                      </span>
-                    </div>
-                    <p className="text-slate-800 dark:text-slate-200 font-sans leading-relaxed text-xs sm:text-sm">
-                      {selectedIssue.adminReply}
-                    </p>
-
-                    {/* Previously Attached Updated Code Snippet */}
-                    {selectedIssue.updatedCodeSnippet && (
-                      <div className="pt-2 border-t border-brand-200/60 dark:border-brand-800/60 space-y-1">
-                        <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 uppercase flex items-center gap-1.5">
-                          <Code2 className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                          <span>Attached Corrected Solution Code:</span>
+                {/* ═══════════════════════════════════════════════════════════
+                    ADMIN PUBLISHED UPDATED CODE & RESPONSE HISTORY
+                    ═══════════════════════════════════════════════════════════ */}
+                {selectedIssue.adminReply &&
+                  (!selectedIssue.messages ||
+                    !selectedIssue.messages.some(
+                      (m) => m.message.trim() === selectedIssue.adminReply?.trim()
+                    )) && (
+                    <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border-2 border-emerald-600 dark:border-emerald-500 space-y-2 text-xs shadow-2xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono font-bold text-xs text-emerald-950 dark:text-emerald-200 uppercase flex items-center gap-1.5">
+                          <GraduationCap className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                          <span>Instructor Response & Solution Note:</span>
                         </span>
-                        <CodeBlock
-                          code={selectedIssue.updatedCodeSnippet}
-                          language={detectLanguage(selectedIssue.updatedCodeSnippet, selectedIssue.subject)}
-                          caption="Delivered Reference Solution"
-                        />
+                        <span className="text-[10px] font-mono text-emerald-900 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-md bg-emerald-200 dark:bg-emerald-900 border border-emerald-300 dark:border-emerald-700 uppercase">
+                          Mentor Response
+                        </span>
                       </div>
-                    )}
-                  </div>
-                )}
+                      <p className="text-emerald-950 dark:text-emerald-100 font-sans leading-relaxed text-xs sm:text-sm pl-5">
+                        {selectedIssue.adminReply}
+                      </p>
+
+                      {/* Previously Attached Updated Code Snippet */}
+                      {selectedIssue.updatedCodeSnippet && (
+                        <div className="pt-2 border-t border-emerald-200 dark:border-emerald-800 space-y-1 pl-5">
+                          <span className="text-[11px] font-mono font-bold text-emerald-900 dark:text-emerald-300 uppercase flex items-center gap-1.5">
+                            <Code2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span>Attached Corrected Solution Code:</span>
+                          </span>
+                          <CodeBlock
+                            code={selectedIssue.updatedCodeSnippet}
+                            language={detectLanguage(selectedIssue.updatedCodeSnippet, selectedIssue.subject)}
+                            caption="Delivered Reference Solution"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                 {/* ═══════════════════════════════════════════════════════════
                     FOLLOW-UP CONVERSATION DIALOGUE THREAD
                     ═══════════════════════════════════════════════════════════ */}
                 {selectedIssue.messages && selectedIssue.messages.length > 0 && (
                   <div className="space-y-2.5 pt-2">
-                    <span className="font-mono font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1.5">
-                      <MessageSquare className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-                      <span>Follow-up Dialogue History ({selectedIssue.messages.length}):</span>
-                    </span>
+                    <div className="flex items-center justify-between gap-2 flex-wrap pb-1">
+                      <span className="font-mono font-bold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                        <span>Follow-up Dialogue History ({selectedIssue.messages.length}):</span>
+                      </span>
+                      <div className="flex items-center gap-2 text-[10px] font-mono font-bold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+                          <User className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" />
+                          Student Reply (Blue)
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                          <GraduationCap className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                          Mentor Response (Green)
+                        </span>
+                      </div>
+                    </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {selectedIssue.messages.map((msg) => {
                         const isLearner = msg.senderRole === 'learner'
                         return (
                           <div
                             key={msg.id}
-                            className={`p-3.5 rounded-2xl border text-xs space-y-1.5 shadow-2xs ${
+                            className={`p-4 rounded-2xl border-2 text-xs space-y-1.5 shadow-2xs ${
                               isLearner
-                                ? 'bg-white dark:bg-slate-900 border-brand-200 dark:border-brand-800/80 ml-2 sm:ml-4'
-                                : 'bg-brand-50/80 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 mr-2 sm:mr-4'
+                                ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 dark:border-blue-400 ml-2 sm:ml-6'
+                                : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-600 dark:border-emerald-500 mr-2 sm:mr-6'
                             }`}
                           >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-2 flex-wrap">
                               <span
                                 className={`font-mono font-bold uppercase flex items-center gap-1.5 ${
                                   isLearner
-                                    ? 'text-brand-700 dark:text-brand-300'
-                                    : 'text-emerald-700 dark:text-emerald-300'
+                                    ? 'text-blue-950 dark:text-blue-200'
+                                    : 'text-emerald-950 dark:text-emerald-200'
                                 }`}
                               >
                                 {isLearner ? (
-                                  <User className="w-3.5 h-3.5" />
+                                  <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                                 ) : (
-                                  <GraduationCap className="w-3.5 h-3.5" />
+                                  <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                 )}
-                                <span>
-                                  {msg.senderName} {isLearner ? '(Student Follow-up)' : '(Instructor Response)'}
+                                <span>{msg.senderName}</span>
+                                <span
+                                  className={`text-[10px] px-1.5 py-0.5 rounded-md border font-mono font-bold ${
+                                    isLearner
+                                      ? 'bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-300 border-blue-300 dark:border-blue-700'
+                                      : 'bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700'
+                                  }`}
+                                >
+                                  {isLearner ? 'Student Reply' : 'Mentor Response'}
                                 </span>
                               </span>
-                              <span className="text-[10px] font-mono text-slate-400">
+                              <span
+                                className={`text-[10px] font-mono font-semibold ${
+                                  isLearner
+                                    ? 'text-blue-700 dark:text-blue-400'
+                                    : 'text-emerald-700 dark:text-emerald-400'
+                                }`}
+                              >
                                 {new Date(msg.createdAt).toLocaleTimeString([], {
                                   hour: '2-digit',
                                   minute: '2-digit',
@@ -725,7 +756,13 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                               </span>
                             </div>
 
-                            <p className="font-sans leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap pl-5">
+                            <p
+                              className={`font-sans leading-relaxed whitespace-pre-wrap pl-5 text-xs sm:text-sm ${
+                                isLearner
+                                  ? 'text-blue-950 dark:text-blue-100'
+                                  : 'text-emerald-950 dark:text-emerald-100'
+                              }`}
+                            >
                               {msg.message}
                             </p>
 
@@ -734,7 +771,7 @@ export const IssueDeskView: React.FC<IssueDeskViewProps> = memo(({ issues, onUpd
                                 <CodeBlock
                                   code={msg.codeSnippet}
                                   language={detectLanguage(msg.codeSnippet, selectedIssue.subject)}
-                                  caption="Attached Code"
+                                  caption={isLearner ? 'Student Attached Code' : 'Mentor Attached Code'}
                                 />
                               </div>
                             )}
