@@ -670,11 +670,11 @@ export const SettingsPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 items-stretch">
+          <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
-              { id: 'dark', label: 'Dark IDE', icon: Moon, desc: 'Optimized for long coding sessions and OLED displays' },
-              { id: 'light', label: 'Light Clean', icon: Sun, desc: 'High daylight readability with crisp high-contrast text' },
-              { id: 'system', label: 'System Default', icon: Laptop, desc: 'Automatically synchronizes with your OS appearance' },
+              { id: 'dark', label: 'Dark IDE', icon: Moon, desc: 'Optimized for long coding & OLED' },
+              { id: 'light', label: 'Light Clean', icon: Sun, desc: 'High daylight crisp contrast' },
+              { id: 'system', label: 'System Default', icon: Laptop, desc: 'Synchronizes with OS theme' },
             ].map((item) => {
               const Icon = item.icon
               const isSelected = theme === item.id
@@ -684,33 +684,33 @@ export const SettingsPage: React.FC = () => {
                   key={item.id}
                   type="button"
                   onClick={() => setTheme(item.id as ThemeMode)}
-                  className={`p-5 rounded-2xl border-2 text-left transition-all flex flex-col justify-between space-y-4 shadow-3xs cursor-pointer active:scale-98 ${
+                  className={`p-3 rounded-xl border-2 text-left transition-all flex items-center gap-3 shadow-3xs cursor-pointer active:scale-98 ${
                     isSelected
-                      ? 'border-[#005F02] bg-emerald-50/70 dark:bg-[#161B22] text-slate-900 dark:text-white ring-2 ring-[#005F02]/20'
+                      ? 'border-[#005F02] bg-emerald-50/70 dark:bg-emerald-950/30 text-slate-900 dark:text-white ring-2 ring-[#005F02]/20'
                       : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#161B22]/50 text-slate-700 dark:text-slate-300 hover:border-[#005F02]'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`p-2.5 rounded-xl border-2 ${
-                        isSelected
-                          ? 'bg-[#005F02] text-white border-[#005F02] shadow-3xs'
-                          : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    {isSelected && (
-                      <span className="flex items-center gap-1 text-[10px] font-mono font-black uppercase px-2.5 py-0.5 rounded-lg bg-[#005F02] text-white shadow-3xs">
-                        Active
-                      </span>
-                    )}
+                  <div
+                    className={`p-2 rounded-lg border-2 shrink-0 ${
+                      isSelected
+                        ? 'bg-[#005F02] text-white border-[#005F02] shadow-3xs'
+                        : 'bg-white dark:bg-[#0E1318] border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <div>
-                    <span className="text-sm font-mono font-black block text-slate-900 dark:text-white">
-                      {item.label}
-                    </span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 block mt-1 leading-relaxed font-medium">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-mono font-black truncate text-slate-900 dark:text-white">
+                        {item.label}
+                      </span>
+                      {isSelected && (
+                        <span className="text-[9px] font-mono font-black uppercase px-1.5 py-0.5 rounded bg-[#005F02] text-white shrink-0 shadow-3xs">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5 leading-tight truncate">
                       {item.desc}
                     </span>
                   </div>
