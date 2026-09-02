@@ -2280,8 +2280,37 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                   </button>
                 </div>
 
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono leading-relaxed">
-                  <span>Admins can review active teaching status and promote/demote mentors.</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 shadow-3xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-400 border-2 border-indigo-300 dark:border-indigo-800 flex items-center justify-center shrink-0 shadow-3xs">
+                      <GraduationCap className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+                      Admins can review active teaching status and promote/demote mentors.
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={handleCollapseAllMentors}
+                        className="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318] transition-all cursor-pointer shadow-3xs active:scale-95"
+                      >
+                        Collapse All
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleExpandAllMentors}
+                        className="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318] transition-all cursor-pointer shadow-3xs active:scale-95"
+                      >
+                        Expand All
+                      </button>
+                    </div>
+
+                    <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-mono font-bold text-xs shadow-3xs whitespace-nowrap">
+                      Showing {filteredMentors.length} of {mentorUsers.length} mentors
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -2289,78 +2318,53 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
               {mentorRosterSubTab === 'roster' && (
                 <div className="space-y-4">
                   {/* Activity Filter Chips */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
-                    <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
-                      {[
-                        { id: 'ALL', label: 'All Mentors', count: mentorUsers.length, dot: null },
-                        { id: 'active', label: 'Active Mentors', count: activeMentorCount, dot: 'bg-emerald-500' },
-                        { id: 'inactive', label: 'Inactive Mentors', count: inactiveMentorCount, dot: 'bg-slate-400' },
-                      ].map((btn) => (
-                        <button
-                          key={btn.id}
-                          type="button"
-                          onClick={() => setMentorActivityFilter(btn.id as any)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 select-none shadow-3xs ${
+                  <div className="flex items-center gap-2 overflow-x-auto w-full pb-1 scrollbar-none font-mono">
+                    {[
+                      { id: 'ALL', label: 'All Mentors', count: mentorUsers.length, dot: null },
+                      { id: 'active', label: 'Active Mentors', count: activeMentorCount, dot: 'bg-emerald-500' },
+                      { id: 'inactive', label: 'Inactive Mentors', count: inactiveMentorCount, dot: 'bg-slate-400' },
+                    ].map((btn) => (
+                      <button
+                        key={btn.id}
+                        type="button"
+                        onClick={() => setMentorActivityFilter(btn.id as any)}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 select-none shadow-3xs border-2 active:scale-95 ${
+                          mentorActivityFilter === btn.id
+                            ? 'bg-[#005F02] text-white border-[#005F02] shadow-xs'
+                            : 'bg-white dark:bg-[#161B22] text-slate-700 dark:text-slate-300 hover:border-[#005F02] border-slate-300 dark:border-slate-700'
+                        }`}
+                      >
+                        {btn.dot && <span className={`w-2 h-2 rounded-full shrink-0 ${btn.dot}`} />}
+                        <span className="whitespace-nowrap">{btn.label}</span>
+                        <span
+                          className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
                             mentorActivityFilter === btn.id
-                              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80'
+                              ? 'bg-white/20 text-white'
+                              : 'bg-slate-100 dark:bg-[#0E1318] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                           }`}
                         >
-                          {btn.dot && <span className={`w-2 h-2 rounded-full shrink-0 ${btn.dot}`} />}
-                          <span className="whitespace-nowrap">{btn.label}</span>
-                          <span
-                            className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
-                              mentorActivityFilter === btn.id
-                                ? 'bg-white/20 dark:bg-slate-900/20'
-                                : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                            }`}
-                          >
-                            {btn.count}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={handleCollapseAllMentors}
-                          className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer shadow-3xs"
-                        >
-                          Collapse All
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleExpandAllMentors}
-                          className="px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer shadow-3xs"
-                        >
-                          Expand All
-                        </button>
-                      </div>
-
-                      <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                        Showing {filteredMentors.length} of {mentorUsers.length} mentors
-                      </div>
-                    </div>
+                          {btn.count}
+                        </span>
+                      </button>
+                    ))}
                   </div>
 
                   {/* Mentors Grid / Cards */}
                   {filteredMentors.length === 0 ? (
-                    <div className="py-12 text-center space-y-2">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                    <div className="py-12 text-center space-y-2 rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-xs">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center mx-auto text-slate-400 shadow-3xs">
                         <GraduationCap className="w-6 h-6" />
                       </div>
-                      <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                      <h4 className="text-sm font-mono font-bold text-slate-700 dark:text-slate-300">
                         No mentors match this filter
                       </h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-sans">
                         Try changing the activity filter or searching by another mentor name or country.
                       </p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 gap-4">
-                      {filteredMentors.map((mentor) => {
+                      {filteredMentors.map((mentor, index) => {
                         const isLiveActive =
                           mentor.status === 'active_now' ||
                           mentor.status === 'active_today' ||
@@ -2388,17 +2392,18 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                         return (
                           <div
                             key={mentor.id}
-                            className={`p-4 sm:p-5 rounded-2xl border transition-all space-y-4 ${
-                              isLiveActive
-                                ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-500/50 shadow-2xs'
-                                : 'bg-slate-50/70 dark:bg-slate-950/40 border-slate-200/80 dark:border-slate-800/80 opacity-90'
-                            }`}
+                            className="p-4 sm:p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] hover:border-[#005F02] dark:hover:border-emerald-500 shadow-xs transition-all space-y-4"
                           >
                             {/* Top row: Mentor Header & Live Status */}
                             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
-                              <div className="flex items-start sm:items-center gap-3.5 min-w-0">
-                                <div className="relative shrink-0 mt-0.5 sm:mt-0">
-                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0 overflow-hidden border border-slate-200 dark:border-slate-800">
+                              <div className="flex items-start sm:items-center gap-3 min-w-0">
+                                {/* Numbered Index Pill */}
+                                <span className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center font-mono text-xs font-black text-slate-700 dark:text-slate-300 shadow-3xs shrink-0">
+                                  {String(index + 1).padStart(2, '0')}
+                                </span>
+
+                                <div className="relative shrink-0">
+                                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#005F02] text-white font-mono font-black flex items-center justify-center text-sm shadow-3xs shrink-0 overflow-hidden border-2 border-[#005F02]">
                                     {mentor.avatarUrl ? (
                                       <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
                                     ) : (
@@ -2406,31 +2411,31 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                     )}
                                   </div>
                                   {mentor.status === 'active_now' ? (
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 animate-pulse shadow-3xs" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0E1318] animate-pulse shadow-3xs" />
                                   ) : isLiveActive ? (
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 shadow-3xs" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0E1318] shadow-3xs" />
                                   ) : (
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-slate-400 border-2 border-white dark:border-slate-900 shadow-3xs" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-slate-400 border-2 border-white dark:border-[#0E1318] shadow-3xs" />
                                   )}
                                 </div>
 
                                 <div className="min-w-0 flex-1">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                                    <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight">
                                       {mentor.name}
                                     </span>
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005F02]/10 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-bold border border-[#005F02]/20 shadow-3xs shrink-0">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-black border-2 border-emerald-300 dark:border-emerald-800 shadow-3xs shrink-0 tracking-wider">
                                       <GraduationCap className="w-3 h-3" />
                                       VERIFIED MENTOR
                                     </span>
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-3xs shrink-0">
-                                      <Globe className="w-2.5 h-2.5 text-brand-500" />
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-[#161B22] font-mono text-[10px] font-black text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 shadow-3xs shrink-0">
+                                      <Globe className="w-2.5 h-2.5 text-[#005F02] dark:text-emerald-400" />
                                       {mentor.countryName} ({mentor.countryCode})
                                     </span>
                                   </div>
 
-                                  <div className="flex items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400 font-mono mt-1 flex-wrap">
-                                    <span className="font-semibold text-slate-700 dark:text-slate-300">@{mentor.username}</span>
+                                  <div className="flex items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400 font-mono mt-1 flex-wrap font-medium">
+                                    <span className="font-bold text-slate-700 dark:text-slate-300">@{mentor.username}</span>
                                     <span className="text-slate-300 dark:text-slate-600 hidden xs:inline">•</span>
                                     <span className="flex items-center gap-1">
                                       <Mail className="w-3 h-3 text-slate-400 shrink-0" />
@@ -2445,33 +2450,33 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                               </div>
 
                               {/* Live Activity Status & Action Controls */}
-                              <div className="flex items-center gap-2 flex-wrap shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800/80 w-full lg:w-auto justify-between lg:justify-end">
+                              <div className="flex items-center gap-2 flex-wrap shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-200 dark:border-slate-800 w-full lg:w-auto justify-between lg:justify-end">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <div className="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-brand-800 dark:text-brand-300 font-mono text-xs font-bold flex items-center gap-1.5 shadow-3xs">
-                                    <Users className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+                                  <div className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-300 font-mono text-xs font-bold flex items-center gap-1.5 shadow-3xs">
+                                    <Users className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
                                     <span>{totalMentorStudentsEnrolled.toLocaleString()} Enrolled</span>
                                   </div>
 
                                   {mentor.status === 'active_now' && (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
                                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
                                       <span>Active Now</span>
                                     </span>
                                   )}
                                   {mentor.status === 'active_today' && (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/60 border-2 border-emerald-300 dark:border-emerald-800 text-[#005F02] dark:text-emerald-400 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
                                       <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
                                       <span>Active Today</span>
                                     </span>
                                   )}
                                   {mentor.status === 'active_this_week' && (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-sky-50 dark:bg-sky-950/60 border-2 border-sky-300 dark:border-sky-800 text-sky-700 dark:text-sky-300 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
                                       <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
                                       <span>Active this Week</span>
                                     </span>
                                   )}
                                   {(mentor.status === 'idle' || mentor.status === 'inactive') && (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 dark:bg-[#161B22] border-2 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-mono text-xs font-bold shadow-3xs whitespace-nowrap">
                                       <span className="w-2 h-2 rounded-full bg-slate-400 shrink-0" />
                                       <span>Inactive</span>
                                     </span>
@@ -2479,20 +2484,19 @@ export const UserAnalyticsDeskView: React.FC<UserAnalyticsDeskViewProps> = ({
                                 </div>
 
                                 <div className="flex items-center gap-1.5">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
+                                  <button
+                                    type="button"
                                     onClick={() => handleToggleMentorRole(mentor)}
-                                    className="h-8 px-2.5 sm:px-3 text-xs font-bold text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 shadow-3xs cursor-pointer"
-                                    leftIcon={<AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />}
+                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-black text-rose-600 dark:text-rose-400 bg-white dark:bg-[#161B22] hover:bg-rose-50 dark:hover:bg-rose-950/80 border-2 border-slate-300 dark:border-slate-700 hover:border-rose-400 active:scale-95 shadow-3xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                                   >
-                                    Demote
-                                  </Button>
+                                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                                    <span>Demote</span>
+                                  </button>
 
                                   <button
                                     type="button"
                                     onClick={() => toggleMentorCardExpanded(mentor.id)}
-                                    className="h-8 px-2.5 sm:px-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-3xs"
+                                    className="h-8.5 px-3.5 rounded-xl text-xs font-mono font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 active:scale-95 shadow-3xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
                                     title={isCardExpanded ? "Hide mentor details" : "Show mentor details"}
                                   >
                                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isCardExpanded ? 'rotate-180' : 'rotate-0'}`} />
