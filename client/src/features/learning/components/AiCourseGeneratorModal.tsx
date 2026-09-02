@@ -211,7 +211,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   <Bot className="w-4 h-4" />
                 </div>
                 <span className="text-[11px] font-mono font-black px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#005F02] dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 shadow-3xs">
-                  100% OFFLINE LLM ARCHITECT
+                  100% OFFLINE ARCHITECT
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
