@@ -427,8 +427,8 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                           <ShieldCheck className="w-3 h-3" /> Unlocked
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-700 dark:text-amber-400 font-black">
-                          <Lock className="w-2.5 h-2.5" /> Sequential
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-700 dark:text-amber-400 font-black" title="Locked">
+                          <Lock className="w-3 h-3" />
                         </span>
                       )}
                     </button>

@@ -210,7 +210,7 @@ export const CourseModuleLockModal: React.FC<CourseModuleLockModalProps> = ({
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
-                            <Lock className="w-2.5 h-2.5" /> Sequential Lock (Needs Mod {idx})
+                            <Lock className="w-2.5 h-2.5" /> Needs Mod {idx}
                           </span>
                         )}
                       </div>
