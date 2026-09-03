@@ -165,23 +165,23 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
         className="relative w-full max-w-2xl max-h-[92vh] sm:max-h-[88vh] rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-2xl z-10 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Top Header Banner */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 text-white px-6 py-5 border-b-2 border-slate-800 shrink-0 flex items-start justify-between gap-4 relative overflow-hidden">
-          {/* Subtle Ambient Glow */}
-          <div className="absolute top-0 right-1/4 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-slate-50 dark:bg-gradient-to-r dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950 px-6 py-5 border-b-2 border-slate-200 dark:border-slate-800 shrink-0 flex items-start justify-between gap-4 relative overflow-hidden">
+          {/* Subtle Ambient Glow (Dark Mode only) */}
+          <div className="hidden dark:block absolute top-0 right-1/4 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex items-start gap-3.5 relative z-10">
-            <div className="w-11 h-11 rounded-2xl bg-[#005F02] text-white flex items-center justify-center shrink-0 shadow-lg border border-emerald-400/30">
-              <GraduationCap className="w-6 h-6 text-emerald-300" />
+            <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-[#005F02] text-[#005F02] dark:text-white flex items-center justify-center shrink-0 shadow-xs border-2 border-emerald-300 dark:border-emerald-400/30">
+              <GraduationCap className="w-6 h-6 text-[#005F02] dark:text-emerald-300" />
             </div>
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] font-black uppercase tracking-wider">
-                <Shield className="w-3 h-3 text-emerald-400" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/15 border border-emerald-300 dark:border-emerald-500/30 text-[#005F02] dark:text-emerald-400 font-mono text-[10px] font-black uppercase tracking-wider">
+                <Shield className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
                 <span>VERIFIED EDUCATOR NETWORK</span>
               </div>
-              <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+              <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white">
                 Apply to Become a CodeTutor Mentor
               </h2>
-              <p className="text-xs text-slate-300 leading-relaxed max-w-lg font-medium">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-w-lg font-medium">
                 Join our verified educator network to author offline course tracks, mentor African tech students, and publish solution notes.
               </p>
             </div>
@@ -190,7 +190,7 @@ export const MentorApplicationModal: React.FC<MentorApplicationModalProps> = ({
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-xl p-2 text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0 border border-transparent hover:border-white/10"
+            className="rounded-xl p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0 border border-transparent hover:border-slate-300 dark:hover:border-white/10"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
