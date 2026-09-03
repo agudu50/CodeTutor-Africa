@@ -18,6 +18,7 @@ import {
   Trash2,
   Lock,
   Calendar,
+  ShieldCheck,
 } from 'lucide-react'
 
 // Preset Curated Cover Images (SVGs and gradients that work 100% offline)
@@ -45,6 +46,10 @@ const PRESET_COVERS = [
   {
     label: 'Cloud & Database',
     url: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    label: 'Web Dev Fullstack',
+    url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80',
   },
 ]
 
@@ -74,11 +79,13 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
   const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [mentorId, setMentorId] = useState('')
   const [mentorName, setMentorName] = useState('')
+  const [isUnlockedByAdmin, setIsUnlockedByAdmin] = useState(false)
   const [generatingLessonId, setGeneratingLessonId] = useState<string | null>(null)
   const [modules, setModules] = useState<Array<{
     id: string
     title: string
     description: string
+    isUnlockedByAdmin?: boolean
     lessons: Array<{
       id: string
       title: string
@@ -130,11 +137,13 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setThumbnailUrl(courseToEdit.thumbnailUrl || '')
       setMentorId(courseToEdit.mentorId || '')
       setMentorName(courseToEdit.mentorName || courseToEdit.instructorName || '')
+      setIsUnlockedByAdmin(Boolean(courseToEdit.isUnlockedByAdmin))
       setModules(
         courseToEdit.modules.map((m) => ({
           id: m.id,
           title: m.title,
           description: m.description,
+          isUnlockedByAdmin: Boolean(m.isUnlockedByAdmin),
           lessons: m.lessons.map((l) => ({
             id: l.id,
             title: l.title,
@@ -158,6 +167,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       setEstimatedWeeks(8)
       setDescription('')
       setThumbnailUrl('')
+      setIsUnlockedByAdmin(false)
       setMentorId('')
       setMentorName('')
       setModules([
@@ -315,6 +325,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
       description: m.description,
       order: mIdx + 1,
       weekNumber: Math.min(finalEstimatedWeeks, Math.floor(mIdx / 2) + 1),
+      isUnlockedByAdmin: Boolean(m.isUnlockedByAdmin || isUnlockedByAdmin),
       createdAt: new Date().toISOString(),
       lessons: m.lessons.map((l, lIdx) => ({
         id: l.id || `les-${Date.now()}-${lIdx}`,
@@ -351,6 +362,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         mentorName: mentorName || undefined,
         instructorName: mentorName || undefined,
         thumbnailUrl: thumbnailUrl.trim() || undefined,
+        isUnlockedByAdmin,
         totalLessons,
         modules: finalModules,
       }) || courseToEdit
@@ -368,6 +380,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
         mentorName: mentorName || undefined,
         instructorName: mentorName || undefined,
         thumbnailUrl: thumbnailUrl.trim() || undefined,
+        isUnlockedByAdmin,
         totalLessons,
         modules: finalModules,
       })
@@ -716,16 +729,50 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
               MODULE & LESSON BUILDER WITH SEQUENTIAL PROGRESSION LOCKING
               ═══════════════════════════════════════════════════════════════ */}
           <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
-            <div className="p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 flex items-start gap-2.5">
-              <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div className="text-xs space-y-0.5">
-                <span className="font-bold text-slate-900 dark:text-slate-100">
-                  Sequential Module Locking Enabled
-                </span>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
-                  Each module is locked automatically until the learner completes 100% of the preceding module lessons.
-                </p>
+            <div className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              isUnlockedByAdmin
+                ? 'bg-emerald-500/10 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800'
+                : 'bg-amber-500/10 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800'
+            }`}>
+              <div className="flex items-start gap-2.5">
+                {isUnlockedByAdmin ? (
+                  <ShieldCheck className="w-4 h-4 text-[#005F02] dark:text-emerald-400 shrink-0 mt-0.5" />
+                ) : (
+                  <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                )}
+                <div className="text-xs space-y-0.5">
+                  <span className="font-bold text-slate-900 dark:text-slate-100">
+                    {isUnlockedByAdmin ? 'All Modules Unlocked for Learners' : 'Sequential Module Locking Enabled'}
+                  </span>
+                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                    {isUnlockedByAdmin
+                      ? 'Learners can access all modules without completing prerequisites.'
+                      : 'Each module is locked automatically until the learner completes 100% of the preceding module lessons.'}
+                  </p>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setIsUnlockedByAdmin(!isUnlockedByAdmin)}
+                className={`px-3 py-1.5 rounded-xl font-mono text-[11px] font-bold border cursor-pointer shadow-3xs transition-all active:scale-95 shrink-0 inline-flex items-center gap-1.5 self-start sm:self-auto ${
+                  isUnlockedByAdmin
+                    ? 'bg-amber-100 dark:bg-amber-950 text-amber-950 dark:text-amber-200 border-amber-300 dark:border-amber-700 hover:bg-amber-200'
+                    : 'bg-[#005F02] hover:bg-emerald-700 text-white border-[#005F02]'
+                }`}
+              >
+                {isUnlockedByAdmin ? (
+                  <>
+                    <Lock className="w-3 h-3" />
+                    <span>Enforce Sequential Lock</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-3 h-3" />
+                    <span>Unlock All Modules</span>
+                  </>
+                )}
+              </button>
             </div>
 
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -752,6 +799,7 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
             <div className="space-y-3.5 sm:space-y-4">
               {modules.map((mod, modIdx) => {
                 const assignedWeek = Math.min(Number(estimatedWeeks) || 8, Math.floor(modIdx / 2) + 1)
+                const isModUnlocked = Boolean(mod.isUnlockedByAdmin || isUnlockedByAdmin)
 
                 return (
                 <div
@@ -765,9 +813,34 @@ export const CourseEditorModal: React.FC<CourseEditorModalProps> = memo(({
                         Week {assignedWeek}
                       </span>
                       {modIdx > 0 && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono text-slate-500 shrink-0">
-                          <Lock className="w-2.5 h-2.5" /> Requires Module {modIdx}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setModules((prev) => {
+                              const copy = [...prev]
+                              copy[modIdx].isUnlockedByAdmin = !copy[modIdx].isUnlockedByAdmin
+                              return copy
+                            })
+                          }}
+                          className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border cursor-pointer transition-colors shrink-0 ${
+                            isModUnlocked
+                              ? 'bg-emerald-100 dark:bg-emerald-950 text-[#005F02] dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                              : 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                          }`}
+                          title="Click to toggle module unlock for learners"
+                        >
+                          {isModUnlocked ? (
+                            <>
+                              <ShieldCheck className="w-2.5 h-2.5 text-[#005F02] dark:text-emerald-400" />
+                              <span>Unlocked for Learners</span>
+                            </>
+                          ) : (
+                            <>
+                              <Lock className="w-2.5 h-2.5" />
+                              <span>Requires Module {modIdx}</span>
+                            </>
+                          )}
+                        </button>
                       )}
                       <input
                         type="text"

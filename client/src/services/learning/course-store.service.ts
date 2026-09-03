@@ -187,6 +187,40 @@ class CourseStoreService {
     return this.courses[idx]
   }
 
+  toggleModuleUnlock(courseId: string, moduleId: string, forceStatus?: boolean): boolean {
+    const course = this.courses.find((c: Course) => c.id === courseId || c.slug === courseId)
+    if (!course) return false
+
+    const mod = course.modules.find((m: Module) => m.id === moduleId)
+    if (!mod) return false
+
+    mod.isUnlockedByAdmin = forceStatus !== undefined ? forceStatus : !mod.isUnlockedByAdmin
+    this.save()
+    window.dispatchEvent(
+      new CustomEvent('module_lock_toggled', {
+        detail: { courseId, moduleId, isUnlockedByAdmin: mod.isUnlockedByAdmin },
+      })
+    )
+    return true
+  }
+
+  unlockAllModulesForCourse(courseId: string, isUnlocked: boolean = true): boolean {
+    const course = this.courses.find((c: Course) => c.id === courseId || c.slug === courseId)
+    if (!course) return false
+
+    course.isUnlockedByAdmin = isUnlocked
+    course.modules.forEach((m: Module) => {
+      m.isUnlockedByAdmin = isUnlocked
+    })
+    this.save()
+    window.dispatchEvent(
+      new CustomEvent('course_all_modules_unlocked', {
+        detail: { courseId, isUnlocked },
+      })
+    )
+    return true
+  }
+
   resetToDefaults(): void {
     this.courses = [...MOCK_COURSES]
     this.save()

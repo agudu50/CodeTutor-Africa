@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { courseStoreService } from '@/services/learning/course-store.service'
@@ -28,6 +28,19 @@ export const CourseDetailPage: React.FC = () => {
   const [expandedModuleId, setExpandedModuleId] = useState<string | null>(null)
   const [supportModalOpen, setSupportModalOpen] = useState(false)
   const [inboxModalOpen, setInboxModalOpen] = useState(false)
+  const [, setVersion] = useState(0)
+
+  useEffect(() => {
+    const handleUpdate = () => setVersion((v) => v + 1)
+    window.addEventListener('courses_updated', handleUpdate)
+    window.addEventListener('module_lock_toggled', handleUpdate)
+    window.addEventListener('course_all_modules_unlocked', handleUpdate)
+    return () => {
+      window.removeEventListener('courses_updated', handleUpdate)
+      window.removeEventListener('module_lock_toggled', handleUpdate)
+      window.removeEventListener('course_all_modules_unlocked', handleUpdate)
+    }
+  }, [])
 
   const courses = courseStoreService.getAllCourses()
   const course = courses.find((c) => c.id === courseId || c.slug === courseId) || courses[0]
@@ -74,6 +87,10 @@ export const CourseDetailPage: React.FC = () => {
 
   // Find first uncompleted lesson for the primary CTA button
   const isModuleLocked = (moduleIdx: number) => {
+    const mod = course.modules[moduleIdx]
+    if (!mod) return false
+    // If admin or mentor specifically unlocked this module or all modules
+    if (mod.isUnlockedByAdmin || course.isUnlockedByAdmin) return false
     if (moduleIdx === 0) return false
     const prevMod = course.modules[moduleIdx - 1]
     if (!prevMod) return false
@@ -85,8 +102,10 @@ export const CourseDetailPage: React.FC = () => {
 
   const isLessonLocked = (moduleIdx: number, lessonIdx: number) => {
     if (isModuleLocked(moduleIdx)) return true
+    const mod = course.modules[moduleIdx]
+    if (mod?.isUnlockedByAdmin || course.isUnlockedByAdmin) return false
     if (lessonIdx === 0) return false
-    const prevLesson = course.modules[moduleIdx]?.lessons[lessonIdx - 1]
+    const prevLesson = mod?.lessons[lessonIdx - 1]
     return !prevLesson?.isCompleted
   }
 
@@ -393,7 +412,7 @@ export const CourseDetailPage: React.FC = () => {
                     {isExpanded && (
                       <div className="px-4 sm:px-6 pb-5 pt-3 border-t-2 border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/80 space-y-3 animate-in fade-in duration-150">
                         {locked && (
-                          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 flex items-center gap-2.5 text-xs text-amber-900 dark:text-amber-200">
+                          <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 flex items-center gap-2.5 text-xs text-amber-900 dark:text-amber-200">
                             <Lock className="w-4 h-4 text-amber-600 shrink-0" />
                             <span>
                               <strong>Module Locked:</strong> Complete 100% of all lessons in <strong>Module {idx}</strong> to unlock this week&apos;s curriculum.

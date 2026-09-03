@@ -3,6 +3,7 @@ import { Course } from '@/types'
 import { Link } from 'react-router-dom'
 import { ConfirmDeleteModal } from '@/components/feedback/ConfirmDeleteModal'
 import { adminAnalyticsService } from '@/services/admin/admin-analytics.service'
+import { CourseModuleLockModal } from './CourseModuleLockModal'
 import {
   BookOpen,
   ArrowRight,
@@ -13,6 +14,8 @@ import {
   Users,
   Trash2,
   GraduationCap,
+  ShieldCheck,
+  Lock,
 } from 'lucide-react'
 
 interface CourseListTableProps {
@@ -27,6 +30,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
   onDeleteCourse,
 }) => {
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null)
+  const [courseForLockManager, setCourseForLockManager] = useState<Course | null>(null)
   if (courses.length === 0) {
     return (
       <div className="rounded-3xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0E1318] shadow-xs p-12 text-center text-slate-500 dark:text-slate-400 space-y-2">
@@ -182,14 +186,26 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
 
               {/* Modules, Lessons, and Duration 3-Card Grid */}
               <div className="grid grid-cols-3 gap-2 pt-1 border-t-2 border-slate-200/70 dark:border-slate-800 text-center font-mono">
-                <div className="p-2 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-800 shadow-3xs space-y-0.5">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-mono font-bold block tracking-wider">
-                    Modules
-                  </span>
-                  <span className="text-xs font-black text-slate-900 dark:text-white">
+                <button
+                  type="button"
+                  onClick={() => setCourseForLockManager(course)}
+                  className="p-2 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-800 hover:border-emerald-500 shadow-3xs space-y-0.5 cursor-pointer text-left transition-colors"
+                  title="Click to manage module locks"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-mono font-bold block tracking-wider">
+                      Modules
+                    </span>
+                    {course.isUnlockedByAdmin || course.modules?.every(m => m.isUnlockedByAdmin) ? (
+                      <ShieldCheck className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
+                    ) : (
+                      <Lock className="w-3 h-3 text-amber-500" />
+                    )}
+                  </div>
+                  <span className="text-xs font-black text-slate-900 dark:text-white block">
                     {course.modules?.length || 18}
                   </span>
-                </div>
+                </button>
 
                 <div className="p-2 rounded-xl bg-white dark:bg-[#0E1318] border-2 border-slate-200 dark:border-slate-800 shadow-3xs space-y-0.5">
                   <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-mono font-bold block tracking-wider">
@@ -220,6 +236,16 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
               >
                 <Pencil className="w-3.5 h-3.5" />
                 <span>Edit Course</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCourseForLockManager(course)}
+                className="py-2 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 hover:bg-amber-100 dark:hover:bg-amber-900/80 text-amber-950 dark:text-amber-200 border-2 border-amber-300 dark:border-amber-700 font-mono text-xs font-bold flex items-center justify-center gap-1 shadow-3xs transition-all active:scale-95 cursor-pointer"
+                title="Manage module unlock overrides"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                <span>Locks</span>
               </button>
 
               <Link
@@ -383,14 +409,29 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                     </span>
                   </td>
 
-                  {/* Modules / Lessons */}
+                  {/* Modules / Lessons with Quick Lock Status Pill */}
                   <td className="py-4 px-4 font-mono">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs shadow-3xs">
+                    <button
+                      type="button"
+                      onClick={() => setCourseForLockManager(course)}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-[#161B22] border-2 border-slate-200 dark:border-slate-800 hover:border-emerald-500 text-slate-800 dark:text-slate-200 text-xs shadow-3xs cursor-pointer transition-colors text-left"
+                      title="Click to manage module locks and learner access"
+                    >
                       <Database className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
-                      <span>{course.modules?.length || 0} Modules</span>
+                      <span>{course.modules?.length || 0} Mod</span>
                       <span className="text-slate-400">•</span>
-                      <span className="font-bold">{course.totalLessons} Lessons</span>
-                    </div>
+                      <span className="font-bold">{course.totalLessons} Les</span>
+                      <span className="text-slate-300 dark:text-slate-700">|</span>
+                      {course.isUnlockedByAdmin || course.modules?.every(m => m.isUnlockedByAdmin) ? (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-[#005F02] dark:text-emerald-400 font-black">
+                          <ShieldCheck className="w-3 h-3" /> Unlocked
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-700 dark:text-amber-400 font-black">
+                          <Lock className="w-2.5 h-2.5" /> Sequential
+                        </span>
+                      )}
+                    </button>
                   </td>
 
                   {/* Estimated Hours */}
@@ -404,6 +445,15 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                   {/* Actions */}
                   <td className="py-4 pr-4 pl-2 text-right">
                     <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setCourseForLockManager(course)}
+                        className="p-2 rounded-xl text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/80 hover:bg-amber-100 dark:hover:bg-amber-900/80 border-2 border-amber-300 dark:border-amber-700 transition-all shadow-3xs cursor-pointer active:scale-95"
+                        title="Manage module locks for learners"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                      </button>
+
                       <Link
                         to={`/learning/courses/${course.id}`}
                         className="p-2 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-[#161B22] hover:border-[#005F02] border-2 border-slate-300 dark:border-slate-700 transition-all shadow-3xs active:scale-95"
@@ -437,6 +487,13 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
           </table>
         </div>
       </div>
+
+      {/* Module Lock Manager Modal */}
+      <CourseModuleLockModal
+        isOpen={Boolean(courseForLockManager)}
+        onClose={() => setCourseForLockManager(null)}
+        course={courseForLockManager}
+      />
 
       {/* Delete Confirmation Modal */}
       <ConfirmDeleteModal

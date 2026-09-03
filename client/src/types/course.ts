@@ -47,6 +47,7 @@ export interface Module extends BaseEntity {
   order: number
   weekNumber?: number
   isLocked?: boolean
+  isUnlockedByAdmin?: boolean
   progressPercentage?: number
   learningObjectives?: string[]
   technicalTerms?: TechnicalTerm[]
@@ -81,4 +82,5 @@ export interface Course extends BaseEntity {
   mentorName?: string
   instructorId?: string
   instructorName?: string
+  isUnlockedByAdmin?: boolean
 }
