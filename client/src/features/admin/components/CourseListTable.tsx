@@ -15,6 +15,7 @@ import {
   Trash2,
   GraduationCap,
   ShieldCheck,
+  Lock,
 } from 'lucide-react'
 
 interface CourseListTableProps {
@@ -241,7 +242,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                 className="py-2 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 hover:bg-amber-100 dark:hover:bg-amber-900/80 text-amber-950 dark:text-amber-200 border-2 border-amber-300 dark:border-amber-700 font-mono text-xs font-bold flex items-center justify-center gap-1 shadow-3xs transition-all active:scale-95 cursor-pointer"
                 title="Manage module unlock overrides"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                <Lock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 <span>Locks</span>
               </button>
 
@@ -446,7 +447,7 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                         className="p-2 rounded-xl text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/80 hover:bg-amber-100 dark:hover:bg-amber-900/80 border-2 border-amber-300 dark:border-amber-700 transition-all shadow-3xs cursor-pointer active:scale-95"
                         title="Manage module locks for learners"
                       >
-                        <ShieldCheck className="w-3.5 h-3.5 text-[#005F02] dark:text-emerald-400" />
+                        <Lock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       </button>
 
                       <Link
