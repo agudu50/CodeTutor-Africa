@@ -225,7 +225,7 @@ export const SystemStatusModal: React.FC<SystemStatusModalProps> = memo(({ isOpe
         ) : (
           /* Feature Availability Matrix */
           <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {capabilities.map((cap) => (
                 <div
                   key={cap.id}

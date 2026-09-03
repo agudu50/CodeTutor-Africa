@@ -58,12 +58,12 @@ export const Modal: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         className={cn(
-          'relative w-full rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 p-6 sm:p-7 shadow-2xl z-10 transition-all max-h-[90vh] overflow-y-auto',
+          'relative w-full rounded-3xl bg-white dark:bg-[#0E1318] border-2 border-slate-300 dark:border-slate-700 shadow-2xl z-10 transition-all max-h-[90vh] flex flex-col overflow-hidden',
           sizeClasses[size],
           className
         )}
       >
-        <div className="flex items-start justify-between pb-4 border-b-2 border-slate-200 dark:border-slate-800">
+        <div className="flex items-start justify-between px-6 py-5 sm:px-7 sm:py-5.5 border-b-2 border-slate-200 dark:border-slate-800 shrink-0">
           <div>
             {title && <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{title}</h2>}
             {description && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">{description}</p>}
@@ -78,7 +78,7 @@ export const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
 
-        <div className="py-4">{children}</div>
+        <div className="px-6 py-5 sm:px-7 sm:py-6 overflow-y-auto flex-1">{children}</div>
       </div>
     </div>
   )
