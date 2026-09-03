@@ -15,7 +15,6 @@ import {
   Trash2,
   GraduationCap,
   ShieldCheck,
-  Lock,
 } from 'lucide-react'
 
 interface CourseListTableProps {
@@ -196,10 +195,8 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-mono font-bold block tracking-wider">
                       Modules
                     </span>
-                    {course.isUnlockedByAdmin || course.modules?.every(m => m.isUnlockedByAdmin) ? (
+                    {(course.isUnlockedByAdmin || course.modules?.every(m => m.isUnlockedByAdmin)) && (
                       <ShieldCheck className="w-3 h-3 text-[#005F02] dark:text-emerald-400" />
-                    ) : (
-                      <Lock className="w-3 h-3 text-amber-500" />
                     )}
                   </div>
                   <span className="text-xs font-black text-slate-900 dark:text-white block">
@@ -421,15 +418,13 @@ export const CourseListTable: React.FC<CourseListTableProps> = memo(({
                       <span>{course.modules?.length || 0} Mod</span>
                       <span className="text-slate-400">•</span>
                       <span className="font-bold">{course.totalLessons} Les</span>
-                      <span className="text-slate-300 dark:text-slate-700">|</span>
-                      {course.isUnlockedByAdmin || course.modules?.every(m => m.isUnlockedByAdmin) ? (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-[#005F02] dark:text-emerald-400 font-black">
-                          <ShieldCheck className="w-3 h-3" /> Unlocked
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-700 dark:text-amber-400 font-black" title="Locked">
-                          <Lock className="w-3 h-3" />
-                        </span>
+                      {(course.isUnlockedByAdmin || course.modules?.every(m => m.isUnlockedByAdmin)) && (
+                        <>
+                          <span className="text-slate-300 dark:text-slate-700">|</span>
+                          <span className="inline-flex items-center gap-0.5 text-[10px] text-[#005F02] dark:text-emerald-400 font-black">
+                            <ShieldCheck className="w-3 h-3" /> Unlocked
+                          </span>
+                        </>
                       )}
                     </button>
                   </td>
